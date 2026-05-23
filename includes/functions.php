@@ -39,12 +39,11 @@ function sessionCreate(int $userId, string $role): string {
         'expires_at' => date('Y-m-d\TH:i:s\Z', time() + 86400),
     ]);
 
-    $secure = ($_SERVER['REQUEST_SCHEME'] ?? 'https') === 'https';
     setcookie('kingdom_session', $token, [
         'expires' => time() + 86400,
         'path' => '/',
+        'secure' => true,
         'httponly' => true,
-        'secure' => $secure,
         'samesite' => 'Lax',
     ]);
 
@@ -98,8 +97,8 @@ function sessionDestroy(): void {
     setcookie('kingdom_session', '', [
         'expires' => 1,
         'path' => '/',
+        'secure' => true,
         'httponly' => true,
-        'secure' => ($_SERVER['REQUEST_SCHEME'] ?? 'https') === 'https',
         'samesite' => 'Lax',
     ]);
 }
