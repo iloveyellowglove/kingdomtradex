@@ -25,9 +25,6 @@ require __DIR__ . '/header.php';
                 </p>
             </div>
         </div>
-        <div class="text-center mt-3">
-            <small class="text-muted">Demo credentials: admin@demo.local / admin123</small>
-        </div>
     </div>
 </div>
 

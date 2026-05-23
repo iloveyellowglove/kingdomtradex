@@ -500,7 +500,7 @@ $title = 'KingdomTrade Exchange: A Kingdom Marketplace for Faithful Stewards';
     <div class="lp-nav-inner">
         <a href="/" class="lp-nav-brand">
             <div class="logo-icon">&#x2663;</div>
-            KingdomTrade
+            KingdomTrade Exchange
         </a>
         <div class="lp-nav-links">
             <a href="/about/" class="btn-nav-login">About</a>
