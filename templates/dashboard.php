@@ -180,7 +180,7 @@ $rankClass = match($rank) {
             <div class="card-header"><h5 class="mb-0"><i class="bi bi-download"></i> Deposit Funds</h5></div>
             <div class="card-body">
                 <div class="alert alert-secondary">
-                    <strong>Deposit Instructions</strong> — Send funds to the address below, then contact admin with your transaction ID to confirm.
+                    <strong>Deposit Instructions:</strong> Send funds to the address below, then contact admin with your transaction ID to confirm.
                 </div>
                 <p><strong>Deposit Address (USDT TRC20):</strong></p>
                 <code class="d-block p-2 bg-light text-break">TXt8LiveAddr<?= substr(md5($user['id']), 0, 10) ?>Xch</code>

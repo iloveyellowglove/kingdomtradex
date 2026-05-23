@@ -1,5 +1,5 @@
 <?php
-$title = 'Withdrawal History - QuantumTrade Exchange';
+$title = 'Withdrawal History - KingdomTrade Exchange';
 require __DIR__ . '/header.php';
 ?>
 

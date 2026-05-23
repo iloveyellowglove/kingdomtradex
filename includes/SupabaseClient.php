@@ -330,7 +330,7 @@ class SupabaseClient {
     }
 
     /**
-     * Get the last inserted ID for a table (approximate — fetches max id).
+     * Get the last inserted ID for a table (approximate: fetches max id).
      */
     public function lastInsertId(string $table): int {
         $rows = $this->query($table, [], 'id', 'id.desc', 1);

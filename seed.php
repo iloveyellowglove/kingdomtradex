@@ -23,7 +23,7 @@ $settings = [
     ['setting_key' => 'min_deposit_btc', 'setting_value' => '0.001', 'description' => 'Minimum deposit in BTC'],
     ['setting_key' => 'min_deposit_eth', 'setting_value' => '0.01', 'description' => 'Minimum deposit in ETH'],
     ['setting_key' => 'min_withdrawal_usdt', 'setting_value' => '10.00', 'description' => 'Minimum withdrawal in USDT'],
-    ['setting_key' => 'site_name', 'setting_value' => 'QuantumTrade Exchange', 'description' => 'Site display name'],
+    ['setting_key' => 'site_name', 'setting_value' => 'KingdomTrade Exchange', 'description' => 'Site display name'],
 ];
 
 $existingSettings = $db->readTable('settings');

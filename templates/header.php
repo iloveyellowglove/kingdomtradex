@@ -1,6 +1,6 @@
 <?php
 /**
- * Common header template
+ * Common header template: KingdomTrade Dark Theme
  */
 $currentUser = currentUser();
 $siteName = 'KingdomTrade Exchange';
@@ -21,10 +21,12 @@ try {
     <?= $extraHead ?? '' ?>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark mb-0">
+
+<nav class="navbar navbar-expand-lg" id="mainNav">
     <div class="container">
         <a class="navbar-brand fw-bold" href="/">
-            🕊️ <?= h($siteName) ?>
+            <div style="width:34px;height:34px;background:linear-gradient(135deg,var(--temple-gold),#b8860b);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#1a1a2e;">&#x2663;</div>
+            <?= h($siteName) ?>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -74,10 +76,10 @@ try {
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="/login.php">Login</a>
+                        <a class="nav-link" href="/login.php">Log In</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/register.php">Register</a>
+                        <a class="nav-link text-warning" href="/register.php">Register</a>
                     </li>
                 <?php endif; ?>
             </ul>

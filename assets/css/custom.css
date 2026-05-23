@@ -1,43 +1,52 @@
-/* Christian Crypto Branding - Temple Gold & Royal Purple */
+/* KingdomTrade Dark Theme: Temple Gold and Royal Purple */
 
 :root {
     --temple-gold: #FFD700;
     --royal-purple: #6A0DAD;
     --deep-purple: #4B0082;
     --dark-indigo: #1a1a2e;
+    --bg-dark: #0e0b1a;
+    --bg-card: #151025;
+    --bg-card-hover: #1c1635;
+    --text-primary: #f0edf5;
+    --text-secondary: #a89bb5;
+    --text-muted: #6e6080;
+    --border: #261f3a;
+    --border-light: #352c4a;
+    --gold-glow: rgba(255, 215, 0, 0.25);
+    --gold-glow-strong: rgba(255, 215, 0, 0.45);
 }
 
-/* Sacred geometry background pattern (Seed of Life / overlapping circles) */
+/* Body */
 body {
-    background-color: #f8f6f0;
-    background-image:
-        radial-gradient(circle at 30% 20%, rgba(255, 215, 0, 0.04) 0%, transparent 50%),
-        radial-gradient(circle at 70% 60%, rgba(106, 13, 173, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 50% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
-        repeating-linear-gradient(
-            60deg,
-            transparent,
-            transparent 40px,
-            rgba(255, 215, 0, 0.015) 40px,
-            rgba(255, 215, 0, 0.015) 41px
-        );
-    background-attachment: fixed;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* Primary buttons - Temple Gold */
+/* Links */
+a { color: var(--temple-gold); }
+a:hover { color: #FFE44D; }
+
+/* Primary buttons: Temple Gold */
 .btn-primary {
-    background-color: var(--temple-gold) !important;
+    background: linear-gradient(135deg, var(--temple-gold), #c9a800) !important;
     border-color: #B8860B !important;
-    color: #000 !important;
-    font-weight: 600;
+    color: #1a1a2e !important;
+    font-weight: 700;
+    box-shadow: 0 2px 12px var(--gold-glow);
 }
 .btn-primary:hover {
-    background-color: #FFC107 !important;
+    background: linear-gradient(135deg, #FFE44D, var(--temple-gold)) !important;
     border-color: #B8860B !important;
-    color: #000 !important;
+    color: #1a1a2e !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px var(--gold-glow-strong);
 }
 
-/* Secondary buttons - Royal Purple */
+/* Secondary outline buttons: Royal Purple */
 .btn-outline-secondary {
     border-color: var(--royal-purple) !important;
     color: var(--royal-purple) !important;
@@ -48,76 +57,243 @@ body {
 }
 
 .btn-success {
-    background-color: var(--royal-purple) !important;
+    background: linear-gradient(135deg, var(--royal-purple), var(--deep-purple)) !important;
     border-color: var(--deep-purple) !important;
     color: #fff !important;
 }
 .btn-success:hover {
-    background-color: #7B1FA2 !important;
+    background: linear-gradient(135deg, #7B1FA2, var(--deep-purple)) !important;
 }
 
-/* Navbar - deep purple with gold text */
-.navbar-dark {
-    background: linear-gradient(135deg, var(--deep-purple), #2d004d) !important;
-    border-bottom: 2px solid var(--temple-gold);
+.btn-outline-primary {
+    border-color: var(--temple-gold) !important;
+    color: var(--temple-gold) !important;
+    background: transparent;
 }
-.navbar-dark .navbar-brand,
-.navbar-dark .nav-link {
+.btn-outline-primary:hover {
+    background: var(--temple-gold) !important;
+    color: #1a1a2e !important;
+}
+
+.btn-outline-warning {
+    border-color: var(--temple-gold) !important;
     color: var(--temple-gold) !important;
 }
-.navbar-dark .nav-link:hover {
-    color: #fff !important;
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-}
-.navbar-dark .nav-link.text-warning {
-    color: #FFC107 !important;
-}
-.navbar-dark .dropdown-menu {
-    background: var(--dark-indigo);
-    border: 1px solid var(--temple-gold);
-}
-.navbar-dark .dropdown-item {
-    color: var(--temple-gold);
-}
-.navbar-dark .dropdown-item:hover {
-    background: var(--royal-purple);
+.btn-outline-warning:hover {
+    background: var(--temple-gold) !important;
+    color: #1a1a2e !important;
 }
 
-/* Kingdom cards - gold border, white bg, purple shadow */
+.btn-outline-info {
+    border-color: #b47cff !important;
+    color: #b47cff !important;
+}
+
+.btn-outline-light {
+    border-color: var(--border-light) !important;
+    color: var(--text-primary) !important;
+}
+.btn-outline-light:hover {
+    background: rgba(255,255,255,0.06) !important;
+    color: var(--temple-gold) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #B71C1C, #D32F2F) !important;
+    border-color: #B71C1C !important;
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--temple-gold), #c9a800) !important;
+    border-color: #B8860B !important;
+    color: #1a1a2e !important;
+    font-weight: 600;
+}
+
+.btn-sm {
+    min-height: 36px;
+}
+
+/* Navbar: glassmorphism fixed, matches landing page */
+.navbar-dark,
+.navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(14, 11, 26, 0.88) !important;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s;
+    padding: 0;
+}
+.navbar-dark.scrolled,
+.navbar.scrolled {
+    background: rgba(14, 11, 26, 0.98) !important;
+}
+.navbar > .container {
+    max-width: 1280px;
+    padding: 0 24px;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+}
+/* Push page content below fixed navbar */
+main.container.mt-3 {
+    margin-top: 84px !important;
+}
+.navbar-dark .navbar-brand,
+.navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--temple-gold) !important;
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: -0.3px;
+    text-decoration: none;
+}
+.navbar-dark .nav-link,
+.navbar .nav-link {
+    color: var(--text-primary) !important;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+.navbar-dark .nav-link:hover,
+.navbar .nav-link:hover {
+    background: rgba(255,255,255,0.06);
+    color: var(--temple-gold) !important;
+    text-shadow: none;
+}
+.navbar-dark .nav-link.text-warning,
+.navbar .nav-link.text-warning {
+    color: var(--temple-gold) !important;
+}
+.navbar-dark .dropdown-menu,
+.navbar .dropdown-menu {
+    background: var(--bg-card);
+    border: 1px solid var(--temple-gold);
+    border-radius: 12px;
+    padding: 8px;
+}
+.navbar-dark .dropdown-item,
+.navbar .dropdown-item {
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+.navbar-dark .dropdown-item:hover,
+.navbar .dropdown-item:hover {
+    background: rgba(255, 215, 0, 0.08);
+    color: var(--temple-gold);
+}
+.navbar-dark .dropdown-item-text,
+.navbar .dropdown-item-text {
+    color: var(--text-secondary);
+}
+.navbar-dark .dropdown-divider,
+.navbar .dropdown-divider {
+    border-color: var(--border);
+}
+.navbar-toggler {
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
+}
+
+/* Cards: dark with gold border */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+.card-header {
+    background: linear-gradient(135deg, rgba(75, 0, 130, 0.4), rgba(26, 26, 46, 0.8));
+    color: var(--temple-gold);
+    border-bottom: 1px solid var(--border-light);
+    border-radius: 16px 16px 0 0 !important;
+    font-weight: 600;
+}
+.card-body {
+    color: var(--text-primary);
+}
+.card-footer {
+    background: rgba(0,0,0,0.2);
+    border-top: 1px solid var(--border);
+}
+
+/* Kingdom cards: gold border accent */
 .kingdom-card {
     border: 2px solid var(--temple-gold) !important;
-    background: #fff !important;
-    box-shadow: 0 4px 16px rgba(106, 13, 173, 0.25) !important;
-    border-radius: 0.75rem !important;
+    box-shadow: 0 4px 20px var(--gold-glow) !important;
 }
 .kingdom-card .card-header {
     background: linear-gradient(135deg, var(--deep-purple), var(--royal-purple));
     color: var(--temple-gold);
     border-bottom: 1px solid var(--temple-gold);
 }
+.kingdom-card .card-header h1,
+.kingdom-card .card-header h2,
+.kingdom-card .card-header h3,
+.kingdom-card .card-header h4,
+.kingdom-card .card-header h5,
+.kingdom-card .card-header h6 {
+    color: var(--temple-gold);
+    font-weight: 700;
+}
 
-/* God's Economics callout box */
+/* Unify card border-left styles */
+.card.border-primary { border-left: 4px solid var(--temple-gold) !important; }
+.card.border-success { border-left: 4px solid var(--royal-purple) !important; }
+.card.border-warning { border-left: 4px solid #FF6F00 !important; }
+.card.border-danger { border-left: 4px solid #ff5252 !important; }
+
+/* Hero section */
+.hero-section {
+    background: linear-gradient(135deg, var(--deep-purple), var(--dark-indigo));
+    color: var(--temple-gold);
+    border: 2px solid var(--temple-gold);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(106, 13, 173, 0.3);
+}
+.hero-section h1,
+.hero-section h2,
+.hero-section h3,
+.hero-section h4,
+.hero-section h5,
+.hero-section h6 {
+    color: var(--temple-gold);
+    font-weight: 700;
+}
+
+/* Stewardship callout */
 .stewardship-callout {
-    background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
-    border: 3px solid var(--royal-purple) !important;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.06), rgba(255, 215, 0, 0.02));
+    border: 2px solid var(--royal-purple) !important;
     border-radius: 0.75rem;
     padding: 1.25rem;
     margin-bottom: 1.5rem;
     box-shadow: 0 4px 12px rgba(106, 13, 173, 0.15);
 }
 .stewardship-callout h5 {
-    color: var(--deep-purple);
+    color: var(--temple-gold);
     font-weight: bold;
 }
 .stewardship-callout p {
-    color: #333;
+    color: var(--text-secondary);
     margin-bottom: 0;
 }
 
 /* Urgency banner */
 .urgency-banner {
     background: linear-gradient(135deg, #B71C1C, #D32F2F);
-    color: #FFD700;
+    color: var(--temple-gold);
     text-align: center;
     padding: 12px 20px;
     font-weight: bold;
@@ -131,25 +307,6 @@ body {
     50% { border-color: #FF6F00; }
 }
 
-/* Footer update */
-footer {
-    background: linear-gradient(135deg, var(--deep-purple), var(--dark-indigo));
-    border-top: 3px solid var(--temple-gold);
-}
-footer p, footer small { color: #ccc; }
-
-/* Hero section */
-.hero-section {
-    background: linear-gradient(135deg, var(--deep-purple), var(--dark-indigo));
-    color: var(--temple-gold);
-    border: 2px solid var(--temple-gold);
-    border-radius: 1rem;
-    padding: 2rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 32px rgba(106, 13, 173, 0.3);
-}
-
 /* Covenant economy table */
 .covenant-table th {
     background: var(--deep-purple);
@@ -159,133 +316,150 @@ footer p, footer small { color: #ccc; }
     vertical-align: middle;
     word-break: break-word;
     white-space: normal;
+    color: var(--text-primary);
+    background: var(--bg-card);
+}
+.covenant-table {
+    border-color: var(--border-light) !important;
 }
 
-/* Rank badges - dark colors for readability on white backgrounds */
-.rank-elder { color: #5C4033; font-weight: bold; }
-.rank-prophet { color: #B8860B; font-weight: bold; }
-.rank-apostle { color: #CC3700; font-weight: bold; }
+/* Rank badges */
+.rank-elder { color: var(--temple-gold); font-weight: bold; }
+.rank-prophet { color: #FFC107; font-weight: bold; }
+.rank-apostle { color: #ff7043; font-weight: bold; }
 
-/* ---- Heading contrast system ---- */
-
-/* Default: dark headings on light backgrounds (body, white cards, etc.) */
+/* Heading contrast system */
 h1, h2, h3, h4, h5, h6,
 .card-title,
 .section-heading,
 .page-header {
-    color: #1A1A1A;
-    font-weight: 700;
-    text-shadow: none;
-}
-
-/* Hero section: gold headings on dark purple background */
-.hero-section h1,
-.hero-section h2,
-.hero-section h3,
-.hero-section h4,
-.hero-section h5,
-.hero-section h6 {
-    color: #FFD700;
+    color: #fff;
     font-weight: 700;
 }
+.text-muted { color: var(--text-muted) !important; }
+.text-primary { color: var(--temple-gold) !important; }
+.text-success { color: #00c853 !important; }
+.text-warning { color: var(--temple-gold) !important; }
+.text-danger { color: #ff5252 !important; }
+.text-info { color: #b47cff !important; }
 
-/* Kingdom card headers: gold headings on purple gradient */
-.kingdom-card .card-header h1,
-.kingdom-card .card-header h2,
-.kingdom-card .card-header h3,
-.kingdom-card .card-header h4,
-.kingdom-card .card-header h5,
-.kingdom-card .card-header h6 {
-    color: #FFD700;
-    font-weight: 700;
+/* Tables */
+.table {
+    color: var(--text-primary);
+    --bs-table-bg: transparent;
+    --bs-table-hover-bg: rgba(255, 215, 0, 0.03);
+    --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
+}
+.table thead th {
+    background: rgba(75, 0, 130, 0.4);
+    color: var(--temple-gold);
+    border-bottom: 1px solid var(--border-light);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.table td {
+    border-color: var(--border);
+    vertical-align: middle;
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 215, 0, 0.04);
+}
+.table-dark {
+    --bs-table-bg: rgba(75, 0, 130, 0.4);
 }
 
-/* Covenant table headers: gold text on purple - already set on th, ensure children match */
-.covenant-table th h1,
-.covenant-table th h2,
-.covenant-table th h3,
-.covenant-table th h4,
-.covenant-table th h5,
-.covenant-table th h6 {
-    color: #FFD700;
-    font-weight: 700;
+/* Forms */
+.form-control,
+.form-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
+    border-radius: 8px;
+    min-height: 44px;
+    font-size: 16px;
+}
+.form-control:focus,
+.form-select:focus {
+    background: var(--bg-card-hover);
+    border-color: var(--temple-gold);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    color: var(--text-primary);
+}
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+.form-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.input-group-text {
+    background: var(--border);
+    border-color: var(--border-light);
+    color: var(--text-secondary);
 }
 
-/* Ekklesia box: gold headings on dark purple */
-.ekklesia-box h1,
-.ekklesia-box h2,
-.ekklesia-box h3,
-.ekklesia-box h4,
-.ekklesia-box h5,
-.ekklesia-box h6 {
-    color: #FFD700;
-    font-weight: 700;
+/* Alerts */
+.alert {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: 12px;
 }
+.alert-success { border-color: #00c853; background: rgba(0, 200, 83, 0.08); }
+.alert-danger { border-color: #ff5252; background: rgba(255, 82, 82, 0.08); }
+.alert-warning { border-color: var(--temple-gold); background: rgba(255, 215, 0, 0.06); color: var(--temple-gold); }
+.alert-info { border-color: #b47cff; background: rgba(180, 124, 255, 0.08); }
+.alert-light { background: var(--bg-card-hover); border-color: var(--border-light); }
+.alert-secondary { background: var(--bg-card); border-color: var(--border); }
 
-/* Stewardship callout: dark headings on light gold background */
-.stewardship-callout h1,
-.stewardship-callout h2,
-.stewardship-callout h3,
-.stewardship-callout h4,
-.stewardship-callout h5,
-.stewardship-callout h6 {
-    color: #2E0A4E;
-    font-weight: 700;
+/* Badges */
+.badge {
+    font-weight: 500;
 }
+.badge.bg-secondary { background: rgba(110, 96, 128, 0.3) !important; }
+.badge.bg-success { background: #00c853 !important; }
+.badge.bg-warning { background: #b8860b !important; color: #1a1a2e; }
+.badge.bg-info { background: var(--royal-purple) !important; }
+.badge.bg-danger { background: #ff5252 !important; }
 
-/* Card header with light background */
-.card-header:not(.kingdom-card .card-header) {
-    background-color: #f8f6f0;
+/* Code blocks */
+code {
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    white-space: normal;
+    color: var(--temple-gold);
+    background: rgba(255, 215, 0, 0.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
 }
-.card-header:not(.kingdom-card .card-header) h1,
-.card-header:not(.kingdom-card .card-header) h2,
-.card-header:not(.kingdom-card .card-header) h3,
-.card-header:not(.kingdom-card .card-header) h4,
-.card-header:not(.kingdom-card .card-header) h5,
-.card-header:not(.kingdom-card .card-header) h6 {
-    color: #1A1A1A;
-    font-weight: 700;
-}
-
-/* Navbar brand and text - gold on dark purple */
-.navbar-dark .navbar-brand,
-.navbar-dark .navbar-brand h1,
-.navbar-dark .navbar-brand h2,
-.navbar-dark .navbar-brand h3,
-.navbar-dark .navbar-brand h4,
-.navbar-dark .navbar-brand h5,
-.navbar-dark .navbar-brand h6 {
-    color: #FFD700 !important;
-    font-weight: 700;
-}
-
-/* Links */
-a { color: #6A0DAD; }
-a:hover { color: #4B0082; }
-
-/* Unify card border-left styles */
-.card.border-primary { border-left: 4px solid var(--temple-gold) !important; }
-.card.border-success { border-left: 4px solid var(--royal-purple) !important; }
-.card.border-warning { border-left: 4px solid #FF6F00 !important; }
 
 /* Admin sidebar */
 .admin-sidebar {
     border: 1px solid var(--temple-gold);
+    background: var(--bg-card);
+    border-radius: 16px;
 }
-
-/* Button tweaks */
-.btn-outline-primary {
-    border-color: var(--temple-gold) !important;
-    color: #B8860B !important;
+.admin-sidebar .card-header {
+    border-radius: 16px 16px 0 0;
 }
-.btn-outline-primary:hover {
-    background: var(--temple-gold) !important;
-    color: #000 !important;
+.admin-sidebar .nav-link {
+    color: var(--text-secondary);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+    color: var(--temple-gold);
+    background-color: rgba(255, 215, 0, 0.08);
 }
 
 /* Ekklesia sidebar box */
 .ekklesia-box {
-    background: linear-gradient(135deg, #1a1a2e, #2d004d);
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(45, 0, 77, 0.9));
     border: 2px solid var(--temple-gold);
     border-radius: 0.75rem;
     padding: 1.25rem;
@@ -299,58 +473,109 @@ a:hover { color: #4B0082; }
     color: var(--temple-gold);
     font-weight: bold;
 }
+.ekklesia-box h1,
+.ekklesia-box h2,
+.ekklesia-box h3,
+.ekklesia-box h4,
+.ekklesia-box h5,
+.ekklesia-box h6 {
+    color: var(--temple-gold);
+    font-weight: 700;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, var(--dark-indigo), #110a22);
+    border-top: 2px solid var(--temple-gold);
+    color: var(--text-primary);
+}
+footer p, footer small { color: var(--text-secondary); }
+
+/* Modal */
+.modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 16px;
+}
+.modal-header {
+    border-bottom: 1px solid var(--border);
+}
+.modal-footer {
+    border-top: 1px solid var(--border);
+}
+.btn-close {
+    filter: invert(1);
+}
+
+/* Spinner */
+.spinner-border { color: var(--temple-gold); }
+
+/* Horizontal rule */
+hr, .dropdown-divider {
+    border-color: var(--border);
+}
+
+/* Breadcrumb / page headings */
+.page-header, h2 {
+    color: #fff;
+}
+
+/* Order book (trading page) */
+#asksTable td:first-child { color: #ff5252; }
+#bidsTable td:first-child { color: #00c853; }
+#tradesTable tr { font-size: 0.82rem; }
+
+/* Flash alert animation */
+.alert {
+    animation: slideDown 0.3s ease-out;
+}
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tree node hover */
+.tree-node .card:hover {
+    box-shadow: 0 2px 12px rgba(255, 215, 0, 0.2);
+}
+
+/* Light background override for dark theme */
+.bg-light {
+    background-color: var(--bg-card) !important;
+}
+.bg-dark {
+    background-color: var(--bg-dark) !important;
+}
+.table-danger {
+    --bs-table-bg: rgba(255, 82, 82, 0.08);
+    --bs-table-color: var(--text-primary);
+}
+.table-success {
+    --bs-table-bg: rgba(0, 200, 83, 0.08);
+    --bs-table-color: var(--text-primary);
+}
+.table-light {
+    --bs-table-bg: var(--bg-card);
+    --bs-table-color: var(--text-primary);
+}
+
+/* Print-friendly */
+@media print {
+    nav, footer, .btn, .alert { display: none !important; }
+}
 
 /* =========================================================================
    Mobile Responsive Breakpoints
    ========================================================================= */
-
-/* ---------- Base mobile fixes (all screens) ---------- */
-
-/* Prevent horizontal overflow */
-body {
-    overflow-x: hidden;
-}
-
-/* Ensure all images and embedded content stay contained */
-img, svg, canvas, iframe {
-    max-width: 100%;
-    height: auto;
-}
 
 /* Table responsive: smooth scrolling on iOS */
 .table-responsive {
     -webkit-overflow-scrolling: touch;
 }
 
-/* Minimum tap target size for all buttons and form controls */
-.form-control,
-.form-select,
-.btn {
-    min-height: 44px;
-}
-
 /* Referral tree: base indent via CSS custom property */
 .tree-node {
     margin-left: var(--tree-indent, 0px);
-}
-
-/* Prevent iOS zoom on input focus — 16px minimum font size */
-.form-control,
-.form-select,
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="search"],
-textarea {
-    font-size: 16px !important;
-}
-
-/* Code blocks: force wrap to prevent overflow */
-code {
-    word-break: break-all;
-    overflow-wrap: anywhere;
-    white-space: normal;
 }
 
 /* Timeframe buttons: allow wrapping */
@@ -364,9 +589,14 @@ code {
     height: min(420px, 60vh);
 }
 
+/* Ensure all images stay contained */
+img, svg, canvas, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
 /* ---------- 1024px and below (tablet landscape) ---------- */
 @media (max-width: 1024px) {
-    /* Referral tree: reduce indentation via CSS variable override */
     .tree-node {
         --tree-indent: 0px;
         padding-left: 8px;
@@ -382,37 +612,23 @@ code {
 
 /* ---------- 768px and below (tablet portrait) ---------- */
 @media (max-width: 768px) {
-    /* Trading page: stack order book above chart */
-    .trading-orderbook {
-        order: 1;
-    }
-    .trading-chart-col {
-        order: 2;
-    }
+    .trading-orderbook { order: 1; }
+    .trading-chart-col { order: 2; }
 
-    /* Chart: shorter on mobile */
-    #chart-container {
-        height: min(300px, 50vh);
-    }
+    #chart-container { height: min(300px, 50vh); }
 
-    /* Footer: stack columns */
     footer .text-md-end {
         text-align: left !important;
         margin-top: 0.75rem;
     }
 
-    /* Admin sidebar: full width above content */
-    .admin-sidebar {
-        margin-bottom: 1rem;
-    }
+    .admin-sidebar { margin-bottom: 1rem; }
 
-    /* Admin filter buttons: smaller and wrap */
     .btn-sm {
         padding: 0.375rem 0.5rem;
         font-size: 0.8rem;
     }
 
-    /* Mass payout card: stack vertically */
     .card.border-warning .card-body.d-flex {
         flex-direction: column;
         gap: 1rem;
@@ -422,74 +638,42 @@ code {
         width: 100%;
     }
 
-    /* Settings form: make grid columns full width */
-    .col-md-3, .col-md-4, .col-md-6 {
-        width: 100%;
-    }
+    .col-md-3, .col-md-4, .col-md-6 { width: 100%; }
 
-    /* Lower heading sizes for readability */
     h1 { font-size: 1.6rem; }
     h2 { font-size: 1.4rem; }
     h3 { font-size: 1.25rem; }
     h4 { font-size: 1.1rem; }
 
-    /* Dashboard balance cards: stack */
-    .col-md-4 {
-        margin-bottom: 0.75rem;
-    }
+    .col-md-4 { margin-bottom: 0.75rem; }
 
-    /* Navbar: tighter padding */
     .navbar .container {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
     }
 
-    /* Hero section padding */
-    .hero-section {
-        padding: 1.25rem;
-    }
+    .hero-section { padding: 1.25rem; }
+    .stewardship-callout { padding: 1rem; }
+    .col-md-6 { margin-bottom: 1rem; }
 
-    /* Stewardship callout */
-    .stewardship-callout {
-        padding: 1rem;
-    }
+    .mt-3 .btn-outline-secondary { width: 100%; }
 
-    /* Withdrawal form cards */
-    .col-md-6 {
-        margin-bottom: 1rem;
-    }
-
-    /* Breadcrumb / back links */
-    .mt-3 .btn-outline-secondary {
-        width: 100%;
-    }
-
-    /* Invitation link input group on mobile */
-    .input-group {
-        flex-wrap: wrap;
-    }
+    .input-group { flex-wrap: wrap; }
     .input-group .form-control,
     .input-group .btn {
         width: 100%;
         border-radius: 0.375rem !important;
         margin-bottom: 0.25rem;
     }
-    .input-group > :not(:first-child) {
-        margin-left: 0;
-    }
+    .input-group > :not(:first-child) { margin-left: 0; }
 
-    /* Admin dashboard stat cards */
-    h1.display-4, h1 {
-        font-size: 1.5rem;
-    }
+    h1.display-4, h1 { font-size: 1.5rem; }
 
-    /* Table cells: slightly smaller on mobile */
     .table td, .table th {
         font-size: 0.85rem;
         padding: 0.4rem 0.5rem;
     }
 
-    /* Search form */
     .input-group .form-control {
         margin-bottom: 0;
         border-top-right-radius: 0 !important;
@@ -501,7 +685,6 @@ code {
         border-bottom-left-radius: 0 !important;
     }
 
-    /* Covenant report row */
     .kingdom-card .row.text-center > [class*="col-"] {
         margin-bottom: 1rem;
         border-bottom: 1px solid rgba(255,215,0,0.2);
@@ -512,7 +695,6 @@ code {
         border-bottom: none;
     }
 
-    /* Trading pair selector */
     .text-end.align-self-center {
         text-align: left !important;
         margin-top: 0.5rem;
@@ -521,38 +703,24 @@ code {
 
 /* ---------- 375px and below (small phones) ---------- */
 @media (max-width: 375px) {
-    /* Navbar brand smaller */
-    .navbar-brand {
-        font-size: 1rem;
-    }
+    .navbar-brand { font-size: 1rem; }
 
-    /* Further reduce heading sizes */
     h2 { font-size: 1.25rem; }
     h3 { font-size: 1.1rem; }
 
-    /* Tighter container padding */
     .container {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
 
-    /* Card body: less padding */
-    .card-body {
-        padding: 0.75rem;
-    }
+    .card-body { padding: 0.75rem; }
+    .card-body h3 { font-size: 1rem; }
 
-    /* Balance amount: smaller on tiny screens */
-    .card-body h3 {
-        font-size: 1rem;
-    }
-
-    /* Table even smaller */
     .table td, .table th {
         font-size: 0.75rem;
         padding: 0.3rem;
     }
 
-    /* Buttons full width on tiny screens */
     .btn {
         width: 100%;
         margin-bottom: 0.25rem;
@@ -565,7 +733,6 @@ code {
         margin-bottom: 0;
     }
 
-    /* Timeframe buttons */
     #timeframeButtons .btn {
         font-size: 0.7rem;
         padding: 0.25rem 0.4rem;
@@ -574,27 +741,16 @@ code {
 
 /* ---------- 320px (absolute minimum) ---------- */
 @media (max-width: 320px) {
-    .navbar-brand {
-        font-size: 0.9rem;
-        letter-spacing: -0.5px;
-    }
+    .navbar-brand { font-size: 0.9rem; }
 
     .container {
         padding-left: 0.25rem;
         padding-right: 0.25rem;
     }
 
-    .card-body {
-        padding: 0.5rem;
-    }
+    .card-body { padding: 0.5rem; }
 
-    /* Hide non-essential badges on smallest screens */
-    .badge.bg-secondary {
-        display: none;
-    }
+    .badge.bg-secondary { display: none; }
 
-    /* Referral code: inline display */
-    .text-md-end code {
-        font-size: 0.7rem;
-    }
+    .text-md-end code { font-size: 0.7rem; }
 }

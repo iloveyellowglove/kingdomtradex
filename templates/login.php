@@ -1,5 +1,5 @@
 <?php
-$title = 'Login - QuantumTrade Exchange';
+$title = 'Login - KingdomTrade Exchange';
 $csrfToken = csrfToken();
 require __DIR__ . '/header.php';
 ?>

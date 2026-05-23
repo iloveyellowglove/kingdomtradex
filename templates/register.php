@@ -1,5 +1,5 @@
 <?php
-$title = 'Register - QuantumTrade Exchange';
+$title = 'Register - KingdomTrade Exchange';
 $csrfToken = csrfToken();
 $ref = $_GET['ref'] ?? ($ref ?? '');
 require __DIR__ . '/header.php';

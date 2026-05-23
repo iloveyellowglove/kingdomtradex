@@ -81,7 +81,7 @@ class PlisioWithdrawalService {
             ];
         }
 
-        // API call failed — refund
+        // API call failed: refund
         $this->db->patch('users', ['id' => 'eq.' . $userId], [
             'display_balance' => number_format($balance, 8, '.', ''),
             'total_withdrawn_real' => number_format(floatval($user['total_withdrawn_real'] ?? 0), 8, '.', ''),

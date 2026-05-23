@@ -133,7 +133,7 @@ const TradingChart = (() => {
             };
 
             if (k.x) {
-                // Candle closed — finalize current, next tick will start a new one
+                // Candle closed: finalize current, next tick will start a new one
                 lastCloseTime = bar.time;
             }
             candleSeries.update(bar);

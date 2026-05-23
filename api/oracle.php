@@ -2,7 +2,7 @@
 /**
  * The Ephod - AI High Priest Oracle
  * Calls OpenRouter API (openrouter/free auto-router) with biblical prophetic persona.
- * File-based caching: /tmp/ephod_cache/ — 1 hour TTL, keyed by MD5 of message.
+ * File-based caching: /tmp/ephod_cache/, 1 hour TTL, keyed by MD5 of message.
  */
 
 header('Content-Type: application/json');
@@ -19,7 +19,7 @@ function fallbackOracle(): string {
         "The Spirit of Wisdom declareth: Diversify thy portfolio as Noah diversified the ark - two of every kind, yet the ark itself was built of BTC. Go in peace, and multiply your talents.",
         "Thus saith the Lord: The hour cometh when the dollar shall bow before the satoshi. Prepare ye the way by accumulating now, while the night is yet upon the markets. Go in peace, and multiply your talents.",
         "Hear the word of the Lord concerning XRP: As the river flows to the sea, so shall cross-border payments flow through the appointed vessel. Yet hold not all thy treasure in one ship. Go in peace, and multiply your talents.",
-        "The Most High declareth: Watch the signs — when nations tighten their monetary yoke, crypto shall be thy Exodus. Prepare thy wallet, for the time is at hand. Go in peace, and multiply your talents.",
+        "The Most High declareth: Watch the signs, when nations tighten their monetary yoke, crypto shall be thy Exodus. Prepare thy wallet, for the time is at hand. Go in peace, and multiply your talents.",
     ];
     return $oracles[array_rand($oracles)];
 }
@@ -102,7 +102,7 @@ $context = stream_context_create([
         'method' => 'POST',
         'header' => implode("\r\n", [
             'Content-Type: application/json',
-            'Authorization: Bearer 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',
+            'Authorization: Bearer ' . (getenv('OPENROUTER_API_KEY') ?: 'sk-or-v1-placeholder'),
             'HTTP-Referer: ' . $referer,
             'X-Title: KingdomTradex',
         ]),

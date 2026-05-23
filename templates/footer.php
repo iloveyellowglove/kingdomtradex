@@ -1,6 +1,6 @@
 <?php
 /**
- * Common footer template
+ * Common footer template: KingdomTrade Dark Theme
  */
 $currentUser = currentUser();
 ?>
@@ -21,7 +21,7 @@ $currentUser = currentUser();
         <div class="col-md-6">
             <div class="ekklesia-box mb-3">
                 <h6><i class="bi bi-shield-lock-fill"></i> Confidential Onboarding</h6>
-                <p class="mb-1"><small>For private coaching, use BonChat - encrypted and secure. Your financial journey stays between you and your spiritual covering.</small></p>
+                <p class="mb-1"><small>For private coaching, use BonChat, encrypted and secure. Your financial journey stays between you and your spiritual covering.</small></p>
                 <a href="https://bonchat.io/yourlink" target="_blank" rel="noopener" class="btn btn-sm btn-outline-light mt-2">
                     <i class="bi bi-chat-dots"></i> Open BonChat
                 </a>
@@ -31,22 +31,33 @@ $currentUser = currentUser();
 </div>
 <?php endif; ?>
 
-<footer class="bg-dark text-light py-4 mt-5">
+<footer class="py-4 mt-5">
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <p class="mb-1"><strong>KingdomTrade Exchange</strong> — Professional cryptocurrency trading platform.</p>
-                <small class="text-muted">Secure blockchain transactions. All balances and trades are processed in real time.</small>
+                <p class="mb-1"><strong>KingdomTrade Exchange</strong>, a professional cryptocurrency trading platform.</p>
+                <small>Secure blockchain transactions. All balances and trades are processed in real time.</small>
             </div>
             <div class="col-md-6 text-md-end">
                 <small>&copy; <?= date('Y') ?> KingdomTrade Exchange. All rights reserved.</small><br>
-                <small class="text-muted">"The earth is the LORD's, and the fullness thereof." (Psalm 24:1)</small>
+                <small>"The earth is the LORD's, and the fullness thereof." (Psalm 24:1)</small>
             </div>
         </div>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Navbar scroll effect
+(function() {
+    var nav = document.getElementById('mainNav');
+    if (nav) {
+        window.addEventListener('scroll', function() {
+            nav.classList.toggle('scrolled', window.scrollY > 20);
+        });
+    }
+})();
+</script>
 <script src="/assets/js/ephod_chatbot.js"></script>
 <?= $extraScripts ?? '' ?>
 </body>
