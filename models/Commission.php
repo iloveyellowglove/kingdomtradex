@@ -1,6 +1,6 @@
 <?php
 /**
- * Commission model - DEMO MODE
+ * Commission model - Supabase PostgreSQL backend
  * Handles referral commission tracking and payouts.
  */
 class Commission {
@@ -14,44 +14,56 @@ class Commission {
      * Get commissions for a user
      */
     public function getByUser(int $userId, int $limit = 50, int $offset = 0): array {
-        $stmt = $this->db->prepare(
-            'SELECT rc.*, u.username AS source_username
-             FROM referral_commissions rc
-             JOIN users u ON rc.source_user_id = u.id
-             WHERE rc.user_id = ?
-             ORDER BY rc.created_at DESC LIMIT ? OFFSET ?'
+        return $this->db->join(
+            'referral_commissions',
+            ['user_id' => 'eq.' . $userId],
+            'users',
+            'id',
+            'source_user_id',
+            '*',
+            'created_at.desc',
+            $limit
         );
-        $stmt->execute([$userId, $limit, $offset]);
-        return $stmt->fetchAll();
     }
 
     /**
      * Get total pending commissions for user
      */
     public function getTotalPending(int $userId): float {
-        $stmt = $this->db->prepare('SELECT COALESCE(SUM(amount), 0) FROM referral_commissions WHERE user_id = ? AND status = ?');
-        $stmt->execute([$userId, 'pending']);
-        return (float)$stmt->fetchColumn();
+        return $this->db->sum('referral_commissions', 'amount', [
+            'user_id' => 'eq.' . $userId,
+            'status' => 'eq.pending',
+        ]);
     }
 
     /**
      * Get total paid commissions for user
      */
     public function getTotalPaid(int $userId): float {
-        $stmt = $this->db->prepare('SELECT COALESCE(SUM(amount), 0) FROM referral_commissions WHERE user_id = ? AND status = ?');
-        $stmt->execute([$userId, 'paid']);
-        return (float)$stmt->fetchColumn();
+        return $this->db->sum('referral_commissions', 'amount', [
+            'user_id' => 'eq.' . $userId,
+            'status' => 'eq.paid',
+        ]);
     }
 
     /**
      * Admin marks a commission as paid
      */
     public function markPaid(int $commissionId, int $adminId): array {
-        $stmt = $this->db->prepare("UPDATE referral_commissions SET status = 'paid', paid_at = NOW() WHERE id = ? AND status = 'pending'");
-        $stmt->execute([$commissionId]);
-        if ($stmt->rowCount() === 0) {
+        $rows = $this->db->query('referral_commissions', [
+            'id' => 'eq.' . $commissionId,
+            'status' => 'eq.pending',
+        ], 'id', '', 1);
+
+        if (empty($rows)) {
             return ['success' => false, 'error' => 'Commission not found or already paid.'];
         }
+
+        $this->db->patch('referral_commissions', ['id' => 'eq.' . $commissionId], [
+            'status' => 'paid',
+            'paid_at' => date('Y-m-d\TH:i:s\Z'),
+        ]);
+
         logAdminAction($this->db, $adminId, 'mark_commission_paid', 'referral_commissions', $commissionId);
         return ['success' => true];
     }
@@ -60,9 +72,20 @@ class Commission {
      * Mark all pending commissions for a user as paid
      */
     public function markAllPaid(int $userId, int $adminId): int {
-        $stmt = $this->db->prepare("UPDATE referral_commissions SET status = 'paid', paid_at = NOW() WHERE user_id = ? AND status = 'pending'");
-        $stmt->execute([$userId]);
-        $count = $stmt->rowCount();
+        $rows = $this->db->query('referral_commissions', [
+            'user_id' => 'eq.' . $userId,
+            'status' => 'eq.pending',
+        ], 'id');
+
+        $count = 0;
+        foreach ($rows as $r) {
+            $this->db->patch('referral_commissions', ['id' => 'eq.' . $r['id']], [
+                'status' => 'paid',
+                'paid_at' => date('Y-m-d\TH:i:s\Z'),
+            ]);
+            $count++;
+        }
+
         if ($count > 0) {
             logAdminAction($this->db, $adminId, 'mark_all_commissions_paid', 'referral_commissions', $userId);
         }
@@ -70,17 +93,36 @@ class Commission {
     }
 
     /**
-     * Get all commissions (admin)
+     * Get all commissions (admin) with joined usernames
      */
     public function getAll(int $limit = 50, int $offset = 0): array {
-        $stmt = $this->db->prepare(
-            'SELECT rc.*, u.username AS user_name, s.username AS source_name
-             FROM referral_commissions rc
-             JOIN users u ON rc.user_id = u.id
-             JOIN users s ON rc.source_user_id = s.id
-             ORDER BY rc.created_at DESC LIMIT ? OFFSET ?'
-        );
-        $stmt->execute([$limit, $offset]);
-        return $stmt->fetchAll();
+        // First get commissions
+        $commissions = $this->db->query('referral_commissions', [], '*', 'created_at.desc', $limit, $offset);
+
+        if (empty($commissions)) return [];
+
+        // Collect user IDs for batch lookup
+        $userIds = array_unique(array_merge(
+            array_column($commissions, 'user_id'),
+            array_column($commissions, 'source_user_id')
+        ));
+
+        // Fetch all relevant users
+        $users = $this->db->query('users', [
+            'id' => 'in.(' . implode(',', $userIds) . ')',
+        ], 'id,username');
+
+        $userMap = [];
+        foreach ($users as $u) {
+            $userMap[$u['id']] = $u['username'];
+        }
+
+        // Merge
+        foreach ($commissions as &$c) {
+            $c['user_name'] = $userMap[$c['user_id']] ?? 'Unknown';
+            $c['source_name'] = $userMap[$c['source_user_id']] ?? 'Unknown';
+        }
+
+        return $commissions;
     }
 }

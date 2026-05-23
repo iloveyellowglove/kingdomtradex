@@ -8,6 +8,7 @@
  * Crontab: 0 * * * * php /path/to/cron/process_withdrawals.php
  *
  * DEMO MODE - no real crypto is sent.
+ * PostgreSQL backend (Supabase).
  */
 
 require_once __DIR__ . '/../includes/functions.php';

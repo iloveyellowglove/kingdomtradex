@@ -1,14 +1,17 @@
 <?php
-require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/SupabaseClient.php';
 
 /**
- * Database connection singleton - Flat-file JSON storage (zero dependencies)
+ * Supabase client singleton (service_role key for backend operations).
  */
-function getDB(): FlatDB {
+function getDB(): SupabaseClient {
     static $db = null;
     if ($db === null) {
         $config = require __DIR__ . '/../config/database.php';
-        $db = new FlatDB($config['data_dir']);
+        $db = new SupabaseClient(
+            $config['supabase_url'],
+            $config['supabase_service_role_key']
+        );
     }
     return $db;
 }
@@ -28,9 +31,9 @@ function ensureSession(): void {
 function currentUser(): ?array {
     ensureSession();
     if (empty($_SESSION['user_id'])) return null;
-    $stmt = getDB()->prepare('SELECT * FROM users WHERE id = ? AND status = ? LIMIT 1');
-    $stmt->execute([(int)$_SESSION['user_id'], 'active']);
-    return $stmt->fetch() ?: null;
+    $db = getDB();
+    $rows = $db->query('users', ['id' => 'eq.' . (int)$_SESSION['user_id'], 'status' => 'eq.active'], '*', '', 1);
+    return $rows[0] ?? null;
 }
 
 /**
@@ -100,9 +103,8 @@ function getFlashes(): array {
 function generateReferralCode($db): string {
     do {
         $code = strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
-        $stmt = $db->prepare('SELECT COUNT(*) FROM users WHERE referral_code = ?');
-        $stmt->execute([$code]);
-    } while ($stmt->fetchColumn() > 0);
+        $existing = $db->query('users', ['referral_code' => 'eq.' . $code], 'id', '', 1);
+    } while (!empty($existing));
     return $code;
 }
 
@@ -117,18 +119,24 @@ function h(string $value): string {
  * Log admin action
  */
 function logAdminAction($db, int $adminId, string $action, ?string $table = null, ?int $targetId = null, ?string $oldValue = null, ?string $newValue = null): void {
-    $stmt = $db->prepare('INSERT INTO admin_logs (admin_id, action, target_table, target_id, old_value, new_value, ip) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute([$adminId, $action, $table, $targetId, $oldValue, $newValue, $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1']);
+    $db->post('admin_logs', [
+        'admin_id' => $adminId,
+        'action' => $action,
+        'target_table' => $table,
+        'target_id' => $targetId,
+        'old_value' => $oldValue,
+        'new_value' => $newValue,
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+        'created_at' => date('Y-m-d\TH:i:s\Z'),
+    ]);
 }
 
 /**
  * Get a system setting value
  */
 function getSetting($db, string $key, string $default = ''): string {
-    $stmt = $db->prepare('SELECT setting_value FROM settings WHERE setting_key = ? LIMIT 1');
-    $stmt->execute([$key]);
-    $row = $stmt->fetch();
-    return $row ? $row['setting_value'] : $default;
+    $rows = $db->query('settings', ['setting_key' => 'eq.' . $key], 'setting_value', '', 1);
+    return $rows[0]['setting_value'] ?? $default;
 }
 
 /**
@@ -140,10 +148,12 @@ function getDownlineTree($db, int $userId, int $maxDepth = 5): array {
 
 function _fetchDownline($db, int $parentId, int $currentLevel, int $maxDepth): array {
     if ($currentLevel > $maxDepth) return [];
-    $stmt = $db->prepare('SELECT id, username, email, display_balance, created_at FROM users WHERE referred_by = ? AND status = ?');
-    $stmt->execute([$parentId, 'active']);
+    $rows = $db->query('users', [
+        'referred_by' => 'eq.' . $parentId,
+        'status' => 'eq.active',
+    ], 'id,username,email,display_balance,created_at');
     $children = [];
-    while ($row = $stmt->fetch()) {
+    foreach ($rows as $row) {
         $row['level'] = $currentLevel;
         $row['children'] = _fetchDownline($db, (int)$row['id'], $currentLevel + 1, $maxDepth);
         $children[] = $row;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Settings model - DEMO MODE
+ * Settings model - Supabase PostgreSQL backend
  * Manages system configuration settings.
  */
 class Settings {
@@ -14,9 +14,9 @@ class Settings {
      * Get all settings as key-value array
      */
     public function getAll(): array {
-        $stmt = $this->db->query('SELECT setting_key, setting_value, description FROM settings ORDER BY setting_key');
+        $rows = $this->db->query('settings', [], 'setting_key,setting_value,description', 'setting_key.asc');
         $settings = [];
-        while ($row = $stmt->fetch()) {
+        foreach ($rows as $row) {
             $settings[$row['setting_key']] = [
                 'value' => $row['setting_value'],
                 'description' => $row['description'],
@@ -37,10 +37,23 @@ class Settings {
      */
     public function set(string $key, string $value, ?string $description = null, int $adminId = 0): void {
         $old = getSetting($this->db, $key, '');
-        $stmt = $this->db->prepare(
-            'INSERT INTO settings (setting_key, setting_value, description) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), description = COALESCE(VALUES(description), description)'
-        );
-        $stmt->execute([$key, $value, $description]);
+
+        $existing = $this->db->query('settings', ['setting_key' => 'eq.' . $key], 'id', '', 1);
+
+        if (empty($existing)) {
+            $this->db->post('settings', [
+                'setting_key' => $key,
+                'setting_value' => $value,
+                'description' => $description,
+            ]);
+        } else {
+            $updates = ['setting_value' => $value];
+            if ($description !== null) {
+                $updates['description'] = $description;
+            }
+            $this->db->patch('settings', ['setting_key' => 'eq.' . $key], $updates);
+        }
+
         if ($adminId > 0) {
             logAdminAction($this->db, $adminId, 'update_setting', 'settings', null, "$key: $old", "$key: $value");
         }

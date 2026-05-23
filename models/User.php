@@ -1,6 +1,6 @@
 <?php
 /**
- * User model - DEMO MODE
+ * User model - Supabase PostgreSQL backend
  * Handles user registration, authentication, balance management.
  */
 class User {
@@ -14,9 +14,9 @@ class User {
      * Register a new user
      */
     public function register(string $username, string $email, string $password, ?string $referralCode = null): array {
-        // Validate inputs
         $username = trim($username);
         $email = strtolower(trim($email));
+
         if (strlen($username) < 3 || strlen($username) > 50) {
             return ['success' => false, 'error' => 'Username must be 3-50 characters.'];
         }
@@ -28,40 +28,67 @@ class User {
         }
 
         // Check existing
-        $stmt = $this->db->prepare('SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1');
-        $stmt->execute([$email, $username]);
-        if ($stmt->fetch()) {
+        $existing = $this->db->query('users', [
+            'select' => 'id',
+            'or' => '(email.eq.' . $email . ',username.eq.' . $username . ')',
+            'limit' => '1',
+        ]);
+        if (!empty($existing)) {
             return ['success' => false, 'error' => 'Email or username already taken.'];
         }
 
         // Resolve referrer
         $referredBy = null;
         if ($referralCode) {
-            $stmt = $this->db->prepare('SELECT id FROM users WHERE referral_code = ? AND status = ? LIMIT 1');
-            $stmt->execute([strtoupper(trim($referralCode)), 'active']);
-            $referrer = $stmt->fetch();
-            if ($referrer) {
-                $referredBy = (int)$referrer['id'];
+            $ref = $this->db->query('users', [
+                'referral_code' => 'eq.' . strtoupper(trim($referralCode)),
+                'status' => 'eq.active',
+            ], 'id', '', 1);
+            if (!empty($ref)) {
+                $referredBy = (int)$ref[0]['id'];
             } else {
                 return ['success' => false, 'error' => 'Invalid referral code.'];
             }
         }
 
-        $referralCode = generateReferralCode($this->db);
+        $newReferralCode = generateReferralCode($this->db);
         $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-        $plisioUid = 'user_' . ($this->db->lastInsertId() + 1) . '_' . substr(md5($email . time()), 0, 8);
 
-        $stmt = $this->db->prepare(
-            'INSERT INTO users (username, email, password_hash, role, referral_code, referred_by, plisio_uid, plisio_btc_address, plisio_eth_address, plisio_usdt_address, display_balance, total_deposited_real, total_withdrawn_real, pending_withdrawal_amount, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-        );
-        $stmt->execute([$username, $email, $passwordHash, 'member', $referralCode, $referredBy, $plisioUid, '', '', '', '0', '0', '0', '0', 'active']);
-        $userId = (int)$this->db->lastInsertId();
+        // Get next ID for plisio_uid generation
+        $lastId = $this->db->lastInsertId('users');
+        $nextId = $lastId + 1;
+        $plisioUid = 'user_' . $nextId . '_' . substr(md5($email . time()), 0, 8);
+
+        $data = [
+            'username' => $username,
+            'email' => $email,
+            'password_hash' => $passwordHash,
+            'role' => 'member',
+            'referral_code' => $newReferralCode,
+            'referred_by' => $referredBy,
+            'plisio_uid' => $plisioUid,
+            'plisio_btc_address' => '',
+            'plisio_eth_address' => '',
+            'plisio_usdt_address' => '',
+            'display_balance' => 0,
+            'total_deposited_real' => 0,
+            'total_withdrawn_real' => 0,
+            'pending_withdrawal_amount' => 0,
+            'status' => 'active',
+            'created_at' => date('Y-m-d\TH:i:s\Z'),
+        ];
+
+        $rows = $this->db->post('users', $data);
+        if (empty($rows)) {
+            return ['success' => false, 'error' => 'Registration failed. Please try again.'];
+        }
+
+        $userId = (int)$rows[0]['id'];
 
         return [
             'success' => true,
             'user_id' => $userId,
-            'referral_code' => $referralCode,
+            'referral_code' => $newReferralCode,
         ];
     }
 
@@ -69,28 +96,26 @@ class User {
      * Authenticate user, return user array on success
      */
     public function login(string $email, string $password): array {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE email = ? LIMIT 1');
-        $stmt->execute([strtolower(trim($email))]);
-        $user = $stmt->fetch();
+        $rows = $this->db->query('users', ['email' => 'eq.' . strtolower(trim($email))], '*', '', 1);
+        $user = $rows[0] ?? null;
 
         if (!$user) {
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
-
         if ($user['status'] === 'banned') {
             return ['success' => false, 'error' => 'Account is banned.'];
         }
         if ($user['status'] === 'suspended') {
             return ['success' => false, 'error' => 'Account is suspended.'];
         }
-
         if (!password_verify($password, $user['password_hash'])) {
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
 
         // Update last login
-        $stmt = $this->db->prepare('UPDATE users SET last_login = NOW() WHERE id = ?');
-        $stmt->execute([$user['id']]);
+        $this->db->patch('users', ['id' => 'eq.' . $user['id']], [
+            'last_login' => date('Y-m-d\TH:i:s\Z'),
+        ]);
 
         return ['success' => true, 'user' => $user];
     }
@@ -99,9 +124,8 @@ class User {
      * Get user by ID
      */
     public function getById(int $id): ?array {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE id = ? LIMIT 1');
-        $stmt->execute([$id]);
-        return $stmt->fetch() ?: null;
+        $rows = $this->db->query('users', ['id' => 'eq.' . $id], '*', '', 1);
+        return $rows[0] ?? null;
     }
 
     /**
@@ -109,41 +133,51 @@ class User {
      */
     public function getDownlineCounts(int $userId): array {
         $counts = ['level_1' => 0, 'level_2' => 0, 'level_3' => 0, 'level_4' => 0, 'level_5' => 0];
+
         // Level 1
-        $stmt = $this->db->prepare('SELECT id FROM users WHERE referred_by = ? AND status = ?');
-        $stmt->execute([$userId, 'active']);
-        $l1 = $stmt->fetchAll(3);
+        $l1 = $this->db->query('users', [
+            'referred_by' => 'eq.' . $userId,
+            'status' => 'eq.active',
+        ], 'id');
         $counts['level_1'] = count($l1);
+        $l1Ids = array_column($l1, 'id');
 
         // Level 2
-        if ($l1) {
-            $in = implode(',', array_map('intval', $l1));
-            $stmt = $this->db->query("SELECT id FROM users WHERE referred_by IN ($in) AND status = 'active'");
-            $l2 = $stmt->fetchAll(3);
+        if ($l1Ids) {
+            $l2 = $this->db->query('users', [
+                'referred_by' => 'in.(' . implode(',', $l1Ids) . ')',
+                'status' => 'eq.active',
+            ], 'id');
             $counts['level_2'] = count($l2);
-        } else { $l2 = []; }
+            $l2Ids = array_column($l2, 'id');
+        } else { $l2Ids = []; }
 
         // Level 3
-        if ($l2) {
-            $in = implode(',', array_map('intval', $l2));
-            $stmt = $this->db->query("SELECT id FROM users WHERE referred_by IN ($in) AND status = 'active'");
-            $l3 = $stmt->fetchAll(3);
+        if ($l2Ids) {
+            $l3 = $this->db->query('users', [
+                'referred_by' => 'in.(' . implode(',', $l2Ids) . ')',
+                'status' => 'eq.active',
+            ], 'id');
             $counts['level_3'] = count($l3);
-        } else { $l3 = []; }
+            $l3Ids = array_column($l3, 'id');
+        } else { $l3Ids = []; }
 
         // Level 4
-        if ($l3) {
-            $in = implode(',', array_map('intval', $l3));
-            $stmt = $this->db->query("SELECT id FROM users WHERE referred_by IN ($in) AND status = 'active'");
-            $l4 = $stmt->fetchAll(3);
+        if ($l3Ids) {
+            $l4 = $this->db->query('users', [
+                'referred_by' => 'in.(' . implode(',', $l3Ids) . ')',
+                'status' => 'eq.active',
+            ], 'id');
             $counts['level_4'] = count($l4);
-        } else { $l4 = []; }
+            $l4Ids = array_column($l4, 'id');
+        } else { $l4Ids = []; }
 
         // Level 5
-        if ($l4) {
-            $in = implode(',', array_map('intval', $l4));
-            $stmt = $this->db->query("SELECT id FROM users WHERE referred_by IN ($in) AND status = 'active'");
-            $l5 = $stmt->fetchAll(3);
+        if ($l4Ids) {
+            $l5 = $this->db->query('users', [
+                'referred_by' => 'in.(' . implode(',', $l4Ids) . ')',
+                'status' => 'eq.active',
+            ], 'id');
             $counts['level_5'] = count($l5);
         }
 
@@ -154,31 +188,46 @@ class User {
      * Search users (admin)
      */
     public function search(string $query = '', int $limit = 50, int $offset = 0): array {
+        $filters = [];
         if ($query) {
-            $stmt = $this->db->prepare(
-                'SELECT id, username, email, role, display_balance, total_deposited_real, total_withdrawn_real, status, created_at
-                 FROM users WHERE (email LIKE ? OR username LIKE ?) ORDER BY id DESC LIMIT ? OFFSET ?'
-            );
-            $like = "%$query%";
-            $stmt->execute([$like, $like, $limit, $offset]);
-        } else {
-            $stmt = $this->db->prepare('SELECT id, username, email, role, display_balance, total_deposited_real, total_withdrawn_real, status, created_at FROM users ORDER BY id DESC LIMIT ? OFFSET ?');
-            $stmt->execute([$limit, $offset]);
+            $filters['or'] = '(email.ilike.%' . $query . '%,username.ilike.%' . $query . '%)';
         }
-        return $stmt->fetchAll();
+        return $this->db->query(
+            'users',
+            $filters,
+            'id,username,email,role,display_balance,total_deposited_real,total_withdrawn_real,status,created_at',
+            'id.desc',
+            $limit,
+            $offset
+        );
     }
 
     /**
      * Adjust user balance (admin action)
      */
     public function adjustBalance(int $userId, float $newBalance, int $adminId): void {
-        $old = $this->db->prepare('SELECT display_balance FROM users WHERE id = ?');
-        $old->execute([$userId]);
-        $oldBalance = $old->fetchColumn();
+        $old = $this->db->getById('users', $userId);
+        $oldBalance = $old['display_balance'] ?? 0;
 
-        $stmt = $this->db->prepare('UPDATE users SET display_balance = ? WHERE id = ?');
-        $stmt->execute([$newBalance, $userId]);
+        $this->db->patch('users', ['id' => 'eq.' . $userId], [
+            'display_balance' => number_format($newBalance, 8, '.', ''),
+        ]);
 
         logAdminAction($this->db, $adminId, 'adjust_balance', 'users', $userId, (string)$oldBalance, (string)$newBalance);
+    }
+
+    /**
+     * Update user fields by ID
+     */
+    public function update(int $userId, array $fields): void {
+        $this->db->patch('users', ['id' => 'eq.' . $userId], $fields);
+    }
+
+    /**
+     * Get user by plisio_uid
+     */
+    public function getByPlisioUid(string $uid): ?array {
+        $rows = $this->db->query('users', ['plisio_uid' => 'eq.' . $uid], '*', '', 1);
+        return $rows[0] ?? null;
     }
 }

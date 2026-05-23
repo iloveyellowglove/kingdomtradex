@@ -13,27 +13,38 @@ require_once __DIR__ . '/../includes/functions.php';
 
 $db = getDB();
 
-// Find users with pending withdrawals older than 24h
-$stmt = $db->query(
-    "SELECT DISTINCT u.email, u.username, COUNT(w.id) AS pending_count
-     FROM withdrawals w
-     JOIN users u ON w.user_id = u.id
-     WHERE w.status = 'pending' AND w.request_time < DATE_SUB(NOW(), INTERVAL 24 HOUR)
-     GROUP BY u.id"
-);
-$users = $stmt->fetchAll();
+// Find pending withdrawals older than 24h
+$cutoff = date('Y-m-d\TH:i:s\Z', strtotime('-24 hours'));
+$pendingWithdrawals = $db->query('withdrawals', [
+    'status' => 'eq.pending',
+    'request_time' => 'lt.' . $cutoff,
+], 'user_id', 'request_time.asc');
 
-if (empty($users)) {
+if (empty($pendingWithdrawals)) {
     echo date('Y-m-d H:i:s') . " - No users with old pending withdrawals.\n";
     exit;
 }
 
-foreach ($users as $user) {
-    // DEMO MODE: just log the notification
-    echo date('Y-m-d H:i:s') . " - [DEMO] Would email {$user['email']}: You have {$user['pending_count']} pending withdrawal(s).\n";
-
-    // To actually send emails, uncomment below and configure mail settings:
-    // mail($user['email'], 'Withdrawal Reminder', "You have {$user['pending_count']} pending withdrawals.");
+// Count pending per user
+$userCounts = [];
+foreach ($pendingWithdrawals as $w) {
+    $uid = (int)$w['user_id'];
+    $userCounts[$uid] = ($userCounts[$uid] ?? 0) + 1;
 }
 
-echo date('Y-m-d H:i:s') . " - Reminders logged for " . count($users) . " users.\n";
+// Fetch user details
+$userIds = array_keys($userCounts);
+$users = $db->query('users', ['id' => 'in.(' . implode(',', $userIds) . ')'], 'id,email,username');
+
+$emailMap = [];
+foreach ($users as $u) {
+    $emailMap[(int)$u['id']] = ['email' => $u['email'], 'username' => $u['username']];
+}
+
+foreach ($userCounts as $uid => $count) {
+    $info = $emailMap[$uid] ?? null;
+    if (!$info) continue;
+    echo date('Y-m-d H:i:s') . " - [DEMO] Would email {$info['email']}: You have {$count} pending withdrawal(s).\n";
+}
+
+echo date('Y-m-d H:i:s') . " - Reminders logged for " . count($userCounts) . " users.\n";

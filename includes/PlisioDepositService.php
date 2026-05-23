@@ -1,6 +1,6 @@
 <?php
 /**
- * Plisio Deposit Service
+ * Plisio Deposit Service - Supabase PostgreSQL backend
  * Generates permanent crypto addresses for users and handles deposit callbacks.
  */
 class PlisioDepositService {
@@ -14,7 +14,6 @@ class PlisioDepositService {
 
     /**
      * Generate permanent deposit addresses for a user across BTC, ETH, USDT.
-     * Stores addresses in the users table.
      */
     public function generateUserAddresses(int $userId): array {
         $user = $this->getUserById($userId);
@@ -22,13 +21,11 @@ class PlisioDepositService {
             return ['success' => false, 'error' => 'User not found.'];
         }
 
-        // Build or reuse plisio_uid
         $uid = $user['plisio_uid'] ?? ('user_' . $userId . '_' . substr(md5($user['email']), 0, 8));
         if (empty($user['plisio_uid'])) {
             $this->updateUser($userId, ['plisio_uid' => $uid]);
         }
 
-        // Check if addresses already exist
         if (!empty($user['plisio_btc_address']) && !empty($user['plisio_eth_address']) && !empty($user['plisio_usdt_address'])) {
             return [
                 'success' => true,
@@ -41,14 +38,11 @@ class PlisioDepositService {
             ];
         }
 
-        // Call Plisio API to generate addresses
         $result = $this->client->createDepositAddresses($uid, ['BTC', 'ETH', 'USDT_TRX']);
-
         if (!$result['success']) {
             return $result;
         }
 
-        // Map Plisio currency IDs back to our field names
         $updates = [];
         $addressMap = [
             'BTC' => 'plisio_btc_address',
@@ -60,7 +54,6 @@ class PlisioDepositService {
         foreach ($result['addresses'] as $psysCid => $hash) {
             if (isset($addressMap[$psysCid])) {
                 $updates[$addressMap[$psysCid]] = $hash;
-                // Strip USDT_TRX back to USDT for display
                 $displayCurrency = ($psysCid === 'USDT_TRX') ? 'USDT' : $psysCid;
                 $addresses[$displayCurrency] = $hash;
             }
@@ -75,10 +68,8 @@ class PlisioDepositService {
 
     /**
      * Handle incoming deposit webhook from Plisio (ipn_type=pay_in).
-     * Verifies signature, looks up user by uid, credits balance.
      */
     public function handleCallback(array $postData): array {
-        // Verify authenticity
         if (!$this->client->verifyCallback($postData)) {
             return ['success' => false, 'error' => 'Invalid callback signature.'];
         }
@@ -103,29 +94,25 @@ class PlisioDepositService {
             return ['success' => false, 'error' => 'Missing uid or txn_id in callback.'];
         }
 
-        // Find user by plisio_uid
         $user = $this->getUserByPlisioUid($uid);
         if (!$user) {
             return ['success' => false, 'error' => 'User not found for uid: ' . $uid];
         }
 
-        // Check for duplicate transaction
         if ($this->depositExists($txnId)) {
             return ['success' => true, 'message' => 'Duplicate transaction. Already processed.'];
         }
 
-        // Map Plisio currency to our internal currency code
         $ourCurrency = $this->mapCurrency($currency);
-
-        // Record deposit
         $this->recordDeposit($user['id'], $txnId, $ourCurrency, $amount, $walletHash);
 
-        // Update user balance
-        $newBalance = floatval($user['display_balance']) + $amount;
-        $newTotalDeposited = floatval($user['total_deposited_real'] ?? '0') + $amount;
+        $newBalance = floatval($user['display_balance'] ?? 0) + $amount;
+        $newTotalDeposited = floatval($user['total_deposited_real'] ?? 0) + $amount;
 
-        // Set first deposit time if not set
-        $firstDepositUpdate = empty($user['first_deposit_time']) ? ['first_deposit_time' => date('Y-m-d H:i:s')] : [];
+        $firstDepositUpdate = [];
+        if (empty($user['first_deposit_time'])) {
+            $firstDepositUpdate['first_deposit_time'] = date('Y-m-d\TH:i:s\Z');
+        }
 
         $this->updateUser($user['id'], array_merge([
             'display_balance' => number_format($newBalance, 8, '.', ''),
@@ -143,7 +130,6 @@ class PlisioDepositService {
 
     /**
      * Handle invoice payment callback (ipn_type=invoice).
-     * Updates invoice status and credits user if completed.
      */
     public function handleInvoiceCallback(array $postData): array {
         if (!$this->client->verifyCallback($postData)) {
@@ -156,25 +142,25 @@ class PlisioDepositService {
         $amount = floatval($postData['amount'] ?? '0');
         $currency = $postData['currency'] ?? '';
 
-        if ($status === 'completed') {
-            // Find user by order_number (format: "inv_{userId}_{random}")
-            if (preg_match('/^inv_(\d+)_/', $orderNumber, $m)) {
-                $userId = (int)$m[1];
-                $user = $this->getUserById($userId);
-                if ($user && !$this->depositExists($txnId)) {
-                    $ourCurrency = $this->mapCurrency($currency);
-                    $newBalance = floatval($user['display_balance']) + $amount;
-                    $newTotalDeposited = floatval($user['total_deposited_real'] ?? '0') + $amount;
+        if ($status === 'completed' && preg_match('/^inv_(\d+)_/', $orderNumber, $m)) {
+            $userId = (int)$m[1];
+            $user = $this->getUserById($userId);
+            if ($user && !$this->depositExists($txnId)) {
+                $ourCurrency = $this->mapCurrency($currency);
+                $newBalance = floatval($user['display_balance'] ?? 0) + $amount;
+                $newTotalDeposited = floatval($user['total_deposited_real'] ?? 0) + $amount;
 
-                    $firstDepositUpdate = empty($user['first_deposit_time']) ? ['first_deposit_time' => date('Y-m-d H:i:s')] : [];
-
-                    $this->updateUser($user['id'], array_merge([
-                        'display_balance' => number_format($newBalance, 8, '.', ''),
-                        'total_deposited_real' => number_format($newTotalDeposited, 8, '.', ''),
-                    ], $firstDepositUpdate));
-
-                    $this->recordDeposit($user['id'], $txnId, $ourCurrency, $amount, $postData['wallet_hash'] ?? 'invoice');
+                $firstDepositUpdate = [];
+                if (empty($user['first_deposit_time'])) {
+                    $firstDepositUpdate['first_deposit_time'] = date('Y-m-d\TH:i:s\Z');
                 }
+
+                $this->updateUser($user['id'], array_merge([
+                    'display_balance' => number_format($newBalance, 8, '.', ''),
+                    'total_deposited_real' => number_format($newTotalDeposited, 8, '.', ''),
+                ], $firstDepositUpdate));
+
+                $this->recordDeposit($user['id'], $txnId, $ourCurrency, $amount, $postData['wallet_hash'] ?? 'invoice');
             }
         }
 
@@ -184,55 +170,40 @@ class PlisioDepositService {
     // ── Database helpers ──
 
     private function getUserById(int $id): ?array {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE id = ? LIMIT 1');
-        $stmt->execute([$id]);
-        return $stmt->fetch() ?: null;
+        return $this->db->getById('users', $id);
     }
 
     private function getUserByPlisioUid(string $uid): ?array {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE plisio_uid = ? LIMIT 1');
-        $stmt->execute([$uid]);
-        return $stmt->fetch() ?: null;
+        $rows = $this->db->query('users', ['plisio_uid' => 'eq.' . $uid], '*', '', 1);
+        return $rows[0] ?? null;
     }
 
     private function updateUser(int $userId, array $fields): void {
-        $setClauses = [];
-        $params = [];
-        foreach ($fields as $col => $val) {
-            $setClauses[] = "$col = ?";
-            $params[] = $val;
-        }
-        $params[] = $userId;
-        $stmt = $this->db->prepare('UPDATE users SET ' . implode(', ', $setClauses) . ' WHERE id = ?');
-        $stmt->execute($params);
+        $this->db->patch('users', ['id' => 'eq.' . $userId], $fields);
     }
 
     private function depositExists(string $txnId): bool {
-        $stmt = $this->db->prepare('SELECT id FROM deposits WHERE txn_id = ? LIMIT 1');
-        $stmt->execute([$txnId]);
-        return (bool)$stmt->fetch();
+        $rows = $this->db->query('deposits', ['txn_id' => 'eq.' . $txnId], 'id', '', 1);
+        return !empty($rows);
     }
 
     private function recordDeposit(int $userId, string $txnId, string $currency, float $amount, string $address): void {
-        $stmt = $this->db->prepare(
-            'INSERT INTO deposits (user_id, txn_id, currency, amount, address, status, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, NOW())'
-        );
-        $stmt->execute([$userId, $txnId, $currency, number_format($amount, 8, '.', ''), $address, 'completed']);
+        $this->db->post('deposits', [
+            'user_id' => $userId,
+            'txn_id' => $txnId,
+            'txid' => $txnId,
+            'currency' => $currency,
+            'amount' => number_format($amount, 8, '.', ''),
+            'address' => $address,
+            'status' => 'completed',
+            'created_at' => date('Y-m-d\TH:i:s\Z'),
+        ]);
     }
 
     private function mapCurrency(string $plisioCurrency): string {
-        $map = [
-            'BTC' => 'BTC',
-            'ETH' => 'ETH',
-            'USDT_TRX' => 'USDT',
-            'USDT' => 'USDT',
-        ];
-        // Handle longer Plisio currency codes that start with known prefixes
+        $map = ['BTC' => 'BTC', 'ETH' => 'ETH', 'USDT_TRX' => 'USDT', 'USDT' => 'USDT'];
         foreach ($map as $key => $val) {
-            if (strpos($plisioCurrency, $key) === 0) {
-                return $val;
-            }
+            if (strpos($plisioCurrency, $key) === 0) return $val;
         }
         return $plisioCurrency;
     }

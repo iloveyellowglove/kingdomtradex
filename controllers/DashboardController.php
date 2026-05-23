@@ -29,9 +29,8 @@ function handleDashboard(): void {
     $commissions = $commissionModel->getByUser((int)$user['id'], 10);
 
     // Withdrawal lock check
-    $lockStmt = $db->prepare('SELECT * FROM withdrawal_locks WHERE user_id = ? AND is_locked = 1');
-    $lockStmt->execute([$user['id']]);
-    $withdrawalLock = $lockStmt->fetch();
+    $lockRows = $db->query('withdrawal_locks', ['user_id' => 'eq.' . $user['id'], 'is_locked' => 'eq.1'], '*', '', 1);
+    $withdrawalLock = $lockRows[0] ?? null;
 
     // Total pending commissions
     $totalPendingComm = $commissionModel->getTotalPending((int)$user['id']);

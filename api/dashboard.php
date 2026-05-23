@@ -16,9 +16,8 @@ $user = $userModel->getById((int)$user['id']);
 $downlineCounts = $userModel->getDownlineCounts((int)$user['id']);
 
 // Withdrawal lock
-$lockStmt = $db->prepare('SELECT * FROM withdrawal_locks WHERE user_id = ? AND is_locked = 1');
-$lockStmt->execute([$user['id']]);
-$lock = $lockStmt->fetch();
+$lockRows = $db->query('withdrawal_locks', ['user_id' => 'eq.' . $user['id'], 'is_locked' => 'eq.1'], '*', '', 1);
+$lock = $lockRows[0] ?? null;
 
 echo json_encode([
     'success' => true,

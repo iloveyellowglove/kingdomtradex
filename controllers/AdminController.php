@@ -16,9 +16,9 @@ function handleAdminDashboard(): void {
     $db = getDB();
 
     // Stats
-    $totalUsers = $db->query("SELECT COUNT(*) FROM users WHERE role != 'admin'")->fetchColumn();
-    $totalDeposits = $db->query("SELECT COALESCE(SUM(amount), 0) FROM deposits WHERE status = 'completed'")->fetchColumn();
-    $pendingWithdrawals = $db->query("SELECT COUNT(*) FROM withdrawals WHERE status = 'pending'")->fetchColumn();
+    $totalUsers = $db->count('users', ['role' => 'neq.admin']);
+    $totalDeposits = $db->sum('deposits', 'amount', ['status' => 'eq.completed']);
+    $pendingWithdrawals = $db->count('withdrawals', ['status' => 'eq.pending']);
 
     $flashes = getFlashes();
     $csrfToken = csrfToken();
@@ -231,6 +231,7 @@ function handleAdminUpdateSettings(): void {
         'commission_l1', 'commission_l2', 'commission_l3', 'commission_l4', 'commission_l5',
         'daily_profit_percentage', 'withdrawal_lock_hours', 'min_deposit_usdt',
         'min_deposit_btc', 'min_deposit_eth', 'min_withdrawal_usdt',
+        'plisio_api_key',
     ];
 
     foreach ($keys as $key) {
@@ -266,15 +267,7 @@ function handleAdminUpdateUser(): void {
     }
 
     if (!empty($updates)) {
-        $setClauses = [];
-        $params = [];
-        foreach ($updates as $col => $val) {
-            $setClauses[] = "$col = ?";
-            $params[] = $val;
-        }
-        $params[] = $userId;
-        $stmt = $db->prepare('UPDATE users SET ' . implode(', ', $setClauses) . ' WHERE id = ?');
-        $stmt->execute($params);
+        $db->patch('users', ['id' => 'eq.' . $userId], $updates);
         logAdminAction($db, (int)$admin['id'], 'update_user', 'users', $userId, null, json_encode($updates));
         flash('success', 'User updated.');
     }
@@ -292,10 +285,11 @@ function handleAdminUnlockWithdrawal(): void {
     }
 
     $db = getDB();
-    $stmt = $db->prepare(
-        'UPDATE withdrawal_locks SET is_locked = 0, admin_unlocked_by = ?, unlocked_at = NOW() WHERE user_id = ? AND is_locked = 1'
-    );
-    $stmt->execute([(int)$admin['id'], (int)$_POST['user_id']]);
+    $db->patch('withdrawal_locks', ['user_id' => 'eq.' . (int)$_POST['user_id'], 'is_locked' => 'eq.1'], [
+        'is_locked' => 0,
+        'admin_unlocked_by' => (int)$admin['id'],
+        'unlocked_at' => date('Y-m-d\TH:i:s\Z'),
+    ]);
     logAdminAction($db, (int)$admin['id'], 'unlock_withdrawal', 'withdrawal_locks', (int)$_POST['user_id']);
     flash('success', 'Withdrawal lock removed for user.');
     header('Location: /admin/users.php');

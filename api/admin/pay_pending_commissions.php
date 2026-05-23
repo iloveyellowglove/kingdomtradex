@@ -1,6 +1,6 @@
 <?php
 /**
- * Mass Payout Endpoint
+ * Mass Payout Endpoint - Supabase PostgreSQL backend
  * POST /api/admin/pay_pending_commissions.php
  * Aggregates all pending pastor commissions and sends via Plisio mass withdrawal.
  */
@@ -22,9 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $db = getDB();
 
 // ── Load Plisio API key ──
-$stmt = $db->prepare('SELECT setting_value FROM settings WHERE setting_key = ? LIMIT 1');
-$stmt->execute(['plisio_api_key']);
-$apiKey = $stmt->fetchColumn();
+$rows = $db->query('settings', ['setting_key' => 'eq.plisio_api_key'], 'setting_value', '', 1);
+$apiKey = $rows[0]['setting_value'] ?? '';
 
 if (empty($apiKey)) {
     http_response_code(500);
@@ -32,23 +31,15 @@ if (empty($apiKey)) {
     exit;
 }
 
-// ── Query: pending commissions grouped by pastor ──
-// Join referral_commissions → users to filter role='pastor' and get plisio_btc_address
-$commissions = $db->query(
-    "SELECT rc.user_id, u.username, u.plisio_btc_address, SUM(rc.amount) AS total_usd
-     FROM referral_commissions rc
-     JOIN users u ON rc.user_id = u.id
-     WHERE rc.status = 'pending' AND u.role = 'pastor'
-     GROUP BY rc.user_id"
-)->fetchAll();
-
-// Also get individual commission IDs for marking paid later
-$allPending = $db->query(
-    "SELECT rc.id, rc.user_id, rc.amount, u.username, u.plisio_btc_address, u.role
-     FROM referral_commissions rc
-     JOIN users u ON rc.user_id = u.id
-     WHERE rc.status = 'pending'"
-)->fetchAll();
+// ── Query: all pending commissions with user data ──
+$allPending = $db->join(
+    'referral_commissions',
+    ['status' => 'eq.pending'],
+    'users',
+    'id',
+    'user_id',
+    'id,user_id,amount,users_username,users_plisio_btc_address,users_role'
+);
 
 if (empty($allPending)) {
     echo json_encode(['success' => true, 'message' => 'No pending blessings to pay.']);
@@ -57,30 +48,32 @@ if (empty($allPending)) {
 
 // ── Filter: only pastors with a BTC address ──
 $BTC_USD_RATE = 80000.0;
-$payments = [];       // address => btc_amount
-$pastorSummary = [];  // user_id => ['username', 'usd_amount', 'btc_amount', 'address', 'commission_ids']
+$payments = [];
+$pastorSummary = [];
 $skipped = [];
 $warnings = [];
 
 foreach ($allPending as $c) {
     $uid = $c['user_id'];
-    $address = trim($c['plisio_btc_address'] ?? '');
+    $address = trim($c['users_plisio_btc_address'] ?? '');
+    $role = $c['users_role'] ?? '';
+    $username = $c['users_username'] ?? 'Unknown';
 
-    if ($c['role'] !== 'pastor') {
-        $skipped[] = ['user_id' => $uid, 'username' => $c['username'], 'reason' => 'Not a pastor (role: ' . $c['role'] . ')'];
-        $warnings[] = "Skipped {$c['username']}: not a pastor.";
+    if ($role !== 'pastor') {
+        $skipped[] = ['user_id' => $uid, 'username' => $username, 'reason' => 'Not a pastor (role: ' . $role . ')'];
+        $warnings[] = "Skipped {$username}: not a pastor.";
         continue;
     }
 
     if (empty($address)) {
-        $skipped[] = ['user_id' => $uid, 'username' => $c['username'], 'reason' => 'No BTC wallet address set'];
-        $warnings[] = "Skipped {$c['username']}: no BTC wallet address.";
+        $skipped[] = ['user_id' => $uid, 'username' => $username, 'reason' => 'No BTC wallet address set'];
+        $warnings[] = "Skipped {$username}: no BTC wallet address.";
         continue;
     }
 
     if (!isset($pastorSummary[$uid])) {
         $pastorSummary[$uid] = [
-            'username' => $c['username'],
+            'username' => $username,
             'address' => $address,
             'usd_amount' => 0.0,
             'commission_ids' => [],
@@ -101,11 +94,9 @@ if (empty($pastorSummary)) {
     exit;
 }
 
-// Convert USD to BTC and build payment array
+// Convert USD to BTC
 foreach ($pastorSummary as $uid => $info) {
-    $btcAmount = $info['usd_amount'] / $BTC_USD_RATE;
-    // Avoid dust — round to 8 decimal places
-    $btcAmount = round($btcAmount, 8);
+    $btcAmount = round($info['usd_amount'] / $BTC_USD_RATE, 8);
     if ($btcAmount <= 0) {
         $skipped[] = ['user_id' => $uid, 'username' => $info['username'], 'reason' => 'BTC amount too small after conversion'];
         $warnings[] = "Skipped {$info['username']}: BTC amount too small.";
@@ -148,10 +139,16 @@ foreach ($pastorSummary as $uid => $info) {
 }
 
 $paidCount = 0;
+$now = date('Y-m-d\TH:i:s\Z');
 foreach ($allCommissionIds as $cid) {
-    $stmt = $db->prepare("UPDATE referral_commissions SET status = 'paid', paid_at = NOW() WHERE id = ? AND status = 'pending'");
-    $stmt->execute([$cid]);
-    $paidCount += $stmt->rowCount();
+    $affected = $db->patch('referral_commissions', [
+        'id' => 'eq.' . $cid,
+        'status' => 'eq.pending',
+    ], [
+        'status' => 'paid',
+        'paid_at' => $now,
+    ]);
+    $paidCount += $affected;
 }
 
 // Log admin action

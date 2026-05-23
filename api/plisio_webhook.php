@@ -15,9 +15,8 @@ require_once __DIR__ . '/../includes/PlisioDepositService.php';
 
 // Load API key from settings
 $db = getDB();
-$stmt = $db->prepare('SELECT setting_value FROM settings WHERE setting_key = ? LIMIT 1');
-$stmt->execute(['plisio_api_key']);
-$apiKey = $stmt->fetchColumn();
+$rows = $db->query('settings', ['setting_key' => 'eq.plisio_api_key'], 'setting_value', '', 1);
+$apiKey = $rows[0]['setting_value'] ?? '';
 
 if (empty($apiKey)) {
     http_response_code(500);
