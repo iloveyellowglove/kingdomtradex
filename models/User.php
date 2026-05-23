@@ -131,6 +131,12 @@ class User {
         $pwOk = password_verify($password, $hash);
         error_log('[LOGIN] Step 4: password_verify result=' . ($pwOk ? 'true' : 'false'));
         if (!$pwOk) {
+            // Fallback: try crypt() directly for PHP versions with broken password_verify
+            $fallback = hash_equals(crypt($password, $hash), $hash);
+            error_log('[LOGIN] Step 4b: crypt fallback result=' . ($fallback ? 'true' : 'false'));
+            $pwOk = $fallback;
+        }
+        if (!$pwOk) {
             error_log('[LOGIN] FAIL: password_verify returned false');
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
