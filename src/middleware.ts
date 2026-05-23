@@ -29,8 +29,13 @@ export async function middleware(request: NextRequest) {
 
   // Check for kingdom_session cookie and validate
   const sessionToken = request.cookies.get('kingdom_session')?.value;
+  console.log('[mw] pathname:', pathname);
+  console.log('[mw] kingdom_session cookie found:', !!sessionToken);
+  console.log('[mw] token first 16:', sessionToken?.substring(0, 16) ?? 'none');
+  console.log('[mw] token length:', sessionToken?.length ?? 0);
 
   if (!sessionToken || sessionToken.length !== 64) {
+    console.log('[mw] FAIL: token missing or wrong length');
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -38,13 +43,17 @@ export async function middleware(request: NextRequest) {
   }
 
   // Validate session against sessions table
-  const { data: sessions } = await supabase
+  const { data: sessions, error } = await supabase
     .from('sessions')
     .select('user_id, user_role, csrf_token, expires_at')
     .eq('session_token', sessionToken)
     .limit(1);
 
+  console.log('[mw] supabase query error:', error ?? 'none');
+  console.log('[mw] sessions rows returned:', sessions?.length ?? 0);
+
   if (!sessions || sessions.length === 0) {
+    console.log('[mw] FAIL: no session row in DB');
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -108,6 +117,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  console.log('[mw] PASS: session valid, user_role:', session.user_role);
   return NextResponse.next();
 }
 
