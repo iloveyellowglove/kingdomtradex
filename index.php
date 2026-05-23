@@ -28,7 +28,7 @@ if ($currentUser) {
     exit;
 }
 
-$title = 'KingdomTrade Exchange — Trade Crypto with Confidence';
+$title = 'KingdomTrade Exchange: A Kingdom Marketplace for Faithful Stewards';
 ?><!DOCTYPE html>
 <html lang="en">
 <head>
@@ -482,9 +482,9 @@ $title = 'KingdomTrade Exchange — Trade Crypto with Confidence';
 <!-- ── Hero ── -->
 <section class="lp-hero">
     <div class="lp-hero-content">
-        <div class="lp-hero-badge"><span class="dot"></span>Trusted by thousands of traders worldwide</div>
-        <h1>Trade Crypto with<br><span class="highlight">Speed & Confidence</span></h1>
-        <p class="lead">KingdomTrade delivers institutional-grade trading tools, real-time market data, and industry-leading security — all in one powerful platform.</p>
+        <div class="lp-hero-badge"><span class="dot"></span>A Kingdom marketplace for faithful stewards</div>
+        <h1>Multiply What You Have<br><span class="highlight">Been Entrusted With</span></h1>
+        <p class="lead">Trade with wisdom. Earn daily harvest returns. Build your disciple network. KingdomTrade is where faithful stewardship multiplies God's resources.</p>
         <div class="lp-hero-actions">
             <a href="/register.php" class="btn-hero-primary">Get Started</a>
             <a href="/login.php" class="btn-hero-secondary">Login</a>
@@ -500,39 +500,39 @@ $title = 'KingdomTrade Exchange — Trade Crypto with Confidence';
 <!-- ── Features ── -->
 <section class="lp-section" id="features">
     <div class="lp-section-header">
-        <h2>Built for <span>Serious Traders</span></h2>
-        <p>Everything you need to trade crypto at the highest level.</p>
+        <h2>A Platform Built on <span>Kingdom Principles</span></h2>
+        <p>Everything you need to steward resources faithfully and multiply what you have been given.</p>
     </div>
     <div class="lp-features-grid">
         <div class="lp-feature-card">
             <div class="icon-box gold"><i class="bi bi-shield-check"></i></div>
-            <h3>Bank-Grade Security</h3>
-            <p>Multi-layer encryption, cold storage for assets, 72-hour withdrawal holds, and real-time threat monitoring keep your funds safe.</p>
+            <h3>Kingdom Treasury</h3>
+            <p>Multi-layer encryption, cold storage for assets, and a 72-hour stewardship hold protect what has been entrusted to you.</p>
         </div>
         <div class="lp-feature-card">
             <div class="icon-box purple"><i class="bi bi-lightning-charge"></i></div>
-            <h3>Lightning Execution</h3>
-            <p>High-performance order matching engine processing thousands of trades per second. Never miss a market move.</p>
+            <h3>Daily Harvest Returns</h3>
+            <p>Automated daily returns applied to every steward's balance. Your resources grow while you build the Kingdom.</p>
         </div>
         <div class="lp-feature-card">
             <div class="icon-box indigo"><i class="bi bi-people-fill"></i></div>
-            <h3>Earn While You Refer</h3>
-            <p>Generous 5-level referral system. Earn up to 15% commission when your network trades. Build your legacy.</p>
+            <h3>Covenant Blessings</h3>
+            <p>A 5-level blessing structure from Firstfruits to Hundredfold. As your disciples prosper, blessings flow upward to you.</p>
         </div>
         <div class="lp-feature-card">
             <div class="icon-box gold"><i class="bi bi-graph-up-arrow"></i></div>
-            <h3>Real-Time Charts</h3>
-            <p>Professional-grade TradingView charts with live Binance data. Multiple timeframes, indicators, and drawing tools.</p>
+            <h3>Real-Time Trading</h3>
+            <p>Professional TradingView charts powered by live Binance data. Multiple timeframes and tools for wise stewardship.</p>
         </div>
         <div class="lp-feature-card">
             <div class="icon-box purple"><i class="bi bi-wallet2"></i></div>
-            <h3>Multi-Currency Support</h3>
-            <p>Deposit and withdraw BTC, ETH, and USDT. Seamless crypto management with Plisio payment integration.</p>
+            <h3>Multi-Currency Treasury</h3>
+            <p>Deposit and withdraw BTC, ETH, and USDT. Seamless management with Plisio payment integration.</p>
         </div>
         <div class="lp-feature-card">
             <div class="icon-box indigo"><i class="bi bi-headset"></i></div>
-            <h3>24/7 Support</h3>
-            <p>Dedicated support team available around the clock. Plus our AI assistant answers your questions instantly.</p>
+            <h3>The Ekklesia</h3>
+            <p>Connect with fellow stewards. Receive prophetic market insights, coordinate the harvest, and grow together in faith.</p>
         </div>
     </div>
 </section>
@@ -540,34 +540,34 @@ $title = 'KingdomTrade Exchange — Trade Crypto with Confidence';
 <!-- ── Stats ── -->
 <div class="lp-stats">
     <div class="lp-stats-grid">
-        <div class="lp-stat"><h3>10,000+</h3><p>Active Traders</p></div>
-        <div class="lp-stat"><h3>$50M+</h3><p>Monthly Volume</p></div>
-        <div class="lp-stat"><h3>99.9%</h3><p>Platform Uptime</p></div>
-        <div class="lp-stat"><h3>0.5s</h3><p>Avg Execution</p></div>
+        <div class="lp-stat"><h3>10,000+</h3><p>Faithful Stewards</p></div>
+        <div class="lp-stat"><h3>$50M+</h3><p>Kingdom Deposits</p></div>
+        <div class="lp-stat"><h3>5 Levels</h3><p>Covenant Blessings</p></div>
+        <div class="lp-stat"><h3>72-Hour</h3><p>Stewardship Hold</p></div>
     </div>
 </div>
 
 <!-- ── How It Works ── -->
 <section class="lp-section">
     <div class="lp-section-header">
-        <h2>Start Trading in <span>Minutes</span></h2>
-        <p>Three simple steps to begin your crypto journey.</p>
+        <h2>Begin Your <span>Stewardship</span></h2>
+        <p>Three steps to enter the Kingdom economy.</p>
     </div>
     <div class="lp-steps">
         <div class="lp-step">
             <div class="lp-step-num">1</div>
-            <h4>Create Account</h4>
-            <p>Register in under 60 seconds with just your email. No KYC required for basic trading.</p>
+            <h4>Join the Kingdom</h4>
+            <p>Register in under a minute with your email. Receive your unique disciple invitation code to begin building your network.</p>
         </div>
         <div class="lp-step">
             <div class="lp-step-num">2</div>
-            <h4>Deposit Funds</h4>
-            <p>Fund your account with BTC, ETH, or USDT. Deposits are confirmed quickly by our team.</p>
+            <h4>Plant Your Seed</h4>
+            <p>Make your first deposit in BTC, ETH, or USDT. Every seed planted begins your journey of multiplication.</p>
         </div>
         <div class="lp-step">
             <div class="lp-step-num">3</div>
-            <h4>Start Trading</h4>
-            <p>Access real-time charts, place trades, earn daily profits, and build your referral network.</p>
+            <h4>Reap the Harvest</h4>
+            <p>Trade with real-time charts, earn daily harvest returns, and build your disciple network across five generations.</p>
         </div>
     </div>
 </section>
@@ -575,32 +575,32 @@ $title = 'KingdomTrade Exchange — Trade Crypto with Confidence';
 <!-- ── Testimonials ── -->
 <section class="lp-section">
     <div class="lp-section-header">
-        <h2>What Our <span>Traders Say</span></h2>
-        <p>Join thousands of satisfied traders on KingdomTrade.</p>
+        <h2>What Fellow <span>Stewards Say</span></h2>
+        <p>Hear from those who have entered the Kingdom economy.</p>
     </div>
     <div class="lp-trust-grid">
         <div class="lp-testimonial">
             <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <p class="quote">"I've used every major exchange. KingdomTrade's execution speed and charting tools are on par with the best. The referral rewards are unmatched."</p>
+            <p class="quote">"The covenant blessing structure is unlike anything I have seen. I brought five disciples into the Kingdom and now receive blessings from three generations of their spiritual lineage."</p>
             <div class="author">
                 <div class="avatar">M</div>
-                <div><div class="name">Michael R.</div><div class="role">Professional Trader</div></div>
+                <div><div class="name">Michael R.</div><div class="role">Elder Steward</div></div>
             </div>
         </div>
         <div class="lp-testimonial">
             <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <p class="quote">"The security features give me peace of mind. I know my assets are protected with the 72-hour withdrawal hold and multi-layer encryption."</p>
+            <p class="quote">"The 72-hour stewardship hold gives me confidence that my resources are protected. This is faithful stewardship in action, not the reckless trading you see on other platforms."</p>
             <div class="author">
                 <div class="avatar">S</div>
-                <div><div class="name">Sarah L.</div><div class="role">Crypto Investor</div></div>
+                <div><div class="name">Sarah L.</div><div class="role">Faithful Steward</div></div>
             </div>
         </div>
         <div class="lp-testimonial">
             <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-            <p class="quote">"Built my entire referral network on KingdomTrade. The 5-level commission system helped me generate passive income while I trade."</p>
+            <p class="quote">"I joined for the trading but stayed for the Ekklesia. The community of stewards, the prophetic insights, the shared mission: this is more than a platform, it is a movement."</p>
             <div class="author">
                 <div class="avatar">D</div>
-                <div><div class="name">David K.</div><div class="role">Network Builder</div></div>
+                <div><div class="name">David K.</div><div class="role">Covenant Steward</div></div>
             </div>
         </div>
     </div>
@@ -609,9 +609,9 @@ $title = 'KingdomTrade Exchange — Trade Crypto with Confidence';
 <!-- ── CTA ── -->
 <section class="lp-section">
     <div class="lp-cta-banner">
-        <h2>Ready to Start Trading?</h2>
-        <p>Join 10,000+ traders on the fastest-growing crypto exchange. Create your free account today.</p>
-        <a href="/register.php" class="btn-hero-primary">Get Started</a>
+        <h2>Ready to Enter the Kingdom?</h2>
+        <p>Join 10,000+ stewards multiplying their resources. Create your account and begin your stewardship today.</p>
+        <a href="/register.php" class="btn-hero-primary">Begin Your Stewardship</a>
     </div>
 </section>
 
@@ -619,22 +619,22 @@ $title = 'KingdomTrade Exchange — Trade Crypto with Confidence';
 <footer class="lp-footer">
     <div class="lp-footer-inner">
         <div class="lp-footer-col">
-            <h4>Platform</h4>
+            <h4>Kingdom</h4>
             <a href="/register.php">Register</a>
             <a href="/login.php">Log In</a>
             <a href="/trading.php">Trading</a>
         </div>
         <div class="lp-footer-col">
-            <h4>Company</h4>
-            <a href="/about/">About Us</a>
-            <a href="/covenant/">Covenant</a>
-            <a href="#">Careers</a>
+            <h4>Teaching</h4>
+            <a href="/about/">God's Economics</a>
+            <a href="/covenant/">The Covenant</a>
+            <a href="#">Scripture</a>
         </div>
         <div class="lp-footer-col">
-            <h4>Support</h4>
-            <a href="#">Help Center</a>
-            <a href="#">Contact Us</a>
-            <a href="#">API Docs</a>
+            <h4>Ekklesia</h4>
+            <a href="#">Join Telegram</a>
+            <a href="#">BonChat</a>
+            <a href="#">Contact</a>
         </div>
         <div class="lp-footer-col">
             <h4>Legal</h4>
@@ -645,7 +645,7 @@ $title = 'KingdomTrade Exchange — Trade Crypto with Confidence';
     </div>
     <div class="lp-footer-bottom">
         <span>&copy; <?= date('Y') ?> KingdomTrade Exchange. All rights reserved.</span>
-        <span>"The earth is the LORD's, and the fullness thereof." — Psalm 24:1</span>
+        <span>"The earth is the LORD's, and the fullness thereof." (Psalm 24:1)</span>
     </div>
 </footer>
 
