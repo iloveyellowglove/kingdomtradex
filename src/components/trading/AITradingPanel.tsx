@@ -5,15 +5,14 @@ export default function AITradingPanel({ profits }: { profits: AITradingProfit[]
 
   return (
     <div>
-      <h2 className="mb-2">AI Trading</h2>
+      <h2 className="mb-2">AI Trading History</h2>
       <p className="text-text-muted mb-6">Daily harvest from AI-powered trading algorithms</p>
 
-      <div className="hero-section mb-6">
-        <h3>Kingdom AI Trader</h3>
-        <p className="text-lg">Automated trading yields 1.5% daily on your deposited balance.</p>
-        <p className="text-3xl font-bold mt-4">{totalProfit.toFixed(8)} USDT</p>
-        <p className="text-text-secondary">Total AI trading profits earned</p>
-      </div>
+      {totalProfit > 0 && (
+        <p className="text-lg text-temple-gold mb-4">
+          Total earned: {totalProfit.toFixed(8)} USDT
+        </p>
+      )}
 
       {profits.length > 0 ? (
         <div className="card">
