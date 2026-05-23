@@ -1,7 +1,7 @@
 <?php
 /**
  * Deposit model - Supabase PostgreSQL backend
- * All deposits are simulated. Admin manually confirms them.
+ * All deposits are manually confirmed by admin.
  */
 class Deposit {
     private $db;
@@ -11,7 +11,7 @@ class Deposit {
     }
 
     /**
-     * Create a pending deposit (SIMULATION)
+     * Create a pending deposit
      */
     public function create(int $userId, string $currency, float $amount, string $txid): array {
         if ($amount <= 0) {

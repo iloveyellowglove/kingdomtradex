@@ -6,7 +6,7 @@ require __DIR__ . '/../../templates/header.php';
 <div class="row">
     <div class="col-md-3"><?php require __DIR__ . '/sidebar.php'; ?></div>
     <div class="col-md-9">
-        <h3 class="mb-3">Pending Deposits <span class="badge bg-warning">DEMO SIMULATION</span></h3>
+        <h3 class="mb-3">Pending Deposits</h3>
 
         <?php if ($deposits): ?>
             <div class="table-responsive">

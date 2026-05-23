@@ -1,6 +1,6 @@
 <?php
 /**
- * Dashboard Controller - DEMO MODE
+ * Dashboard Controller
  * Handles member/pastor dashboard display and withdrawal requests.
  */
 require_once __DIR__ . '/../includes/functions.php';

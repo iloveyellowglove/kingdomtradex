@@ -1,6 +1,6 @@
 <?php
 /**
- * Authentication Controller - DEMO MODE
+ * Authentication Controller
  * Handles login, registration, logout.
  */
 require_once __DIR__ . '/../includes/functions.php';

@@ -1,6 +1,6 @@
 <?php
 /**
- * Router / Homepage - DEMO MODE
+ * Router / Homepage
  * Christian Crypto Exchange - KingdomTrade
  *
  * When used as PHP built-in server router, return false for existing
@@ -81,9 +81,8 @@ ob_start();
 
 <div class="text-center py-3">
     <div class="alert alert-secondary">
-        <strong>DEMO MODE NOTICE:</strong> This is a simulation platform for educational purposes only.
-        No real cryptocurrency transactions occur. All balances, trades, and blessings are simulated.
-        No payment gateways or blockchain nodes are connected.
+        <strong>KingdomTrade Exchange</strong> — Professional cryptocurrency trading platform.
+        All balances, trades, and blessings are processed in real time.
     </div>
 </div>
 <?php

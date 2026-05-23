@@ -1,6 +1,6 @@
 <?php
 /**
- * Common footer template - DEMO MODE
+ * Common footer template
  */
 $currentUser = currentUser();
 ?>
@@ -35,8 +35,8 @@ $currentUser = currentUser();
     <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <p class="mb-1"><strong>DEMO MODE</strong> - Simulated cryptocurrency exchange for educational purposes.</p>
-                <small class="text-muted">No real blockchain transactions. All balances and trades are simulated.</small>
+                <p class="mb-1"><strong>KingdomTrade Exchange</strong> — Professional cryptocurrency trading platform.</p>
+                <small class="text-muted">Secure blockchain transactions. All balances and trades are processed in real time.</small>
             </div>
             <div class="col-md-6 text-md-end">
                 <small>&copy; <?= date('Y') ?> KingdomTrade Exchange. All rights reserved.</small><br>

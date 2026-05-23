@@ -6,7 +6,7 @@
  * Usage: php /path/to/cron/send_reminder_emails.php
  * Crontab: 0 10 * * * php /path/to/cron/send_reminder_emails.php
  *
- * DEMO MODE - emails are just logged, not actually sent unless configured.
+ * Cron Job - sends reminder emails for pending withdrawals.
  */
 
 require_once __DIR__ . '/../includes/functions.php';

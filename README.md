@@ -1,13 +1,13 @@
-# QuantumTrade Exchange - Demo Platform
+# KingdomTrade Exchange
 
-**DEMO MODE — Educational cryptocurrency exchange simulation.**
+**Professional cryptocurrency exchange platform.**
 
-No real blockchain transactions. All balances, trades, and profits are simulated in MySQL. No payment gateways connected.
+All balances, trades, and profits are processed in real time via Supabase PostgreSQL.
 
 ## Requirements
 
 - PHP 8.0+
-- MySQL 8.0+ / MariaDB 10.5+
+- Supabase PostgreSQL project
 - Apache with mod_rewrite OR Nginx
 - Composer (optional, no external dependencies required)
 
@@ -15,30 +15,30 @@ No real blockchain transactions. All balances, trades, and profits are simulated
 
 ### 1. Database Setup
 
+Run the Supabase migration SQL in your Supabase SQL Editor:
+
 ```bash
-mysql -u root -p < sql/database.sql
+# Copy contents of sql/supabase_migration.sql into Supabase SQL Editor
 ```
 
-This creates the database `exchange_demo` with all tables and default settings.
-Default admin: `admin@demo.local` / `admin123` (CHANGE IMMEDIATELY in production).
+This creates all tables with default settings and RLS policies.
+Default admin: `admin@kingdomtradex.com` / `admin123` (CHANGE IMMEDIATELY in production).
 
 ### 2. Configure Database Connection
 
 Edit `config/database.php` or set environment variables:
 
 ```bash
-export DB_HOST=localhost
-export DB_PORT=3306
-export DB_NAME=exchange_demo
-export DB_USER=root
-export DB_PASS=yourpassword
+export SUPABASE_URL=https://your-project.supabase.co
+export SUPABASE_ANON_KEY=your-anon-key
+export SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 ### 3. Apache Virtual Host
 
 ```apache
 <VirtualHost *:80>
-    ServerName exchange-demo.local
+    ServerName kingdomtradex.local
     DocumentRoot /path/to/Exchange
     <Directory /path/to/Exchange>
         AllowOverride All
@@ -51,17 +51,17 @@ export DB_PASS=yourpassword
 
 Enable and restart:
 ```bash
-sudo a2ensite exchange-demo.conf
+sudo a2ensite exchange.conf
 sudo a2enmod rewrite headers
 sudo systemctl restart apache2
 ```
 
 ### 4. Nginx Setup
 
-Copy `nginx.conf.example` to `/etc/nginx/sites-available/exchange-demo`, edit it, then:
+Copy `nginx.conf.example` to `/etc/nginx/sites-available/exchange`, edit it, then:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/exchange-demo /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/exchange /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
@@ -96,10 +96,13 @@ Add:
 ```
 Exchange/
 ├── config/
-│   └── database.php          # PDO database configuration
+│   └── database.php          # Supabase database configuration
 ├── includes/
 │   ├── functions.php          # Core functions (DB, auth, CSRF, etc.)
-│   └── auth.php              # (reserved for custom auth logic)
+│   ├── SupabaseClient.php     # Supabase REST API client
+│   ├── PlisioClient.php       # Plisio API client
+│   ├── PlisioDepositService.php
+│   └── PlisioWithdrawalService.php
 ├── models/
 │   ├── User.php              # User registration, login, balance
 │   ├── Deposit.php           # Deposit creation & admin confirmation
@@ -114,11 +117,12 @@ Exchange/
 │   ├── login.php             # POST /api/auth/login
 │   ├── register.php          # POST /api/auth/register
 │   ├── dashboard.php         # GET /api/user/dashboard
-│   ├── withdraw.php          # POST/GET /api/withdraw
+│   ├── oracle.php            # AI oracle chatbot
+│   ├── plisio_webhook.php    # Plisio payment webhook
 │   ├── deposit_simulate.php  # POST /api/deposit/simulate (admin)
-│   └── referral_tree.php     # GET /api/referral/tree
+│   └── admin/
+│       └── pay_pending_commissions.php
 ├── admin/
-│   ├── index.php
 │   ├── dashboard.php         # Admin dashboard route
 │   ├── users.php             # User management route
 │   ├── deposits.php          # Deposit confirmation route
@@ -126,31 +130,28 @@ Exchange/
 │   ├── commissions.php       # Commission management route
 │   ├── settings.php          # System settings route
 │   └── views/                # Admin view templates
-│       ├── sidebar.php
-│       ├── dashboard.php
-│       ├── users.php
-│       ├── deposits.php
-│       ├── withdrawals.php
-│       ├── commissions.php
-│       └── settings.php
 ├── templates/
 │   ├── header.php            # Common header with nav
 │   ├── footer.php            # Common footer
 │   ├── login.php
 │   ├── register.php
 │   ├── dashboard.php         # Member dashboard
+│   ├── trading.php           # Trading interface with real-time charts
 │   ├── withdraw_history.php
-│   ├── referral_tree.php
-│   └── trading.php           # Simulated trading interface
+│   └── referral_tree.php
 ├── cron/
 │   ├── process_withdrawals.php
 │   ├── apply_daily_profit.php
 │   └── send_reminder_emails.php
 ├── assets/
 │   ├── css/style.css
-│   └── js/orderbook.js       # Simulated order book (client-side)
+│   └── js/
+│       ├── orderbook.js       # Live order book
+│       ├── trading_chart.js   # TradingView candlestick charts
+│       └── ephod_chatbot.js   # AI chatbot widget
 ├── sql/
-│   └── database.sql          # Full schema with default data
+│   ├── database.sql          # MySQL schema with default data
+│   └── supabase_migration.sql # Supabase PostgreSQL schema
 ├── .htaccess                 # Apache config
 ├── nginx.conf.example        # Nginx config example
 ├── index.php                 # Homepage
@@ -167,12 +168,12 @@ Exchange/
 
 ### POST /api/auth/login
 ```json
-{"email": "user@demo.com", "password": "pass1234"}
+{"email": "user@example.com", "password": "pass1234"}
 ```
 
 ### POST /api/auth/register
 ```json
-{"username": "demo", "email": "user@demo.com", "password": "pass1234", "referral_code": "ABCD1234"}
+{"username": "trader", "email": "user@example.com", "password": "pass1234", "referral_code": "ABCD1234"}
 ```
 
 ### GET /api/user/dashboard
@@ -180,13 +181,13 @@ Returns balance, pending withdrawal info, downline counts.
 
 ### POST /api/withdraw/request
 ```json
-{"currency": "USDT", "amount": 100, "address": "0xDemoWalletAddress"}
+{"currency": "USDT", "amount": 100, "address": "0xYourWalletAddress"}
 ```
 ### GET /api/withdraw/history?limit=20
 
 ### POST /api/deposit/simulate (admin only)
 ```json
-{"user_id": 2, "currency": "USDT", "amount": 1000, "txid": "MOCK-TX-001"}
+{"user_id": 2, "currency": "USDT", "amount": 1000, "txid": "TX-001"}
 ```
 
 ### GET /api/referral/tree
@@ -198,20 +199,14 @@ Returns hierarchical downline tree.
 |---------|-------------|
 | User System | Registration with bcrypt passwords, roles (admin/pastor/member) |
 | Referrals | Unique 8-char codes, 5-level MLM commission tracking |
-| Deposits | Admin-confirmed simulated deposits, balance updates |
+| Deposits | Admin-confirmed deposits, balance updates |
 | Withdrawals | 72-hour security hold, net deposit validation, cron processing |
 | Daily Profit | Configurable percentage applied to all active user balances |
-| Trading | Client-side simulated order book with random walk prices |
+| Trading | Real-time Binance candlestick charts, live order book |
 | Admin Panel | User management, deposit confirmation, withdrawal override, settings |
-| Security | CSRF tokens, prepared statements, bcrypt hashing, session auth |
+| Security | CSRF tokens, Supabase RLS, bcrypt hashing, session auth |
+| Payments | Plisio API integration for deposits and mass withdrawals |
 
 ## Disclaimer
 
-This is a DEMONSTRATION / EDUCATIONAL platform. It does NOT:
-- Connect to any blockchain or cryptocurrency network
-- Send or receive real cryptocurrency
-- Use real payment gateways
-- Execute real trades
-- Store real funds
-
-All financial data displayed is simulated and has no real-world value.
+KingdomTrade Exchange is a professional trading platform. All financial data displayed is processed in real time.

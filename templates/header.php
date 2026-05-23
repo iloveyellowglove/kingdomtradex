@@ -1,6 +1,6 @@
 <?php
 /**
- * Common header template - DEMO MODE
+ * Common header template
  */
 $currentUser = currentUser();
 $siteName = 'KingdomTrade Exchange';

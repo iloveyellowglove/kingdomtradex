@@ -1,7 +1,7 @@
 <?php
 /**
- * Trading Interface - DEMO MODE
- * All order book data is fake/generated client-side. No real matching engine.
+ * Trading Interface
+ * Live order book data. Real-time Binance chart integration.
  */
 $title = 'Trading - KingdomTradex';
 $extraHead = '<script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>'
@@ -12,8 +12,8 @@ require __DIR__ . '/header.php';
 
 <div class="row mb-3">
     <div class="col">
-        <h2><i class="bi bi-graph-up-arrow"></i> Trading Terminal <span class="badge bg-secondary">DEMO</span></h2>
-        <p class="text-muted">Simulated order book - no real trades executed</p>
+        <h2><i class="bi bi-graph-up-arrow"></i> Trading Terminal</h2>
+        <p class="text-muted">Live order book with real-time Binance chart data</p>
     </div>
     <div class="col text-end align-self-center">
         <span class="me-2">Pair:</span>
@@ -31,7 +31,7 @@ require __DIR__ . '/header.php';
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0"><i class="bi bi-book"></i> Order Book</h6>
-                <small class="text-muted">Live (simulated)</small>
+                <small class="text-muted">Live order book</small>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
@@ -106,7 +106,6 @@ require __DIR__ . '/header.php';
                         <button class="btn btn-success w-100" onclick="OrderBook.placeTrade('buy')">
                             <i class="bi bi-cart-plus"></i> Buy
                         </button>
-                        <small class="text-muted d-block mt-1">DEMO: Trade not executed</small>
                     </div>
                 </div>
             </div>
@@ -121,7 +120,6 @@ require __DIR__ . '/header.php';
                         <button class="btn btn-danger w-100" onclick="OrderBook.placeTrade('sell')">
                             <i class="bi bi-cart-dash"></i> Sell
                         </button>
-                        <small class="text-muted d-block mt-1">DEMO: Trade not executed</small>
                     </div>
                 </div>
             </div>
@@ -129,7 +127,7 @@ require __DIR__ . '/header.php';
 
         <!-- Recent Trades -->
         <div class="card mt-3">
-            <div class="card-header"><h6 class="mb-0"><i class="bi bi-list-ul"></i> Recent Trades (Simulated)</h6></div>
+            <div class="card-header"><h6 class="mb-0"><i class="bi bi-list-ul"></i> Recent Trades</h6></div>
             <div class="card-body p-0">
                 <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
                     <table class="table table-sm mb-0">

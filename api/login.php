@@ -1,6 +1,6 @@
 <?php
 /**
- * POST /api/auth/login - DEMO MODE
+ * POST /api/auth/login
  */
 header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/functions.php';

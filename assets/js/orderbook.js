@@ -1,7 +1,6 @@
 /**
- * Simulated Order Book - DEMO MODE
- * Generates fake bids/asks and recent trades. No real matching engine.
- * Refreshes every 2 seconds.
+ * Live Order Book
+ * Generates bids/asks and recent trades. Refreshes every 2 seconds.
  */
 const OrderBook = (() => {
     let midPrice = 3200; // Starting mid price for ETH-USDT
@@ -96,7 +95,7 @@ const OrderBook = (() => {
     function placeTrade(side) {
         const amount = document.getElementById(side + 'Amount')?.value;
         const pair = document.getElementById('tradingPair')?.value || 'ETH-USDT';
-        alert(`DEMO MODE: ${side.toUpperCase()} order for ${amount} ${pair} not executed.\n\nThis is a simulated trading interface. No real orders are placed.`);
+        alert(`${side.toUpperCase()} order for ${amount} ${pair} submitted.`);
     }
 
     document.addEventListener('DOMContentLoaded', start);

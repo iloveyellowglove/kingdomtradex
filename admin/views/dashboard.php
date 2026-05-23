@@ -1,5 +1,5 @@
 <?php
-$title = 'Admin Dashboard - DEMO MODE';
+$title = 'Admin Dashboard';
 require __DIR__ . '/../../templates/header.php';
 ?>
 

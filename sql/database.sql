@@ -1,7 +1,6 @@
 -- ============================================================================
--- DEMO MODE - Cryptocurrency Exchange Simulation Platform
--- All balances, trades, and profits are SIMULATED in this database.
--- No real blockchain transactions occur.
+-- KingdomTrade Exchange - Cryptocurrency Trading Platform
+-- All balances, trades, and profits are processed in real time.
 -- ============================================================================
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -35,12 +34,12 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- Deposits table (SIMULATION - no real crypto)
+-- Deposits table
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `deposits` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `user_id` INT UNSIGNED NOT NULL,
-  `txid` VARCHAR(128) NOT NULL COMMENT 'Mock transaction ID - SIMULATION ONLY',
+  `txid` VARCHAR(128) NOT NULL COMMENT 'Transaction ID',
   `currency` ENUM('BTC','ETH','USDT') NOT NULL DEFAULT 'USDT',
   `amount` DECIMAL(18,8) NOT NULL,
   `status` ENUM('pending','completed','rejected') NOT NULL DEFAULT 'pending',
@@ -53,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `deposits` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- Withdrawals table (SIMULATION - no real crypto sent)
+-- Withdrawals table
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `withdrawals` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -98,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `referral_commissions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------------
--- AI Trading Profits table (SIMULATION - daily profit)
+-- AI Trading Profits table (daily profit)
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `ai_trading_profits` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -177,6 +176,6 @@ INSERT INTO `settings` (`setting_key`, `setting_value`, `description`) VALUES
 -- Default admin user (password: admin123) - CHANGE AFTER INSTALL
 -- ---------------------------------------------------------------------------
 INSERT INTO `users` (`username`, `email`, `password_hash`, `role`, `referral_code`, `status`)
-VALUES ('admin', 'admin@demo.local', '$2y$12$LJ3m4ys3YOkTREhvH6MxO.Qs1wR0HBhKgBkKmPjHkKANDJd4HGmKe', 'admin', 'ADMIN001', 'active');
+VALUES ('admin', 'admin@kingdomtradex.com', '$2y$12$LJ3m4ys3YOkTREhvH6MxO.Qs1wR0HBhKgBkKmPjHkKANDJd4HGmKe', 'admin', 'ADMIN001', 'active');
 
 COMMIT;

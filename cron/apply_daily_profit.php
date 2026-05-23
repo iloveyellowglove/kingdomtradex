@@ -6,7 +6,7 @@
  * Usage: php /path/to/cron/apply_daily_profit.php
  * Crontab: 1 0 * * * php /path/to/cron/apply_daily_profit.php
  *
- * DEMO MODE - simulated profits only. No real trading.
+ * Cron Job - applies daily trading profit to all active users.
  * PostgreSQL backend (Supabase).
  */
 

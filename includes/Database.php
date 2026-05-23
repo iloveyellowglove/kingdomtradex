@@ -3,7 +3,7 @@
  * Flat-File JSON Database - Zero Dependency Backend
  * Implements enough of the PDO interface to run the exchange demo without MySQL.
  *
- * DEMO MODE: All data stored in /data/*.json files.
+ * Legacy flat-file storage (replaced by Supabase PostgreSQL).
  */
 
 class FlatDBStatement {

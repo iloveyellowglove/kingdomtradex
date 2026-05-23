@@ -7,7 +7,7 @@
  * Usage: php /path/to/cron/process_withdrawals.php
  * Crontab: 0 * * * * php /path/to/cron/process_withdrawals.php
  *
- * DEMO MODE - no real crypto is sent.
+ * Cron Job - processes withdrawals.
  * PostgreSQL backend (Supabase).
  */
 

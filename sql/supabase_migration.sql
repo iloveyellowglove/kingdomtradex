@@ -98,7 +98,7 @@ CREATE INDEX IF NOT EXISTS idx_commissions_source     ON referral_commissions(so
 CREATE INDEX IF NOT EXISTS idx_commissions_status     ON referral_commissions(status);
 
 -- ---------------------------------------------------------------------------
--- AI Trading Profits (daily simulated profit)
+-- AI Trading Profits (daily profit)
 -- ---------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS ai_trading_profits (
     id          BIGSERIAL PRIMARY KEY,

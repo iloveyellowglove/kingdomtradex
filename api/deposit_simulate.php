@@ -1,6 +1,6 @@
 <?php
 /**
- * POST /api/deposit/simulate - Admin only - SIMULATION
+ * POST /api/deposit/simulate - Admin only
  * Manually marks a deposit as completed and triggers commissions.
  */
 header('Content-Type: application/json');
@@ -24,7 +24,7 @@ $result = $depositModel->create(
     (int)$input['user_id'],
     $input['currency'] ?? 'USDT',
     (float)($input['amount'] ?? 0),
-    $input['txid'] ?? ('SIM-' . bin2hex(random_bytes(8)))
+    $input['txid'] ?? ('TX-' . bin2hex(random_bytes(8)))
 );
 
 if (!$result['success']) {
@@ -36,7 +36,7 @@ if (!$result['success']) {
 // Immediately confirm it
 $confirmResult = $depositModel->confirm($result['deposit_id'], (int)$admin['id']);
 if ($confirmResult['success']) {
-    echo json_encode(['success' => true, 'deposit_id' => $result['deposit_id'], 'message' => 'Deposit simulated and confirmed. Commissions awarded.']);
+    echo json_encode(['success' => true, 'deposit_id' => $result['deposit_id'], 'message' => 'Deposit confirmed. Commissions awarded.']);
 } else {
     http_response_code(500);
     echo json_encode($confirmResult);

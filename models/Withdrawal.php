@@ -11,7 +11,7 @@ class Withdrawal {
     }
 
     /**
-     * Request a withdrawal - SIMULATION only
+     * Request a withdrawal
      */
     public function request(int $userId, string $currency, float $amount, string $address): array {
         if ($amount <= 0) {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin Controller - DEMO MODE
+ * Admin Controller
  * Handles all admin dashboard functions: user management, deposit confirmation,
  * withdrawal management, settings, and commission payouts.
  */

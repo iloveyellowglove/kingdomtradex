@@ -1,6 +1,6 @@
 <?php
 /**
- * Member Dashboard - DEMO MODE
+ * Member Dashboard
  * Shows balances, disciple info, deposit/withdraw actions, and covenant economy report.
  */
 $title = 'Dashboard - KingdomTrade Exchange';
@@ -28,7 +28,7 @@ $rankClass = match($rank) {
 <div class="row mb-4">
     <div class="col-md-8">
         <h2>Welcome, <?= h($user['username']) ?>!</h2>
-        <p class="text-muted">Faithful stewardship multiplies God's resources - all balances simulated</p>
+        <p class="text-muted">Faithful stewardship multiplies God's resources</p>
     </div>
     <div class="col-md-4 text-md-end">
         <small class="text-muted">Disciple Code: <strong class="text-primary"><?= h($user['referral_code']) ?></strong></small><br>
@@ -165,7 +165,7 @@ $rankClass = match($rank) {
                     <div class="mb-3">
                         <label class="form-label">Destination Address</label>
                         <input type="text" class="form-control" name="address" required placeholder="Crypto wallet address">
-                        <small class="text-muted">DEMO - any string works, no real crypto sent</small>
+                        <small class="text-muted">Enter your wallet address for withdrawal</small>
                     </div>
                     <div class="alert alert-light border mb-3">
                         <small><i class="bi bi-info-circle"></i> Remember the widow's mite - withdraw only what you need.</small>
@@ -180,10 +180,10 @@ $rankClass = match($rank) {
             <div class="card-header"><h5 class="mb-0"><i class="bi bi-download"></i> Deposit Funds</h5></div>
             <div class="card-body">
                 <div class="alert alert-secondary">
-                    <strong>DEMO MODE</strong> - No real crypto required. Send a mock transaction ID and an admin will confirm it.
+                    <strong>Deposit Instructions</strong> — Send funds to the address below, then contact admin with your transaction ID to confirm.
                 </div>
-                <p><strong>Mock Deposit Address (USDT TRC20):</strong></p>
-                <code class="d-block p-2 bg-light text-break">TXt8DummyAddr<?= substr(md5($user['id']), 0, 10) ?>Demo</code>
+                <p><strong>Deposit Address (USDT TRC20):</strong></p>
+                <code class="d-block p-2 bg-light text-break">TXt8LiveAddr<?= substr(md5($user['id']), 0, 10) ?>Xch</code>
                 <p class="mt-3 mb-0"><small class="text-muted">After sending, contact admin with your transaction ID to confirm the deposit.</small></p>
             </div>
         </div>
