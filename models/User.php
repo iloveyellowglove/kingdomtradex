@@ -107,6 +107,12 @@ class User {
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
         error_log('[LOGIN] Step 3: user found, id=' . ($user['id'] ?? '?') . ', status=' . ($user['status'] ?? '?') . ', hash_len=' . strlen($user['password_hash'] ?? ''));
+        error_log('[LOGIN] Step 3b: raw hash from Supabase: ' . $user['password_hash']);
+        // Supabase JSON may return hashes with escaped forward slashes (\/)
+        $hash = str_replace('\/', '/', $user['password_hash']);
+        if ($hash !== $user['password_hash']) {
+            error_log('[LOGIN] Step 3c: hash was unescaped: ' . $hash);
+        }
         if ($user['status'] === 'banned') {
             error_log('[LOGIN] FAIL: user is banned');
             return ['success' => false, 'error' => 'Account is banned.'];
@@ -115,7 +121,7 @@ class User {
             error_log('[LOGIN] FAIL: user is suspended');
             return ['success' => false, 'error' => 'Account is suspended.'];
         }
-        $pwOk = password_verify($password, $user['password_hash']);
+        $pwOk = password_verify($password, $hash);
         error_log('[LOGIN] Step 4: password_verify result=' . ($pwOk ? 'true' : 'false'));
         if (!$pwOk) {
             error_log('[LOGIN] FAIL: password_verify returned false');
