@@ -1,0 +1,66 @@
+# Nginx Configuration Example for Exchange Demo Platform
+# Place in /etc/nginx/sites-available/exchange-demo
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name exchange-demo.local;
+
+    root /var/www/exchange;
+    index index.php;
+
+    # Deny access to sensitive directories
+    location ~ ^/(config|includes|models|controllers|sql|cron)/ {
+        deny all;
+        return 403;
+    }
+
+    # Deny direct access to .sql and hidden files
+    location ~ /\. {
+        deny all;
+        return 403;
+    }
+    location ~ \.sql$ {
+        deny all;
+        return 403;
+    }
+
+    # API endpoints
+    location /api/ {
+        try_files $uri =404;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    # Main application
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # PHP-FPM processing
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 4 256k;
+        fastcgi_busy_buffers_size 256k;
+    }
+
+    # Static assets caching
+    location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg|woff2)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Security headers
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Logs
+    access_log /var/log/nginx/exchange-demo-access.log;
+    error_log /var/log/nginx/exchange-demo-error.log;
+}

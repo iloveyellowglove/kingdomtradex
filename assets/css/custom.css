@@ -1,0 +1,301 @@
+/* Christian Crypto Branding - Temple Gold & Royal Purple */
+
+:root {
+    --temple-gold: #FFD700;
+    --royal-purple: #6A0DAD;
+    --deep-purple: #4B0082;
+    --dark-indigo: #1a1a2e;
+}
+
+/* Sacred geometry background pattern (Seed of Life / overlapping circles) */
+body {
+    background-color: #f8f6f0;
+    background-image:
+        radial-gradient(circle at 30% 20%, rgba(255, 215, 0, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(106, 13, 173, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 50% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+        repeating-linear-gradient(
+            60deg,
+            transparent,
+            transparent 40px,
+            rgba(255, 215, 0, 0.015) 40px,
+            rgba(255, 215, 0, 0.015) 41px
+        );
+    background-attachment: fixed;
+}
+
+/* Primary buttons - Temple Gold */
+.btn-primary {
+    background-color: var(--temple-gold) !important;
+    border-color: #B8860B !important;
+    color: #000 !important;
+    font-weight: 600;
+}
+.btn-primary:hover {
+    background-color: #FFC107 !important;
+    border-color: #B8860B !important;
+    color: #000 !important;
+}
+
+/* Secondary buttons - Royal Purple */
+.btn-outline-secondary {
+    border-color: var(--royal-purple) !important;
+    color: var(--royal-purple) !important;
+}
+.btn-outline-secondary:hover {
+    background-color: var(--royal-purple) !important;
+    color: #fff !important;
+}
+
+.btn-success {
+    background-color: var(--royal-purple) !important;
+    border-color: var(--deep-purple) !important;
+    color: #fff !important;
+}
+.btn-success:hover {
+    background-color: #7B1FA2 !important;
+}
+
+/* Navbar - deep purple with gold text */
+.navbar-dark {
+    background: linear-gradient(135deg, var(--deep-purple), #2d004d) !important;
+    border-bottom: 2px solid var(--temple-gold);
+}
+.navbar-dark .navbar-brand,
+.navbar-dark .nav-link {
+    color: var(--temple-gold) !important;
+}
+.navbar-dark .nav-link:hover {
+    color: #fff !important;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+.navbar-dark .nav-link.text-warning {
+    color: #FFC107 !important;
+}
+.navbar-dark .dropdown-menu {
+    background: var(--dark-indigo);
+    border: 1px solid var(--temple-gold);
+}
+.navbar-dark .dropdown-item {
+    color: var(--temple-gold);
+}
+.navbar-dark .dropdown-item:hover {
+    background: var(--royal-purple);
+}
+
+/* Kingdom cards - gold border, white bg, purple shadow */
+.kingdom-card {
+    border: 2px solid var(--temple-gold) !important;
+    background: #fff !important;
+    box-shadow: 0 4px 16px rgba(106, 13, 173, 0.25) !important;
+    border-radius: 0.75rem !important;
+}
+.kingdom-card .card-header {
+    background: linear-gradient(135deg, var(--deep-purple), var(--royal-purple));
+    color: var(--temple-gold);
+    border-bottom: 1px solid var(--temple-gold);
+}
+
+/* God's Economics callout box */
+.stewardship-callout {
+    background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
+    border: 3px solid var(--royal-purple) !important;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(106, 13, 173, 0.15);
+}
+.stewardship-callout h5 {
+    color: var(--deep-purple);
+    font-weight: bold;
+}
+.stewardship-callout p {
+    color: #333;
+    margin-bottom: 0;
+}
+
+/* Urgency banner */
+.urgency-banner {
+    background: linear-gradient(135deg, #B71C1C, #D32F2F);
+    color: #FFD700;
+    text-align: center;
+    padding: 12px 20px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-bottom: 2px solid var(--temple-gold);
+    animation: pulse-border 2s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+    0%, 100% { border-color: var(--temple-gold); }
+    50% { border-color: #FF6F00; }
+}
+
+/* Footer update */
+footer {
+    background: linear-gradient(135deg, var(--deep-purple), var(--dark-indigo));
+    border-top: 3px solid var(--temple-gold);
+}
+footer p, footer small { color: #ccc; }
+
+/* Hero section */
+.hero-section {
+    background: linear-gradient(135deg, var(--deep-purple), var(--dark-indigo));
+    color: var(--temple-gold);
+    border: 2px solid var(--temple-gold);
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(106, 13, 173, 0.3);
+}
+
+/* Covenant economy table */
+.covenant-table th {
+    background: var(--deep-purple);
+    color: var(--temple-gold);
+}
+.covenant-table td {
+    vertical-align: middle;
+    word-break: break-word;
+    white-space: normal;
+}
+
+/* Rank badges - dark colors for readability on white backgrounds */
+.rank-elder { color: #5C4033; font-weight: bold; }
+.rank-prophet { color: #B8860B; font-weight: bold; }
+.rank-apostle { color: #CC3700; font-weight: bold; }
+
+/* ---- Heading contrast system ---- */
+
+/* Default: dark headings on light backgrounds (body, white cards, etc.) */
+h1, h2, h3, h4, h5, h6,
+.card-title,
+.section-heading,
+.page-header {
+    color: #1A1A1A;
+    font-weight: 700;
+    text-shadow: none;
+}
+
+/* Hero section: gold headings on dark purple background */
+.hero-section h1,
+.hero-section h2,
+.hero-section h3,
+.hero-section h4,
+.hero-section h5,
+.hero-section h6 {
+    color: #FFD700;
+    font-weight: 700;
+}
+
+/* Kingdom card headers: gold headings on purple gradient */
+.kingdom-card .card-header h1,
+.kingdom-card .card-header h2,
+.kingdom-card .card-header h3,
+.kingdom-card .card-header h4,
+.kingdom-card .card-header h5,
+.kingdom-card .card-header h6 {
+    color: #FFD700;
+    font-weight: 700;
+}
+
+/* Covenant table headers: gold text on purple - already set on th, ensure children match */
+.covenant-table th h1,
+.covenant-table th h2,
+.covenant-table th h3,
+.covenant-table th h4,
+.covenant-table th h5,
+.covenant-table th h6 {
+    color: #FFD700;
+    font-weight: 700;
+}
+
+/* Ekklesia box: gold headings on dark purple */
+.ekklesia-box h1,
+.ekklesia-box h2,
+.ekklesia-box h3,
+.ekklesia-box h4,
+.ekklesia-box h5,
+.ekklesia-box h6 {
+    color: #FFD700;
+    font-weight: 700;
+}
+
+/* Stewardship callout: dark headings on light gold background */
+.stewardship-callout h1,
+.stewardship-callout h2,
+.stewardship-callout h3,
+.stewardship-callout h4,
+.stewardship-callout h5,
+.stewardship-callout h6 {
+    color: #2E0A4E;
+    font-weight: 700;
+}
+
+/* Card header with light background */
+.card-header:not(.kingdom-card .card-header) {
+    background-color: #f8f6f0;
+}
+.card-header:not(.kingdom-card .card-header) h1,
+.card-header:not(.kingdom-card .card-header) h2,
+.card-header:not(.kingdom-card .card-header) h3,
+.card-header:not(.kingdom-card .card-header) h4,
+.card-header:not(.kingdom-card .card-header) h5,
+.card-header:not(.kingdom-card .card-header) h6 {
+    color: #1A1A1A;
+    font-weight: 700;
+}
+
+/* Navbar brand and text - gold on dark purple */
+.navbar-dark .navbar-brand,
+.navbar-dark .navbar-brand h1,
+.navbar-dark .navbar-brand h2,
+.navbar-dark .navbar-brand h3,
+.navbar-dark .navbar-brand h4,
+.navbar-dark .navbar-brand h5,
+.navbar-dark .navbar-brand h6 {
+    color: #FFD700 !important;
+    font-weight: 700;
+}
+
+/* Links */
+a { color: #6A0DAD; }
+a:hover { color: #4B0082; }
+
+/* Unify card border-left styles */
+.card.border-primary { border-left: 4px solid var(--temple-gold) !important; }
+.card.border-success { border-left: 4px solid var(--royal-purple) !important; }
+.card.border-warning { border-left: 4px solid #FF6F00 !important; }
+
+/* Admin sidebar */
+.admin-sidebar {
+    border: 1px solid var(--temple-gold);
+}
+
+/* Button tweaks */
+.btn-outline-primary {
+    border-color: var(--temple-gold) !important;
+    color: #B8860B !important;
+}
+.btn-outline-primary:hover {
+    background: var(--temple-gold) !important;
+    color: #000 !important;
+}
+
+/* Ekklesia sidebar box */
+.ekklesia-box {
+    background: linear-gradient(135deg, #1a1a2e, #2d004d);
+    border: 2px solid var(--temple-gold);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    color: var(--temple-gold);
+}
+.ekklesia-box a {
+    color: var(--temple-gold);
+    text-decoration: underline;
+}
+.ekklesia-box h6 {
+    color: var(--temple-gold);
+    font-weight: bold;
+}

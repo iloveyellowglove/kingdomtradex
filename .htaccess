@@ -1,0 +1,49 @@
+# Apache .htaccess for Exchange Demo Platform
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Force HTTPS (uncomment in production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# Block access to sensitive directories
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Protect includes, models, controllers, config directories
+RewriteRule ^(config|includes|models|controllers|sql|cron)/.* - [F,L]
+
+# Protect .sql files
+<FilesMatch "\.sql$">
+    Require all denied
+</FilesMatch>
+
+# Only allow API access to PHP files directly
+RewriteRule ^api/(.*\.php)$ api/$1 [L]
+
+# Route to PHP files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set X-XSS-Protection "1; mode=block"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# Disable directory listing
+Options -Indexes
+
+# PHP settings
+<IfModule mod_php.c>
+    php_value session.cookie_httponly 1
+    php_value session.cookie_secure 1
+    php_value session.cookie_samesite "Strict"
+</IfModule>
+
+# Set default charset
+AddDefaultCharset UTF-8

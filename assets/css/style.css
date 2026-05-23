@@ -1,0 +1,98 @@
+/**
+ * Custom styles - DEMO MODE Exchange Platform
+ */
+
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+    letter-spacing: -0.5px;
+}
+
+.card {
+    border-radius: 0.5rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.tree-node .card {
+    transition: box-shadow 0.2s;
+}
+
+.tree-node .card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Order book styling */
+#asksTable tr, #bidsTable tr {
+    cursor: default;
+    font-size: 0.85rem;
+}
+
+#asksTable td:first-child { color: #dc3545; }
+#bidsTable td:first-child { color: #198754; }
+
+#tradesTable tr { font-size: 0.82rem; }
+
+/* Flash alert animation */
+.alert {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Badge tweaks */
+.badge { font-weight: 500; }
+
+/* Code blocks */
+code {
+    word-break: break-all;
+    font-size: 0.85rem;
+}
+
+/* Dashboard cards */
+.card.border-primary { border-left: 4px solid #0d6efd !important; }
+.card.border-success { border-left: 4px solid #198754 !important; }
+.card.border-warning { border-left: 4px solid #ffc107 !important; }
+
+/* Admin sidebar */
+.admin-sidebar .nav-link {
+    color: #adb5bd;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+    color: #fff;
+    background-color: rgba(255,255,255,0.1);
+}
+
+/* Footer */
+footer {
+    border-top: 3px solid #0d6efd;
+}
+
+/* Responsive chart */
+#priceChart {
+    max-height: 280px;
+}
+
+/* Table hover */
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Print-friendly */
+@media print {
+    nav, footer, .btn, .alert { display: none !important; }
+}
