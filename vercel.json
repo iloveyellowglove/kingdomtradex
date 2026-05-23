@@ -1,11 +1,9 @@
 {
   "version": 2,
   "builds": [
-    { "src": "**/*.php", "use": "vercel-php@0.9.0" },
-    { "src": "assets/**/*", "use": "@vercel/static" }
+    { "src": "**/*.php", "use": "vercel-php@0.9.0" }
   ],
   "routes": [
-    { "handle": "filesystem" },
     { "src": "/about/(.*)", "dest": "/about/$1" },
     { "src": "/covenant/(.*)", "dest": "/covenant/$1" },
     { "src": "/(.*\\.php)", "dest": "/$1" },

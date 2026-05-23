@@ -6,6 +6,37 @@
  * When used as PHP built-in server router, return false for existing
  * static files and PHP scripts so they're served directly.
  */
+// On Vercel and other production environments, static file requests arrive at
+// index.php via the catch-all route. Serve them with correct MIME types.
+if (php_sapi_name() !== 'cli-server') {
+    $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $ext = strtolower(pathinfo($uri, PATHINFO_EXTENSION));
+    $mimeTypes = [
+        'css'   => 'text/css',
+        'js'    => 'application/javascript',
+        'png'   => 'image/png',
+        'jpg'   => 'image/jpeg',
+        'jpeg'  => 'image/jpeg',
+        'gif'   => 'image/gif',
+        'svg'   => 'image/svg+xml',
+        'ico'   => 'image/x-icon',
+        'woff'  => 'font/woff',
+        'woff2' => 'font/woff2',
+        'ttf'   => 'font/ttf',
+        'eot'   => 'application/vnd.ms-fontobject',
+    ];
+    if (isset($mimeTypes[$ext])) {
+        $file = __DIR__ . $uri;
+        if (file_exists($file)) {
+            header('Content-Type: ' . $mimeTypes[$ext]);
+            header('Cache-Control: public, max-age=31536000, immutable');
+            header('Content-Length: ' . filesize($file));
+            readfile($file);
+            exit;
+        }
+    }
+}
+
 if (php_sapi_name() === 'cli-server') {
     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $file = __DIR__ . $uri;
