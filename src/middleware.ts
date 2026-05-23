@@ -70,7 +70,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Admin route protection
-  if (pathname.startsWith('/admin') && session.user_role !== 'admin') {
+  if ((pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) && session.user_role !== 'admin') {
     if (pathname.startsWith('/api/admin')) {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }

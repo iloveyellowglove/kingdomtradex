@@ -1,4 +1,6 @@
+import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
+import SettingsTable from '@/components/admin/SettingsTable';
 
 type SettingRow = {
   id: number;
@@ -8,6 +10,20 @@ type SettingRow = {
 };
 
 export default async function AdminSettingsPage() {
+  const cookieStore = cookies();
+  const token = cookieStore.get('kingdom_session')?.value;
+
+  let csrfToken = '';
+  if (token) {
+    const supabase = createServiceClient();
+    const { data: sessions } = await supabase
+      .from('sessions')
+      .select('csrf_token')
+      .eq('session_token', token)
+      .limit(1);
+    csrfToken = (sessions?.[0] as { csrf_token?: string } | undefined)?.csrf_token ?? '';
+  }
+
   const supabase = createServiceClient();
   const { data } = await supabase
     .from('settings')
@@ -19,28 +35,7 @@ export default async function AdminSettingsPage() {
   return (
     <div>
       <h2 className="mb-4">System Settings</h2>
-      <div className="card">
-        <div className="card-body p-0 overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr>
-                <th className="text-left p-3">Key</th>
-                <th className="text-left p-3">Value</th>
-                <th className="text-left p-3">Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {settings.map((s) => (
-                <tr key={s.id}>
-                  <td className="p-3"><code>{s.setting_key}</code></td>
-                  <td className="p-3 font-mono">{s.setting_value}</td>
-                  <td className="p-3"><small className="text-text-muted">{s.description || '-'}</small></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <SettingsTable settings={settings} csrfToken={csrfToken} />
     </div>
   );
 }
