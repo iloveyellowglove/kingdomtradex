@@ -19,6 +19,10 @@ export async function POST(request: NextRequest) {
     .limit(1);
 
   const user = users?.[0];
+  console.log('[login] email:', emailClean);
+  console.log('[login] user found:', !!user);
+  console.log('[login] hash prefix (first 10):', user?.password_hash?.substring(0, 10) ?? 'none');
+
   if (!user) {
     return NextResponse.json({ success: false, error: 'Invalid credentials.' }, { status: 401 });
   }
@@ -31,6 +35,7 @@ export async function POST(request: NextRequest) {
   }
 
   const pwOk = verifyPassword(password, user.password_hash);
+  console.log('[login] bcrypt.compare result:', pwOk);
   if (!pwOk) {
     return NextResponse.json({ success: false, error: 'Invalid credentials.' }, { status: 401 });
   }
