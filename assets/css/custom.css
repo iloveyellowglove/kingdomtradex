@@ -15,6 +15,37 @@
     --border-light: #352c4a;
     --gold-glow: rgba(255, 215, 0, 0.25);
     --gold-glow-strong: rgba(255, 215, 0, 0.45);
+
+    /* Override Bootstrap 5 CSS custom properties (light defaults → dark) */
+    --bs-body-bg: #0e0b1a;
+    --bs-body-color: #f0edf5;
+    --bs-card-bg: #151025;
+    --bs-card-cap-bg: rgba(75, 0, 130, 0.4);
+    --bs-card-color: #f0edf5;
+    --bs-card-border-color: #261f3a;
+    --bs-heading-color: #fff;
+    --bs-emphasis-color: #fff;
+    --bs-border-color: #261f3a;
+    --bs-link-color: #FFD700;
+    --bs-link-hover-color: #FFE44D;
+    --bs-table-bg: #151025;
+    --bs-table-color: #f0edf5;
+    --bs-table-border-color: #352c4a;
+    --bs-dropdown-bg: #151025;
+    --bs-dropdown-color: #f0edf5;
+    --bs-dropdown-link-color: #f0edf5;
+    --bs-dropdown-link-hover-bg: rgba(255, 215, 0, 0.08);
+    --bs-dropdown-link-hover-color: #FFD700;
+    --bs-modal-bg: #151025;
+    --bs-modal-color: #f0edf5;
+    --bs-navbar-color: #f0edf5;
+    --bs-navbar-hover-color: #FFD700;
+    --bs-navbar-brand-color: #FFD700;
+    --bs-secondary-color: #a89bb5;
+    --bs-tertiary-color: #6e6080;
+    --bs-form-control-bg: #151025;
+    --bs-form-control-color: #f0edf5;
+    --bs-form-control-border-color: #352c4a;
 }
 
 /* Body — !important guarantees dark theme overrides Bootstrap and style.css */
