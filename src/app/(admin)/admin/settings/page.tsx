@@ -9,6 +9,11 @@ type SettingRow = {
   description: string | null;
 };
 
+const MISSING_SETTINGS: { key: string; value: string; description: string }[] = [
+  { key: 'openrouter_api_key', value: '', description: 'API key for OpenRouter AI provider' },
+  { key: 'openrouter_model', value: 'mistralai/mistral-7b-instruct', description: 'Model used for AI oracle chatbot' },
+];
+
 export default async function AdminSettingsPage() {
   const cookieStore = cookies();
   const token = cookieStore.get('kingdom_session')?.value;
@@ -25,6 +30,23 @@ export default async function AdminSettingsPage() {
   }
 
   const supabase = createServiceClient();
+
+  // Upsert missing settings
+  for (const s of MISSING_SETTINGS) {
+    const { data: existing } = await supabase
+      .from('settings')
+      .select('id')
+      .eq('setting_key', s.key)
+      .limit(1);
+    if (!existing || existing.length === 0) {
+      await supabase.from('settings').insert({
+        setting_key: s.key,
+        setting_value: s.value,
+        description: s.description,
+      });
+    }
+  }
+
   const { data } = await supabase
     .from('settings')
     .select('*')

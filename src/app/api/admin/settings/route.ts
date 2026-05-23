@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { updateSetting } from '@/lib/db/settings';
+import { createServiceClient } from '@/lib/supabase/service';
 
 export async function PATCH(request: NextRequest) {
   const { key, value } = await request.json();
@@ -8,6 +8,16 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Missing key or value.' }, { status: 400 });
   }
 
-  await updateSetting(key, value);
+  const supabase = createServiceClient();
+  const { error } = await supabase
+    .from('settings')
+    .update({ setting_value: value })
+    .eq('setting_key', key);
+
+  if (error) {
+    console.log('[settings] update error:', JSON.stringify(error));
+    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+  }
+
   return NextResponse.json({ success: true });
 }
