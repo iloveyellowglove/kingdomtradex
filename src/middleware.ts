@@ -48,10 +48,7 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
-    // Clear invalid cookie
-    const response = NextResponse.redirect(new URL('/login', request.url));
-    response.cookies.set('kingdom_session', '', { expires: new Date(0), path: '/' });
-    return response;
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   const session = sessions[0];
@@ -61,9 +58,7 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ success: false, error: 'Session expired' }, { status: 401 });
     }
-    const response = NextResponse.redirect(new URL('/login', request.url));
-    response.cookies.set('kingdom_session', '', { expires: new Date(0), path: '/' });
-    return response;
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   // Admin route protection
