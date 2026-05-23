@@ -10,13 +10,5 @@ export default async function LogoutPage() {
     await supabase.from('sessions').delete().eq('session_token', token);
   }
 
-  cookieStore.set('kingdom_session', '', {
-    expires: new Date(0),
-    path: '/',
-    secure: true,
-    httpOnly: true,
-    sameSite: 'lax',
-  });
-
   redirect('/login');
 }
