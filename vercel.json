@@ -1,16 +1,12 @@
 {
-  "version": 2,
-  "buildCommand": "next build",
-  "devCommand": "next dev",
-  "framework": "nextjs",
   "crons": [
     {
-      "path": "/api/cron/daily-profit",
-      "schedule": "0 1 * * *"
+      "path": "/api/cron/apply-profit",
+      "schedule": "1 0 * * *"
     },
     {
       "path": "/api/cron/process-withdrawals",
-      "schedule": "0 */12 * * *"
+      "schedule": "0 * * * *"
     }
   ]
 }
