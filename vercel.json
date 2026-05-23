@@ -4,13 +4,10 @@
     { "src": "**/*.php", "use": "vercel-php@0.9.0" }
   ],
   "routes": [
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/css/(.*)", "dest": "/css/$1" },
-    { "src": "/js/(.*)", "dest": "/js/$1" },
+    { "handle": "filesystem" },
     { "src": "/about/(.*)", "dest": "/about/$1" },
     { "src": "/covenant/(.*)", "dest": "/covenant/$1" },
     { "src": "/(.*\\.php)", "dest": "/$1" },
-    { "src": "/(.*\\.ico)", "dest": "/$1" },
     { "src": "/", "dest": "/index.php" },
     { "src": "/(.*)", "dest": "/index.php" }
   ]
