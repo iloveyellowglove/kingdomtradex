@@ -1,9 +1,11 @@
 /**
- * Custom styles - KingdomTrade Exchange Platform
+ * Base styles - KingdomTrade Exchange Dark Theme
+ * Sits between Bootstrap and custom.css in the cascade.
  */
 
 body {
-    background-color: #f8f9fa;
+    background-color: #0e0b1a;
+    color: #f0edf5;
     min-height: 100vh;
 }
 
@@ -17,8 +19,9 @@ body {
 }
 
 .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid rgba(0,0,0,.125);
+    background: linear-gradient(135deg, rgba(75, 0, 130, 0.4), rgba(26, 26, 46, 0.8));
+    color: #FFD700;
+    border-bottom: 1px solid #261f3a;
 }
 
 .tree-node .card {
@@ -26,7 +29,7 @@ body {
 }
 
 .tree-node .card:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.25);
 }
 
 /* Order book styling */
@@ -79,7 +82,7 @@ code {
 
 /* Footer */
 footer {
-    border-top: 3px solid #0d6efd;
+    border-top: 3px solid #FFD700;
 }
 
 /* Responsive chart */
@@ -89,7 +92,7 @@ footer {
 
 /* Table hover */
 .table-hover tbody tr:hover {
-    background-color: rgba(13, 110, 253, 0.05);
+    background-color: rgba(255, 215, 0, 0.08);
 }
 
 /* Print-friendly */
