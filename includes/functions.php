@@ -26,14 +26,31 @@ function ensureSession(): void {
 }
 
 /**
- * Get currently logged-in user or null
+ * Get currently logged-in user or null.
+ * Queries by id only (not id+status) to avoid Supabase replication/rate-limit
+ * false negatives that would kick users out of valid sessions.
  */
 function currentUser(): ?array {
     ensureSession();
-    if (empty($_SESSION['user_id'])) return null;
+    if (empty($_SESSION['user_id'])) {
+        error_log('[CURRENT_USER] No user_id in session');
+        return null;
+    }
+    $userId = (int)$_SESSION['user_id'];
+    error_log('[CURRENT_USER] Querying Supabase for id=' . $userId);
     $db = getDB();
-    $rows = $db->query('users', ['id' => 'eq.' . (int)$_SESSION['user_id'], 'status' => 'eq.active'], '*', '', 1);
-    return $rows[0] ?? null;
+    $rows = $db->query('users', ['id' => 'eq.' . $userId], '*', '', 1);
+    if (empty($rows)) {
+        error_log('[CURRENT_USER] Supabase returned empty for id=' . $userId . ' (network error, replication lag, or rate limit)');
+        return null;
+    }
+    $user = $rows[0];
+    error_log('[CURRENT_USER] User found: id=' . $user['id'] . ' status=' . ($user['status'] ?? '?'));
+    if (($user['status'] ?? '') !== 'active') {
+        error_log('[CURRENT_USER] User id=' . $user['id'] . ' status is ' . ($user['status'] ?? '?') . ', not active');
+        return null;
+    }
+    return $user;
 }
 
 /**
@@ -42,6 +59,7 @@ function currentUser(): ?array {
 function requireLogin(): array {
     $user = currentUser();
     if (!$user) {
+        error_log('[REQUIRE_LOGIN] currentUser() returned null, session user_id=' . ($_SESSION['user_id'] ?? 'unset') . '. Redirecting to /login.php');
         header('Location: /login.php');
         exit;
     }
