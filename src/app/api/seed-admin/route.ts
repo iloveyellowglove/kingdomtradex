@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { hashPassword } from '@/lib/auth/password';
+import bcrypt from 'bcryptjs';
 
 export async function POST() {
-  return NextResponse.json({ hash: hashPassword('admin123') });
+  const hash = await bcrypt.hash('admin123', 12);
+  return NextResponse.json({ hash });
 }
