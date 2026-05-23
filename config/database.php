@@ -11,6 +11,5 @@ if (empty($supabaseUrl)) {
 
 return [
     'supabase_url' => getenv('SUPABASE_URL'),
-    'supabase_anon_key' => getenv('SUPABASE_ANON_KEY'),
     'supabase_service_role_key' => getenv('SUPABASE_SERVICE_ROLE_KEY'),
 ];
