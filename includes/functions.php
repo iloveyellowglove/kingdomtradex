@@ -16,28 +16,176 @@ function getDB(): SupabaseClient {
     return $db;
 }
 
+// ── Supabase-backed session system ──
+// Replaces PHP native sessions which do not persist across Vercel serverless lambdas.
+// Sessions are stored in the Supabase "sessions" table, keyed by a secure random token
+// stored in an HttpOnly cookie named "kingdom_session".
+
 /**
- * Start session if not already started
+ * Create a new session in Supabase and set the cookie.
+ * Returns the session token.
  */
-function ensureSession(): void {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+function sessionCreate(int $userId, string $role): string {
+    $token = bin2hex(random_bytes(32));
+    $csrfToken = bin2hex(random_bytes(16));
+    $db = getDB();
+
+    $db->post('sessions', [
+        'session_token' => $token,
+        'user_id' => $userId,
+        'user_role' => $role,
+        'csrf_token' => $csrfToken,
+        'created_at' => date('Y-m-d\TH:i:s\Z'),
+        'expires_at' => date('Y-m-d\TH:i:s\Z', time() + 86400),
+    ]);
+
+    $secure = ($_SERVER['REQUEST_SCHEME'] ?? 'https') === 'https';
+    setcookie('kingdom_session', $token, [
+        'expires' => time() + 86400,
+        'path' => '/',
+        'httponly' => true,
+        'secure' => $secure,
+        'samesite' => 'Lax',
+    ]);
+
+    error_log('[SESSION] Created token for user_id=' . $userId . ' role=' . $role);
+    return $token;
 }
 
 /**
- * Get currently logged-in user or null.
- * Queries by id only (not id+status) to avoid Supabase replication/rate-limit
- * false negatives that would kick users out of valid sessions.
+ * Read the session cookie, validate against Supabase, return session data or null.
+ * Cleans up expired sessions automatically.
  */
-function currentUser(): ?array {
-    ensureSession();
-    if (empty($_SESSION['user_id'])) {
-        error_log('[CURRENT_USER] No user_id in session');
+function sessionGet(): ?array {
+    $token = $_COOKIE['kingdom_session'] ?? null;
+    if (!$token || strlen($token) !== 64) {
         return null;
     }
-    $userId = (int)$_SESSION['user_id'];
-    error_log('[CURRENT_USER] Querying Supabase for id=' . $userId);
+
+    $db = getDB();
+    $rows = $db->query('sessions', ['session_token' => 'eq.' . $token], '*', '', 1);
+    $row = $rows[0] ?? null;
+
+    if (!$row) {
+        error_log('[SESSION] Token not found in sessions table');
+        return null;
+    }
+
+    $expiresAt = strtotime($row['expires_at'] ?? '');
+    if ($expiresAt && time() > $expiresAt) {
+        error_log('[SESSION] Token expired, deleting: ' . substr($token, 0, 8) . '...');
+        $db->delete('sessions', ['session_token' => 'eq.' . $token]);
+        return null;
+    }
+
+    return [
+        'user_id' => (int)$row['user_id'],
+        'user_role' => $row['user_role'],
+        'csrf_token' => $row['csrf_token'] ?? '',
+    ];
+}
+
+/**
+ * Destroy the current session: delete from Supabase and clear the cookie.
+ */
+function sessionDestroy(): void {
+    $token = $_COOKIE['kingdom_session'] ?? null;
+    if ($token) {
+        $db = getDB();
+        $db->delete('sessions', ['session_token' => 'eq.' . $token]);
+        error_log('[SESSION] Destroyed token: ' . substr($token, 0, 8) . '...');
+    }
+    setcookie('kingdom_session', '', [
+        'expires' => 1,
+        'path' => '/',
+        'httponly' => true,
+        'secure' => ($_SERVER['REQUEST_SCHEME'] ?? 'https') === 'https',
+        'samesite' => 'Lax',
+    ]);
+}
+
+/**
+ * Store a flash message in the sessions table.
+ */
+function flash(string $key, string $message): void {
+    $session = sessionGet();
+    if (!$session) return;
+
+    $db = getDB();
+    $token = $_COOKIE['kingdom_session'];
+    $existing = $db->query('sessions', ['session_token' => 'eq.' . $token], 'flash_data', '', 1);
+    $flashes = [];
+    if (!empty($existing) && !empty($existing[0]['flash_data'])) {
+        $flashes = json_decode($existing[0]['flash_data'], true) ?: [];
+    }
+    $flashes[$key] = $message;
+    $db->patch('sessions', ['session_token' => 'eq.' . $token], [
+        'flash_data' => json_encode($flashes),
+    ]);
+}
+
+/**
+ * Retrieve and clear flash messages from the sessions table.
+ */
+function getFlashes(): array {
+    $session = sessionGet();
+    if (!$session) return [];
+
+    $db = getDB();
+    $token = $_COOKIE['kingdom_session'];
+    $rows = $db->query('sessions', ['session_token' => 'eq.' . $token], 'flash_data', '', 1);
+    $flashes = [];
+    if (!empty($rows) && !empty($rows[0]['flash_data'])) {
+        $flashes = json_decode($rows[0]['flash_data'], true) ?: [];
+    }
+    // Clear flash data
+    $db->patch('sessions', ['session_token' => 'eq.' . $token], [
+        'flash_data' => null,
+    ]);
+    return $flashes;
+}
+
+/**
+ * No-op: kept for backward compatibility with callers that expect session init.
+ * The Supabase cookie session does not need explicit initialization.
+ */
+function ensureSession(): void {
+    // Supabase-backed sessions require no PHP session init
+}
+
+/**
+ * Generate a CSRF token from the current session.
+ */
+function csrfToken(): string {
+    $session = sessionGet();
+    if (!$session) return bin2hex(random_bytes(32));
+    return $session['csrf_token'];
+}
+
+/**
+ * Validate a submitted CSRF token against the session.
+ */
+function validateCsrf(string $token): bool {
+    $session = sessionGet();
+    if (!$session) return false;
+    return hash_equals($session['csrf_token'], $token);
+}
+
+// ── User lookup ──
+
+/**
+ * Get currently logged-in user or null.
+ * Uses Supabase sessions table to find user_id, then queries users table by id only
+ * (not id+status) to avoid replication/rate-limit false negatives.
+ */
+function currentUser(): ?array {
+    $session = sessionGet();
+    if (!$session) {
+        error_log('[CURRENT_USER] No valid session');
+        return null;
+    }
+    $userId = $session['user_id'];
+    error_log('[CURRENT_USER] Looking up user id=' . $userId);
     $db = getDB();
     $rows = $db->query('users', ['id' => 'eq.' . $userId], '*', '', 1);
     if (empty($rows)) {
@@ -59,7 +207,7 @@ function currentUser(): ?array {
 function requireLogin(): array {
     $user = currentUser();
     if (!$user) {
-        error_log('[REQUIRE_LOGIN] currentUser() returned null, session user_id=' . ($_SESSION['user_id'] ?? 'unset') . '. Redirecting to /login.php');
+        error_log('[REQUIRE_LOGIN] currentUser() returned null, redirecting to /login.php');
         header('Location: /login.php');
         exit;
     }
@@ -78,42 +226,7 @@ function requireRole(string ...$roles): array {
     return $user;
 }
 
-/**
- * Generate a CSRF token and store in session
- */
-function csrfToken(): string {
-    ensureSession();
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
-
-/**
- * Validate a submitted CSRF token
- */
-function validateCsrf(string $token): bool {
-    ensureSession();
-    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
-}
-
-/**
- * Redirect back with an error flash message
- */
-function flash(string $key, string $message): void {
-    ensureSession();
-    $_SESSION['flash'][$key] = $message;
-}
-
-/**
- * Retrieve and clear flash messages
- */
-function getFlashes(): array {
-    ensureSession();
-    $flashes = $_SESSION['flash'] ?? [];
-    unset($_SESSION['flash']);
-    return $flashes;
-}
+// ── Referral ──
 
 /**
  * Generate a unique 8-character referral code
@@ -125,6 +238,8 @@ function generateReferralCode($db): string {
     } while (!empty($existing));
     return $code;
 }
+
+// ── Utilities ──
 
 /**
  * Sanitize output for HTML display

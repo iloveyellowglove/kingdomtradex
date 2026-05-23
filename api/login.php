@@ -17,9 +17,7 @@ $userModel = new User(getDB());
 $result = $userModel->login($input['email'] ?? '', $input['password'] ?? '');
 
 if ($result['success']) {
-    ensureSession();
-    $_SESSION['user_id'] = (int)$result['user']['id'];
-    $_SESSION['user_role'] = $result['user']['role'];
+    sessionCreate((int)$result['user']['id'], $result['user']['role']);
     unset($result['user']['password_hash']);
     echo json_encode(['success' => true, 'user' => $result['user']]);
 } else {

@@ -35,9 +35,8 @@ function handleLogin(): void {
         exit;
     }
 
-    $_SESSION['user_id'] = (int)$result['user']['id'];
-    $_SESSION['user_role'] = $result['user']['role'];
-    error_log('[AUTH] Session set: user_id=' . $_SESSION['user_id'] . ', role=' . $_SESSION['user_role']);
+    sessionCreate((int)$result['user']['id'], $result['user']['role']);
+    error_log('[AUTH] Session created via Supabase for user_id=' . $result['user']['id'] . ', role=' . $result['user']['role']);
 
     if ($result['user']['role'] === 'admin') {
         header('Location: /admin/dashboard.php');
@@ -89,8 +88,7 @@ function handleRegister(): void {
 }
 
 function handleLogout(): void {
-    ensureSession();
-    session_destroy();
+    sessionDestroy();
     header('Location: /login.php');
     exit;
 }
