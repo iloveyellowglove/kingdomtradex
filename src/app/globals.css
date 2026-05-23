@@ -1,0 +1,365 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --temple-gold: #FFD700;
+  --royal-purple: #6A0DAD;
+  --deep-purple: #4B0082;
+  --dark-indigo: #1a1a2e;
+  --bg-dark: #0e0b1a;
+  --card-bg: #151025;
+  --card-bg-hover: #1c1635;
+  --text-primary: #f0edf5;
+  --text-secondary: #a89bb5;
+  --text-muted: #6e6080;
+  --border: #261f3a;
+  --border-light: #352c4a;
+  --gold-glow: rgba(255, 215, 0, 0.25);
+  --gold-glow-strong: rgba(255, 215, 0, 0.45);
+}
+
+body {
+  background-color: #0e0b1a;
+  color: #f0edf5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* Navbar: glassmorphism */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(14, 11, 26, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid #261f3a;
+  transition: background 0.3s;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar.scrolled {
+  background: rgba(14, 11, 26, 0.98);
+}
+
+main {
+  margin-top: 84px;
+}
+
+/* Cards */
+.card {
+  background: #151025;
+  border: 1px solid #261f3a;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  color: #f0edf5;
+}
+
+.card-header {
+  background: linear-gradient(135deg, rgba(75, 0, 130, 0.4), rgba(26, 26, 46, 0.8));
+  color: #FFD700;
+  border-bottom: 1px solid #352c4a;
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, #FFD700, #c9a800);
+  border-color: #B8860B;
+  color: #1a1a2e;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(255, 215, 0, 0.25);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #FFE44D, #FFD700);
+  color: #1a1a2e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.45);
+}
+
+/* Links */
+a {
+  color: #FFD700;
+}
+
+a:hover {
+  color: #FFE44D;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #fff;
+  font-weight: 700;
+}
+
+.text-muted {
+  color: #6e6080 !important;
+}
+
+.text-primary {
+  color: #FFD700 !important;
+}
+
+.text-success {
+  color: #00c853 !important;
+}
+
+.text-warning {
+  color: #FFD700 !important;
+}
+
+.text-danger {
+  color: #ff5252 !important;
+}
+
+.text-info {
+  color: #b47cff !important;
+}
+
+/* Forms */
+input, select, textarea {
+  background: #151025;
+  border: 1px solid #352c4a;
+  color: #f0edf5;
+  border-radius: 8px;
+  min-height: 44px;
+  font-size: 16px;
+  padding: 8px 12px;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #FFD700;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  outline: none;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #6e6080;
+}
+
+/* Tables */
+table {
+  color: #f0edf5;
+  width: 100%;
+}
+
+thead th {
+  background: rgba(75, 0, 130, 0.4);
+  color: #FFD700;
+  border-bottom: 1px solid #352c4a;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 12px 16px;
+}
+
+tbody td {
+  border-bottom: 1px solid #261f3a;
+  padding: 10px 16px;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background-color: rgba(255, 215, 0, 0.04);
+}
+
+/* Alerts */
+.alert {
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  animation: slideDown 0.3s ease-out;
+}
+
+.alert-success {
+  border: 1px solid #00c853;
+  background: rgba(0, 200, 83, 0.08);
+  color: #f0edf5;
+}
+
+.alert-danger {
+  border: 1px solid #ff5252;
+  background: rgba(255, 82, 82, 0.08);
+  color: #f0edf5;
+}
+
+.alert-warning {
+  border: 1px solid #FFD700;
+  background: rgba(255, 215, 0, 0.06);
+  color: #FFD700;
+}
+
+.alert-info {
+  border: 1px solid #b47cff;
+  background: rgba(180, 124, 255, 0.08);
+  color: #f0edf5;
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.badge-success {
+  background: #00c853;
+  color: #fff;
+}
+
+.badge-warning {
+  background: #b8860b;
+  color: #1a1a2e;
+}
+
+.badge-info {
+  background: #6A0DAD;
+  color: #fff;
+}
+
+.badge-danger {
+  background: #ff5252;
+  color: #fff;
+}
+
+.badge-secondary {
+  background: rgba(110, 96, 128, 0.3);
+  color: #f0edf5;
+}
+
+/* Code */
+code {
+  color: #FFD700;
+  background: rgba(255, 215, 0, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+/* Footer */
+footer {
+  background: linear-gradient(135deg, #1a1a2e, #110a22);
+  border-top: 2px solid #FFD700;
+  color: #f0edf5;
+  margin-top: 3rem;
+  padding: 2rem 0;
+}
+
+/* Hero section */
+.hero-section {
+  background: linear-gradient(135deg, #4B0082, #1a1a2e);
+  color: #FFD700;
+  border: 2px solid #FFD700;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(106, 13, 173, 0.3);
+}
+
+.hero-section h1, .hero-section h2, .hero-section h3 {
+  color: #FFD700;
+  font-weight: 700;
+}
+
+/* Stewardship callout */
+.stewardship-callout {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.06), rgba(255, 215, 0, 0.02));
+  border: 2px solid #6A0DAD;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(106, 13, 173, 0.15);
+}
+
+.stewardship-callout h5 {
+  color: #FFD700;
+  font-weight: bold;
+}
+
+/* Kingdom card */
+.kingdom-card {
+  border: 2px solid #FFD700;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.25);
+}
+
+.kingdom-card .card-header {
+  background: linear-gradient(135deg, #4B0082, #6A0DAD);
+  color: #FFD700;
+}
+
+/* Urgency banner */
+.urgency-banner {
+  background: linear-gradient(135deg, #B71C1C, #D32F2F);
+  color: #FFD700;
+  text-align: center;
+  padding: 12px 20px;
+  font-weight: bold;
+  border-bottom: 2px solid #FFD700;
+  animation: pulseBorder 2s ease-in-out infinite;
+}
+
+/* Rank badges */
+.rank-elder { color: #FFD700; font-weight: bold; }
+.rank-prophet { color: #FFC107; font-weight: bold; }
+.rank-apostle { color: #ff7043; font-weight: bold; }
+
+/* Ekklesia box */
+.ekklesia-box {
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(45, 0, 77, 0.9));
+  border: 2px solid #FFD700;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  color: #FFD700;
+}
+
+/* Admin sidebar */
+.admin-sidebar {
+  border: 1px solid #FFD700;
+  background: #151025;
+  border-radius: 16px;
+}
+
+.admin-sidebar .nav-link {
+  color: #a89bb5;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+  color: #FFD700;
+  background-color: rgba(255, 215, 0, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  main {
+    margin-top: 72px;
+  }
+  footer .text-end {
+    text-align: left !important;
+    margin-top: 0.75rem;
+  }
+  .hero-section {
+    padding: 1.25rem;
+  }
+}
+
+@media print {
+  nav, footer, .btn, .alert {
+    display: none !important;
+  }
+}
