@@ -112,6 +112,9 @@ class User {
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
         error_log('[LOGIN] Step 3: user found, id=' . ($user['id'] ?? '?') . ', status=' . ($user['status'] ?? '?') . ', hash_len=' . strlen($user['password_hash'] ?? ''));
+        error_log('[LOGIN] DEBUG: testing known hash: ' . (password_verify('admin123', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uZutLiSDi') ? 'TRUE' : 'FALSE'));
+        error_log('[LOGIN] DEBUG: input password bytes: ' . bin2hex($password));
+        error_log('[LOGIN] DEBUG: hash from db bytes: ' . bin2hex($user['password_hash']));
         // Supabase JSON may return hashes with escaped forward slashes (\/)
         $hash = str_replace('\/', '/', $user['password_hash']);
         if ($user['status'] === 'banned') {
