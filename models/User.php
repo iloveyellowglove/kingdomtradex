@@ -97,9 +97,14 @@ class User {
      */
     public function login(string $email, string $password): array {
         $emailClean = strtolower(trim($email));
+
+        if (!filter_var($emailClean, FILTER_VALIDATE_EMAIL)) {
+            error_log('[LOGIN] FAIL: invalid email format: ' . substr($emailClean, 0, 50));
+            return ['success' => false, 'error' => 'Invalid credentials.'];
+        }
+
         error_log('[LOGIN] Step 1: querying Supabase for email=' . $emailClean);
         $rows = $this->db->query('users', ['email' => 'eq.' . $emailClean], '*', '', 1);
-        error_log('[LOGIN] Step 2: raw rows from Supabase: ' . json_encode($rows));
         $user = $rows[0] ?? null;
 
         if (!$user) {
@@ -107,12 +112,8 @@ class User {
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
         error_log('[LOGIN] Step 3: user found, id=' . ($user['id'] ?? '?') . ', status=' . ($user['status'] ?? '?') . ', hash_len=' . strlen($user['password_hash'] ?? ''));
-        error_log('[LOGIN] Step 3b: raw hash from Supabase: ' . $user['password_hash']);
         // Supabase JSON may return hashes with escaped forward slashes (\/)
         $hash = str_replace('\/', '/', $user['password_hash']);
-        if ($hash !== $user['password_hash']) {
-            error_log('[LOGIN] Step 3c: hash was unescaped: ' . $hash);
-        }
         if ($user['status'] === 'banned') {
             error_log('[LOGIN] FAIL: user is banned');
             return ['success' => false, 'error' => 'Account is banned.'];
@@ -207,7 +208,11 @@ class User {
     public function search(string $query = '', int $limit = 50, int $offset = 0): array {
         $filters = [];
         if ($query) {
-            $filters['or'] = '(email.ilike.%' . $query . '%,username.ilike.%' . $query . '%)';
+            // Sanitize: allow only alphanumeric, @, ., _, -, spaces, and % for ilike wildcard
+            $safe = preg_replace('/[^a-zA-Z0-9@._%\-\s]/', '', $query);
+            if ($safe !== '') {
+                $filters['or'] = '(email.ilike.%' . $safe . '%,username.ilike.%' . $safe . '%)';
+            }
         }
         return $this->db->query(
             'users',

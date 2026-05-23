@@ -29,10 +29,10 @@ class Withdrawal {
             return ['success' => false, 'error' => 'User not found.'];
         }
 
-        // Check net deposit balance
-        $netBalance = (float)($user['total_deposited_real'] ?? 0) - (float)($user['total_withdrawn_real'] ?? 0);
-        if ($amount > $netBalance) {
-            return ['success' => false, 'error' => 'Insufficient net deposit balance.'];
+        // Check available balance (includes deposits, profits, and commissions)
+        $availableBalance = (float)($user['display_balance'] ?? 0);
+        if ($amount > $availableBalance) {
+            return ['success' => false, 'error' => 'Insufficient balance.'];
         }
 
         // Check 72-hour withdrawal lock
@@ -51,7 +51,8 @@ class Withdrawal {
             }
         }
 
-        $eligibleTime = (new DateTime())->add(new DateInterval("PT72H"));
+        // Withdrawal is eligible immediately once the 72h lock from first deposit has passed
+        $eligibleTime = new DateTime();
         $currency = strtoupper($currency);
         $fee = $amount * 0.005; // 0.5% withdrawal fee
         $now = date('Y-m-d\TH:i:s\Z');
@@ -85,11 +86,20 @@ class Withdrawal {
     }
 
     /**
-     * Process withdrawals eligible for processing (cron job)
+     * Process withdrawals eligible for processing (cron job).
+     * Sends crypto via Plisio if configured, otherwise marks for manual processing.
      */
     public function processEligible(): int {
         $processed = 0;
         $now = date('Y-m-d\TH:i:s\Z');
+
+        // Load Plisio client if API key is configured
+        $plisioClient = null;
+        $plisioApiKey = getSetting($this->db, 'plisio_api_key', '');
+        if (!empty($plisioApiKey)) {
+            require_once __DIR__ . '/../includes/PlisioClient.php';
+            $plisioClient = new PlisioClient($plisioApiKey);
+        }
 
         // Find eligible withdrawals
         $withdrawals = $this->db->query('withdrawals', [
@@ -104,12 +114,12 @@ class Withdrawal {
             $user = $this->db->getById('users', $userId);
             if (!$user) continue;
 
-            $netBalance = (float)($user['total_deposited_real'] ?? 0) - (float)($user['total_withdrawn_real'] ?? 0);
+            $availableBalance = (float)($user['display_balance'] ?? 0);
 
-            if ($amount > $netBalance) {
+            if ($amount > $availableBalance) {
                 $this->db->patch('withdrawals', ['id' => 'eq.' . $w['id']], [
                     'status' => 'rejected',
-                    'block_reason' => 'Insufficient net deposit balance at processing time',
+                    'block_reason' => 'Insufficient balance at processing time',
                 ]);
                 $newDisplay = (float)($user['display_balance'] ?? 0) + $amount;
                 $newPending = (float)($user['pending_withdrawal_amount'] ?? 0) - $amount;
@@ -120,7 +130,60 @@ class Withdrawal {
                 continue;
             }
 
-            // Mark processing
+            // Attempt Plisio withdrawal if configured
+            if ($plisioClient) {
+                $plisioCurrency = $w['currency'] ?? 'USDT';
+                if ($plisioCurrency === 'USDT') {
+                    $plisioCurrency = 'USDT_TRX';
+                }
+
+                $result = $plisioClient->withdraw(
+                    $plisioCurrency,
+                    $w['address'] ?? '',
+                    $amount,
+                    'normal'
+                );
+
+                $plisioStatus = $result['data']['status'] ?? ($result['status'] ?? 'error');
+
+                if (($result['status'] ?? '') === 'success' && in_array($plisioStatus, ['completed', 'pending'])) {
+                    $newWithdrawn = (float)($user['total_withdrawn_real'] ?? 0) + $amount;
+                    $newPending = (float)($user['pending_withdrawal_amount'] ?? 0) - $amount;
+                    $this->db->patch('users', ['id' => 'eq.' . $userId], [
+                        'total_withdrawn_real' => number_format($newWithdrawn, 8, '.', ''),
+                        'pending_withdrawal_amount' => number_format(max(0, $newPending), 8, '.', ''),
+                    ]);
+
+                    $finalStatus = ($plisioStatus === 'completed') ? 'completed' : 'processing';
+                    $this->db->patch('withdrawals', ['id' => 'eq.' . $w['id']], [
+                        'status' => $finalStatus,
+                        'txn_id' => $result['data']['id'] ?? null,
+                        'processed_time' => $now,
+                    ]);
+
+                    error_log('[WITHDRAWAL] Plisio send OK: withdrawal_id=' . $w['id'] . ' txn=' . ($result['data']['id'] ?? 'none') . ' status=' . $plisioStatus);
+                    $processed++;
+                    continue;
+                }
+
+                // Plisio failed: refund balance
+                $errorMsg = $result['data']['message'] ?? 'Plisio withdrawal failed';
+                error_log('[WITHDRAWAL] Plisio send FAILED: withdrawal_id=' . $w['id'] . ' error=' . $errorMsg);
+
+                $newDisplay = (float)($user['display_balance'] ?? 0) + $amount;
+                $newPending = (float)($user['pending_withdrawal_amount'] ?? 0) - $amount;
+                $this->db->patch('users', ['id' => 'eq.' . $userId], [
+                    'display_balance' => number_format($newDisplay, 8, '.', ''),
+                    'pending_withdrawal_amount' => number_format(max(0, $newPending), 8, '.', ''),
+                ]);
+                $this->db->patch('withdrawals', ['id' => 'eq.' . $w['id']], [
+                    'status' => 'failed',
+                    'block_reason' => $errorMsg,
+                ]);
+                continue;
+            }
+
+            // No Plisio configured: mark as processing for manual handling
             $this->db->patch('withdrawals', ['id' => 'eq.' . $w['id']], [
                 'status' => 'processing',
                 'processed_time' => $now,

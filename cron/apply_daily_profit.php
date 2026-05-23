@@ -13,6 +13,18 @@
 require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../models/Settings.php';
 
+// Require CRON_SECRET token for HTTP access
+$cronSecret = getenv('CRON_SECRET');
+if (empty($cronSecret)) {
+    http_response_code(500);
+    die('CRON_SECRET environment variable is not set.');
+}
+$providedToken = $_GET['token'] ?? '';
+if (!hash_equals($cronSecret, $providedToken)) {
+    http_response_code(403);
+    die('Access denied.');
+}
+
 $db = getDB();
 $settings = new Settings($db);
 $profitRate = (float)$settings->get('daily_profit_percentage', '1.5');

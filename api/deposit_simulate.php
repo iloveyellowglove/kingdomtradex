@@ -16,6 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+
+// CSRF check
+if (!validateCsrf($input['csrf_token'] ?? '')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Invalid security token.']);
+    exit;
+}
+
 $db = getDB();
 $depositModel = new Deposit($db);
 

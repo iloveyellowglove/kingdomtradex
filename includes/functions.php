@@ -153,21 +153,59 @@ function ensureSession(): void {
 }
 
 /**
- * Generate a CSRF token from the current session.
+ * Generate a CSRF token from the current session, or a guest cookie for unauthenticated users.
  */
 function csrfToken(): string {
     $session = sessionGet();
-    if (!$session) return bin2hex(random_bytes(32));
-    return $session['csrf_token'];
+    if ($session) {
+        return $session['csrf_token'];
+    }
+
+    // No session: use a guest CSRF cookie for unauthenticated forms (register, forgot password)
+    $guestToken = $_COOKIE['csrf_guest'] ?? null;
+    if ($guestToken && strlen($guestToken) === 32) {
+        return $guestToken;
+    }
+
+    $guestToken = bin2hex(random_bytes(16));
+    setcookie('csrf_guest', $guestToken, [
+        'expires' => time() + 3600,
+        'path' => '/',
+        'secure' => true,
+        'httponly' => false,
+        'samesite' => 'Lax',
+    ]);
+    return $guestToken;
 }
 
 /**
- * Validate a submitted CSRF token against the session.
+ * Validate a submitted CSRF token against the session or guest cookie.
  */
 function validateCsrf(string $token): bool {
+    if (empty($token)) {
+        return false;
+    }
+
     $session = sessionGet();
-    if (!$session) return false;
-    return hash_equals($session['csrf_token'], $token);
+    if ($session) {
+        return hash_equals($session['csrf_token'], $token);
+    }
+
+    // No session: validate against guest cookie
+    $guestToken = $_COOKIE['csrf_guest'] ?? null;
+    if ($guestToken && hash_equals($guestToken, $token)) {
+        // Clear the guest cookie after successful use
+        setcookie('csrf_guest', '', [
+            'expires' => 1,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => false,
+            'samesite' => 'Lax',
+        ]);
+        return true;
+    }
+
+    return false;
 }
 
 // ── User lookup ──
@@ -291,4 +329,52 @@ function _fetchDownline($db, int $parentId, int $currentLevel, int $maxDepth): a
         $children[] = $row;
     }
     return $children;
+}
+
+// ── Email ──
+
+/**
+ * Send an email via Resend HTTP API.
+ * Falls back to error_log if RESEND_API_KEY is not set.
+ */
+function sendEmail(string $to, string $subject, string $htmlBody): bool {
+    $apiKey = getenv('RESEND_API_KEY');
+    if (empty($apiKey)) {
+        error_log('[EMAIL] RESEND_API_KEY not set. Would send to ' . $to . ': ' . $subject);
+        return false;
+    }
+
+    $payload = json_encode([
+        'from' => 'KingdomTrade Exchange <noreply@kingdomtradex.vercel.app>',
+        'to' => [$to],
+        'subject' => $subject,
+        'html' => $htmlBody,
+    ]);
+
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => implode("\r\n", [
+                'Authorization: Bearer ' . $apiKey,
+                'Content-Type: application/json',
+            ]),
+            'content' => $payload,
+            'timeout' => 15,
+            'ignore_errors' => true,
+        ],
+        'ssl' => ['verify_peer' => true],
+    ]);
+
+    $response = @file_get_contents('https://api.resend.com/emails', false, $context);
+    $httpCode = 0;
+    if (isset($http_response_header)) {
+        $firstLine = $http_response_header[0] ?? '';
+        if (preg_match('/\s(\d{3})\s/', $firstLine, $m)) {
+            $httpCode = (int)$m[1];
+        }
+    }
+
+    $success = $httpCode >= 200 && $httpCode < 300;
+    error_log('[EMAIL] Resend send to ' . $to . ': HTTP ' . $httpCode . ' ' . ($success ? 'OK' : 'FAILED'));
+    return $success;
 }

@@ -94,7 +94,7 @@ require __DIR__ . '/../../templates/header.php';
                     </div>
                     <div class="mb-0">
                         <label class="form-label">Webhook URL (set in Plisio dashboard)</label>
-                        <code><?= ($_SERVER['REQUEST_SCHEME'] ?? 'https') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') ?>/api/plisio_webhook.php</code>
+                        <code><?= (getenv('APP_URL') ?: 'https://kingdomtradex.vercel.app') ?>/api/plisio_webhook.php</code>
                     </div>
                 </div>
             </div>

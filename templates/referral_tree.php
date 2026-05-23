@@ -40,7 +40,7 @@ function renderTree(array $nodes, int $depth = 0): void {
     <div class="card-body">
         <div class="input-group">
             <input type="text" class="form-control" readonly
-                   value="<?= h('https://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/register.php?ref=' . $user['referral_code']) ?>"
+                   value="<?= h((getenv('APP_URL') ?: 'https://kingdomtradex.vercel.app') . '/register.php?ref=' . $user['referral_code']) ?>"
                    id="refLink">
             <button class="btn btn-outline-primary" onclick="navigator.clipboard.writeText(document.getElementById('refLink').value);alert('Copied!')">
                 <i class="bi bi-clipboard"></i> Copy

@@ -19,6 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+$inputData = json_decode(file_get_contents('php://input'), true) ?: [];
+
+// CSRF check
+if (!validateCsrf($inputData['csrf_token'] ?? '')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Invalid security token.']);
+    exit;
+}
+
 $db = getDB();
 
 // ── Load Plisio API key ──

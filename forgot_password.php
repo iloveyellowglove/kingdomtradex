@@ -38,14 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 error_log('[PASSWORD_RESET] ERROR: password_resets table may not exist. Run sql/create_password_resets.sql in Supabase SQL Editor.');
                 flash('error', 'Password reset is not available right now. Please contact support.');
             } else {
-                $resetUrl = ($_SERVER['REQUEST_SCHEME'] ?? 'https') . '://' . ($_SERVER['HTTP_HOST'] ?? 'kingdomtradex.vercel.app') . '/reset_password.php?token=' . $token;
+                $appUrl = getenv('APP_URL') ?: 'https://kingdomtradex.vercel.app';
+                $resetUrl = $appUrl . '/reset_password.php?token=' . $token;
 
-                // On Vercel, mail() may not work -- log the reset link to error_log
-                $mailed = @mail('iloveyellowglove@gmail.com', 'KingdomTrade Password Reset', "Reset link: $resetUrl\n\nThis link expires in 1 hour.");
-                if (!$mailed) {
-                    error_log('[PASSWORD_RESET] mail() not available. Reset token for ' . $email . ': ' . $resetUrl);
+                $emailBody = '<p>You requested a password reset for your KingdomTrade Exchange account.</p>'
+                    . '<p><a href="' . h($resetUrl) . '">Click here to reset your password</a></p>'
+                    . '<p>Or copy this link: ' . h($resetUrl) . '</p>'
+                    . '<p>This link expires in 1 hour. If you did not request this, ignore this email.</p>';
+
+                $sent = sendEmail($email, 'KingdomTrade Password Reset', $emailBody);
+                if ($sent) {
+                    error_log('[PASSWORD_RESET] Reset email sent to ' . $email);
                 } else {
-                    error_log('[PASSWORD_RESET] Reset email sent to iloveyellowglove@gmail.com for user ' . $email);
+                    error_log('[PASSWORD_RESET] Failed to send reset email to ' . $email . '. Reset URL: ' . $resetUrl);
                 }
 
                 flash('success', 'If that email is registered, a reset link has been sent.');

@@ -55,7 +55,7 @@ if ($ipnType === 'pay_in') {
     $result = $depositService->handleInvoiceCallback($postData);
 } else {
     // Log unknown type for debugging
-    error_log('[Plisio Webhook] Unknown ipn_type: ' . $ipnType . ' data=' . json_encode($postData));
+    error_log('[Plisio Webhook] Unknown ipn_type: ' . $ipnType . ' txn_id=' . ($postData['txn_id'] ?? 'none'));
     $result = ['success' => true, 'message' => 'Unknown ipn_type: ' . $ipnType];
 }
 

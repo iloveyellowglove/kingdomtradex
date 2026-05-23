@@ -32,7 +32,7 @@ $rankClass = match($rank) {
     </div>
     <div class="col-md-4 text-md-end">
         <small class="text-muted">Disciple Code: <strong class="text-primary"><?= h($user['referral_code']) ?></strong></small><br>
-        <small>Your Disciple Invitation Link: <code><?= h('https://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . '/register.php?ref=' . $user['referral_code']) ?></code></small>
+        <small>Your Disciple Invitation Link: <code><?= h((getenv('APP_URL') ?: 'https://kingdomtradex.vercel.app') . '/register.php?ref=' . $user['referral_code']) ?></code></small>
     </div>
 </div>
 
@@ -182,8 +182,20 @@ $rankClass = match($rank) {
                 <div class="alert alert-secondary">
                     <strong>Deposit Instructions:</strong> Send funds to the address below, then contact admin with your transaction ID to confirm.
                 </div>
-                <p><strong>Deposit Address (USDT TRC20):</strong></p>
-                <code class="d-block p-2 bg-light text-break">TXt8LiveAddr<?= substr(md5($user['id']), 0, 10) ?>Xch</code>
+                <?php if (!empty($depositAddresses)): ?>
+                    <?php foreach ($depositAddresses as $currency => $addr): ?>
+                    <p><strong><?= h($currency) ?> Address:</strong></p>
+                    <code class="d-block p-2 bg-light text-break"><?= h($addr) ?></code>
+                    <?php endforeach; ?>
+                <?php elseif (isset($depositAddressError) && $depositAddressError): ?>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> <?= h($depositAddressError) ?>
+                    </div>
+                <?php else: ?>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Deposit addresses are generated on demand. Please contact admin to set up your deposit addresses.
+                    </div>
+                <?php endif; ?>
                 <p class="mt-3 mb-0"><small class="text-muted">After sending, contact admin with your transaction ID to confirm the deposit.</small></p>
             </div>
         </div>

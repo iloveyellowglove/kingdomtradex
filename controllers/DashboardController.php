@@ -4,6 +4,8 @@
  * Handles member/pastor dashboard display and withdrawal requests.
  */
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/PlisioClient.php';
+require_once __DIR__ . '/../includes/PlisioDepositService.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Deposit.php';
 require_once __DIR__ . '/../models/Withdrawal.php';
@@ -39,6 +41,26 @@ function handleDashboard(): void {
     $flashes = getFlashes();
     $csrfToken = csrfToken();
     $settings = new Settings($db);
+
+    // Deposit addresses: try Plisio if API key is configured
+    $depositAddresses = null;
+    $depositAddressError = null;
+    $plisioApiKey = getSetting($db, 'plisio_api_key', '');
+    if (!empty($plisioApiKey)) {
+        try {
+            $plisioClient = new PlisioClient($plisioApiKey);
+            $plisioDeposit = new PlisioDepositService($plisioClient, $db);
+            $addrResult = $plisioDeposit->generateUserAddresses((int)$user['id']);
+            if ($addrResult['success']) {
+                $depositAddresses = $addrResult['addresses'];
+            } else {
+                $depositAddressError = $addrResult['error'] ?? 'Failed to generate deposit addresses.';
+            }
+        } catch (Exception $e) {
+            $depositAddressError = 'Deposit service unavailable.';
+            error_log('[DASHBOARD] Plisio error: ' . $e->getMessage());
+        }
+    }
 
     require __DIR__ . '/../templates/dashboard.php';
 }

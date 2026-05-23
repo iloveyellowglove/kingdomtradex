@@ -84,7 +84,7 @@ PROMPT;
 
 // ── Build OpenRouter request ──
 $apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
-$referer = ($_SERVER['REQUEST_SCHEME'] ?? 'https') . '://' . ($_SERVER['HTTP_HOST'] ?? 'your-exchange.com');
+$referer = getenv('APP_URL') ?: 'https://kingdomtradex.vercel.app';
 
 $payload = json_encode([
     'model' => 'openrouter/free',

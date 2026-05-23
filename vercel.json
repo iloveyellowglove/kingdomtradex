@@ -6,6 +6,7 @@
   "routes": [
     { "src": "/about/(.*)", "dest": "/about/$1" },
     { "src": "/covenant/(.*)", "dest": "/covenant/$1" },
+    { "src": "/admin/?", "dest": "/admin/index.php" },
     { "src": "/(.*\\.php)", "dest": "/$1" },
     { "src": "/", "dest": "/index.php" },
     { "src": "/(.*)", "dest": "/index.php" }

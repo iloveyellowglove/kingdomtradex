@@ -14,6 +14,14 @@ $withdrawalModel = new Withdrawal($db);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Request withdrawal
     $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+
+    // CSRF check
+    if (!validateCsrf($input['csrf_token'] ?? '')) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Invalid security token.']);
+        exit;
+    }
+
     $result = $withdrawalModel->request(
         (int)$user['id'],
         $input['currency'] ?? 'USDT',
