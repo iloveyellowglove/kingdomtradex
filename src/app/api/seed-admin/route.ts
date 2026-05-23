@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword } from '@/lib/auth/password';
 import { createServiceClient } from '@/lib/supabase/service';
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   console.log('[seed-admin] CRON_SECRET:', process.env.CRON_SECRET);
 
   // Token check temporarily bypassed
