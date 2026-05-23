@@ -1,6 +1,10 @@
-import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
+import HeroSection from '@/components/landing/HeroSection';
+import LiveMarkets from '@/components/landing/LiveMarkets';
+import YieldCalculator from '@/components/landing/YieldCalculator';
+import Testimonials from '@/components/landing/Testimonials';
+import FaqAccordion from '@/components/landing/FaqAccordion';
 
 export default async function LandingPage() {
   const cookieStore = cookies();
@@ -29,53 +33,72 @@ export default async function LandingPage() {
 
   return (
     <div>
-      <section className="hero-section mt-8">
-        <h1 className="text-4xl md:text-5xl mb-4">KingdomTrade Exchange</h1>
-        <p className="text-xl text-text-secondary mb-6">AI-Powered Crypto Trading with Covenant Economics</p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          {user ? (
-            <Link href="/dashboard" className="btn-primary inline-block px-8 py-4 rounded-xl text-lg">
-              Go to Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link href="/register" className="btn-primary inline-block px-8 py-4 rounded-xl text-lg">
-                Join the Kingdom
-              </Link>
-              <Link href="/login" className="inline-block border border-temple-gold text-temple-gold px-8 py-4 rounded-xl text-lg hover:bg-temple-gold hover:text-bg-dark transition">
-                Sign In
-              </Link>
-            </>
-          )}
+      {/* Hero Section */}
+      <HeroSection user={user} />
+
+      {/* Live Markets */}
+      <LiveMarkets />
+
+      {/* How It Works */}
+      <section className="mb-12">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2">How KingdomTrade Works</h2>
+          <p className="text-text-muted">Three simple steps to start growing your assets</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { step: '01', title: 'Stake Your Assets', desc: 'Deposit USDT into your KingdomTrade wallet. Your assets begin earning immediately at the 1.5% daily rate. Minimum deposit is only $50 USDT.' },
+            { step: '02', title: 'AI Multiplies Your Yield', desc: 'Our proprietary AI trading algorithms work 24/7 across multiple exchanges, executing profitable micro-trades to generate consistent daily returns on your staked balance.' },
+            { step: '03', title: 'Build Your Covenant', desc: 'Refer disciples and earn blessings across 5 levels. As your network grows, so do your covenant rewards - from 15% on Level 1 to 1% on Level 5.' },
+          ].map((item) => (
+            <div key={item.step} className="card p-6 text-center group transition-all hover:border-temple-gold">
+              <p className="text-4xl font-extrabold mb-3" style={{ color: '#FFD700', opacity: 0.15 }}>
+                {item.step}
+              </p>
+              <h4 className="text-lg font-bold mb-2">{item.title}</h4>
+              <p className="text-text-secondary text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div className="card p-6 text-center">
-          <h4 className="text-temple-gold mb-2">AI Trading</h4>
-          <p className="text-text-secondary">Advanced AI algorithms trade on your behalf, generating consistent daily returns on your deposits.</p>
-          <p className="text-2xl font-bold text-temple-gold mt-2">1.5% Daily</p>
+      {/* Yield Calculator */}
+      <YieldCalculator />
+
+      {/* Security & Trust */}
+      <section className="mb-12">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2">Enterprise-Grade Security</h2>
+          <p className="text-text-muted">Your assets are protected by institutional-level security measures</p>
         </div>
-        <div className="card p-6 text-center">
-          <h4 className="text-temple-gold mb-2">Covenant Blessings</h4>
-          <p className="text-text-secondary">Earn blessings across 5 levels of your disciples network when they deposit and trade.</p>
-          <p className="text-2xl font-bold text-temple-gold mt-2">Up to 26%</p>
-        </div>
-        <div className="card p-6 text-center">
-          <h4 className="text-temple-gold mb-2">Secure Withdrawals</h4>
-          <p className="text-text-secondary">Withdraw your earnings at any time after the 72-hour security hold period from your first deposit.</p>
-          <p className="text-2xl font-bold text-temple-gold mt-2">Fast & Secure</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { icon: '\u{1F512}', title: 'Cold Storage', desc: 'Majority of funds held in offline multi-sig wallets' },
+            { icon: '\u{1F6E1}', title: '2FA Protection', desc: 'Two-factor authentication on all accounts and withdrawals' },
+            { icon: '\u{1F310}', title: '24/7 Monitoring', desc: 'Real-time threat detection and automated response systems' },
+            { icon: '\u{1F4DC}', title: 'Smart Contract Audit', desc: 'All trading contracts independently audited and verified' },
+          ].map((item) => (
+            <div key={item.title} className="card p-5 text-center">
+              <p className="text-2xl mb-2">{item.icon}</p>
+              <h5 className="font-bold text-sm mb-1">{item.title}</h5>
+              <p className="text-text-muted text-xs">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      <section className="card p-8 mb-12 text-center">
-        <h2 className="text-temple-gold mb-4">The Covenant Economy</h2>
-        <p className="text-text-secondary max-w-3xl mx-auto mb-6">
+      {/* Referral Program Preview */}
+      <section className="card p-8 mb-12 text-center" style={{
+        borderImage: 'linear-gradient(135deg, #FFD700, #6A0DAD) 1',
+        border: '1px solid transparent',
+      }}>
+        <h2 className="text-temple-gold text-2xl md:text-3xl font-bold mb-4">The Covenant Economy</h2>
+        <p className="text-text-secondary max-w-3xl mx-auto mb-8">
           KingdomTrade operates on biblical principles of stewardship and multiplication. When you deposit and trade,
           you are not just growing your own resources - you are participating in a covenant economy that blesses
           those who brought you here. Your disciples bring disciples, and the blessings flow through five generations.
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-3xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-3xl mx-auto mb-6">
           {[
             { level: 1, pct: 15, name: 'Firstfruits' },
             { level: 2, pct: 5, name: 'Fruit that Remains' },
@@ -90,13 +113,19 @@ export default async function LandingPage() {
             </div>
           ))}
         </div>
+        <div className="text-text-muted text-xs">
+          Total possible blessing: up to 26% across 5 levels
+        </div>
       </section>
 
-      <div className="urgency-banner rounded-xl mb-12">
-        Time is short. The harvest is plentiful but the laborers are few. Join the Kingdom economy today.
-      </div>
+      {/* Testimonials */}
+      <Testimonials />
 
-      <div className="text-center mb-12">
+      {/* FAQ */}
+      <FaqAccordion />
+
+      {/* Psalm */}
+      <div className="text-center mb-8">
         <p className="text-text-secondary italic">
           &quot;The earth is the LORD&apos;s, and the fullness thereof; the world, and they that dwell therein.&quot;
         </p>
