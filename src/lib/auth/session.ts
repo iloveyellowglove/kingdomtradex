@@ -28,7 +28,7 @@ export async function createSession(userId: number, role: string): Promise<strin
 
   const cookieStore = cookies();
   cookieStore.set(SESSION_COOKIE, token, {
-    expires: expiresAt,
+    maxAge: SESSION_TTL,
     path: '/',
     secure: true,
     httpOnly: true,
@@ -75,7 +75,7 @@ export async function destroySession(): Promise<void> {
   }
 
   cookieStore.set(SESSION_COOKIE, '', {
-    expires: new Date(0),
+    maxAge: 0,
     path: '/',
     secure: true,
     httpOnly: true,

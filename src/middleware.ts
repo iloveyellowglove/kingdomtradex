@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { createServiceClient } from '@/lib/supabase/service';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -25,20 +25,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Create Supabase client for middleware (uses cookies)
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
-        },
-        set() {},
-        remove() {},
-      },
-    }
-  );
+  const supabase = createServiceClient();
 
   // Check for kingdom_session cookie and validate
   const sessionToken = request.cookies.get('kingdom_session')?.value;
