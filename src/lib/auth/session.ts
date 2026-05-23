@@ -17,7 +17,14 @@ export async function createSession(userId: number, role: string): Promise<{ tok
   const now = new Date();
   const expiresAt = new Date(now.getTime() + SESSION_TTL * 1000);
 
-  await supabase.from('sessions').insert({
+  // Check if sessions table is accessible
+  const { error: tableError } = await supabase
+    .from('sessions')
+    .select('session_token')
+    .limit(1);
+  console.log('[session] table accessible:', !tableError, '| error:', tableError ?? 'none');
+
+  const { error: insertError } = await supabase.from('sessions').insert({
     session_token: token,
     user_id: userId,
     user_role: role,
@@ -26,6 +33,12 @@ export async function createSession(userId: number, role: string): Promise<{ tok
     expires_at: expiresAt.toISOString(),
   });
 
+  if (insertError) {
+    console.log('[session] INSERT FAILED:', JSON.stringify(insertError));
+    throw new Error(`Failed to create session: ${insertError.message}`);
+  }
+
+  console.log('[session] insert OK, token first 16:', token.substring(0, 16));
   return { token, csrfToken };
 }
 

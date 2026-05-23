@@ -41,9 +41,17 @@ export async function POST(request: NextRequest) {
   }
 
   await supabase.from('users').update({ last_login: new Date().toISOString() }).eq('id', user.id);
-  const { token } = await createSession(user.id, user.role);
-  console.log('[login] session token:', token);
-  console.log('[login] token length:', token.length);
+
+  let token: string;
+  try {
+    const result = await createSession(user.id, user.role);
+    token = result.token;
+    console.log('[login] session token:', token);
+    console.log('[login] token length:', token.length);
+  } catch (e) {
+    console.log('[login] createSession threw:', String(e));
+    return NextResponse.json({ success: false, error: 'Session creation failed. Check server logs.' }, { status: 500 });
+  }
 
   const response = NextResponse.json({ success: true });
   response.cookies.set('kingdom_session', token, {
