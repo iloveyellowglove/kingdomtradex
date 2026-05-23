@@ -17,7 +17,6 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/plisio-webhook') ||
     pathname.startsWith('/api/cron') ||
-    pathname.startsWith('/api/seed-admin') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/assets') ||
     pathname.includes('.')
