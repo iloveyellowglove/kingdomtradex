@@ -42,6 +42,8 @@ export async function POST(request: NextRequest) {
 
   await supabase.from('users').update({ last_login: new Date().toISOString() }).eq('id', user.id);
   const { token } = await createSession(user.id, user.role);
+  console.log('[login] session token:', token);
+  console.log('[login] token length:', token.length);
 
   const response = NextResponse.json({ success: true });
   response.cookies.set('kingdom_session', token, {
@@ -51,5 +53,11 @@ export async function POST(request: NextRequest) {
     path: '/',
     maxAge: 86400,
   });
+
+  const setCookie = response.cookies.get('kingdom_session');
+  console.log('[login] cookie set on response:', setCookie?.value === token);
+  console.log('[login] cookie value on response:', setCookie?.value?.substring(0, 16) + '...');
+  console.log('[login] response headers Set-Cookie:', response.headers.get('Set-Cookie'));
+
   return response;
 }
