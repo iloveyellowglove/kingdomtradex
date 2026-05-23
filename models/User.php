@@ -96,19 +96,29 @@ class User {
      * Authenticate user, return user array on success
      */
     public function login(string $email, string $password): array {
-        $rows = $this->db->query('users', ['email' => 'eq.' . strtolower(trim($email))], '*', '', 1);
+        $emailClean = strtolower(trim($email));
+        error_log('[LOGIN] Step 1: querying Supabase for email=' . $emailClean);
+        $rows = $this->db->query('users', ['email' => 'eq.' . $emailClean], '*', '', 1);
+        error_log('[LOGIN] Step 2: raw rows from Supabase: ' . json_encode($rows));
         $user = $rows[0] ?? null;
 
         if (!$user) {
+            error_log('[LOGIN] FAIL: no user found or Supabase returned empty/error');
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
+        error_log('[LOGIN] Step 3: user found, id=' . ($user['id'] ?? '?') . ', status=' . ($user['status'] ?? '?') . ', hash_len=' . strlen($user['password_hash'] ?? ''));
         if ($user['status'] === 'banned') {
+            error_log('[LOGIN] FAIL: user is banned');
             return ['success' => false, 'error' => 'Account is banned.'];
         }
         if ($user['status'] === 'suspended') {
+            error_log('[LOGIN] FAIL: user is suspended');
             return ['success' => false, 'error' => 'Account is suspended.'];
         }
-        if (!password_verify($password, $user['password_hash'])) {
+        $pwOk = password_verify($password, $user['password_hash']);
+        error_log('[LOGIN] Step 4: password_verify result=' . ($pwOk ? 'true' : 'false'));
+        if (!$pwOk) {
+            error_log('[LOGIN] FAIL: password_verify returned false');
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
 
@@ -116,6 +126,7 @@ class User {
         $this->db->patch('users', ['id' => 'eq.' . $user['id']], [
             'last_login' => date('Y-m-d\TH:i:s\Z'),
         ]);
+        error_log('[LOGIN] SUCCESS: user id=' . $user['id'] . ', role=' . $user['role']);
 
         return ['success' => true, 'user' => $user];
     }
