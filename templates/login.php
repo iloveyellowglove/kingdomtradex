@@ -21,6 +21,9 @@ require __DIR__ . '/header.php';
                     <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
                 <p class="text-center mt-3 mb-0">
+                    <a href="/forgot_password.php">Forgot Password?</a>
+                </p>
+                <p class="text-center mt-2 mb-0">
                     Don't have an account? <a href="/register.php">Register</a>
                 </p>
             </div>
