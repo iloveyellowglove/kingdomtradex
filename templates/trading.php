@@ -27,7 +27,7 @@ require __DIR__ . '/header.php';
 
 <div class="row">
     <!-- Order Book -->
-    <div class="col-md-4">
+    <div class="col-md-4 trading-orderbook">
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0"><i class="bi bi-book"></i> Order Book</h6>
@@ -71,7 +71,7 @@ require __DIR__ . '/header.php';
     </div>
 
     <!-- Real Candlestick Chart + Trade Form -->
-    <div class="col-md-8">
+    <div class="col-md-8 trading-chart-col">
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0"><i class="bi bi-graph-up"></i> Price Chart <small class="text-muted" id="chartPairLabel">BTC/USDT</small></h6>

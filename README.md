@@ -91,6 +91,21 @@ Add:
 0 10 * * * php /path/to/Exchange/cron/send_reminder_emails.php >> /var/log/exchange-cron.log 2>&1
 ```
 
+## Vercel Deployment
+
+### Fixing "Authentication Required" on Vercel
+
+If your deployed site shows a login screen instead of the exchange:
+
+1. Go to your Vercel project dashboard.
+2. Click **Settings** → **Deployment Protection**.
+3. Under **Vercel Authentication**, select **Unprotected Previews** or **Disable for All Environments**.
+4. Click **Save**.
+
+After this change, your site will be publicly accessible. No code changes are needed.
+
+The included `vercel.json` configures PHP routing for all API endpoints, cron scripts, and the front-controller pattern (all non-file requests route through `index.php`).
+
 ## Project Structure
 
 ```

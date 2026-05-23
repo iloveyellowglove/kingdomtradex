@@ -299,3 +299,302 @@ a:hover { color: #4B0082; }
     color: var(--temple-gold);
     font-weight: bold;
 }
+
+/* =========================================================================
+   Mobile Responsive Breakpoints
+   ========================================================================= */
+
+/* ---------- Base mobile fixes (all screens) ---------- */
+
+/* Prevent horizontal overflow */
+body {
+    overflow-x: hidden;
+}
+
+/* Ensure all images and embedded content stay contained */
+img, svg, canvas, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Table responsive: smooth scrolling on iOS */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Minimum tap target size for all buttons and form controls */
+.form-control,
+.form-select,
+.btn {
+    min-height: 44px;
+}
+
+/* Referral tree: base indent via CSS custom property */
+.tree-node {
+    margin-left: var(--tree-indent, 0px);
+}
+
+/* Prevent iOS zoom on input focus — 16px minimum font size */
+.form-control,
+.form-select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+textarea {
+    font-size: 16px !important;
+}
+
+/* Code blocks: force wrap to prevent overflow */
+code {
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+/* Timeframe buttons: allow wrapping */
+#timeframeButtons {
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+/* Chart container: responsive height */
+#chart-container {
+    height: min(420px, 60vh);
+}
+
+/* ---------- 1024px and below (tablet landscape) ---------- */
+@media (max-width: 1024px) {
+    /* Referral tree: reduce indentation via CSS variable override */
+    .tree-node {
+        --tree-indent: 0px;
+        padding-left: 8px;
+        border-left: 3px solid var(--temple-gold);
+    }
+    .tree-node .tree-node {
+        --tree-indent: 12px;
+    }
+    .tree-node .tree-node .tree-node {
+        --tree-indent: 24px;
+    }
+}
+
+/* ---------- 768px and below (tablet portrait) ---------- */
+@media (max-width: 768px) {
+    /* Trading page: stack order book above chart */
+    .trading-orderbook {
+        order: 1;
+    }
+    .trading-chart-col {
+        order: 2;
+    }
+
+    /* Chart: shorter on mobile */
+    #chart-container {
+        height: min(300px, 50vh);
+    }
+
+    /* Footer: stack columns */
+    footer .text-md-end {
+        text-align: left !important;
+        margin-top: 0.75rem;
+    }
+
+    /* Admin sidebar: full width above content */
+    .admin-sidebar {
+        margin-bottom: 1rem;
+    }
+
+    /* Admin filter buttons: smaller and wrap */
+    .btn-sm {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    /* Mass payout card: stack vertically */
+    .card.border-warning .card-body.d-flex {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    .card.border-warning .card-body.d-flex .btn-lg {
+        width: 100%;
+    }
+
+    /* Settings form: make grid columns full width */
+    .col-md-3, .col-md-4, .col-md-6 {
+        width: 100%;
+    }
+
+    /* Lower heading sizes for readability */
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.4rem; }
+    h3 { font-size: 1.25rem; }
+    h4 { font-size: 1.1rem; }
+
+    /* Dashboard balance cards: stack */
+    .col-md-4 {
+        margin-bottom: 0.75rem;
+    }
+
+    /* Navbar: tighter padding */
+    .navbar .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    /* Hero section padding */
+    .hero-section {
+        padding: 1.25rem;
+    }
+
+    /* Stewardship callout */
+    .stewardship-callout {
+        padding: 1rem;
+    }
+
+    /* Withdrawal form cards */
+    .col-md-6 {
+        margin-bottom: 1rem;
+    }
+
+    /* Breadcrumb / back links */
+    .mt-3 .btn-outline-secondary {
+        width: 100%;
+    }
+
+    /* Invitation link input group on mobile */
+    .input-group {
+        flex-wrap: wrap;
+    }
+    .input-group .form-control,
+    .input-group .btn {
+        width: 100%;
+        border-radius: 0.375rem !important;
+        margin-bottom: 0.25rem;
+    }
+    .input-group > :not(:first-child) {
+        margin-left: 0;
+    }
+
+    /* Admin dashboard stat cards */
+    h1.display-4, h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Table cells: slightly smaller on mobile */
+    .table td, .table th {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.5rem;
+    }
+
+    /* Search form */
+    .input-group .form-control {
+        margin-bottom: 0;
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+    .input-group .btn {
+        margin-bottom: 0;
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+    }
+
+    /* Covenant report row */
+    .kingdom-card .row.text-center > [class*="col-"] {
+        margin-bottom: 1rem;
+        border-bottom: 1px solid rgba(255,215,0,0.2);
+        padding-bottom: 0.75rem;
+    }
+    .kingdom-card .row.text-center > [class*="col-"]:last-child {
+        margin-bottom: 0;
+        border-bottom: none;
+    }
+
+    /* Trading pair selector */
+    .text-end.align-self-center {
+        text-align: left !important;
+        margin-top: 0.5rem;
+    }
+}
+
+/* ---------- 375px and below (small phones) ---------- */
+@media (max-width: 375px) {
+    /* Navbar brand smaller */
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    /* Further reduce heading sizes */
+    h2 { font-size: 1.25rem; }
+    h3 { font-size: 1.1rem; }
+
+    /* Tighter container padding */
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    /* Card body: less padding */
+    .card-body {
+        padding: 0.75rem;
+    }
+
+    /* Balance amount: smaller on tiny screens */
+    .card-body h3 {
+        font-size: 1rem;
+    }
+
+    /* Table even smaller */
+    .table td, .table th {
+        font-size: 0.75rem;
+        padding: 0.3rem;
+    }
+
+    /* Buttons full width on tiny screens */
+    .btn {
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+    .d-flex .btn,
+    .btn-group .btn,
+    .d-inline .btn,
+    form.d-inline .btn {
+        width: auto;
+        margin-bottom: 0;
+    }
+
+    /* Timeframe buttons */
+    #timeframeButtons .btn {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.4rem;
+    }
+}
+
+/* ---------- 320px (absolute minimum) ---------- */
+@media (max-width: 320px) {
+    .navbar-brand {
+        font-size: 0.9rem;
+        letter-spacing: -0.5px;
+    }
+
+    .container {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+    }
+
+    /* Hide non-essential badges on smallest screens */
+    .badge.bg-secondary {
+        display: none;
+    }
+
+    /* Referral code: inline display */
+    .text-md-end code {
+        font-size: 0.7rem;
+    }
+}
