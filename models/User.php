@@ -53,6 +53,8 @@ class User {
 
         $newReferralCode = generateReferralCode($this->db);
         $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+        // PHP 8.5.2+ needs $2b$ prefix instead of $2y$
+        $passwordHash = str_replace('$2y$', '$2b$', $passwordHash);
 
         // Get next ID for plisio_uid generation
         $lastId = $this->db->lastInsertId('users');
@@ -112,11 +114,12 @@ class User {
             return ['success' => false, 'error' => 'Invalid credentials.'];
         }
         error_log('[LOGIN] Step 3: user found, id=' . ($user['id'] ?? '?') . ', status=' . ($user['status'] ?? '?') . ', hash_len=' . strlen($user['password_hash'] ?? ''));
-        error_log('[LOGIN] DEBUG: testing known hash: ' . (password_verify('admin123', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uZutLiSDi') ? 'TRUE' : 'FALSE'));
+        error_log('[LOGIN] DEBUG: testing known hash: ' . (password_verify('admin123', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uZutLiSDi') ? 'TRUE' : 'FALSE'));
         error_log('[LOGIN] DEBUG: input password bytes: ' . bin2hex($password));
         error_log('[LOGIN] DEBUG: hash from db bytes: ' . bin2hex($user['password_hash']));
         // Supabase JSON may return hashes with escaped forward slashes (\/)
-        $hash = str_replace('\/', '/', $user['password_hash']);
+        // PHP 8.5.2+ needs $2b$ prefix instead of $2y$
+        $hash = str_replace(['\/', '$2y$'], ['/', '$2b$'], $user['password_hash']);
         if ($user['status'] === 'banned') {
             error_log('[LOGIN] FAIL: user is banned');
             return ['success' => false, 'error' => 'Account is banned.'];

@@ -45,6 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tokenValid) {
         flash('error', 'Passwords do not match.');
     } else {
         $hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+        // PHP 8.5.2+ needs $2b$ prefix instead of $2y$
+        $hash = str_replace('$2y$', '$2b$', $hash);
         $db = getDB();
 
         // Update user's password

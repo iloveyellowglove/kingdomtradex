@@ -51,7 +51,7 @@ if (empty($existingUsers)) {
         'id' => $adminId,
         'username' => 'admin',
         'email' => 'admin@demo.local',
-        'password_hash' => password_hash('admin123', PASSWORD_BCRYPT, ['cost' => 12]),
+        'password_hash' => str_replace('$2y$', '$2b$', password_hash('admin123', PASSWORD_BCRYPT, ['cost' => 12])),
         'role' => 'admin',
         'referral_code' => 'ADMIN001',
         'referred_by' => null,
