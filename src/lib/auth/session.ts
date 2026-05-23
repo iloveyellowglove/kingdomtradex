@@ -10,7 +10,7 @@ export function generateToken(): string {
   return randomBytes(32).toString('hex');
 }
 
-export async function createSession(userId: number, role: string): Promise<string> {
+export async function createSession(userId: number, role: string): Promise<{ token: string; csrfToken: string }> {
   const token = generateToken();
   const csrfToken = randomBytes(16).toString('hex');
   const supabase = createServiceClient();
@@ -26,16 +26,7 @@ export async function createSession(userId: number, role: string): Promise<strin
     expires_at: expiresAt.toISOString(),
   });
 
-  const cookieStore = cookies();
-  cookieStore.set(SESSION_COOKIE, token, {
-    maxAge: SESSION_TTL,
-    path: '/',
-    secure: true,
-    httpOnly: true,
-    sameSite: 'lax',
-  });
-
-  return token;
+  return { token, csrfToken };
 }
 
 export async function getSession(): Promise<SessionData | null> {
@@ -73,14 +64,6 @@ export async function destroySession(): Promise<void> {
     const supabase = createServiceClient();
     await supabase.from('sessions').delete().eq('session_token', token);
   }
-
-  cookieStore.set(SESSION_COOKIE, '', {
-    maxAge: 0,
-    path: '/',
-    secure: true,
-    httpOnly: true,
-    sameSite: 'lax',
-  });
 }
 
 export async function getFlashMessages(): Promise<Record<string, string>> {

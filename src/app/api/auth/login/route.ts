@@ -41,7 +41,15 @@ export async function POST(request: NextRequest) {
   }
 
   await supabase.from('users').update({ last_login: new Date().toISOString() }).eq('id', user.id);
-  await createSession(user.id, user.role);
+  const { token } = await createSession(user.id, user.role);
 
-  return NextResponse.json({ success: true });
+  const response = NextResponse.json({ success: true });
+  response.cookies.set('kingdom_session', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 86400,
+  });
+  return response;
 }

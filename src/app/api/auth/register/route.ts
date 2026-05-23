@@ -86,11 +86,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Registration failed. Please try again.' }, { status: 500 });
   }
 
-  await createSession(newUser[0].id, 'member');
+  const { token } = await createSession(newUser[0].id, 'member');
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     success: true,
     user_id: newUser[0].id,
     referral_code: newReferralCode,
   });
+  response.cookies.set('kingdom_session', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 86400,
+  });
+  return response;
 }
