@@ -29,14 +29,29 @@ async function getUser() {
   const session = sess[0];
   if (new Date(session.expires_at) < new Date()) return null;
 
-  const { data: users } = await supabase
+  const { data: users, error: userError } = await supabase
     .from('users')
     .select('id,username,role,display_balance,email,avatar_url')
     .eq('id', session.user_id)
     .eq('status', 'active')
     .limit(1);
 
-  if (!users || users.length === 0) return null;
+  // If avatar_url column doesn't exist yet, retry without it
+  if (userError || !users || users.length === 0) {
+    if (userError) {
+      console.warn('[getUser] query with avatar_url failed, retrying without:', userError.message);
+    }
+    if (!users || users.length === 0) {
+      const { data: fallbackUsers } = await supabase
+        .from('users')
+        .select('id,username,role,display_balance,email')
+        .eq('id', session.user_id)
+        .eq('status', 'active')
+        .limit(1);
+      if (!fallbackUsers || fallbackUsers.length === 0) return null;
+      return fallbackUsers[0];
+    }
+  }
   return users[0];
 }
 
