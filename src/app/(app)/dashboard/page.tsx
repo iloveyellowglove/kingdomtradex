@@ -112,6 +112,16 @@ export default async function DashboardPage() {
     }
   }
 
+  // Daily yield rate
+  const dailyRate = parseFloat(await getSetting('daily_profit_percentage', '1.5'));
+
+  // Total earned from AI trading profits
+  const { data: profitRows } = await supabase
+    .from('ai_trading_profits')
+    .select('amount')
+    .eq('user_id', userId);
+  const totalEarned = ((profitRows ?? []) as unknown as { amount: number }[]).reduce((s, r) => s + Number(r.amount), 0);
+
   return (
     <DashboardContent
       user={user}
@@ -123,6 +133,8 @@ export default async function DashboardPage() {
       totalPendingComm={totalPendingComm}
       depositAddresses={depositAddresses}
       depositAddressError={depositAddressError}
+      dailyRate={dailyRate}
+      totalEarned={totalEarned}
     />
   );
 }

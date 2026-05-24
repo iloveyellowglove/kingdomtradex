@@ -24,8 +24,8 @@ export default function YieldVault({ balance, dailyRate }: Props) {
             <h3 className="text-temple-gold mb-1" style={{ fontSize: '1.25rem' }}>Kingdom Yield Vault</h3>
             <p className="text-text-muted text-sm">Your balance earns yield daily through AI-powered trading</p>
           </div>
-          <a href="/dashboard" className="btn-primary inline-block px-6 py-2 rounded-lg text-sm">
-            Stake More
+          <a href="/deposit" className="btn-primary inline-block px-6 py-2 rounded-lg text-sm">
+            Deposit Funds
           </a>
         </div>
 

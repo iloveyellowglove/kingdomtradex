@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Logo from '@/components/brand/Logo';
+import { fmt } from '@/lib/utils/formatting';
 
 interface NavbarProps {
   user?: {
@@ -35,6 +36,9 @@ export default function Navbar({ user }: NavbarProps) {
               <>
                 <NavLink href="/dashboard" active={pathname === '/dashboard'}>
                   Dashboard
+                </NavLink>
+                <NavLink href="/deposit" active={pathname === '/deposit'}>
+                  Deposit
                 </NavLink>
                 <NavLink href="/trading" active={pathname === '/trading'}>
                   Trading
@@ -72,16 +76,25 @@ export default function Navbar({ user }: NavbarProps) {
             )}
           </div>
 
-          <div className="flex gap-2 ml-auto">
+          <div className="flex gap-2 ml-auto items-center">
             {user ? (
-              <div className="relative group">
-                <button className="flex items-center gap-2 text-text-primary hover:text-temple-gold px-4 py-2 rounded-lg hover:bg-white/5 transition">
-                  {user.username}
-                  <span className="badge badge-secondary">{user.role}</span>
-                </button>
+              <>
+                <Link href="/dashboard" className="flex items-center gap-2 text-temple-gold hover:text-temple-gold/80 px-3 py-2 rounded-lg hover:bg-white/5 transition no-underline">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+                    <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+                    <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+                  </svg>
+                  <span className="font-bold text-sm">{fmt(user.display_balance)} USDT</span>
+                </Link>
+                <div className="relative group">
+                  <button className="flex items-center gap-2 text-text-primary hover:text-temple-gold px-4 py-2 rounded-lg hover:bg-white/5 transition">
+                    {user.username}
+                    <span className="badge badge-secondary">{user.role}</span>
+                  </button>
                 <div className="absolute right-0 top-full mt-2 hidden group-hover:block bg-card-bg border border-temple-gold rounded-xl py-2 min-w-[240px]">
                   <div className="px-4 py-2 text-text-secondary">
-                    Balance: <strong className="text-text-primary">{Number(user.display_balance).toFixed(8)} USDT</strong>
+                    Balance: <strong className="text-text-primary">{Number(user.display_balance).toFixed(2)} USDT</strong>
                   </div>
                   <hr className="border-border my-1" />
                   <form action="/api/auth/logout" method="POST" className="block">
@@ -91,6 +104,7 @@ export default function Navbar({ user }: NavbarProps) {
                   </form>
                 </div>
               </div>
+              </>
             ) : (
               <Link href="/waitlist" className="btn-primary px-5 py-2 rounded-lg text-sm font-bold">
                 Join the Waitlist

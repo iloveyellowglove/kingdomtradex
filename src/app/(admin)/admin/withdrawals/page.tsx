@@ -51,9 +51,9 @@ export default async function AdminWithdrawalsPage() {
                   <tr key={w.id}>
                     <td className="p-3">{w.id}</td>
                     <td className="p-3">{u.username}</td>
-                    <td className="p-3">{Number(w.amount).toFixed(6)}</td>
+                    <td className="p-3">{Number(w.amount).toFixed(2)}</td>
                     <td className="p-3">{w.currency}</td>
-                    <td className="p-3">{Number(w.fee).toFixed(8)}</td>
+                    <td className="p-3">{Number(w.fee).toFixed(2)}</td>
                     <td className="p-3">
                       <span className={`badge ${
                         w.status === 'completed' ? 'badge-success' :

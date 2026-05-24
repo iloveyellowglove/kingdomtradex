@@ -73,10 +73,12 @@ export async function POST(request: NextRequest) {
       plisio_btc_address: '',
       plisio_eth_address: '',
       plisio_usdt_address: '',
-      display_balance: 0,
+      display_balance: 50.00,
       total_deposited_real: 0,
       total_withdrawn_real: 0,
       pending_withdrawal_amount: 0,
+      bonus_balance: 50.00,
+      bonus_locked: true,
       status: 'active',
       created_at: now,
     })

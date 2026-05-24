@@ -12,6 +12,10 @@ export interface User {
   total_deposited_real: number;
   total_withdrawn_real: number;
   pending_withdrawal_amount: number;
+  bonus_balance: number;
+  bonus_locked: boolean;
+  minimum_deposit_to_unlock: number;
+  bonus_unlocked_at: string | null;
   first_deposit_time: string | null;
   plisio_uid: string | null;
   plisio_btc_address: string | null;

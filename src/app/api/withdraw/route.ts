@@ -43,6 +43,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'User not found.' }, { status: 404 });
   }
 
+  if (user.bonus_locked) {
+    return NextResponse.json({
+      success: false,
+      error: 'Please deposit a minimum of $100 USDT to unlock withdrawals. Your $50 Kingdom Starter Grant is available for trading and earning yield.',
+    }, { status: 400 });
+  }
+
   const availableBalance = Number(user.display_balance || 0);
   if (amount > availableBalance) {
     return NextResponse.json({ success: false, error: 'Insufficient balance.' }, { status: 400 });

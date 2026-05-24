@@ -28,10 +28,37 @@ export default async function WithdrawalsPage() {
     id: number; amount: number; currency: string; fee: number; status: string; request_time: string;
   }>;
 
+  const { data: userRows } = await supabase
+    .from('users')
+    .select('bonus_locked,minimum_deposit_to_unlock,total_deposited_real')
+    .eq('id', s[0].user_id)
+    .limit(1);
+
+  const bonusLocked = userRows?.[0]?.bonus_locked ?? false;
+  const minToUnlock = Number(userRows?.[0]?.minimum_deposit_to_unlock || 100);
+  const totalDeposited = Number(userRows?.[0]?.total_deposited_real || 0);
+
   return (
     <div className="py-4">
       <h2 className="mb-2">Withdrawal History</h2>
       <p className="text-text-muted mb-6">Your withdrawal requests and their status</p>
+
+      {bonusLocked && (
+        <div className="alert alert-warning mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" style={{
+          border: '1px solid #FFD700',
+          background: 'linear-gradient(135deg, rgba(255,215,0,0.08), rgba(106,13,173,0.08))',
+        }}>
+          <div>
+            <strong>Your $50 Kingdom Starter Grant is currently locked.</strong>
+            <p className="mb-0 text-sm mt-1">
+              Deposit {Math.max(0, minToUnlock - totalDeposited).toFixed(2)} more USDT (minimum $100 total) to unlock withdrawals. Your $50 bonus is already earning yield.
+            </p>
+          </div>
+          <a href="/deposit" className="btn-primary px-6 py-2 rounded-lg text-sm font-bold whitespace-nowrap no-underline">
+            Deposit Now
+          </a>
+        </div>
+      )}
 
       <div className="card">
         <div className="card-body p-0">
@@ -51,9 +78,9 @@ export default async function WithdrawalsPage() {
                 {wData.map((w) => (
                   <tr key={w.id}>
                     <td className="p-3">#{w.id}</td>
-                    <td className="p-3">{Number(w.amount).toFixed(8)}</td>
+                    <td className="p-3">{Number(w.amount).toFixed(2)}</td>
                     <td className="p-3">{w.currency}</td>
-                    <td className="p-3">{Number(w.fee).toFixed(8)}</td>
+                    <td className="p-3">{Number(w.fee).toFixed(2)}</td>
                     <td className="p-3">
                       <span className={`badge ${
                         w.status === 'completed' ? 'badge-success' :

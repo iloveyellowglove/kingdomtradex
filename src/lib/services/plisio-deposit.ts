@@ -125,6 +125,11 @@ export class PlisioDepositService {
       updates.first_deposit_time = new Date().toISOString();
     }
 
+    if (user.bonus_locked && newTotalDeposited >= Number(user.minimum_deposit_to_unlock || 100)) {
+      updates.bonus_locked = false;
+      updates.bonus_unlocked_at = new Date().toISOString();
+    }
+
     await updateUser(user.id, updates);
 
     return {

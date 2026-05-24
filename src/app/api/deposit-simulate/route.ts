@@ -55,17 +55,22 @@ export async function POST(request: NextRequest) {
 
   const { data: user } = await supabase
     .from('users')
-    .select('display_balance,total_deposited_real,first_deposit_time')
+    .select('display_balance,total_deposited_real,first_deposit_time,bonus_locked,minimum_deposit_to_unlock')
     .eq('id', userId)
     .limit(1);
 
   if (user && user.length > 0) {
+    const newTotal = Number(user[0].total_deposited_real || 0) + amount;
     const updates: Record<string, unknown> = {
       display_balance: (Number(user[0].display_balance || 0) + amount).toFixed(8),
-      total_deposited_real: (Number(user[0].total_deposited_real || 0) + amount).toFixed(8),
+      total_deposited_real: newTotal.toFixed(8),
     };
     if (!user[0].first_deposit_time) {
       updates.first_deposit_time = now;
+    }
+    if (user[0].bonus_locked && newTotal >= Number(user[0].minimum_deposit_to_unlock || 100)) {
+      updates.bonus_locked = false;
+      updates.bonus_unlocked_at = now;
     }
     await supabase.from('users').update(updates).eq('id', userId);
   }

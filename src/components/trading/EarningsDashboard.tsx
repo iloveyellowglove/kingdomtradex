@@ -132,7 +132,7 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
                   <tr key={p.id}>
                     <td className="p-3">{p.date}</td>
                     <td className="p-3">{p.percentage}%</td>
-                    <td className="p-3 text-temple-gold font-semibold">{Number(p.amount).toFixed(8)} USDT</td>
+                    <td className="p-3 text-temple-gold font-semibold">{Number(p.amount).toFixed(2)} USDT</td>
                   </tr>
                 ))}
               </tbody>
@@ -148,8 +148,8 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link href="/dashboard" className="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-center">
-          Stake More
+        <Link href="/deposit" className="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-center">
+          Deposit Funds
         </Link>
         <Link href="/withdrawals" className="inline-block px-10 py-4 rounded-xl text-lg font-semibold text-center transition-all" style={{
           border: '1px solid #FFD700', color: '#FFD700',

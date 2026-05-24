@@ -168,9 +168,11 @@ BEGIN
     END IF;
 
     INSERT INTO users (username, email, password_hash, role, referral_code, referred_by,
-      display_balance, total_deposited_real, first_deposit_time, created_at, plisio_uid, status)
+      display_balance, total_deposited_real, first_deposit_time, created_at, plisio_uid, status,
+      bonus_balance, bonus_locked)
     VALUES (u_username, u_email, pw_hash, 'member', u_ref_code, u_referred_by,
-      u_balance, u_deposited, u_first_time, u_created, 'seed_uid_' || i, 'active')
+      u_balance, u_deposited, u_first_time, u_created, 'seed_uid_' || i, 'active',
+      50.00, FALSE)
     ON CONFLICT (email) DO NOTHING;
 
     -- Get the inserted user id (or existing if already present)

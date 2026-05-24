@@ -10,7 +10,7 @@ export default function AITradingPanel({ profits }: { profits: AITradingProfit[]
 
       {totalProfit > 0 && (
         <p className="text-lg text-temple-gold mb-4">
-          Total earned: {totalProfit.toFixed(8)} USDT
+          Total earned: {totalProfit.toFixed(2)} USDT
         </p>
       )}
 
@@ -26,7 +26,7 @@ export default function AITradingPanel({ profits }: { profits: AITradingProfit[]
                 {profits.map((p) => (
                   <tr key={p.id}>
                     <td className="p-3">{p.date}</td>
-                    <td className="p-3">{Number(p.amount).toFixed(8)} USDT</td>
+                    <td className="p-3">{Number(p.amount).toFixed(2)} USDT</td>
                     <td className="p-3">{p.percentage}%</td>
                   </tr>
                 ))}
