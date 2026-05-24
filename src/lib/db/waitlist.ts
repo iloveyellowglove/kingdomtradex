@@ -199,12 +199,17 @@ export async function getWaitlistDashboard(referralCode: string): Promise<{
 export async function getLeaderboard(limit = 100): Promise<WaitlistLeaderboardEntry[]> {
   const supabase = createServiceClient();
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('waitlist')
     .select('name, referral_count, tier')
     .gt('referral_count', 0)
     .order('referral_count', { ascending: false })
     .limit(limit);
+
+  if (error) {
+    console.error('[getLeaderboard] Supabase error:', JSON.stringify(error));
+    return [];
+  }
 
   const entries = (data ?? []) as unknown as { name: string | null; referral_count: number; tier: string }[];
 

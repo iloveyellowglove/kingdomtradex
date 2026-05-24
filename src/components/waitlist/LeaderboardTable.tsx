@@ -31,6 +31,15 @@ export default function LeaderboardTable() {
     );
   }
 
+  if (entries.length === 0) {
+    return (
+      <div className="card p-8 text-center">
+        <p className="text-text-muted">No referrers yet.</p>
+        <p className="text-text-muted text-xs mt-1">Be the first to share your referral link and climb the ranks.</p>
+      </div>
+    );
+  }
+
   const tierBadgeColors: Record<string, { bg: string; text: string }> = {
     genesis: { bg: '#FFD700', text: '#0e0b1a' },
     gold: { bg: '#FFD700', text: '#0e0b1a' },
