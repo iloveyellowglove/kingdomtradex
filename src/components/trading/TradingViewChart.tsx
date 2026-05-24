@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 const SYMBOLS: Record<string, string> = {
   BTC: 'BINANCE:BTCUSDT',
@@ -18,9 +18,12 @@ declare global {
   }
 }
 
-export default function TradingViewChart() {
+interface TradingViewChartProps {
+  symbol: string;
+}
+
+export default function TradingViewChart({ symbol }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [symbol, setSymbol] = useState('BTC');
 
   useEffect(() => {
     const container = containerRef.current;
@@ -33,7 +36,7 @@ export default function TradingViewChart() {
     script.onload = () => {
       new window.TradingView.widget({
         autosize: true,
-        symbol: SYMBOLS[symbol],
+        symbol: SYMBOLS[symbol] || SYMBOLS.BTC,
         interval: '60',
         timezone: 'Etc/UTC',
         theme: 'dark',
@@ -44,7 +47,7 @@ export default function TradingViewChart() {
         hide_side_toolbar: false,
         allow_symbol_change: false,
         container_id: 'tv-chart-container',
-        height: 500,
+        height: 550,
         width: '100%',
         overrides: {
           'paneProperties.background': '#0e0b1a',
@@ -56,22 +59,11 @@ export default function TradingViewChart() {
   }, [symbol]);
 
   return (
-    <div className="card mb-6">
-      <div className="card-header flex items-center justify-between">
-        <h5 className="mb-0">Trading Terminal</h5>
-        <select
-          value={symbol}
-          onChange={(e) => setSymbol(e.target.value)}
-          className="bg-dark-indigo border border-royal-purple rounded px-3 py-1 text-sm text-white"
-        >
-          {Object.keys(SYMBOLS).map((s) => (
-            <option key={s} value={s}>{s}/USDT</option>
-          ))}
-        </select>
-      </div>
-      <div className="card-body p-0">
-        <div id="tv-chart-container" ref={containerRef} style={{ height: 500 }} />
-      </div>
+    <div className="rounded-xl overflow-hidden" style={{
+      background: 'rgba(255,255,255,0.03)',
+      border: '1px solid rgba(255,255,255,0.06)',
+    }}>
+      <div id="tv-chart-container" ref={containerRef} style={{ height: 550 }} />
     </div>
   );
 }

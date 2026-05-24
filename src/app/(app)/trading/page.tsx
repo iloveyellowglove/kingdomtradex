@@ -1,10 +1,10 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
-import TradingViewChart from '@/components/trading/TradingViewChart';
-import AITradingPanel from '@/components/trading/AITradingPanel';
+import { getSetting } from '@/lib/db/settings';
+import TradingPage from '@/components/trading/TradingPage';
 
-export default async function TradingPage() {
+export default async function TradingPageServer() {
   const cookieStore = cookies();
   const token = cookieStore.get('kingdom_session')?.value;
   if (!token) redirect('/login');
@@ -20,18 +20,14 @@ export default async function TradingPage() {
   if (s.length === 0) redirect('/login');
   const userId = s[0].user_id;
 
-  // Fetch AI trading profits
-  const { data: profits } = await supabase
-    .from('ai_trading_profits')
-    .select('*')
-    .eq('user_id', userId)
-    .order('date', { ascending: false })
-    .limit(30);
+  const { data: users } = await supabase
+    .from('users')
+    .select('display_balance')
+    .eq('id', userId)
+    .limit(1);
 
-  return (
-    <div className="py-4">
-      <TradingViewChart />
-      <AITradingPanel profits={profits ?? []} />
-    </div>
-  );
+  const balance = Number(users?.[0]?.display_balance || 0);
+  const dailyRate = parseFloat(await getSetting('daily_profit_percentage', '1.5'));
+
+  return <TradingPage dailyRate={dailyRate} balance={balance} />;
 }
