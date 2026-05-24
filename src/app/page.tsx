@@ -12,8 +12,9 @@ export default async function LandingPage() {
   const token = cookieStore.get('kingdom_session')?.value;
   let user: { username: string; role: string } | null = null;
 
+  const supabase = createServiceClient();
+
   if (token && token.length === 64) {
-    const supabase = createServiceClient();
     const { data: sessions } = await supabase
       .from('sessions')
       .select('user_id, expires_at')
@@ -32,10 +33,14 @@ export default async function LandingPage() {
     }
   }
 
+  const { count: waitlistCount } = await supabase
+    .from('waitlist')
+    .select('*', { count: 'exact', head: true });
+
   return (
     <div>
       {/* Hero Section */}
-      <HeroSection user={user} />
+      <HeroSection user={user} waitlistCount={waitlistCount ?? 0} />
 
       {/* Live Markets */}
       <LiveMarkets />
