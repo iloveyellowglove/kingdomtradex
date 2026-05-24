@@ -30,6 +30,7 @@ interface MarketData {
   error: string | null;
 }
 
+const BINANCE = 'https://api.binance.com/api/v3';
 const POLL_INTERVAL = 10000;
 
 export function useMarketData(symbol: string): MarketData {
@@ -44,20 +45,25 @@ export function useMarketData(symbol: string): MarketData {
     mountedRef.current = true;
 
     async function fetchData() {
+      const p = symbol === 'BTC' ? 'BTCUSDT' : 'ETHUSDT';
+
       try {
-        const res = await fetch('/api/market');
-        const json = await res.json();
-        if (!json.success || !mountedRef.current) return;
+        const [tickerRes, tradesRes, depthRes] = await Promise.all([
+          fetch(`${BINANCE}/ticker/24hr?symbol=${p}`),
+          fetch(`${BINANCE}/trades?symbol=${p}&limit=20`),
+          fetch(`${BINANCE}/depth?symbol=${p}&limit=10`),
+        ]);
 
-        const ticker = symbol === 'BTC' ? json.btcTicker : json.ethTicker;
-        const depth = symbol === 'BTC' ? json.btcDepth : json.ethDepth;
-        const tradesArr = symbol === 'BTC' ? (json.btcTrades || []) : [];
+        if (!tickerRes.ok) throw new Error('Failed to fetch ticker');
 
-        const price = parseFloat(ticker?.lastPrice || '0');
-        const asks: OrderBookLevel[] = (depth?.asks || []).map((a: string[]) => ({
+        const ticker = await tickerRes.json();
+        const tradesArr: Trade[] = tradesRes.ok ? await tradesRes.json() : [];
+        const depth = depthRes.ok ? await depthRes.json() : { asks: [], bids: [] };
+
+        const asks: OrderBookLevel[] = (depth.asks || []).map((a: string[]) => ({
           price: parseFloat(a[0]), amount: parseFloat(a[1]),
         }));
-        const bids: OrderBookLevel[] = (depth?.bids || []).map((b: string[]) => ({
+        const bids: OrderBookLevel[] = (depth.bids || []).map((b: string[]) => ({
           price: parseFloat(b[0]), amount: parseFloat(b[1]),
         }));
 
@@ -67,11 +73,11 @@ export function useMarketData(symbol: string): MarketData {
         const spreadPct = bestBid > 0 ? (spread / bestBid) * 100 : 0;
 
         setData({
-          price,
-          change24h: parseFloat(ticker?.priceChangePercent || '0'),
-          high24h: parseFloat(ticker?.highPrice || '0'),
-          low24h: parseFloat(ticker?.lowPrice || '0'),
-          volume24h: parseFloat(ticker?.quoteVolume || '0'),
+          price: parseFloat(ticker.lastPrice || '0'),
+          change24h: parseFloat(ticker.priceChangePercent || '0'),
+          high24h: parseFloat(ticker.highPrice || '0'),
+          low24h: parseFloat(ticker.lowPrice || '0'),
+          volume24h: parseFloat(ticker.quoteVolume || '0'),
           recentTrades: tradesArr,
           orderBook: { asks, bids },
           spread,
@@ -79,9 +85,13 @@ export function useMarketData(symbol: string): MarketData {
           loading: false,
           error: null,
         });
-      } catch {
+      } catch (err) {
+        console.error('[useMarketData] fetch error:', err);
         if (mountedRef.current) {
-          setData((prev) => ({ ...prev, error: 'Market data unavailable', loading: false }));
+          setData((prev) => prev.loading
+            ? { ...prev, error: 'Market data unavailable', loading: false }
+            : prev
+          );
         }
       }
     }
