@@ -3,6 +3,7 @@ export async function queryOracle(message: string): Promise<string> {
   const model = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
 
   if (!apiKey) {
+    console.error('[oracle] OPENROUTER_API_KEY is not set');
     return 'The Oracle is not available. Please configure the OPENROUTER_API_KEY.';
   }
 
@@ -26,9 +27,22 @@ export async function queryOracle(message: string): Promise<string> {
       }),
     });
 
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => '');
+      console.error(`[oracle] OpenRouter HTTP ${res.status}: ${errBody}`);
+      return `The Oracle is temporarily unavailable (HTTP ${res.status}). Try again later.`;
+    }
+
     const data = await res.json();
-    return data.choices?.[0]?.message?.content || 'The Oracle is silent. Seek wisdom in prayer and patience.';
-  } catch {
+
+    if (!data.choices?.[0]?.message?.content) {
+      console.error('[oracle] Unexpected response shape:', JSON.stringify(data).slice(0, 200));
+      return 'The Oracle is silent. Seek wisdom in prayer and patience.';
+    }
+
+    return data.choices[0].message.content;
+  } catch (err) {
+    console.error('[oracle] fetch error:', err instanceof Error ? err.message : String(err));
     return 'The Oracle is temporarily unavailable. Try again later.';
   }
 }
