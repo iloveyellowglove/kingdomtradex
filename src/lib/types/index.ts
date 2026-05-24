@@ -157,6 +157,29 @@ export interface ReferralTreeNode {
   children: ReferralTreeNode[];
 }
 
+// Waitlist
+export interface WaitlistEntry {
+  id: number;
+  email: string;
+  name: string | null;
+  role: 'pastor' | 'member';
+  referral_code: string;
+  referred_by: string | null;
+  referral_count: number;
+  tier: 'none' | 'bronze' | 'silver' | 'gold' | 'genesis';
+  rank: number | null;
+  waitlist_position: number | null;
+  joined_at: string;
+  email_verified: boolean;
+}
+
+export interface WaitlistLeaderboardEntry {
+  name: string;
+  referral_count: number;
+  tier: string;
+  rank: number;
+}
+
 // Plisio
 export interface PlisioAddressResult {
   success: boolean;

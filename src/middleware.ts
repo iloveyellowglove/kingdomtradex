@@ -13,8 +13,10 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/reset-password') ||
     pathname.startsWith('/about') ||
     pathname.startsWith('/covenant') ||
+    pathname.startsWith('/waitlist') ||
     pathname === '/' ||
     pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/api/waitlist') ||
     pathname.startsWith('/api/plisio-webhook') ||
     pathname.startsWith('/api/cron') ||
     pathname.startsWith('/_next') ||

@@ -224,3 +224,22 @@ CREATE TABLE IF NOT EXISTS password_resets (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     used BOOLEAN DEFAULT FALSE
 );
+
+-- ── Waitlist (pre-launch viral referral system) ──
+CREATE TABLE IF NOT EXISTS waitlist (
+    id              SERIAL PRIMARY KEY,
+    email           TEXT UNIQUE NOT NULL,
+    name            TEXT,
+    role            TEXT DEFAULT 'member' CHECK (role IN ('pastor', 'member')),
+    referral_code   TEXT UNIQUE NOT NULL,
+    referred_by     TEXT REFERENCES waitlist(referral_code),
+    referral_count  INTEGER DEFAULT 0,
+    tier            TEXT DEFAULT 'none' CHECK (tier IN ('none', 'bronze', 'silver', 'gold', 'genesis')),
+    rank            INTEGER,
+    waitlist_position INTEGER,
+    joined_at       TIMESTAMPTZ DEFAULT NOW(),
+    email_verified  BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX IF NOT EXISTS idx_waitlist_referral_code ON waitlist(referral_code);
+CREATE INDEX IF NOT EXISTS idx_waitlist_referral_count ON waitlist(referral_count DESC);

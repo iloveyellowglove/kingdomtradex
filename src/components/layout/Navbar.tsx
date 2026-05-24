@@ -85,6 +85,9 @@ export default function Navbar({ user }: NavbarProps) {
                 <Link href="/register" className="text-temple-gold hover:text-temple-gold-light px-4 py-2 rounded-lg hover:bg-white/5 transition font-medium">
                   Register
                 </Link>
+                <Link href="/waitlist" className="btn-primary px-5 py-2 rounded-lg text-sm font-bold">
+                  Join Waitlist
+                </Link>
               </>
             )}
           </div>
