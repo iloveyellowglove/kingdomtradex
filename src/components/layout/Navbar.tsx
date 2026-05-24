@@ -39,6 +39,9 @@ export default function Navbar({ user }: NavbarProps) {
                 <NavLink href="/trading" active={pathname === '/trading'}>
                   Trading
                 </NavLink>
+                <NavLink href="/earnings" active={pathname === '/earnings'}>
+                  Earnings
+                </NavLink>
                 <NavLink href="/withdrawals" active={pathname === '/withdrawals'}>
                   Withdrawals
                 </NavLink>
