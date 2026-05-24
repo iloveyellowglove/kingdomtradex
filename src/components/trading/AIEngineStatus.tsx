@@ -35,7 +35,7 @@ export default function AIEngineStatus({ dailyRate, balance }: AIEngineStatusPro
               Daily Yield Rate
             </p>
             <p className="mb-0" style={{ fontSize: '18px', fontWeight: 600, color: '#FFD700' }}>
-              {dailyRate}%
+              Up to {dailyRate}%
             </p>
           </div>
           <div>
@@ -70,7 +70,7 @@ export default function AIEngineStatus({ dailyRate, balance }: AIEngineStatusPro
 
       <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <p className="mb-0" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
-          Strategy: Multi-exchange arbitrage and momentum. Your staked balance earns {dailyRate}% daily yield automatically. The AI engine manages all trading on your behalf.
+          Strategy: Multi-exchange arbitrage and momentum. Your staked balance earns up to {dailyRate}% daily yield automatically. The AI engine manages all trading on your behalf.
         </p>
       </div>
     </div>

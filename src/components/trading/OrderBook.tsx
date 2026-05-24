@@ -19,15 +19,16 @@ export default function OrderBook({ asks, bids, spread, spreadPct, loading, symb
   const maxTotal = Math.max(maxAskTotal, maxBidTotal);
 
   return (
-    <div className="rounded-xl" style={{
+    <div className="rounded-xl flex flex-col" style={{
       background: 'rgba(255,255,255,0.03)',
       border: '1px solid rgba(255,255,255,0.06)',
+      height: '100%',
     }}>
-      <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+      <div className="p-3 border-b flex items-center justify-between flex-shrink-0" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <span style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>
           Order Book
         </span>
-        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Binance</span>
+        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Live</span>
       </div>
 
       {loading ? (
@@ -35,7 +36,7 @@ export default function OrderBook({ asks, bids, spread, spreadPct, loading, symb
           Loading...
         </p>
       ) : (
-        <div style={{ fontSize: '12px' }}>
+        <div className="overflow-y-auto flex-1" style={{ fontSize: '12px' }}>
           {/* Column headers */}
           <div className="flex px-3 py-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="flex-1 text-left" style={{ color: 'rgba(255,255,255,0.4)' }}>Price (USDT)</span>

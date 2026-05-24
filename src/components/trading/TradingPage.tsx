@@ -41,23 +41,27 @@ export default function TradingPage({ dailyRate, balance }: TradingPageProps) {
       )}
 
       {/* Main Content: Chart (70%) + Market Data (30%) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart - spans 2 columns */}
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6" style={{ height: 550 }}>
+        {/* Chart - spans 3 columns */}
+        <div className="lg:col-span-3">
           <TradingViewChart symbol={symbol} />
         </div>
 
         {/* Right column: Trades + Order Book */}
-        <div className="space-y-6">
-          <MarketTrades trades={recentTrades} loading={loading} symbol={symbol} />
-          <OrderBook
-            asks={orderBook.asks}
-            bids={orderBook.bids}
-            spread={spread}
-            spreadPct={spreadPct}
-            loading={loading}
-            symbol={symbol}
-          />
+        <div className="lg:col-span-1 flex flex-col gap-0" style={{ height: 550 }}>
+          <div className="flex-1 overflow-hidden">
+            <MarketTrades trades={recentTrades} loading={loading} symbol={symbol} />
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <OrderBook
+              asks={orderBook.asks}
+              bids={orderBook.bids}
+              spread={spread}
+              spreadPct={spreadPct}
+              loading={loading}
+              symbol={symbol}
+            />
+          </div>
         </div>
       </div>
 

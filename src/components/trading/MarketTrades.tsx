@@ -16,17 +16,18 @@ export default function MarketTrades({ trades, loading, symbol }: MarketTradesPr
   const coin = symbol === 'BTC' ? 'BTC' : 'ETH';
 
   return (
-    <div className="rounded-xl" style={{
+    <div className="rounded-xl flex flex-col" style={{
       background: 'rgba(255,255,255,0.03)',
       border: '1px solid rgba(255,255,255,0.06)',
+      height: '100%',
     }}>
-      <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+      <div className="p-3 border-b flex items-center justify-between flex-shrink-0" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <span style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>
           Market Trades
         </span>
-        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Binance</span>
+        <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Live</span>
       </div>
-      <div className="overflow-y-auto" style={{ maxHeight: 320 }}>
+      <div className="overflow-y-auto flex-1">
         {loading ? (
           <p className="p-4 text-center mb-0" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.3)' }}>
             Loading...

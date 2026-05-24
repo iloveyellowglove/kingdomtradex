@@ -43,7 +43,7 @@ export default function MarketHeader({
           <p className="mb-0" style={{ fontSize: '24px', fontWeight: 700, color: '#FFD700' }}>
             {loading ? '--' : formatCurrency(price)}
           </p>
-          <p className="mb-0" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Source: Binance</p>
+          <p className="mb-0" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Live Market Data</p>
         </div>
       </div>
 
