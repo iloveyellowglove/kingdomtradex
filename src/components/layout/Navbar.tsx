@@ -31,7 +31,7 @@ export default function Navbar({ user }: NavbarProps) {
 
         <div className="hidden lg:flex items-center gap-4 flex-1 ml-8" id="navbarNav">
           <div className="flex gap-1">
-            {user && (
+            {user ? (
               <>
                 <NavLink href="/dashboard" active={pathname === '/dashboard'}>
                   Dashboard
@@ -51,13 +51,22 @@ export default function Navbar({ user }: NavbarProps) {
                   </NavLink>
                 )}
               </>
+            ) : (
+              <>
+                <NavLink href="/" active={pathname === '/'}>
+                  Home
+                </NavLink>
+                <NavLink href="/about" active={pathname === '/about'}>
+                  About
+                </NavLink>
+                <NavLink href="/covenant" active={pathname === '/covenant'}>
+                  Covenant
+                </NavLink>
+                <NavLink href="/waitlist/leaderboard" active={pathname === '/waitlist/leaderboard'}>
+                  Leaderboard
+                </NavLink>
+              </>
             )}
-            <NavLink href="/about" active={pathname === '/about'}>
-              About
-            </NavLink>
-            <NavLink href="/covenant" active={pathname === '/covenant'}>
-              Covenant
-            </NavLink>
           </div>
 
           <div className="flex gap-2 ml-auto">
@@ -78,17 +87,9 @@ export default function Navbar({ user }: NavbarProps) {
                 </div>
               </div>
             ) : (
-              <>
-                <Link href="/login" className="text-text-primary hover:text-temple-gold px-4 py-2 rounded-lg hover:bg-white/5 transition">
-                  Log In
-                </Link>
-                <Link href="/register" className="text-temple-gold hover:text-temple-gold-light px-4 py-2 rounded-lg hover:bg-white/5 transition font-medium">
-                  Register
-                </Link>
-                <Link href="/waitlist" className="btn-primary px-5 py-2 rounded-lg text-sm font-bold">
-                  Join Waitlist
-                </Link>
-              </>
+              <Link href="/waitlist" className="btn-primary px-5 py-2 rounded-lg text-sm font-bold">
+                Join the Waitlist
+              </Link>
             )}
           </div>
         </div>

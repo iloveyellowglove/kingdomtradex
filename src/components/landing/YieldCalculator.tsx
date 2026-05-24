@@ -104,8 +104,8 @@ export default function YieldCalculator() {
         </div>
 
         <div className="text-center mt-8">
-          <Link href="/register" className="btn-primary inline-block px-8 py-3 rounded-xl font-bold">
-            Start Earning Now
+          <Link href="/waitlist" className="btn-primary inline-block px-8 py-3 rounded-xl font-bold">
+            Join the Waitlist
           </Link>
         </div>
       </div>

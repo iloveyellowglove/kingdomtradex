@@ -136,16 +136,16 @@ export default function HeroSection({ user }: Props) {
             </Link>
           ) : (
             <>
-              <Link href="/register" className="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-center">
-                Join the Kingdom
+              <Link href="/waitlist" className="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-center">
+                Join the Waitlist
               </Link>
-              <Link href="/login" className="inline-block px-10 py-4 rounded-xl text-lg font-semibold text-center transition-all" style={{
+              <Link href="/waitlist/leaderboard" className="inline-block px-10 py-4 rounded-xl text-lg font-semibold text-center transition-all" style={{
                 border: '1px solid #FFD700', color: '#FFD700',
               }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = '#FFD700'; e.currentTarget.style.color = '#0e0b1a'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#FFD700'; }}
               >
-                Sign In
+                View Leaderboard
               </Link>
             </>
           )}
