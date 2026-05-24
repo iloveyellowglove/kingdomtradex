@@ -1,16 +1,60 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt: number;
+}
+
+const DOVE_ICON = (
+  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16c0-1-.5-2-1-3M4 14c.5-3 2.5-6 5.5-8C12 4.5 15.5 4 18 5c2 .7 3.5 2 4 3.5.3 1 .2 2-.5 2.8-.5.5-1.2.5-1.8 0-.5-.5-.8-1.2-.7-1.8 0-.5.3-1 .8-1.3.5-.4 1-.6 1.5-.5M14 6.5c-3 .5-6 2.5-7.5 5.5M5.5 18.5c.5 1.2 1.5 2 2.8 2.2 1.5.3 3-.2 4-1.2.5-.5 1.2-.5 1.8 0 .7.7.7 1.5 0 2.2-1 1-2.2 1.5-3.8 1.3-2-.2-3.5-1.5-4.3-3" />
+    <path d="M3.5 12c-.5 1.5-.5 3.5 0 5 .3 1 1 1.8 2 2" />
+    <path d="M18 5c.1 1.5.1 3-.2 4.5" />
+    <path d="M18.5 6.5l2-1.5M19.5 8l1.5-1" />
+    <circle cx="19.5" cy="4.5" r="1" fill="#FFD700" stroke="none" />
+  </svg>
+);
+
+const DOVE_SM = (
+  <svg width="20" height="20" viewBox="0 0 28 28" fill="none" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16c0-1-.5-2-1-3M4 14c.5-3 2.5-6 5.5-8C12 4.5 15.5 4 18 5c2 .7 3.5 2 4 3.5.3 1 .2 2-.5 2.8-.5.5-1.2.5-1.8 0-.5-.5-.8-1.2-.7-1.8 0-.5.3-1 .8-1.3.5-.4 1-.6 1.5-.5M14 6.5c-3 .5-6 2.5-7.5 5.5M5.5 18.5c.5 1.2 1.5 2 2.8 2.2 1.5.3 3-.2 4-1.2.5-.5 1.2-.5 1.8 0 .7.7.7 1.5 0 2.2-1 1-2.2 1.5-3.8 1.3-2-.2-3.5-1.5-4.3-3" />
+    <path d="M3.5 12c-.5 1.5-.5 3.5 0 5 .3 1 1 1.8 2 2" />
+    <path d="M18 5c.1 1.5.1 3-.2 4.5" />
+    <path d="M18.5 6.5l2-1.5M19.5 8l1.5-1" />
+    <circle cx="19.5" cy="4.5" r="1" fill="#FFD700" stroke="none" />
+  </svg>
+);
+
+const DOVE_XS = (
+  <svg width="14" height="14" viewBox="0 0 28 28" fill="none" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
+    <path d="M22 16c0-1-.5-2-1-3M4 14c.5-3 2.5-6 5.5-8C12 4.5 15.5 4 18 5c2 .7 3.5 2 4 3.5.3 1 .2 2-.5 2.8-.5.5-1.2.5-1.8 0-.5-.5-.8-1.2-.7-1.8 0-.5.3-1 .8-1.3.5-.4 1-.6 1.5-.5M14 6.5c-3 .5-6 2.5-7.5 5.5M5.5 18.5c.5 1.2 1.5 2 2.8 2.2 1.5.3 3-.2 4-1.2.5-.5 1.2-.5 1.8 0 .7.7.7 1.5 0 2.2-1 1-2.2 1.5-3.8 1.3-2-.2-3.5-1.5-4.3-3" />
+    <path d="M3.5 12c-.5 1.5-.5 3.5 0 5 .3 1 1 1.8 2 2" />
+    <path d="M18 5c.1 1.5.1 3-.2 4.5" />
+    <path d="M18.5 6.5l2-1.5M19.5 8l1.5-1" />
+    <circle cx="19.5" cy="4.5" r="1" fill="#FFD700" stroke="none" />
+  </svg>
+);
 
 export default function OracleChat() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant'; content: string }[]>([
-    { role: 'assistant', content: 'I am Ephod, the AI Oracle. How may I guide your stewardship today?' },
+  const [closing, setClosing] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: 'I am Ephod, the AI Oracle. How may I guide your stewardship today?', createdAt: Date.now() },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hasPulsed, setHasPulsed] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Pulse ring on first load, once
+  useEffect(() => {
+    const t = setTimeout(() => setHasPulsed(true), 2000);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -24,10 +68,22 @@ export default function OracleChat() {
     }
   }, [open]);
 
+  const close = useCallback(() => {
+    setClosing(true);
+    setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+    }, 150);
+  }, []);
+
+  const open_ = useCallback(() => {
+    setOpen(true);
+  }, []);
+
   async function handleSend() {
     if (!input.trim() || loading) return;
     const userMsg = input.trim();
-    setMessages((prev) => [...prev, { role: 'user', content: userMsg }]);
+    setMessages((prev) => [...prev, { role: 'user', content: userMsg, createdAt: Date.now() }]);
     setInput('');
     setLoading(true);
 
@@ -38,55 +94,77 @@ export default function OracleChat() {
         body: JSON.stringify({ message: userMsg }),
       });
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: 'assistant', content: data.reply || 'The Oracle is silent.' }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: data.reply || 'The Oracle is silent.', createdAt: Date.now() }]);
     } catch {
-      setMessages((prev) => [...prev, { role: 'assistant', content: 'The Oracle is temporarily unavailable.' }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: 'The Oracle is temporarily unavailable.', createdAt: Date.now() }]);
     }
     setLoading(false);
   }
 
+  function fmtTime(ts: number): string {
+    return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
   return (
     <>
-      {/* Floating button — visible when closed */}
+      {/* Floating button */}
       <button
-        onClick={() => setOpen(true)}
+        onClick={open_}
         className="fixed z-50 flex items-center justify-center"
         style={{
           bottom: 20,
           right: 20,
-          width: 48,
-          height: 48,
+          width: 52,
+          height: 52,
           borderRadius: '50%',
           background: '#1a1a2e',
-          border: '1.5px solid rgba(255,215,0,0.35)',
+          border: '2px solid rgba(255,215,0,0.4)',
           cursor: 'pointer',
           opacity: open ? 0 : 1,
           pointerEvents: open ? 'none' : 'auto',
-          transition: 'opacity 200ms ease',
+          transition: 'opacity 200ms ease, box-shadow 200ms ease',
           boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
         }}
-        aria-label="Open Oracle chat"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.boxShadow = '0 0 20px rgba(255,215,0,0.25)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.4)';
+        }}
+        aria-label="Open Ephod Oracle"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
+        {/* Pulse ring */}
+        {!hasPulsed && (
+          <span
+            className="pulse-ring"
+            style={{
+              position: 'absolute',
+              inset: -4,
+              borderRadius: '50%',
+              border: '2px solid rgba(255,215,0,0.5)',
+            }}
+          />
+        )}
+        {DOVE_ICON}
       </button>
 
-      {/* Chat panel — visible when open */}
+      {/* Chat panel */}
       <div
         className="fixed z-50 flex flex-col"
         style={{
           bottom: 20,
           right: 20,
           width: 'min(380px, calc(100vw - 32px))',
-          height: 'min(500px, 70vh)',
+          height: 'min(520px, 70vh)',
           background: '#1a1a2e',
           border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 12,
-          opacity: open ? 1 : 0,
-          transform: open ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.96)',
+          opacity: open && !closing ? 1 : 0,
+          transform: open && !closing ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.96)',
           pointerEvents: open ? 'auto' : 'none',
-          transition: 'opacity 200ms ease, transform 200ms ease',
+          transition: closing
+            ? 'opacity 150ms ease-in, transform 150ms ease-in'
+            : 'opacity 200ms ease-out, transform 200ms ease-out',
           boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
         }}
       >
@@ -94,17 +172,44 @@ export default function OracleChat() {
         <div
           className="flex items-center justify-between px-4 flex-shrink-0"
           style={{
-            height: 44,
+            height: 56,
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #2a1a3e 100%)',
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
             borderBottom: '1px solid rgba(255,255,255,0.06)',
+            position: 'relative',
           }}
         >
-          <span style={{ fontSize: 14, fontWeight: 600, color: '#ffffff' }}>
-            Ephod Oracle
-          </span>
+          {/* Gold gradient top border */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 2,
+              background: 'linear-gradient(90deg, #FFD700, #B8860B)',
+              borderTopLeftRadius: 12,
+              borderTopRightRadius: 12,
+            }}
+          />
+
+          <div className="flex items-center gap-2.5">
+            {DOVE_SM}
+            <div>
+              <span className="text-base font-semibold" style={{ color: '#FFD700' }}>
+                Ephod Oracle
+              </span>
+              <p className="text-xs italic" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                Guided by wisdom
+              </p>
+            </div>
+          </div>
+
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setOpen(false)}
-              className="flex items-center justify-center"
+              onClick={close}
+              className="flex items-center justify-center hover:text-white transition-colors"
               style={{
                 width: 28,
                 height: 28,
@@ -121,8 +226,8 @@ export default function OracleChat() {
               </svg>
             </button>
             <button
-              onClick={() => setOpen(false)}
-              className="flex items-center justify-center"
+              onClick={close}
+              className="flex items-center justify-center hover:text-white transition-colors"
               style={{
                 width: 28,
                 height: 28,
@@ -143,38 +248,103 @@ export default function OracleChat() {
         </div>
 
         {/* Messages */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-          {messages.map((m, i) => (
-            <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className="px-3 py-2 text-sm"
-                style={{
-                  maxWidth: '82%',
-                  borderRadius: 10,
-                  borderBottomRightRadius: m.role === 'user' ? 4 : 10,
-                  borderBottomLeftRadius: m.role === 'assistant' ? 4 : 10,
-                  background: m.role === 'user'
-                    ? 'rgba(255,215,0,0.15)'
-                    : 'rgba(255,255,255,0.05)',
-                  color: m.role === 'user' ? '#FFD700' : 'rgba(255,255,255,0.85)',
-                  lineHeight: 1.5,
-                }}
-              >
-                {m.content}
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto px-4 py-3 space-y-4"
+          style={{ background: '#0e0b1a' }}
+        >
+          {messages.map((m, i) => {
+            const isWelcome = i === 0 && m.role === 'assistant';
+            const isUser = m.role === 'user';
+
+            if (isUser) {
+              return (
+                <div key={i} className="flex justify-end">
+                  <div className="flex flex-col items-end" style={{ maxWidth: '82%' }}>
+                    <div
+                      className="px-3 py-2 text-sm"
+                      style={{
+                        borderRadius: 10,
+                        borderTopRightRadius: 4,
+                        background: 'rgba(255,255,255,0.06)',
+                        color: 'rgba(255,255,255,0.8)',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {m.content}
+                    </div>
+                    <span className="mt-0.5" style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)' }}>
+                      {fmtTime(m.createdAt)}
+                    </span>
+                  </div>
+                </div>
+              );
+            }
+
+            // Bot message (or welcome)
+            return (
+              <div key={i} className="flex justify-start">
+                <div className="flex flex-col" style={{ maxWidth: '82%' }}>
+                  {/* Bot label */}
+                  {!isWelcome && (
+                    <div className="flex items-center gap-1 mb-1 ml-1">
+                      {DOVE_XS}
+                      <span style={{ fontSize: 11, color: 'rgba(255,215,0,0.5)', fontWeight: 500 }}>
+                        Ephod
+                      </span>
+                    </div>
+                  )}
+                  <div
+                    className={`px-3 py-2 ${isWelcome ? '' : ''}`}
+                    style={{
+                      borderRadius: 10,
+                      borderTopLeftRadius: isWelcome ? 10 : 4,
+                      background: isWelcome ? 'transparent' : 'rgba(255,215,0,0.06)',
+                      borderLeft: isWelcome ? 'none' : '2px solid rgba(255,215,0,0.3)',
+                      color: isWelcome ? 'rgba(255,215,0,0.7)' : 'rgba(255,255,255,0.85)',
+                      fontStyle: isWelcome ? 'italic' : 'normal',
+                      lineHeight: 1.5,
+                      fontSize: isWelcome ? 14 : undefined,
+                    }}
+                  >
+                    {m.content}
+                  </div>
+                  <span className="ml-1 mt-0.5" style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)' }}>
+                    {fmtTime(m.createdAt)}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+
+          {/* Typing indicator */}
           {loading && (
             <div className="flex justify-start">
-              <div
-                className="px-4 py-3 flex items-center gap-1"
-                style={{
-                  borderRadius: 10,
-                  borderBottomLeftRadius: 4,
-                  background: 'rgba(255,255,255,0.05)',
-                }}
-              >
-                <span className="dot-pulse" />
+              <div className="flex flex-col" style={{ maxWidth: '82%' }}>
+                <div className="flex items-center gap-1 mb-1 ml-1">
+                  {DOVE_XS}
+                  <span style={{ fontSize: 11, color: 'rgba(255,215,0,0.5)', fontWeight: 500 }}>
+                    Ephod
+                  </span>
+                </div>
+                <div
+                  className="px-4 py-3 flex flex-col gap-1"
+                  style={{
+                    borderRadius: 10,
+                    borderTopLeftRadius: 4,
+                    background: 'rgba(255,215,0,0.06)',
+                    borderLeft: '2px solid rgba(255,215,0,0.3)',
+                  }}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="typing-dot" />
+                    <span className="typing-dot" />
+                    <span className="typing-dot" />
+                  </div>
+                  <span className="text-xs italic" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                    The Oracle speaks...
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -183,20 +353,25 @@ export default function OracleChat() {
         {/* Input */}
         <div
           className="flex-shrink-0 px-3 py-3"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+          style={{
+            borderTop: '1px solid rgba(255,255,255,0.05)',
+            background: '#1a1a2e',
+            borderBottomLeftRadius: 12,
+            borderBottomRightRadius: 12,
+          }}
         >
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <input
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Ask the Oracle..."
-              className="flex-1 px-3 py-2 text-sm outline-none"
+              placeholder="Seek wisdom..."
+              className="flex-1 px-4 py-2.5 text-sm outline-none"
               style={{
-                borderRadius: 8,
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '9999px',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
                 color: '#ffffff',
               }}
               disabled={loading}
@@ -204,20 +379,20 @@ export default function OracleChat() {
             <button
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="flex items-center justify-center flex-shrink-0"
+              className="flex items-center justify-center flex-shrink-0 transition"
               style={{
-                width: 38,
-                height: 38,
-                borderRadius: 8,
+                width: 36,
+                height: 36,
+                borderRadius: '50%',
                 border: 'none',
                 cursor: loading || !input.trim() ? 'default' : 'pointer',
                 background: loading || !input.trim()
-                  ? 'rgba(255,215,0,0.08)'
-                  : 'rgba(255,215,0,0.18)',
+                  ? 'rgba(255,215,0,0.05)'
+                  : 'rgba(255,215,0,0.1)',
                 color: loading || !input.trim()
-                  ? 'rgba(255,215,0,0.3)'
+                  ? 'rgba(255,215,0,0.2)'
                   : '#FFD700',
-                transition: 'background 150ms ease, color 150ms ease',
+                opacity: input.trim() ? 1 : 0.4,
               }}
               aria-label="Send message"
             >
@@ -230,43 +405,37 @@ export default function OracleChat() {
         </div>
       </div>
 
-      {/* Dot-pulse animation styles */}
+      {/* Animations */}
       <style jsx>{`
-        .dot-pulse {
+        @keyframes pulseRing {
+          0% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.12); }
+          100% { opacity: 0; transform: scale(1.25); }
+        }
+        .pulse-ring {
+          animation: pulseRing 1.8s ease-out forwards;
+          pointer-events: none;
+        }
+
+        @keyframes typingBounce {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.3; }
+          30% { transform: translateY(-4px); opacity: 1; }
+        }
+        .typing-dot {
           display: inline-block;
-          width: 6px;
-          height: 6px;
+          width: 5px;
+          height: 5px;
           border-radius: 50%;
-          background: rgba(255,255,255,0.4);
-          animation: dotPulse 1.2s infinite ease-in-out;
-          position: relative;
+          background: #FFD700;
+          animation: typingBounce 1.4s infinite ease-in-out;
         }
-        .dot-pulse::before,
-        .dot-pulse::after {
-          content: '';
-          display: inline-block;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.4);
-          position: absolute;
-          top: 0;
-          animation: dotPulse 1.2s infinite ease-in-out;
-        }
-        .dot-pulse::before {
-          left: -12px;
-          animation-delay: 0s;
-        }
-        .dot-pulse {
-          animation-delay: 0.2s;
-        }
-        .dot-pulse::after {
-          left: 12px;
-          animation-delay: 0.4s;
-        }
-        @keyframes dotPulse {
-          0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-          40% { opacity: 1; transform: scale(1); }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes msgIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </>
