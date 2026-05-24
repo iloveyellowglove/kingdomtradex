@@ -1,4 +1,5 @@
 import { PAIRS } from '@/lib/pairs';
+import { COIN_LOGOS } from '@/lib/coinLogos';
 
 interface Trade {
   id: number;
@@ -24,9 +25,22 @@ export default function MarketTrades({ trades, loading, symbol }: MarketTradesPr
       height: '100%',
     }}>
       <div className="p-3 border-b flex items-center justify-between flex-shrink-0" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-        <span style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>
-          Market Trades
-        </span>
+        <div className="flex items-center gap-2">
+          <img
+            src={COIN_LOGOS[pair.coin]?.logo || ''}
+            alt={pair.coin}
+            width={16}
+            height={16}
+            className="rounded-full flex-shrink-0"
+            style={{ background: 'rgba(255,255,255,0.05)', padding: 1 }}
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>
+            {pair.display} Trades
+          </span>
+        </div>
         <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Live</span>
       </div>
       <div className="overflow-y-auto flex-1">

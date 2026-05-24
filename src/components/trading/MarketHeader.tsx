@@ -1,5 +1,6 @@
 import { formatCurrency } from '@/lib/utils/formatting';
 import { PAIRS } from '@/lib/pairs';
+import { COIN_LOGOS } from '@/lib/coinLogos';
 
 interface MarketHeaderProps {
   symbol: string;
@@ -32,21 +33,47 @@ export default function MarketHeader({
     }}>
       {/* Pair selector + price */}
       <div className="flex items-center gap-3">
-        <select
-          value={symbol}
-          onChange={(e) => onSymbolChange(e.target.value)}
-          className="rounded-lg px-3 py-2 text-sm font-medium"
-          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}
-        >
-          {Object.entries(PAIRS).map(([key, info]) => (
-            <option key={key} value={key}>{info.display}</option>
-          ))}
-        </select>
-        <div>
-          <p className="mb-0" style={{ fontSize: '24px', fontWeight: 700, color: '#FFD700' }}>
-            {loading ? '--' : formatCurrency(price)}
-          </p>
-          <p className="mb-0" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Live Market Data</p>
+        <div className="flex items-center gap-2">
+          <img
+            src={COIN_LOGOS[pair.coin]?.logo || ''}
+            alt={pair.coin}
+            width={20}
+            height={20}
+            className="rounded-full flex-shrink-0"
+            style={{ background: 'rgba(255,255,255,0.05)', padding: 2 }}
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+          <select
+            value={symbol}
+            onChange={(e) => onSymbolChange(e.target.value)}
+            className="rounded-lg px-3 py-2 text-sm font-medium"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}
+          >
+            {Object.entries(PAIRS).map(([key, info]) => (
+              <option key={key} value={key}>{info.display}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <img
+            src={COIN_LOGOS[pair.coin]?.logo || ''}
+            alt={pair.coin}
+            width={24}
+            height={24}
+            className="rounded-full flex-shrink-0"
+            style={{ background: 'rgba(255,255,255,0.05)', padding: 2 }}
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+          <div>
+            <p className="mb-0" style={{ fontSize: '24px', fontWeight: 700, color: '#FFD700' }}>
+              {loading ? '--' : formatCurrency(price)}
+            </p>
+            <p className="mb-0" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>Live Market Data</p>
+          </div>
         </div>
       </div>
 

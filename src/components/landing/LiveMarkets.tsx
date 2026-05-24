@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { COIN_LOGOS, COINGECKO_ID_MAP } from '@/lib/coinLogos';
 
 interface Coin {
   id: string;
@@ -22,6 +23,7 @@ const FALLBACK: Coin[] = [
 function PriceCard({ coin }: { coin: Coin }) {
   const prevPrice = useRef(coin.current_price);
   const [flash, setFlash] = useState<'up' | 'down' | null>(null);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     if (coin.current_price > prevPrice.current) setFlash('up');
@@ -33,9 +35,31 @@ function PriceCard({ coin }: { coin: Coin }) {
 
   const change = coin.price_change_percentage_24h;
   const isPositive = change >= 0;
+  const symbol = COINGECKO_ID_MAP[coin.id] || '';
+  const logoInfo = symbol ? COIN_LOGOS[symbol] : null;
 
   return (
     <div className="card p-5 text-center transition-all hover:border-temple-gold" style={{ transition: 'border-color 0.3s' }}>
+      <div className="flex justify-center mb-2">
+        {logoInfo && !imgError ? (
+          <img
+            src={logoInfo.logo}
+            alt={logoInfo.name}
+            width={28}
+            height={28}
+            className="rounded-full"
+            style={{ background: 'rgba(255,255,255,0.05)', padding: 2 }}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div
+            className="flex items-center justify-center rounded-full"
+            style={{ width: 28, height: 28, background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: 600 }}
+          >
+            {coin.symbol.charAt(0).toUpperCase()}
+          </div>
+        )}
+      </div>
       <p className="text-text-muted text-xs uppercase tracking-wider mb-2">{coin.name}</p>
       <p className={`text-xl font-bold mb-1 transition-colors ${
         flash === 'up' ? 'text-success' : flash === 'down' ? 'text-danger' : 'text-white'
