@@ -17,7 +17,7 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
   const monthly = daily * 30;
 
   // Interactive calculator state
-  const [calcAmount, setCalcAmount] = useState(1000);
+  const [calcAmount, setCalcAmount] = useState(50);
   const calcDaily = calcAmount * (dailyRate / 100);
   const calcWeekly = calcDaily * 7;
   const calcMonthly = calcDaily * 30;
@@ -43,7 +43,7 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
               <h2 className="text-temple-gold mb-1" style={{ fontSize: '1.5rem' }}>Kingdom Yield Vault</h2>
               <p className="text-text-muted text-sm">Your balance earns yield daily through AI-powered trading</p>
             </div>
-            <p className="text-temple-gold text-3xl font-extrabold">{dailyRate}% <span className="text-text-muted text-sm font-normal">Daily</span></p>
+            <p className="text-temple-gold text-3xl font-extrabold">Up to {dailyRate}% <span className="text-text-muted text-sm font-normal">Daily</span></p>
           </div>
 
           {/* 4 Stat Cards */}
@@ -56,11 +56,25 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
         </div>
       </div>
 
+      {/* Stake Your USDT */}
+      <div className="card">
+        <div className="card-body p-6">
+          <h3 className="text-lg font-bold mb-3">Stake Your USDT</h3>
+          <p className="mb-3">
+            Your entire balance of <span className="text-temple-gold font-semibold">{fmt(balance)} USDT</span> is earning yield automatically.
+          </p>
+          <p className="text-text-muted text-sm mb-4">Staked funds earn up to {dailyRate}% daily yield. Withdraw anytime.</p>
+          <Link href="/deposit" className="btn-primary inline-block px-6 py-3 rounded-lg text-sm font-semibold">
+            Deposit More
+          </Link>
+        </div>
+      </div>
+
       {/* Interactive Yield Calculator */}
       <div className="card">
         <div className="card-body p-6">
           <h3 className="text-lg font-bold mb-4">Yield Calculator</h3>
-          <p className="text-text-muted text-sm mb-4">See how your assets can grow at {dailyRate}% daily</p>
+          <p className="text-text-muted text-sm mb-4">See how your assets can grow at up to {dailyRate}% daily</p>
 
           <div className="mb-6">
             <div className="flex justify-between items-center mb-3">
@@ -69,9 +83,9 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
             </div>
             <input
               type="range"
-              min={100}
+              min={50}
               max={100000}
-              step={100}
+              step={50}
               value={calcAmount}
               onChange={(e) => setCalcAmount(Number(e.target.value))}
               className="w-full"
@@ -80,7 +94,7 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
                 appearance: 'none',
                 height: '8px',
                 borderRadius: '4px',
-                background: `linear-gradient(to right, #FFD700 0%, #FFD700 ${((calcAmount - 100) / (100000 - 100)) * 100}%, #261f3a ${((calcAmount - 100) / (100000 - 100)) * 100}%, #261f3a 100%)`,
+                background: `linear-gradient(to right, #FFD700 0%, #FFD700 ${((calcAmount - 50) / (100000 - 50)) * 100}%, #261f3a ${((calcAmount - 50) / (100000 - 50)) * 100}%, #261f3a 100%)`,
                 outline: 'none',
                 cursor: 'pointer',
               }}
@@ -99,7 +113,7 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
               }
             `}</style>
             <div className="flex justify-between text-text-muted text-xs mt-1">
-              <span>$100</span>
+              <span>$50</span>
               <span>$50,000</span>
               <span>$100,000</span>
             </div>
