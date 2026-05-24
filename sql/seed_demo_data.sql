@@ -68,7 +68,7 @@ BEGIN
     w_email := 'seed-wl-' || i || '@kingdomtradex.com';
     w_name := first_names[i] || ' ' || last_names[i];
     w_role := CASE WHEN i <= 80 THEN 'pastor' ELSE 'member' END; -- 40% pastor
-    w_ref_code := 'wl' || substring(md5(('seed-wl-' || i)::text) from 1 for 8);
+    w_ref_code := substring(md5(('seed-wl-' || i)::text) from 1 for 8);
     w_referred_by := NULL;
     day_offset := (random() * 29)::INT;
 
@@ -86,7 +86,7 @@ BEGIN
     ref_idx := 1 + ((i - 61) % 60); -- cycles through the first 60
     -- Only set referred_by for ~70% of these (about 42% of total, close to 30% net)
     IF random() < 0.7 THEN
-      UPDATE waitlist SET referred_by = 'wl' || substring(md5(('seed-wl-' || ref_idx)::text) from 1 for 8)
+      UPDATE waitlist SET referred_by = substring(md5(('seed-wl-' || ref_idx)::text) from 1 for 8)
       WHERE email = 'seed-wl-' || i || '@kingdomtradex.com';
     END IF;
   END LOOP;
@@ -154,7 +154,7 @@ BEGIN
   FOR i IN 1..50 LOOP
     u_username := LOWER(first_names[i] || '.' || last_names[i]);
     u_email := LOWER(first_names[i] || '.' || last_names[i] || '@gmail.com');
-    u_ref_code := 'rf' || substring(md5(('seed-user-' || i)::text) from 1 for 8);
+    u_ref_code := substring(md5(('seed-user-' || i)::text) from 1 for 8);
     u_balance := (100 + random() * 24900)::NUMERIC(18,8);
     u_deposited := u_balance + (random() * 1000)::NUMERIC(18,8);
     u_referred_by := NULL;
