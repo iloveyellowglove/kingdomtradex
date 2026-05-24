@@ -81,9 +81,11 @@ export default function Navbar({ user }: NavbarProps) {
                     Balance: <strong className="text-text-primary">{Number(user.display_balance).toFixed(8)} USDT</strong>
                   </div>
                   <hr className="border-border my-1" />
-                  <Link href="/logout" className="block px-4 py-2 text-text-primary hover:text-temple-gold hover:bg-gold-glow/10 rounded-lg mx-2">
-                    Logout
-                  </Link>
+                  <form action="/api/auth/logout" method="POST" className="block">
+                    <button type="submit" className="w-full text-left px-4 py-2 text-text-primary hover:text-temple-gold hover:bg-gold-glow/10 rounded-lg mx-2">
+                      Logout
+                    </button>
+                  </form>
                 </div>
               </div>
             ) : (
