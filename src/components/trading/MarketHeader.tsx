@@ -1,4 +1,5 @@
 import { formatCurrency } from '@/lib/utils/formatting';
+import { PAIRS } from '@/lib/pairs';
 
 interface MarketHeaderProps {
   symbol: string;
@@ -15,6 +16,7 @@ export default function MarketHeader({
   symbol, price, change24h, high24h, low24h, volume24h, loading, onSymbolChange,
 }: MarketHeaderProps) {
   const isPositive = change24h >= 0;
+  const pair = PAIRS[symbol];
 
   function fmtVol(n: number): string {
     if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
@@ -36,8 +38,9 @@ export default function MarketHeader({
           className="rounded-lg px-3 py-2 text-sm font-medium"
           style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#ffffff' }}
         >
-          <option value="BTC">BTC/USDT</option>
-          <option value="ETH">ETH/USDT</option>
+          {Object.entries(PAIRS).map(([key, info]) => (
+            <option key={key} value={key}>{info.display}</option>
+          ))}
         </select>
         <div>
           <p className="mb-0" style={{ fontSize: '24px', fontWeight: 700, color: '#FFD700' }}>
@@ -56,7 +59,7 @@ export default function MarketHeader({
         </Stat>
         <Stat label="24h High">{formatCurrency(high24h)}</Stat>
         <Stat label="24h Low">{formatCurrency(low24h)}</Stat>
-        <Stat label="24h Volume (USDT)">{fmtVol(volume24h)}</Stat>
+        <Stat label={`24h Volume (${pair.quote})`}>{fmtVol(volume24h)}</Stat>
       </div>
     </div>
   );

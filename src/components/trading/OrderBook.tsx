@@ -1,3 +1,5 @@
+import { PAIRS } from '@/lib/pairs';
+
 interface OrderBookLevel {
   price: number;
   amount: number;
@@ -13,7 +15,7 @@ interface OrderBookProps {
 }
 
 export default function OrderBook({ asks, bids, spread, spreadPct, loading, symbol }: OrderBookProps) {
-  const coin = symbol === 'BTC' ? 'BTC' : 'ETH';
+  const pair = PAIRS[symbol] || PAIRS.BTC;
   const maxAskTotal = asks.reduce((s, a) => s + a.amount, 0);
   const maxBidTotal = bids.reduce((s, b) => s + b.amount, 0);
   const maxTotal = Math.max(maxAskTotal, maxBidTotal);
@@ -39,8 +41,8 @@ export default function OrderBook({ asks, bids, spread, spreadPct, loading, symb
         <div className="overflow-y-auto flex-1" style={{ fontSize: '12px' }}>
           {/* Column headers */}
           <div className="flex px-3 py-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-            <span className="flex-1 text-left" style={{ color: 'rgba(255,255,255,0.4)' }}>Price (USDT)</span>
-            <span className="text-right" style={{ width: 80, color: 'rgba(255,255,255,0.4)' }}>Amount ({coin})</span>
+            <span className="flex-1 text-left" style={{ color: 'rgba(255,255,255,0.4)' }}>Price ({pair.quote})</span>
+            <span className="text-right" style={{ width: 80, color: 'rgba(255,255,255,0.4)' }}>Amount ({pair.coin})</span>
             <span className="text-right" style={{ width: 80, color: 'rgba(255,255,255,0.4)' }}>Total</span>
           </div>
 

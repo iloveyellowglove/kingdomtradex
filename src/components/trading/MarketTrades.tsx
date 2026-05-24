@@ -1,3 +1,5 @@
+import { PAIRS } from '@/lib/pairs';
+
 interface Trade {
   id: number;
   price: string;
@@ -13,7 +15,7 @@ interface MarketTradesProps {
 }
 
 export default function MarketTrades({ trades, loading, symbol }: MarketTradesProps) {
-  const coin = symbol === 'BTC' ? 'BTC' : 'ETH';
+  const pair = PAIRS[symbol] || PAIRS.BTC;
 
   return (
     <div className="rounded-xl flex flex-col" style={{
@@ -40,8 +42,8 @@ export default function MarketTrades({ trades, loading, symbol }: MarketTradesPr
           <table className="w-full" style={{ fontSize: '12px' }}>
             <thead>
               <tr>
-                <th className="text-left p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Price (USDT)</th>
-                <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Amount ({coin})</th>
+                <th className="text-left p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Price ({pair.quote})</th>
+                <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Amount ({pair.coin})</th>
                 <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Time</th>
               </tr>
             </thead>

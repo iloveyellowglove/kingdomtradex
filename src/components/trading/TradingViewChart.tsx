@@ -1,14 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-
-const SYMBOLS: Record<string, string> = {
-  BTC: 'BINANCE:BTCUSDT',
-  ETH: 'BINANCE:ETHUSDT',
-  BNB: 'BINANCE:BNBUSDT',
-  SOL: 'BINANCE:SOLUSDT',
-  XRP: 'BINANCE:XRPUSDT',
-};
+import { PAIRS } from '@/lib/pairs';
 
 declare global {
   interface Window {
@@ -36,7 +29,7 @@ export default function TradingViewChart({ symbol }: TradingViewChartProps) {
     script.onload = () => {
       new window.TradingView.widget({
         autosize: true,
-        symbol: SYMBOLS[symbol] || SYMBOLS.BTC,
+        symbol: PAIRS[symbol]?.tvSymbol || PAIRS.BTC.tvSymbol,
         interval: '60',
         timezone: 'Etc/UTC',
         theme: 'dark',

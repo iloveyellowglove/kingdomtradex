@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { PAIRS } from '@/lib/pairs';
 
 interface Trade {
   id: number;
@@ -45,7 +46,7 @@ export function useMarketData(symbol: string): MarketData {
     mountedRef.current = true;
 
     async function fetchData() {
-      const p = symbol === 'BTC' ? 'BTCUSDT' : 'ETHUSDT';
+      const p = PAIRS[symbol]?.binance || 'BTCUSDT';
 
       try {
         const [tickerRes, tradesRes, depthRes] = await Promise.all([
