@@ -56,6 +56,8 @@ export default function ProfilePage() {
   const [migrationNeeded, setMigrationNeeded] = useState(false);
   const [migrationRunning, setMigrationRunning] = useState(false);
   const [migrationMsg, setMigrationMsg] = useState('');
+  const [migrationSql, setMigrationSql] = useState<string | null>(null);
+  const [copiedSql, setCopiedSql] = useState(false);
 
   // Edit state
   const [fullName, setFullName] = useState('');
@@ -275,6 +277,7 @@ export default function ProfilePage() {
   const handleRunMigration = useCallback(async () => {
     setMigrationRunning(true);
     setMigrationMsg('');
+    setMigrationSql(null);
     try {
       const res = await fetch('/api/profile/migrate', { method: 'POST' });
       const data = await res.json();
@@ -293,6 +296,9 @@ export default function ProfilePage() {
           setCity(fresh.city || '');
           setAddress(fresh.address || '');
         }
+      } else if (data.sql) {
+        setMigrationSql(data.sql);
+        setMigrationMsg(data.message || 'Automatic migration not available. Run the SQL manually.');
       } else {
         setMigrationMsg(data.message || 'Migration failed.');
       }
@@ -303,6 +309,27 @@ export default function ProfilePage() {
       setTimeout(() => setMigrationMsg(''), 6000);
     }
   }, []);
+
+  const handleCopySql = useCallback(async () => {
+    if (!migrationSql) return;
+    try {
+      await navigator.clipboard.writeText(migrationSql);
+      setCopiedSql(true);
+      setTimeout(() => setCopiedSql(false), 2000);
+    } catch {
+      // Fallback for environments without clipboard API
+      const ta = document.createElement('textarea');
+      ta.value = migrationSql;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      setCopiedSql(true);
+      setTimeout(() => setCopiedSql(false), 2000);
+    }
+  }, [migrationSql]);
 
   if (profileLoading) {
     return (
@@ -324,26 +351,56 @@ export default function ProfilePage() {
 
       {/* Migration banner */}
       {migrationNeeded && (
-        <div className="mb-8 p-5 rounded-xl flex items-start justify-between gap-4 flex-wrap" style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.2)' }}>
-          <div>
-            <p className="text-temple-gold text-sm font-semibold">Database Migration Required</p>
-            <p className="text-text-muted text-sm mt-1">Profile features require a database migration. Ask your admin to run it.</p>
+        <div className="mb-8 p-5 rounded-xl" style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.2)' }}>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <p className="text-temple-gold text-sm font-semibold">Database Migration Required</p>
+              <p className="text-text-muted text-sm mt-1">Profile features require a database migration. Ask your admin to run it.</p>
+            </div>
+            {profile.role === 'admin' && !migrationSql && (
+              <div className="flex items-center gap-3">
+                {migrationMsg && (
+                  <span className={`text-sm ${migrationMsg.includes('complete') ? 'text-green-400' : 'text-red-400'}`}>
+                    {migrationMsg}
+                  </span>
+                )}
+                <button
+                  onClick={handleRunMigration}
+                  disabled={migrationRunning}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 flex-shrink-0"
+                  style={{ background: '#FFD700', color: '#0e0b1a' }}
+                >
+                  {migrationRunning ? 'Running...' : 'Run Migration'}
+                </button>
+              </div>
+            )}
           </div>
-          {profile.role === 'admin' && (
-            <div className="flex items-center gap-3">
+
+          {/* Manual SQL fallback */}
+          {migrationSql && (
+            <div className="mt-4 space-y-3">
               {migrationMsg && (
-                <span className={`text-sm ${migrationMsg.includes('complete') ? 'text-green-400' : 'text-red-400'}`}>
-                  {migrationMsg}
-                </span>
+                <p className="text-text-muted text-sm">{migrationMsg}</p>
               )}
-              <button
-                onClick={handleRunMigration}
-                disabled={migrationRunning}
-                className="px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 flex-shrink-0"
-                style={{ background: '#FFD700', color: '#0e0b1a' }}
-              >
-                {migrationRunning ? 'Running...' : 'Run Migration'}
-              </button>
+              <p className="text-text-muted text-xs">
+                Go to <span className="text-white/70">Supabase Dashboard</span> &gt; <span className="text-white/70">SQL Editor</span> &gt; paste the query below &gt; click <span className="text-white/70">Run</span>.
+                Then refresh this page.
+              </p>
+              <div className="relative">
+                <pre
+                  className="p-4 rounded-lg text-xs font-mono overflow-x-auto"
+                  style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.8)' }}
+                >
+                  {migrationSql}
+                </pre>
+                <button
+                  onClick={handleCopySql}
+                  className="absolute top-2 right-2 px-3 py-1.5 rounded text-xs font-semibold transition"
+                  style={{ background: copiedSql ? '#22c55e' : 'rgba(255,255,255,0.1)', color: copiedSql ? '#fff' : 'rgba(255,255,255,0.7)' }}
+                >
+                  {copiedSql ? 'Copied' : 'Copy SQL'}
+                </button>
+              </div>
             </div>
           )}
         </div>
