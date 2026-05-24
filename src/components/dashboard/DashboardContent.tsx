@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { User, DownlineCounts, WithdrawalLock, Deposit, ReferralCommission } from '@/lib/types';
+import CrossBackground from '@/components/brand/CrossBackground';
 
 interface DashboardProps {
   user: User;
@@ -45,7 +46,9 @@ export default function DashboardContent({
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://kingdomtradex.vercel.app';
 
   return (
-    <>
+    <div className="relative">
+      <CrossBackground opacity={0.03} />
+      <div className="relative z-10">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between mb-6">
         <div>
@@ -250,7 +253,8 @@ export default function DashboardContent({
           </div>
         </div>
       </div>
-    </>
+      </div>
+    </div>
   );
 }
 

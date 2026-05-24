@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Logo from '@/components/brand/Logo';
 
 interface NavbarProps {
   user?: {
@@ -17,11 +18,8 @@ export default function Navbar({ user }: NavbarProps) {
   return (
     <nav className="navbar" id="mainNav">
       <div className="flex items-center justify-between max-w-[1280px] mx-auto px-6 w-full min-h-[64px]">
-        <Link href="/" className="flex items-center gap-2.5 text-temple-gold font-bold text-[1.3rem] no-underline tracking-[-0.3px]">
-          <div className="w-[34px] h-[34px] flex items-center justify-center text-[1rem] text-bg-dark rounded-lg" style={{ background: 'linear-gradient(135deg, var(--temple-gold), #b8860b)' }}>
-            &#x2663;
-          </div>
-          KingdomTrade Exchange
+        <Link href="/" className="no-underline">
+          <Logo size="md" />
         </Link>
 
         {/* Mobile toggle */}

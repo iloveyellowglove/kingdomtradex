@@ -4,6 +4,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import YieldVault from '@/components/trading/YieldVault';
 import TradingViewChart from '@/components/trading/TradingViewChart';
 import AITradingPanel from '@/components/trading/AITradingPanel';
+import CrossBackground from '@/components/brand/CrossBackground';
 
 export default async function TradingPage() {
   const cookieStore = cookies();
@@ -48,10 +49,13 @@ export default async function TradingPage() {
     .limit(30);
 
   return (
-    <div className="py-4">
-      <YieldVault balance={balance} dailyRate={dailyRate} />
+    <div className="py-4 relative">
+      <CrossBackground opacity={0.03} />
+      <div className="relative z-10">
+        <YieldVault balance={balance} dailyRate={dailyRate} />
       <TradingViewChart />
       <AITradingPanel profits={profits ?? []} />
+      </div>
     </div>
   );
 }

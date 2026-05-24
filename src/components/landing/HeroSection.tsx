@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import Logo from '@/components/brand/Logo';
+import CrossBackground from '@/components/brand/CrossBackground';
 
 type Props = { user: { username: string; role: string } | null };
 
@@ -93,8 +95,14 @@ export default function HeroSection({ user }: Props) {
         ))}
       </div>
 
+      {/* Cross watermark background */}
+      <CrossBackground opacity={0.04} />
+
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center px-6 py-16 md:py-20" style={{ minHeight: '580px' }}>
+        {/* Logo */}
+        <Logo size="lg" showText={false} className="mb-5" />
+
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{
           background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.2)',

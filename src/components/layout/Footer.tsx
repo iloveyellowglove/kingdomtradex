@@ -1,3 +1,5 @@
+import Logo from '@/components/brand/Logo';
+
 export default function Footer({ user }: { user?: { role: string } | null }) {
   return (
     <>
@@ -26,7 +28,7 @@ export default function Footer({ user }: { user?: { role: string } | null }) {
         <div className="max-w-[1280px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="font-bold mb-1">KingdomTrade Exchange</p>
+              <Logo size="sm" className="mb-1" />
               <small className="text-text-secondary">Secure blockchain transactions. All balances and trades are processed in real time.</small>
             </div>
             <div className="text-left md:text-right">

@@ -5,6 +5,7 @@ import LiveMarkets from '@/components/landing/LiveMarkets';
 import YieldCalculator from '@/components/landing/YieldCalculator';
 import Testimonials from '@/components/landing/Testimonials';
 import FaqAccordion from '@/components/landing/FaqAccordion';
+import CrossDove from '@/components/brand/CrossDove';
 
 export default async function LandingPage() {
   const cookieStore = cookies();
@@ -42,7 +43,9 @@ export default async function LandingPage() {
       {/* How It Works */}
       <section className="mb-12">
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">How KingdomTrade Works</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-2">
+            <CrossDove size={24} /> How KingdomTrade Works
+          </h2>
           <p className="text-text-muted">Three simple steps to start growing your assets</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -68,7 +71,9 @@ export default async function LandingPage() {
       {/* Security & Trust */}
       <section className="mb-12">
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">Enterprise-Grade Security</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-2">
+            <CrossDove size={24} /> Enterprise-Grade Security
+          </h2>
           <p className="text-text-muted">Your assets are protected by institutional-level security measures</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -92,7 +97,9 @@ export default async function LandingPage() {
         borderImage: 'linear-gradient(135deg, #FFD700, #6A0DAD) 1',
         border: '1px solid transparent',
       }}>
-        <h2 className="text-temple-gold text-2xl md:text-3xl font-bold mb-4">The Covenant Economy</h2>
+        <h2 className="text-temple-gold text-2xl md:text-3xl font-bold mb-4">
+          <CrossDove size={24} /> The Covenant Economy
+        </h2>
         <p className="text-text-secondary max-w-3xl mx-auto mb-8">
           KingdomTrade operates on biblical principles of stewardship and multiplication. When you deposit and trade,
           you are not just growing your own resources - you are participating in a covenant economy that blesses

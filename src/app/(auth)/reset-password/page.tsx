@@ -1,5 +1,6 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import ResetPasswordForm from '@/components/auth/ResetPasswordForm';
+import Logo from '@/components/brand/Logo';
 
 export default async function ResetPasswordPage({ searchParams }: { searchParams: { token?: string } }) {
   const token = searchParams.token || '';
@@ -39,11 +40,17 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
           <div className="card-body p-6">
             {tokenValid ? (
               <>
+                <div className="flex justify-center mb-6">
+                  <Logo size="md" />
+                </div>
                 <h3 className="text-center mb-4">Set New Password</h3>
                 <ResetPasswordForm token={token} email={tokenEmail} />
               </>
             ) : (
               <>
+                <div className="flex justify-center mb-6">
+                  <Logo size="md" />
+                </div>
                 <h3 className="text-center mb-4">Reset Password</h3>
                 {error && <div className="alert alert-danger">{error}</div>}
                 <div className="text-center">
