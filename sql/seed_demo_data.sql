@@ -245,7 +245,7 @@ DO $$
 DECLARE
   currencies TEXT[] := ARRAY['USDT','USDT','USDT','USDT','USDT','BTC','ETH','USDT','USDT','USDT'];
   deposit_statuses TEXT[] := ARRAY['completed','completed','completed','completed','completed','completed','completed','completed','pending','pending'];
-  r RECORD;
+  selected_user_id BIGINT;
   d_currency TEXT;
   d_amount NUMERIC(18,8);
   d_status TEXT;
@@ -260,7 +260,7 @@ BEGIN
 
   FOR i IN 1..75 LOOP
     -- Pick a random user
-    r.id := user_ids[1 + (random() * array_length(user_ids, 1))::INT % array_length(user_ids, 1)];
+    selected_user_id := user_ids[1 + (random() * array_length(user_ids, 1))::INT % array_length(user_ids, 1)];
 
     d_currency := currencies[1 + (i % array_length(currencies, 1))];
     d_amount := CASE d_currency
@@ -275,7 +275,7 @@ BEGIN
     d_confirmed := CASE WHEN d_status = 'completed' THEN d_created + (random() * 6 || ' hours')::INTERVAL ELSE NULL END;
 
     INSERT INTO deposits (user_id, txn_id, txid, currency, amount, address, status, created_at, confirmed_at, completed_at)
-    VALUES (r.id, 'plisio_txn_' || i, d_txid, d_currency, d_amount, 'seed_addr_' || i, d_status, d_created, d_confirmed,
+    VALUES (selected_user_id, 'plisio_txn_' || i, d_txid, d_currency, d_amount, 'seed_addr_' || i, d_status, d_created, d_confirmed,
       CASE WHEN d_status = 'completed' THEN d_confirmed ELSE NULL END);
   END LOOP;
 END $$;
@@ -286,7 +286,7 @@ END $$;
 DO $$
 DECLARE
   w_statuses TEXT[] := ARRAY['completed','completed','completed','completed','pending','pending','processing','completed','completed','completed'];
-  r RECORD;
+  selected_user_id BIGINT;
   w_amount NUMERIC(18,8);
   w_status TEXT;
   w_requested TIMESTAMPTZ;
@@ -298,7 +298,7 @@ BEGIN
   SELECT array_agg(id) INTO user_ids FROM (SELECT id FROM users LIMIT 50) sub;
 
   FOR i IN 1..30 LOOP
-    r.id := user_ids[1 + (random() * array_length(user_ids, 1))::INT % array_length(user_ids, 1)];
+    selected_user_id := user_ids[1 + (random() * array_length(user_ids, 1))::INT % array_length(user_ids, 1)];
 
     w_amount := (25 + random() * 4975)::NUMERIC(18,8);
     w_status := w_statuses[1 + (i % array_length(w_statuses, 1))];
@@ -308,7 +308,7 @@ BEGIN
 
     INSERT INTO withdrawals (user_id, txn_id, amount, currency, address, fee,
       request_time, eligible_time, processed_time, status)
-    VALUES (r.id, 'seed_wtxn_' || i, w_amount, 'USDT', 'TRC20_seed_addr_' || i,
+    VALUES (selected_user_id, 'seed_wtxn_' || i, w_amount, 'USDT', 'TRC20_seed_addr_' || i,
       (w_amount * 0.005)::NUMERIC(18,8), w_requested, w_eligible, w_processed, w_status);
   END LOOP;
 END $$;
@@ -320,7 +320,7 @@ DO $$
 DECLARE
   commission_levels SMALLINT[] := ARRAY[1,1,1,1,1,2,2,2,3,3,4,5]; -- weighted toward level 1
   commission_pcts NUMERIC(5,2)[] := ARRAY[15.00,15.00,15.00,15.00,15.00,5.00,5.00,5.00,3.00,3.00,2.00,1.00];
-  r RECORD;
+  selected_user_id BIGINT;
   c_level SMALLINT;
   c_pct NUMERIC(5,2);
   c_amount NUMERIC(18,8);
