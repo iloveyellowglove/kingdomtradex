@@ -29,17 +29,25 @@ export default async function AdminDashboardPage() {
     .select('*', { count: 'exact', head: true })
     .eq('status', 'pending');
 
-  const { count: pendingKyc } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-    .eq('kyc_status', 'pending');
+  // KYC queries - column may not exist yet if migration not run
+  let pendingKyc: number | null = 0;
+  let recentUsers: { username: string; email: string; kyc_status: string; created_at: string }[] = [];
+  try {
+    const kycResult = await supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('kyc_status', 'pending');
+    pendingKyc = kycResult.count ?? 0;
 
-  // Recent signups
-  const { data: recentUsers } = await supabase
-    .from('users')
-    .select('username, email, kyc_status, created_at')
-    .order('created_at', { ascending: false })
-    .limit(10);
+    const recentResult = await supabase
+      .from('users')
+      .select('username, email, kyc_status, created_at')
+      .order('created_at', { ascending: false })
+      .limit(10);
+    recentUsers = (recentResult.data ?? []) as { username: string; email: string; kyc_status: string; created_at: string }[];
+  } catch {
+    // kyc_status column may not exist yet; continue with defaults
+  }
 
   const cardStyle = {
     background: 'rgba(255,255,255,0.03)',
@@ -106,7 +114,7 @@ export default async function AdminDashboardPage() {
               </thead>
               <tbody>
                 {(recentUsers ?? []).map((u: { username: string; email: string; kyc_status: string; created_at: string }, i: number) => (
-                  <tr key={i} className="border-b border-white/[0.02]">
+                  <tr key={i} className="border-b border-white/5">
                     <td className="py-2.5 pr-3 text-white text-sm">{u.username}</td>
                     <td className="py-2.5 pr-3 text-white/50 text-xs">{u.email || '-'}</td>
                     <td className="py-2.5 pr-3">{kycBadge(u.kyc_status)}</td>
