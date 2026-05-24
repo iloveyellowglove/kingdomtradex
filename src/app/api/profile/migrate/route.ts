@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 
 export const dynamic = 'force-dynamic';
@@ -72,8 +72,28 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END $$;
 `;
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const token = req.cookies.get('kingdom_session')?.value;
+  if (!token || token.length !== 64) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const supabase = createServiceClient();
+
+  // Verify admin role
+  const { data: sessions } = await supabase
+    .from('sessions')
+    .select('user_id, user_role, expires_at')
+    .eq('session_token', token)
+    .limit(1);
+
+  const sess = (sessions ?? []) as unknown as { user_id: number; user_role: string; expires_at: string }[];
+  if (sess.length === 0 || new Date(sess[0].expires_at) < new Date()) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  if (sess[0].user_role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
 
   try {
     const { error } = await supabase.rpc('exec_sql', { sql_text: MIGRATION_SQL }).maybeSingle();

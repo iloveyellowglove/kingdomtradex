@@ -26,6 +26,7 @@ interface ProfileData {
   city: string | null;
   address: string | null;
   role: string;
+  migrationNeeded?: boolean;
 }
 
 interface KycData {
@@ -52,6 +53,9 @@ export default function ProfilePage() {
   // Profile state
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [migrationNeeded, setMigrationNeeded] = useState(false);
+  const [migrationRunning, setMigrationRunning] = useState(false);
+  const [migrationMsg, setMigrationMsg] = useState('');
 
   // Edit state
   const [fullName, setFullName] = useState('');
@@ -92,6 +96,7 @@ export default function ProfilePage() {
         if (res.ok) {
           const data = await res.json();
           setProfile(data);
+          setMigrationNeeded(data.migrationNeeded || false);
           setFullName(data.full_name || '');
           setPhone(data.phone || '');
           setDateOfBirth(data.date_of_birth || '');
@@ -266,6 +271,39 @@ export default function ProfilePage() {
     }
   }, []);
 
+  // Run migration (admin only)
+  const handleRunMigration = useCallback(async () => {
+    setMigrationRunning(true);
+    setMigrationMsg('');
+    try {
+      const res = await fetch('/api/profile/migrate', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        setMigrationMsg('Migration complete. Profile features are now available.');
+        setMigrationNeeded(false);
+        // Re-fetch profile
+        const profileRes = await fetch('/api/profile/me');
+        if (profileRes.ok) {
+          const fresh = await profileRes.json();
+          setProfile(fresh);
+          setFullName(fresh.full_name || '');
+          setPhone(fresh.phone || '');
+          setDateOfBirth(fresh.date_of_birth || '');
+          setCountry(fresh.country || '');
+          setCity(fresh.city || '');
+          setAddress(fresh.address || '');
+        }
+      } else {
+        setMigrationMsg(data.message || 'Migration failed.');
+      }
+    } catch {
+      setMigrationMsg('Network error.');
+    } finally {
+      setMigrationRunning(false);
+      setTimeout(() => setMigrationMsg(''), 6000);
+    }
+  }, []);
+
   if (profileLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -283,6 +321,33 @@ export default function ProfilePage() {
   return (
     <div className="py-8">
       <h1 className="text-2xl font-bold text-white mb-8">My Profile</h1>
+
+      {/* Migration banner */}
+      {migrationNeeded && (
+        <div className="mb-8 p-5 rounded-xl flex items-start justify-between gap-4 flex-wrap" style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.2)' }}>
+          <div>
+            <p className="text-temple-gold text-sm font-semibold">Database Migration Required</p>
+            <p className="text-text-muted text-sm mt-1">Profile features require a database migration. Ask your admin to run it.</p>
+          </div>
+          {profile.role === 'admin' && (
+            <div className="flex items-center gap-3">
+              {migrationMsg && (
+                <span className={`text-sm ${migrationMsg.includes('complete') ? 'text-green-400' : 'text-red-400'}`}>
+                  {migrationMsg}
+                </span>
+              )}
+              <button
+                onClick={handleRunMigration}
+                disabled={migrationRunning}
+                className="px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 flex-shrink-0"
+                style={{ background: '#FFD700', color: '#0e0b1a' }}
+              >
+                {migrationRunning ? 'Running...' : 'Run Migration'}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* LEFT COLUMN — Avatar + Profile Fields */}

@@ -3,6 +3,13 @@ import { createServiceClient } from '@/lib/supabase/service';
 
 export const dynamic = 'force-dynamic';
 
+const PROFILE_COLUMNS = [
+  'username', 'email', 'role',
+  'avatar_url', 'full_name', 'phone', 'date_of_birth', 'country', 'city', 'address',
+];
+
+const BASE_COLUMNS = ['username', 'email', 'role', 'display_balance'];
+
 export async function GET(req: NextRequest) {
   const token = req.cookies.get('kingdom_session')?.value;
   if (!token || token.length !== 64) {
@@ -26,15 +33,52 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Session expired' }, { status: 401 });
   }
 
-  const { data: users } = await supabase
+  const userId = sess[0].user_id;
+  let migrationNeeded = false;
+
+  // Try full profile query first
+  const { data: users, error } = await supabase
     .from('users')
-    .select('username, email, role, avatar_url, full_name, phone, date_of_birth, country, city, address')
-    .eq('id', sess[0].user_id)
+    .select(PROFILE_COLUMNS.join(','))
+    .eq('id', userId)
     .limit(1);
 
-  if (!users || users.length === 0) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  // If the full query fails, fall back to base columns
+  if (error || !users || users.length === 0) {
+    if (error) {
+      console.warn('[profile/me] full query failed, falling back to base columns:', error.message);
+    }
+
+    const fallback = await supabase
+      .from('users')
+      .select(BASE_COLUMNS.join(','))
+      .eq('id', userId)
+      .limit(1);
+
+    if (!fallback.data || fallback.data.length === 0) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const base = fallback.data[0] as unknown as Record<string, unknown>;
+    migrationNeeded = true;
+
+    return NextResponse.json({
+      username: base.username || '',
+      email: base.email || null,
+      role: base.role || 'user',
+      avatar_url: null,
+      full_name: null,
+      phone: null,
+      date_of_birth: null,
+      country: null,
+      city: null,
+      address: null,
+      migrationNeeded,
+    });
   }
 
-  return NextResponse.json(users[0]);
+  return NextResponse.json({
+    ...(users[0] as unknown as Record<string, unknown>),
+    migrationNeeded: false,
+  });
 }
