@@ -68,7 +68,7 @@ BEGIN
     w_email := 'seed-wl-' || i || '@kingdomtradex.com';
     w_name := first_names[i] || ' ' || last_names[i];
     w_role := CASE WHEN i <= 80 THEN 'pastor' ELSE 'member' END; -- 40% pastor
-    w_ref_code := 'wl' || substring(md5(random()::text) from 1 for 8);
+    w_ref_code := 'wl' || substring(md5(('seed-wl-' || i)::text) from 1 for 8);
     w_referred_by := NULL;
     day_offset := (random() * 29)::INT;
 
@@ -148,15 +148,13 @@ DECLARE
   u_created TIMESTAMPTZ;
   u_id BIGINT;
   i INT;
-  admin_id BIGINT;
+  ref_idx INT;
+  user_ids BIGINT[] := ARRAY[]::BIGINT[];
 BEGIN
-  -- Get admin user id for reference
-  SELECT id INTO admin_id FROM users WHERE email = 'admin@demo.local' LIMIT 1;
-
   FOR i IN 1..50 LOOP
     u_username := LOWER(first_names[i] || '.' || last_names[i]);
     u_email := LOWER(first_names[i] || '.' || last_names[i] || '@gmail.com');
-    u_ref_code := 'rf' || substring(md5(random()::text) from 1 for 8);
+    u_ref_code := 'rf' || substring(md5(('seed-user-' || i)::text) from 1 for 8);
     u_balance := (100 + random() * 24900)::NUMERIC(18,8);
     u_deposited := u_balance + (random() * 1000)::NUMERIC(18,8);
     u_referred_by := NULL;
@@ -184,16 +182,17 @@ BEGIN
       VALUES (u_id, u_first_time, u_first_time + '72 hours'::INTERVAL, 0)
       ON CONFLICT (user_id) DO NOTHING;
     END IF;
+
+    -- Store user id for referral chain linking
+    user_ids := array_append(user_ids, u_id);
   END LOOP;
 
-  -- Create referral chains: link some users
-  -- Users 6-10 referred by user 1, 11-15 by user 2, 16-20 by user 3, 21-25 by user 4, 26-30 by user 5
+  -- Create referral chains: users 6-10 referred by user 1, 11-15 by user 2, etc.
   FOR i IN 6..30 LOOP
-    SELECT id INTO u_id FROM users WHERE email = LOWER(first_names[i] || '.' || last_names[i] || '@gmail.com') LIMIT 1;
-    IF u_id IS NOT NULL THEN
-      UPDATE users SET referred_by = (
-        SELECT id FROM users WHERE email LIKE 'seed-%' OFFSET (i - 6) / 5 LIMIT 1
-      ) WHERE id = u_id AND referred_by IS NULL;
+    ref_idx := ((i - 6) / 5) + 1;  -- maps: 6-10→1, 11-15→2, 16-20→3, 21-25→4, 26-30→5
+    IF user_ids[i] IS NOT NULL AND user_ids[ref_idx] IS NOT NULL THEN
+      UPDATE users SET referred_by = user_ids[ref_idx]
+      WHERE id = user_ids[i] AND referred_by IS NULL;
     END IF;
   END LOOP;
 END $$;
