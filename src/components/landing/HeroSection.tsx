@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/brand/Logo';
 import CrossBackground from '@/components/brand/CrossBackground';
+import CryptoMarquee from '@/components/landing/CryptoMarquee';
 
 type Props = { user: { username: string; role: string } | null };
 
@@ -98,6 +99,9 @@ export default function HeroSection({ user }: Props) {
       {/* Cross watermark background */}
       <CrossBackground opacity={0.04} />
 
+      {/* Ambient crypto logo marquee */}
+      <CryptoMarquee />
+
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center px-6 py-16 md:py-20" style={{ minHeight: '580px' }}>
         {/* Logo */}
@@ -154,13 +158,14 @@ export default function HeroSection({ user }: Props) {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-3xl">
           {[
-            { target: 1.5, suffix: '%', label: 'Daily Yield', decimals: 1 },
+            { target: 1.6, suffix: '%', label: 'Daily Yield', decimals: 1, prefix: 'Up to ' },
             { target: 15420, suffix: '+', label: 'Active Stewards' },
-            { target: 38000000, suffix: ' USDT', label: 'Total Value Staked', decimals: 0 },
+            { target: 38, suffix: 'M USDT', label: 'Total Value Staked' },
             { target: 5, suffix: '', label: 'Levels of Blessing' },
           ].map((stat) => (
             <div key={stat.label} className="text-center p-4 rounded-xl" style={{ background: 'rgba(255,215,0,0.03)', border: '1px solid rgba(255,215,0,0.08)' }}>
               <p className="text-2xl md:text-3xl font-extrabold text-white mb-1">
+                {'prefix' in stat && stat.prefix ? <span>{stat.prefix}</span> : null}
                 <AnimatedCounter target={stat.target} suffix={stat.suffix} decimals={stat.decimals ?? 0} />
               </p>
               <p className="text-text-muted text-xs uppercase tracking-wider">{stat.label}</p>
