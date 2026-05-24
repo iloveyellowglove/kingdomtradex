@@ -31,7 +31,7 @@ async function getUser() {
 
   const { data: users } = await supabase
     .from('users')
-    .select('id,username,role,display_balance')
+    .select('id,username,role,display_balance,email,avatar_url')
     .eq('id', session.user_id)
     .eq('status', 'active')
     .limit(1);
@@ -46,7 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body>
-        <Navbar user={user ? { username: user.username, role: user.role, display_balance: user.display_balance } : null} />
+        <Navbar user={user ? { username: user.username, role: user.role, display_balance: user.display_balance, email: (user as unknown as { email?: string }).email ?? null, avatar_url: (user as unknown as { avatar_url?: string }).avatar_url ?? null } : null} />
         <main className="max-w-[1280px] mx-auto px-6">
           {children}
         </main>

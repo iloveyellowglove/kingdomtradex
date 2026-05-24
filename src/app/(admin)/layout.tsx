@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
-import AdminSidebar from '@/components/admin/AdminSidebar';
+import AdminTabBar from '@/components/admin/AdminTabBar';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = cookies();
@@ -22,11 +22,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (s[0].user_role !== 'admin') redirect('/dashboard');
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6 py-4">
-      <aside>
-        <AdminSidebar />
-      </aside>
-      <div>{children}</div>
+    <div className="py-4">
+      <AdminTabBar />
+      {children}
     </div>
   );
 }
