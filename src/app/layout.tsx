@@ -5,6 +5,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import OracleChat from '@/components/chatbot/OracleChat';
+import SocialProofToast from '@/components/SocialProofToast';
 
 export const metadata: Metadata = {
   title: 'KingdomTrade Exchange',
@@ -51,6 +52,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </main>
         <Footer user={user ? { role: user.role } : null} />
         <OracleChat />
+        <SocialProofToast />
         <script dangerouslySetInnerHTML={{
           __html: `(function(){var n=document.getElementById('mainNav');if(n){window.addEventListener('scroll',function(){n.classList.toggle('scrolled',window.scrollY>20)});}})();`
         }} />
