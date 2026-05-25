@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getSetting } from '@/lib/db/settings';
+import { moveBalanceToPending, reversePendingToBalance } from '@/lib/db/atomic';
 
 export async function POST(request: NextRequest) {
   const token = cookies().get('kingdom_session')?.value;
@@ -50,8 +51,7 @@ export async function POST(request: NextRequest) {
     }, { status: 400 });
   }
 
-  const availableBalance = Number(user.display_balance || 0);
-  if (amount > availableBalance) {
+  if (amount > Number(user.display_balance || 0)) {
     return NextResponse.json({ success: false, error: 'Insufficient balance.' }, { status: 400 });
   }
 
@@ -69,18 +69,20 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const fee = amount * 0.005;
+  const fee = Math.round(amount * 0.005 * 1e8) / 1e8;
   const now = new Date().toISOString();
 
-  const newDisplay = availableBalance - amount;
-  const newPending = Number(user.pending_withdrawal_amount || 0) + amount;
+  try {
+    await moveBalanceToPending(userId, amount);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes('P0002') || msg.includes('Insufficient balance')) {
+      return NextResponse.json({ success: false, error: 'Insufficient balance.' }, { status: 400 });
+    }
+    throw err;
+  }
 
-  await supabase.from('users').update({
-    display_balance: newDisplay.toFixed(8),
-    pending_withdrawal_amount: newPending.toFixed(8),
-  }).eq('id', userId);
-
-  const { data: withdrawal } = await supabase
+  const { data: withdrawal, error: insertErr } = await supabase
     .from('withdrawals')
     .insert({
       user_id: userId,
@@ -94,9 +96,15 @@ export async function POST(request: NextRequest) {
     })
     .select();
 
+  if (insertErr || !withdrawal?.length) {
+    await reversePendingToBalance(userId, amount);
+    console.error('[withdraw] insert failed, balance reversed:', insertErr?.message);
+    return NextResponse.json({ success: false, error: 'Failed to create withdrawal.' }, { status: 500 });
+  }
+
   return NextResponse.json({
     success: true,
-    withdrawal_id: withdrawal?.[0]?.id ?? 0,
+    withdrawal_id: withdrawal[0].id,
     eligible_time: new Date().toISOString(),
   });
 }

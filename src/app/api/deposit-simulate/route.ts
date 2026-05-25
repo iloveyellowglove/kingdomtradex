@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
+import { creditUserBalanceWithDepositTotal } from '@/lib/db/atomic';
 
 export async function POST(request: NextRequest) {
   const token = cookies().get('kingdom_session')?.value;
@@ -53,26 +54,27 @@ export async function POST(request: NextRequest) {
     })
     .select();
 
-  const { data: user } = await supabase
+  const { data: userRows } = await supabase
     .from('users')
-    .select('display_balance,total_deposited_real,first_deposit_time,bonus_locked,minimum_deposit_to_unlock')
+    .select('first_deposit_time,bonus_locked,minimum_deposit_to_unlock')
     .eq('id', userId)
     .limit(1);
 
-  if (user && user.length > 0) {
-    const newTotal = Number(user[0].total_deposited_real || 0) + amount;
-    const updates: Record<string, unknown> = {
-      display_balance: (Number(user[0].display_balance || 0) + amount).toFixed(8),
-      total_deposited_real: newTotal.toFixed(8),
-    };
-    if (!user[0].first_deposit_time) {
+  const { newTotalDeposited } = await creditUserBalanceWithDepositTotal(userId, amount);
+
+  if (userRows && userRows.length > 0) {
+    const u = userRows[0];
+    const updates: Record<string, unknown> = {};
+    if (!u.first_deposit_time) {
       updates.first_deposit_time = now;
     }
-    if (user[0].bonus_locked && newTotal >= Number(user[0].minimum_deposit_to_unlock || 100)) {
+    if (u.bonus_locked && newTotalDeposited >= Number(u.minimum_deposit_to_unlock || 100)) {
       updates.bonus_locked = false;
       updates.bonus_unlocked_at = now;
     }
-    await supabase.from('users').update(updates).eq('id', userId);
+    if (Object.keys(updates).length > 0) {
+      await supabase.from('users').update(updates).eq('id', userId);
+    }
   }
 
   return NextResponse.json({

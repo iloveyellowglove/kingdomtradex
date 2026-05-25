@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getSetting } from '@/lib/db/settings';
+import { creditUserBalance } from '@/lib/db/atomic';
 
 export async function GET(request: NextRequest) {
   const cronSecret = request.headers.get('authorization')?.replace('Bearer ', '');
@@ -43,10 +44,7 @@ export async function GET(request: NextRequest) {
       created_at: new Date().toISOString(),
     });
 
-    const newBalance = balance + profitAmount;
-    await supabase.from('users').update({
-      display_balance: newBalance.toFixed(8),
-    }).eq('id', user.id);
+    await creditUserBalance(user.id, profitAmount);
 
     applied++;
   }

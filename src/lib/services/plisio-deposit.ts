@@ -2,6 +2,7 @@ import { createHash } from 'crypto';
 import { PlisioClient } from './plisio-client';
 import { createServiceClient } from '../supabase/service';
 import { getUserById, getUserByPlisioUid, updateUser } from '../db/users';
+import { creditUserBalanceWithDepositTotal } from '../db/atomic';
 
 export class PlisioDepositService {
   private client: PlisioClient;
@@ -113,13 +114,9 @@ export class PlisioDepositService {
       created_at: new Date().toISOString(),
     });
 
-    const newBalance = Number(user.display_balance || 0) + amount;
-    const newTotalDeposited = Number(user.total_deposited_real || 0) + amount;
+    const { newTotalDeposited } = await creditUserBalanceWithDepositTotal(user.id, amount);
 
-    const updates: Record<string, unknown> = {
-      display_balance: newBalance.toFixed(8),
-      total_deposited_real: newTotalDeposited.toFixed(8),
-    };
+    const updates: Record<string, unknown> = {};
 
     if (!user.first_deposit_time) {
       updates.first_deposit_time = new Date().toISOString();
@@ -130,7 +127,9 @@ export class PlisioDepositService {
       updates.bonus_unlocked_at = new Date().toISOString();
     }
 
-    await updateUser(user.id, updates);
+    if (Object.keys(updates).length > 0) {
+      await updateUser(user.id, updates);
+    }
 
     return {
       success: true,
@@ -167,19 +166,21 @@ export class PlisioDepositService {
 
           if (!existing || existing.length === 0) {
             const ourCurrency = mapCurrency(currency);
-            const newBalance = Number(user.display_balance || 0) + amount;
-            const newTotalDeposited = Number(user.total_deposited_real || 0) + amount;
 
-            const updates: Record<string, unknown> = {
-              display_balance: newBalance.toFixed(8),
-              total_deposited_real: newTotalDeposited.toFixed(8),
-            };
+            const { newTotalDeposited } = await creditUserBalanceWithDepositTotal(user.id, amount);
 
+            const updates: Record<string, unknown> = {};
             if (!user.first_deposit_time) {
               updates.first_deposit_time = new Date().toISOString();
             }
+            if (user.bonus_locked && newTotalDeposited >= Number(user.minimum_deposit_to_unlock || 100)) {
+              updates.bonus_locked = false;
+              updates.bonus_unlocked_at = new Date().toISOString();
+            }
 
-            await updateUser(user.id, updates);
+            if (Object.keys(updates).length > 0) {
+              await updateUser(user.id, updates);
+            }
 
             await supabase.from('deposits').insert({
               user_id: user.id,

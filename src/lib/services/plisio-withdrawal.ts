@@ -1,7 +1,9 @@
 import { PlisioClient } from './plisio-client';
+import { createServiceClient } from '../supabase/service';
 import { updateWithdrawal, getEligibleWithdrawals } from '../db/withdrawals';
-import { getUserById, updateUser } from '../db/users';
+import { getUserById } from '../db/users';
 import { getSetting } from '../db/settings';
+import { reversePendingToBalance } from '../db/atomic';
 
 export async function processEligibleWithdrawals(): Promise<number> {
   let processed = 0;
@@ -24,12 +26,7 @@ export async function processEligibleWithdrawals(): Promise<number> {
         status: 'rejected',
         block_reason: 'Insufficient balance at processing time',
       });
-      const newDisplay = Number(user.display_balance || 0) + amount;
-      const newPending = Number(user.pending_withdrawal_amount || 0) - amount;
-      await updateUser(userId, {
-        display_balance: newDisplay.toFixed(8),
-        pending_withdrawal_amount: Math.max(0, newPending).toFixed(8),
-      });
+      await reversePendingToBalance(userId, amount);
       continue;
     }
 
@@ -41,11 +38,10 @@ export async function processEligibleWithdrawals(): Promise<number> {
       const plisioStatus = result.data?.status || result.status || 'error';
 
       if (result.status === 'success' && ['completed', 'pending'].includes(plisioStatus)) {
-        const newWithdrawn = Number(user.total_withdrawn_real || 0) + amount;
-        const newPending = Number(user.pending_withdrawal_amount || 0) - amount;
-        await updateUser(userId, {
-          total_withdrawn_real: newWithdrawn.toFixed(8),
-          pending_withdrawal_amount: Math.max(0, newPending).toFixed(8),
+        const supabase = createServiceClient();
+        await supabase.rpc('complete_withdrawal_atomic', {
+          p_user_id: userId,
+          p_amount: Math.round(amount * 1e8) / 1e8,
         });
 
         const finalStatus = plisioStatus === 'completed' ? 'completed' : 'processing';
@@ -59,12 +55,7 @@ export async function processEligibleWithdrawals(): Promise<number> {
       }
 
       const errorMsg = result.data?.message || 'Plisio withdrawal failed';
-      const newDisplay = Number(user.display_balance || 0) + amount;
-      const newPending = Number(user.pending_withdrawal_amount || 0) - amount;
-      await updateUser(userId, {
-        display_balance: newDisplay.toFixed(8),
-        pending_withdrawal_amount: Math.max(0, newPending).toFixed(8),
-      });
+      await reversePendingToBalance(userId, amount);
       await updateWithdrawal(w.id, {
         status: 'failed',
         block_reason: errorMsg,
@@ -77,11 +68,10 @@ export async function processEligibleWithdrawals(): Promise<number> {
       processed_time: now,
     });
 
-    const newWithdrawn = Number(user.total_withdrawn_real || 0) + amount;
-    const newPending = Number(user.pending_withdrawal_amount || 0) - amount;
-    await updateUser(userId, {
-      total_withdrawn_real: newWithdrawn.toFixed(8),
-      pending_withdrawal_amount: Math.max(0, newPending).toFixed(8),
+    const supabase = createServiceClient();
+    await supabase.rpc('complete_withdrawal_atomic', {
+      p_user_id: userId,
+      p_amount: Math.round(amount * 1e8) / 1e8,
     });
 
     processed++;
