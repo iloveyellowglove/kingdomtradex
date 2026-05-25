@@ -1,0 +1,14 @@
+-- ============================================================================
+-- Create Admin User - TEMPLATE ONLY
+-- ============================================================================
+-- This file is a template. The admin user must be created via
+-- scripts/create-admin.ts which reads ADMIN_EMAIL and ADMIN_PASSWORD
+-- from environment variables and generates a bcrypt hash at runtime.
+--
+-- NEVER commit a real password hash to the repository.
+-- See DEPLOYMENT.md for one-time setup instructions.
+-- ============================================================================
+
+-- INSERT INTO users (username, email, password_hash, role, referral_code, plisio_uid, status)
+-- VALUES ('admin', 'admin@yourdomain.com', 'REPLACE_WITH_BCRYPT_HASH', 'admin', 'ADMIN001', 'REPLACE_WITH_PLISIO_UID', 'active')
+-- ON CONFLICT (email) DO NOTHING;

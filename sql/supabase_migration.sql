@@ -175,14 +175,10 @@ INSERT INTO settings (setting_key, setting_value, description) VALUES
     ('plisio_api_key',           '',        'Plisio API secret key')
 ON CONFLICT (setting_key) DO NOTHING;
 
--- ---------------------------------------------------------------------------
--- Default admin user (password: admin123) - CHANGE AFTER INSTALL
--- ---------------------------------------------------------------------------
-INSERT INTO users (username, email, password_hash, role, referral_code, plisio_uid, status)
-VALUES ('admin', 'admin@demo.local',
-    '$2y$12$LJ3m4ys3YOkTREhvH6MxO.Qs1wR0HBhKgBkKmPjHkKANDJd4HGmKe',
-    'admin', 'ADMIN001', 'user_1_a1b2c3d4', 'active')
-ON CONFLICT (email) DO NOTHING;
+-- ============================================================================
+-- Admin user must be created via scripts/create-admin.ts after deployment.
+-- See DEPLOYMENT.md for setup instructions.
+-- ============================================================================
 
 -- ============================================================================
 -- RLS (Row Level Security) Policies

@@ -1,6 +1,8 @@
 -- ============================================================================
 -- KingdomTradex - Demo Seed Data
+-- DEVELOPMENT ONLY - DO NOT RUN IN PRODUCTION
 -- Idempotent: safe to run multiple times (uses ON CONFLICT DO NOTHING)
+-- All demo users share a single password hash. This data is for local testing.
 -- ============================================================================
 
 -- ============================================================================

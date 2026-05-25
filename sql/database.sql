@@ -172,10 +172,7 @@ INSERT INTO `settings` (`setting_key`, `setting_value`, `description`) VALUES
 ('min_withdrawal_usdt', '10.00', 'Minimum withdrawal in USDT'),
 ('site_name', 'QuantumTrade Exchange', 'Site display name');
 
--- ---------------------------------------------------------------------------
--- Default admin user (password: admin123) - CHANGE AFTER INSTALL
--- ---------------------------------------------------------------------------
-INSERT INTO `users` (`username`, `email`, `password_hash`, `role`, `referral_code`, `status`)
-VALUES ('admin', 'admin@kingdomtradex.com', '$2y$12$LJ3m4ys3YOkTREhvH6MxO.Qs1wR0HBhKgBkKmPjHkKANDJd4HGmKe', 'admin', 'ADMIN001', 'active');
+-- Admin user must be created via scripts/create-admin.ts after deployment.
+-- See DEPLOYMENT.md for setup instructions.
 
 COMMIT;

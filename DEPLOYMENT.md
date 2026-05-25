@@ -7,3 +7,51 @@ Next.js 14 migration deployed 2026-05-23.
 Framework: Next.js
 Build Command: next build
 Output Directory: .next
+
+## Environment Variables
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key (public) |
+| `CRON_SECRET` | Shared secret for Vercel cron job auth |
+| `OPENROUTER_API_KEY` | OpenRouter API key for Ephod Oracle chatbot |
+| `OPENROUTER_MODEL` | Model name for Oracle (default: openai/gpt-4o-mini) |
+| `RESEND_API_KEY` | Resend API key for transactional email |
+| `NEXT_PUBLIC_APP_URL` | Public URL of the deployed app |
+
+## One-Time Setup
+
+### 1. Run Database Migration
+
+Execute `sql/supabase_migration.sql` in the Supabase SQL Editor.
+
+### 2. Create Admin User
+
+```bash
+ADMIN_EMAIL="admin@yourdomain.com" ADMIN_PASSWORD="your-secure-password" npx ts-node scripts/create-admin.ts
+```
+
+The script generates a random bcrypt hash at runtime. Never commit real credentials.
+
+### 3. Configure Vercel Cron Jobs
+
+Ensure `vercel.json` cron paths match the deployed routes:
+
+- `/api/cron/daily-profit` -- runs daily at 00:01 UTC
+- `/api/cron/process-withdrawals` -- runs daily at 02:00 UTC
+
+The `CRON_SECRET` environment variable must be set in Vercel and match the value used by the cron routes.
+
+### 4. Atomic Balance Functions
+
+Run `sql/atomic_balance_functions.sql` in the Supabase SQL Editor to install the PostgreSQL functions for safe atomic balance operations. These replace all read-modify-write patterns in application code.
+
+### 5. Commissions Unique Constraint
+
+Run `sql/commissions_unique_constraint.sql` in the Supabase SQL Editor to add idempotency protection on referral commissions.
+
+## Demo Data (Development Only)
+
+`sql/seed_demo_data.sql` contains sample data for local development. **Do not run in production.** All demo users share a single password hash.
