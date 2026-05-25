@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 import { creditUserBalanceWithDepositTotal } from '@/lib/db/atomic';
+import { distributeCommissions } from '@/lib/db/commissions';
 
 export async function POST(request: NextRequest) {
   const token = cookies().get('kingdom_session')?.value;
@@ -74,6 +75,15 @@ export async function POST(request: NextRequest) {
     }
     if (Object.keys(updates).length > 0) {
       await supabase.from('users').update(updates).eq('id', userId);
+    }
+  }
+
+  const simDepositId = deposit?.[0]?.id as number | undefined;
+  if (simDepositId) {
+    try {
+      await distributeCommissions(userId, amount, simDepositId);
+    } catch (commErr) {
+      console.error('[deposit-simulate] commission distribution failed:', commErr);
     }
   }
 

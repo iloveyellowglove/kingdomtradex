@@ -3,6 +3,7 @@ import { PlisioClient } from './plisio-client';
 import { createServiceClient } from '../supabase/service';
 import { getUserById, getUserByPlisioUid, updateUser } from '../db/users';
 import { creditUserBalanceWithDepositTotal } from '../db/atomic';
+import { distributeCommissions } from '../db/commissions';
 
 export class PlisioDepositService {
   private client: PlisioClient;
@@ -103,7 +104,7 @@ export class PlisioDepositService {
 
     const ourCurrency = mapCurrency(currency);
 
-    await supabase.from('deposits').insert({
+    const { data: depositRows } = await supabase.from('deposits').insert({
       user_id: user.id,
       txn_id: txnId,
       txid: txnId,
@@ -112,7 +113,9 @@ export class PlisioDepositService {
       address: walletHash,
       status: 'completed',
       created_at: new Date().toISOString(),
-    });
+    }).select();
+
+    const depositId = depositRows?.[0]?.id as number | undefined;
 
     const { newTotalDeposited } = await creditUserBalanceWithDepositTotal(user.id, amount);
 
@@ -129,6 +132,14 @@ export class PlisioDepositService {
 
     if (Object.keys(updates).length > 0) {
       await updateUser(user.id, updates);
+    }
+
+    if (depositId) {
+      try {
+        await distributeCommissions(user.id, amount, depositId);
+      } catch (commErr) {
+        console.error('[plisio-deposit] commission distribution failed:', commErr);
+      }
     }
 
     return {
@@ -182,7 +193,7 @@ export class PlisioDepositService {
               await updateUser(user.id, updates);
             }
 
-            await supabase.from('deposits').insert({
+            const { data: invDepRows } = await supabase.from('deposits').insert({
               user_id: user.id,
               txn_id: txnId,
               txid: txnId,
@@ -191,7 +202,16 @@ export class PlisioDepositService {
               address: postData.wallet_hash || 'invoice',
               status: 'completed',
               created_at: new Date().toISOString(),
-            });
+            }).select();
+
+            const invDepositId = invDepRows?.[0]?.id as number | undefined;
+            if (invDepositId) {
+              try {
+                await distributeCommissions(user.id, amount, invDepositId);
+              } catch (commErr) {
+                console.error('[plisio-deposit] invoice commission distribution failed:', commErr);
+              }
+            }
           }
         }
       }

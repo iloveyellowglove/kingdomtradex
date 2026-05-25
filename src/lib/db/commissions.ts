@@ -1,4 +1,6 @@
 import { createServiceClient } from '../supabase/service';
+import { getSetting } from './settings';
+import { creditUserBalance } from './atomic';
 import type { ReferralCommission } from '../types';
 
 export async function getCommissionsByUser(
@@ -52,6 +54,78 @@ export async function createCommission(c: {
     .insert(c)
     .select();
   return data?.[0] ?? null;
+}
+
+export async function distributeCommissions(
+  depositorUserId: number,
+  depositAmount: number,
+  depositId: number,
+): Promise<void> {
+  const supabase = createServiceClient();
+  const roundedAmount = Math.round(depositAmount * 1e8) / 1e8;
+
+  let currentUserId = depositorUserId;
+
+  for (let level = 1; level <= 5; level++) {
+    const { data: currentUser } = await supabase
+      .from('users')
+      .select('referred_by')
+      .eq('id', currentUserId)
+      .single();
+
+    if (!currentUser?.referred_by) break;
+
+    const { data: uplineUser } = await supabase
+      .from('users')
+      .select('id, status')
+      .eq('id', currentUser.referred_by)
+      .single();
+
+    if (!uplineUser || uplineUser.status !== 'active') break;
+
+    const percentageStr = await getSetting(`commission_l${level}`, String([15, 5, 3, 2, 1][level - 1]));
+    const percentage = parseFloat(percentageStr) || [15, 5, 3, 2, 1][level - 1];
+    const commissionAmount = Math.round((roundedAmount * percentage / 100) * 1e8) / 1e8;
+
+    const { error: insertErr } = await supabase
+      .from('referral_commissions')
+      .insert({
+        user_id: uplineUser.id,
+        source_user_id: depositorUserId,
+        level,
+        percentage,
+        amount: commissionAmount,
+        source_deposit_id: depositId,
+        source_amount: roundedAmount,
+        status: 'pending',
+        created_at: new Date().toISOString(),
+      });
+
+    if (insertErr) {
+      if (insertErr.code === '23505') {
+        currentUserId = uplineUser.id;
+        continue;
+      }
+      console.error('[commissions] insert failed L' + level + ':', insertErr.message);
+      break;
+    }
+
+    try {
+      await creditUserBalance(uplineUser.id, commissionAmount);
+    } catch (creditErr) {
+      console.error('[commissions] credit failed L' + level + ':', creditErr);
+      break;
+    }
+
+    await supabase
+      .from('referral_commissions')
+      .update({ status: 'paid', paid_at: new Date().toISOString() })
+      .eq('user_id', uplineUser.id)
+      .eq('source_deposit_id', depositId)
+      .eq('level', level);
+
+    currentUserId = uplineUser.id;
+  }
 }
 
 export async function getPendingCommissionsForPayout(): Promise<ReferralCommission[]> {
