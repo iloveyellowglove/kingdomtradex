@@ -19,11 +19,9 @@ export async function POST(request: NextRequest) {
     .limit(1);
 
   const user = users?.[0];
-  console.log('[login] email:', emailClean);
-  console.log('[login] user found:', !!user);
-  console.log('[login] hash prefix (first 10):', user?.password_hash?.substring(0, 10) ?? 'none');
 
   if (!user) {
+    console.warn('[login] failed attempt', { ip: request.headers.get('x-forwarded-for') || 'unknown', timestamp: new Date().toISOString() });
     return NextResponse.json({ success: false, error: 'Invalid credentials.' }, { status: 401 });
   }
 
@@ -35,8 +33,8 @@ export async function POST(request: NextRequest) {
   }
 
   const pwOk = verifyPassword(password, user.password_hash);
-  console.log('[login] bcrypt.compare result:', pwOk);
   if (!pwOk) {
+    console.warn('[login] failed attempt', { ip: request.headers.get('x-forwarded-for') || 'unknown', timestamp: new Date().toISOString() });
     return NextResponse.json({ success: false, error: 'Invalid credentials.' }, { status: 401 });
   }
 
@@ -46,11 +44,9 @@ export async function POST(request: NextRequest) {
   try {
     const result = await createSession(user.id, user.role);
     token = result.token;
-    console.log('[login] session token:', token);
-    console.log('[login] token length:', token.length);
   } catch (e) {
-    console.log('[login] createSession threw:', String(e));
-    return NextResponse.json({ success: false, error: 'Session creation failed. Check server logs.' }, { status: 500 });
+    console.error('[login] createSession failed:', e instanceof Error ? e.message : String(e));
+    return NextResponse.json({ success: false, error: 'Session creation failed.' }, { status: 500 });
   }
 
   const response = NextResponse.json({ success: true });
@@ -61,11 +57,6 @@ export async function POST(request: NextRequest) {
     path: '/',
     maxAge: 86400,
   });
-
-  const setCookie = response.cookies.get('kingdom_session');
-  console.log('[login] cookie set on response:', setCookie?.value === token);
-  console.log('[login] cookie value on response:', setCookie?.value?.substring(0, 16) + '...');
-  console.log('[login] response headers Set-Cookie:', response.headers.get('Set-Cookie'));
 
   return response;
 }
