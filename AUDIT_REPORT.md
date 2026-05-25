@@ -6,12 +6,25 @@
 
 ---
 
+## Resolution Status (2026-05-25)
+
+Six pre-launch blocking findings resolved:
+
+| ID | Severity | Status | Commit |
+|----|----------|--------|--------|
+| S11 | High | **RESOLVED** | `009ccd2` |
+| S02 | Critical | **RESOLVED** | `8d1ecf2` |
+| S01 | Critical | **RESOLVED** | `ba65c83` |
+| S03 | Critical | **RESOLVED** | `026ee17` |
+| S04 | Critical | **RESOLVED** | `17253e8` |
+| S08 | High | **RESOLVED** | `275f03e` |
+
 ## Executive Summary
 
 | Severity | Count | Description |
 |----------|-------|-------------|
-| Critical | 4    | Unauthenticated admin endpoint, PII/token logging, default credentials in SQL, no DB transactions on any balance mutation |
-| High     | 8    | No CSRF enforcement, deposit duplicate risk, TOCTOU withdrawal race, incomplete bonus logic, unimplemented referral commissions, missing IDOR guard, Plisio webhook auth gaps, cron path mismatch |
+| Critical | 4 → **0 resolved** | ~~Unauthenticated admin endpoint~~, ~~PII/token logging~~, ~~default credentials in SQL~~, ~~no DB transactions on any balance mutation~~ |
+| High     | 8 → **2 resolved** | No CSRF enforcement, deposit duplicate risk, TOCTOU withdrawal race, incomplete bonus logic, ~~unimplemented referral commissions~~, missing IDOR guard, Plisio webhook auth gaps, ~~cron path mismatch~~ |
 | Medium   | 12   | No rate limiting, float arithmetic, file upload content sniffing, email delivery issues, no security headers, Supabase filter injection potential, withdrawal lock bypass, minimum deposit not enforced, bonus never credited to spendable balance, cron double-credit risk, password reset token plaintext, session no sliding refresh |
 | Low      | 6    | CSRF timing-safe comparison unused, guest CSRF cookie never set, emoji use, hardcoded marketing stats, cron uses different model name than oracle, no input max lengths |
 | Info     | 5    | HMAC-SHA1 vs SHA256, DEPLOYMENT.md sparse, vercel.app from address, session expiry 24h hard, RLS policies are permissive |
@@ -22,17 +35,17 @@
 
 | ID | Severity | Category | File:Line | Description | Recommendation |
 |----|----------|----------|-----------|-------------|----------------|
-| S01 | **Critical** | Authorization | `src/app/api/admin/settings/route.ts:4` | PATCH handler has NO session check, NO role check. Any unauthenticated caller can modify any setting including Plisio API keys, profit percentages, and lock hours. | Add `validateAdmin()` guard identical to `admin/kyc/route.ts`. Whitelist allowed setting keys. |
-| S02 | **Critical** | Logging | `src/app/api/auth/login/route.ts:49,68` | Full session token logged via `console.log('[login] session token:', token)` and full Set-Cookie header logged at line 68. Anyone with log access can impersonate users. Email also logged at line 22. | Remove all console.log lines containing credentials before production. Use structured logging that redacts secrets. |
-| S03 | **Critical** | Secrets | `sql/supabase_migration.sql:181-184`, `sql/database.sql:178-179` | Default admin user with known password `admin123` (bcrypt hash `$2y$12$LJ3m4ys3YOkTREhvH6MxO...`) inserted into users table. Also 50 demo users share a single password hash in `sql/seed_demo_data.sql:140`. | Remove default admin insert from migration. Generate random admin password at deploy time. Replace seed hashes with per-user random passwords. |
-| S04 | **Critical** | Data Integrity | `src/lib/services/plisio-deposit.ts:116-117`, `src/app/api/withdraw/route.ts:53-81`, `src/app/api/cron/daily-profit/route.ts:46-49` | **Zero database transactions in the entire codebase.** All balance mutations use read-modify-write: fetch user, compute new balance in JS, write back. Every flow is vulnerable to lost-update race conditions. Two simultaneous operations on the same user WILL corrupt balances. | Wrap all balance mutations in PostgreSQL functions called via `.rpc()`. Use `SELECT ... FOR UPDATE` row locking or atomic `UPDATE users SET display_balance = display_balance + $1`. |
+| S01 | **Critical** ✅ | Authorization | `src/app/api/admin/settings/route.ts:4` | ~~PATCH handler has NO session check~~ | **RESOLVED** (`ba65c83`): Added validateAdmin, CSRF via timingSafeEqual, ALLOWED_KEYS whitelist, per-key value validation, admin_logs audit trail. |
+| S02 | **Critical** ✅ | Logging | `src/app/api/auth/login/route.ts:49,68` | ~~Full session token and PII logged~~ | **RESOLVED** (`8d1ecf2`): Removed all credential logging. Only structured `console.warn` on failed attempts (IP + timestamp). Middleware verbose logs gated behind NODE_ENV check. |
+| S03 | **Critical** ✅ | Secrets | `sql/supabase_migration.sql:181-184`, `sql/database.sql:178-179` | ~~Default admin user with known password~~ | **RESOLVED** (`026ee17`): Removed admin INSERT from migrations. Created `scripts/create-admin.ts` (reads from env vars), `sql/create_admin.sql.example`, `.gitignore` entry. seed_demo_data.sql has DEV ONLY guard. |
+| S04 | **Critical** ✅ | Data Integrity | `src/lib/services/plisio-deposit.ts:116-117`, `src/app/api/withdraw/route.ts:53-81`, `src/app/api/cron/daily-profit/route.ts:46-49` | ~~Zero database transactions - all balance mutations used read-modify-write~~ | **RESOLVED** (`17253e8`): Created 7 PostgreSQL atomic functions in `sql/atomic_balance_functions.sql` and TypeScript helpers in `src/lib/db/atomic.ts`. Replaced all RMW patterns in plisio-deposit, withdraw, daily-profit, deposit-simulate, plisio-withdrawal. |
 | S05 | **High** | CSRF | `src/middleware.ts:84-119` | Middleware CSRF check uses `===` for string comparison (line 100), not the `timingSafeEqual` function from `src/lib/auth/csrf.ts:22`. Excluded routes (auth, plisio, waitlist, cron, seed-demo) have NO CSRF at all. Logout is CSRF-vulnerable. | Use `timingSafeEqual()` from csrf.ts. Generate and set `csrf_guest` cookie so non-authenticated CSRF works. |
 | S06 | **High** | Data Integrity | `sql/supabase_migration.sql:49` | `deposits.txn_id` column has NO UNIQUE constraint. Simultaneous Plisio webhook calls pass the SELECT-then-INSERT duplicate check and create duplicate deposit records with double balance credits. | Add `UNIQUE (txn_id)` constraint. Use `ON CONFLICT DO NOTHING` in the INSERT. |
 | S07 | **High** | Authorization | `src/app/api/deposit/status/[txnId]/route.ts:27-31` | Deposit status query filters by `txn_id` only -- no `.eq('user_id', userId)`. Any authenticated user can enumerate all deposit records by guessing txn_ids. | Add `.eq('user_id', userId)` to the query. |
-| S08 | **High** | Workflow | `src/lib/db/commissions.ts:38-55` | `createCommission()` is defined but **never called anywhere** in the TypeScript codebase. No code walks the referral tree upward to credit upline members with commissions. The entire 5-level MLM commission system (15/5/3/2/1%) is unimplemented. | Call `createCommission` in `PlisioDepositService.handleCallback()` after balance credit. Walk up `referred_by` chain 5 levels. Use UNIQUE constraint on `(user_id, source_deposit_id, level)`. |
+| S08 | **High** ✅ | Workflow | `src/lib/db/commissions.ts:38-55` | ~~createCommission() never called~~ | **RESOLVED** (`275f03e`): Implemented `distributeCommissions()` that walks up `referred_by` chain 5 levels, reads percentages from settings, inserts with idempotency (UNIQUE constraint + error code 23505 catch), credits upline atomically via `creditUserBalance`. Wired into Plisio callback and deposit-simulate. |
 | S09 | **High** | Workflow | `src/app/api/auth/register/route.ts:80-81`, `src/lib/services/plisio-deposit.ts:128-131` | `bonus_balance` is set to $50 at registration but is **never credited to display_balance**. When total deposited reaches $100, `bonus_locked` is toggled to false, but the $50 bonus is never transferred. The Kingdom Starter Grant cannot be spent or withdrawn. | In `handleCallback`, when unlocking bonus, add: `{ display_balance: newBalance + user.bonus_balance }`. |
 | S10 | **High** | Authorization | `src/app/api/plisio-webhook/route.ts:6-23` | No authentication on webhook endpoint. Relies entirely on `PlisioClient.verifyCallback()` signature check. If Plisio API key leaks or signature verification has a bug, anyone can inject fake deposits. No IP allowlisting. | Add IP allowlist for Plisio webhook IPs. Add `CRON_SECRET`-style header auth as defense-in-depth. Use HMAC-SHA256 instead of SHA1. |
-| S11 | **High** | Deployment | `vercel.json:3-6` | Cron job path is `/api/cron/apply-profit` but the actual route file is at `/api/cron/daily-profit/route.ts`. The Vercel cron will return 404 every night, meaning **no daily profits are being distributed**. | Change `vercel.json` path to `/api/cron/daily-profit`. |
+| S11 | **High** ✅ | Deployment | `vercel.json:3-6` | ~~Cron path pointed to non-existent route~~ | **RESOLVED** (`009ccd2`): Changed vercel.json path to `/api/cron/daily-profit`. Both cron routes now match existing route files. |
 | S12 | **High** | Data Integrity | `src/app/api/withdraw/route.ts:59` | If `first_deposit_time` is null, the entire withdrawal lock period is skipped. A user who registered but never deposited can withdraw the $50 display_balance (which is set at registration) immediately. | Lock should apply from `created_at` if `first_deposit_time` is null. Or do not set display_balance until first deposit. |
 | S13 | **Medium** | Rate Limiting | All API routes | No rate limiting on any endpoint. Critical targets: login (brute force), register (account bombing), forgot-password (email flooding), withdraw (balance drain attacks), waitlist signup (spam), chatbot (API cost drain). | Add `upstash-ratelimit` or Vercel WAF rate limiting. Minimum: login (5/min), register (3/hour), forgot-password (2/hour), withdraw (10/day), chat (20/hour). |
 | S14 | **Medium** | Input Validation | Multiple route files | No max length on password (bcrypt DoS), no max on profile fields (DB bloat), no message length limit on chat (API cost), no crypto address format validation on withdrawal. | Add password max 128 chars. Add field max lengths. Add crypto address regex validation per currency. |
@@ -483,12 +496,12 @@ Total source files audited: **131 files** (excludes node_modules, .next, .git, .
 
 ### Must fix before launch (blocking):
 
-1. **S01** - Add auth to admin settings endpoint
-2. **S02** - Remove PII/token logging from login route
-3. **S03** - Remove default admin credentials from SQL migrations
-4. **S04** - Implement atomic balance mutations (PostgreSQL functions)
-5. **S08** - Implement referral commission distribution
-6. **S11** - Fix vercel.json cron path
+1. ~~**S01** - Add auth to admin settings endpoint~~ ✅ `ba65c83`
+2. ~~**S02** - Remove PII/token logging from login route~~ ✅ `8d1ecf2`
+3. ~~**S03** - Remove default admin credentials from SQL migrations~~ ✅ `026ee17`
+4. ~~**S04** - Implement atomic balance mutations (PostgreSQL functions)~~ ✅ `17253e8`
+5. ~~**S08** - Implement referral commission distribution~~ ✅ `275f03e`
+6. ~~**S11** - Fix vercel.json cron path~~ ✅ `009ccd2`
 
 ### Should fix before launch (high risk):
 
