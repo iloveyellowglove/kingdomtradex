@@ -56,8 +56,9 @@ export async function POST(request: NextRequest) {
   }
 
   const lockHours = parseInt(await getSetting('withdrawal_lock_hours', '72'));
-  if (user.first_deposit_time) {
-    const firstDeposit = new Date(user.first_deposit_time).getTime();
+  const firstDepositRaw = user.first_deposit_time || user.created_at;
+  if (firstDepositRaw) {
+    const firstDeposit = new Date(firstDepositRaw).getTime();
     const diff = Date.now() - firstDeposit;
     if (diff < lockHours * 3600000) {
       const eligibleAt = new Date(firstDeposit + lockHours * 3600000);
