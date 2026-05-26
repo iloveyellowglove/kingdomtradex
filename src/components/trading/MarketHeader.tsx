@@ -1,3 +1,5 @@
+'use client';
+
 import { formatCurrency } from '@/lib/utils/formatting';
 import { PAIRS } from '@/lib/pairs';
 import { COIN_LOGOS } from '@/lib/coinLogos';

@@ -1,3 +1,5 @@
+'use client';
+
 import { DEPOSIT_CURRENCIES } from '@/lib/currencies';
 
 const ICON_CDN = 'https://assets.coingecko.com/coins/images';
