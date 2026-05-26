@@ -1,7 +1,7 @@
-import { randomBytes } from 'crypto';
-
 export function generateCsrfToken(): string {
-  return randomBytes(16).toString('hex');
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 export function getCsrfToken(sessionCsrfToken?: string | null): string {
