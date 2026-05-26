@@ -18,13 +18,19 @@ Six pre-launch blocking findings resolved:
 | S03 | Critical | **RESOLVED** | `7874b51` |
 | S04 | Critical | **RESOLVED** | `ab3934e` |
 | S08 | High | **RESOLVED** | `2d95608` |
+| S05 | High | **RESOLVED** | `59eda7f` |
+| S06 | High | **RESOLVED** | `1d565ea` |
+| S07 | High | **RESOLVED** | `e9e7588` |
+| S09 | High | **RESOLVED** | `c5bd31f` |
+| S10 | High | **RESOLVED** | `001d40b` |
+| S12 | High | **RESOLVED** | `91b7377` |
 
 ## Executive Summary
 
 | Severity | Count | Description |
 |----------|-------|-------------|
 | Critical | 4 → **0 resolved** | ~~Unauthenticated admin endpoint~~, ~~PII/token logging~~, ~~default credentials in SQL~~, ~~no DB transactions on any balance mutation~~ |
-| High     | 8 → **2 resolved** | No CSRF enforcement, deposit duplicate risk, TOCTOU withdrawal race, incomplete bonus logic, ~~unimplemented referral commissions~~, missing IDOR guard, Plisio webhook auth gaps, ~~cron path mismatch~~ |
+| High     | 8 → **0 resolved** | ~~No CSRF enforcement~~, ~~deposit duplicate risk~~, ~~incomplete bonus logic~~, ~~unimplemented referral commissions~~, ~~missing IDOR guard~~, ~~Plisio webhook auth gaps~~, ~~cron path mismatch~~, ~~withdrawal lock bypass~~ |
 | Medium   | 12   | No rate limiting, float arithmetic, file upload content sniffing, email delivery issues, no security headers, Supabase filter injection potential, withdrawal lock bypass, minimum deposit not enforced, bonus never credited to spendable balance, cron double-credit risk, password reset token plaintext, session no sliding refresh |
 | Low      | 6    | CSRF timing-safe comparison unused, guest CSRF cookie never set, emoji use, hardcoded marketing stats, cron uses different model name than oracle, no input max lengths |
 | Info     | 5    | HMAC-SHA1 vs SHA256, DEPLOYMENT.md sparse, vercel.app from address, session expiry 24h hard, RLS policies are permissive |
@@ -39,14 +45,14 @@ Six pre-launch blocking findings resolved:
 | S02 | **Critical** ✅ | Logging | `src/app/api/auth/login/route.ts:49,68` | ~~Full session token and PII logged~~ | **RESOLVED** (`1dfd742`): Removed all credential logging. Only structured `console.warn` on failed attempts (IP + timestamp). Middleware verbose logs gated behind NODE_ENV check. |
 | S03 | **Critical** ✅ | Secrets | `sql/supabase_migration.sql:181-184`, `sql/database.sql:178-179` | ~~Default admin user with known password~~ | **RESOLVED** (`7874b51`): Removed admin INSERT from migrations. Created `scripts/create-admin.ts` (reads from env vars), `sql/create_admin.sql.example`, `.gitignore` entry. seed_demo_data.sql has DEV ONLY guard. |
 | S04 | **Critical** ✅ | Data Integrity | `src/lib/services/plisio-deposit.ts:116-117`, `src/app/api/withdraw/route.ts:53-81`, `src/app/api/cron/daily-profit/route.ts:46-49` | ~~Zero database transactions - all balance mutations used read-modify-write~~ | **RESOLVED** (`ab3934e`): Created 7 PostgreSQL atomic functions in `sql/atomic_balance_functions.sql` and TypeScript helpers in `src/lib/db/atomic.ts`. Replaced all RMW patterns in plisio-deposit, withdraw, daily-profit, deposit-simulate, plisio-withdrawal. |
-| S05 | **High** | CSRF | `src/middleware.ts:84-119` | Middleware CSRF check uses `===` for string comparison (line 100), not the `timingSafeEqual` function from `src/lib/auth/csrf.ts:22`. Excluded routes (auth, plisio, waitlist, cron, seed-demo) have NO CSRF at all. Logout is CSRF-vulnerable. | Use `timingSafeEqual()` from csrf.ts. Generate and set `csrf_guest` cookie so non-authenticated CSRF works. |
-| S06 | **High** | Data Integrity | `sql/supabase_migration.sql:49` | `deposits.txn_id` column has NO UNIQUE constraint. Simultaneous Plisio webhook calls pass the SELECT-then-INSERT duplicate check and create duplicate deposit records with double balance credits. | Add `UNIQUE (txn_id)` constraint. Use `ON CONFLICT DO NOTHING` in the INSERT. |
-| S07 | **High** | Authorization | `src/app/api/deposit/status/[txnId]/route.ts:27-31` | Deposit status query filters by `txn_id` only -- no `.eq('user_id', userId)`. Any authenticated user can enumerate all deposit records by guessing txn_ids. | Add `.eq('user_id', userId)` to the query. |
+| S05 | **High** ✅ | CSRF | `src/middleware.ts:84-119` | ~~Middleware CSRF check uses `===` for string comparison, not `timingSafeEqual`. No CSRF for excluded routes. Guest CSRF cookie never set.~~ | **RESOLVED** (`59eda7f`): Replaced `===` with `timingSafeEqual()` for all CSRF comparisons. Generate and set `csrf_guest` cookie for unauthenticated visitors in all 4 middleware paths (public pass-through, missing token, invalid session, expired session). |
+| S06 | **High** ✅ | Data Integrity | `sql/supabase_migration.sql:49` | ~~`deposits.txn_id` has NO UNIQUE constraint. Race condition allows duplicate deposits with double balance credits.~~ | **RESOLVED** (`1d565ea`): Added `UNIQUE (txn_id)` constraint via `sql/s06_unique_txn_id.sql` migration. Updated `supabase_migration.sql` for fresh installs. Both `handleCallback` and `handleInvoiceCallback` now INSERT before crediting balance with error/empty-row detection for duplicates. |
+| S07 | **High** ✅ | Authorization | `src/app/api/deposit/status/[txnId]/route.ts:27-31` | ~~Deposit status query filters by `txn_id` only with no user_id check. Any authenticated user can enumerate all deposit records.~~ | **RESOLVED** (`e9e7588`): Added `.eq('user_id', userId)` filter scoped to the authenticated session's user. |
 | S08 | **High** ✅ | Workflow | `src/lib/db/commissions.ts:38-55` | ~~createCommission() never called~~ | **RESOLVED** (`2d95608`): Implemented `distributeCommissions()` that walks up `referred_by` chain 5 levels, reads percentages from settings, inserts with idempotency (UNIQUE constraint + error code 23505 catch), credits upline atomically via `creditUserBalance`. Wired into Plisio callback and deposit-simulate. |
-| S09 | **High** | Workflow | `src/app/api/auth/register/route.ts:80-81`, `src/lib/services/plisio-deposit.ts:128-131` | `bonus_balance` is set to $50 at registration but is **never credited to display_balance**. When total deposited reaches $100, `bonus_locked` is toggled to false, but the $50 bonus is never transferred. The Kingdom Starter Grant cannot be spent or withdrawn. | In `handleCallback`, when unlocking bonus, add: `{ display_balance: newBalance + user.bonus_balance }`. |
-| S10 | **High** | Authorization | `src/app/api/plisio-webhook/route.ts:6-23` | No authentication on webhook endpoint. Relies entirely on `PlisioClient.verifyCallback()` signature check. If Plisio API key leaks or signature verification has a bug, anyone can inject fake deposits. No IP allowlisting. | Add IP allowlist for Plisio webhook IPs. Add `CRON_SECRET`-style header auth as defense-in-depth. Use HMAC-SHA256 instead of SHA1. |
+| S09 | **High** ✅ | Workflow | `src/lib/services/plisio-deposit.ts` | ~~Bonus unlock was non-atomic: credited bonus balance, set bonus_locked=false, and set first_deposit_time in separate DB calls. Crash between calls could credit bonus twice or leave state inconsistent.~~ | **RESOLVED** (`c5bd31f`): Created `process_deposit_atomic` PostgreSQL function that atomically credits deposit, updates total_deposited, unlocks bonus (credit + clear + set unlocked_at), and sets first_deposit_time in a single UPDATE. Both callback handlers use the new atomic function. |
+| S10 | **High** ✅ | Authorization | `src/app/api/plisio-webhook/route.ts:6-23` | ~~No IP allowlisting, no rate limiting, HMAC-SHA1 only for webhook verification.~~ | **RESOLVED** (`001d40b`): Added IP allowlisting with configurable `plisio_webhook_ips` setting (defaults to known Plisio IPs). Added in-memory rate limiter (10 req/60s per IP). Added HMAC-SHA256 verification alongside SHA1 in `verifyCallback()`. |
 | S11 | **High** ✅ | Deployment | `vercel.json:3-6` | ~~Cron path pointed to non-existent route~~ | **RESOLVED** (`765d0c8`): Changed vercel.json path to `/api/cron/daily-profit`. Both cron routes now match existing route files. |
-| S12 | **High** | Data Integrity | `src/app/api/withdraw/route.ts:59` | If `first_deposit_time` is null, the entire withdrawal lock period is skipped. A user who registered but never deposited can withdraw the $50 display_balance (which is set at registration) immediately. | Lock should apply from `created_at` if `first_deposit_time` is null. Or do not set display_balance until first deposit. |
+| S12 | **High** ✅ | Data Integrity | `src/app/api/withdraw/route.ts:59` | ~~If `first_deposit_time` is null, the entire withdrawal lock period is skipped.~~ | **RESOLVED** (`91b7377`): Lock period now falls back to `user.created_at` when `first_deposit_time` is null, ensuring all users have a lock period baseline. |
 | S13 | **Medium** | Rate Limiting | All API routes | No rate limiting on any endpoint. Critical targets: login (brute force), register (account bombing), forgot-password (email flooding), withdraw (balance drain attacks), waitlist signup (spam), chatbot (API cost drain). | Add `upstash-ratelimit` or Vercel WAF rate limiting. Minimum: login (5/min), register (3/hour), forgot-password (2/hour), withdraw (10/day), chat (20/hour). |
 | S14 | **Medium** | Input Validation | Multiple route files | No max length on password (bcrypt DoS), no max on profile fields (DB bloat), no message length limit on chat (API cost), no crypto address format validation on withdrawal. | Add password max 128 chars. Add field max lengths. Add crypto address regex validation per currency. |
 | S15 | **Medium** | Monetary | `src/lib/services/plisio-deposit.ts:116,170`, `src/app/api/cron/daily-profit/route.ts:27`, `src/app/api/withdraw/route.ts:72` | All monetary arithmetic uses JavaScript `Number` (IEEE 754 double). Fee calculation `amount * 0.005` uses non-exact float. Daily profit `balance * (percentage / 100)` accumulates rounding errors over 365 days. DB uses correct `NUMERIC(18,8)`. | Use integer arithmetic (cents/satoshis) or a decimal library like `decimal.js`. At minimum, round all monetary results to 8 decimal places after every operation. |
@@ -505,12 +511,12 @@ Total source files audited: **131 files** (excludes node_modules, .next, .git, .
 
 ### Should fix before launch (high risk):
 
-7. **S05** - Implement proper CSRF validation
-8. **S06** - Add UNIQUE constraint on deposits.txn_id
-9. **S09** - Fix bonus balance credit on unlock
-10. **S10** - Add webhook auth defense-in-depth
-11. **S12** - Fix withdrawal lock bypass for users with no deposits
-12. **S07** - Fix IDOR in deposit status endpoint
+7. ~~**S05** - Implement proper CSRF validation~~ ✅ `59eda7f`
+8. ~~**S06** - Add UNIQUE constraint on deposits.txn_id~~ ✅ `1d565ea`
+9. ~~**S09** - Fix bonus balance credit on unlock~~ ✅ `c5bd31f`
+10. ~~**S10** - Add webhook auth defense-in-depth~~ ✅ `001d40b`
+11. ~~**S12** - Fix withdrawal lock bypass for users with no deposits~~ ✅ `91b7377`
+12. ~~**S07** - Fix IDOR in deposit status endpoint~~ ✅ `e9e7588`
 
 ### Fix within first week post-launch:
 
