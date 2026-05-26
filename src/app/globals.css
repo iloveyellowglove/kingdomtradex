@@ -315,15 +315,6 @@ footer {
 .rank-prophet { color: #FFC107; font-weight: bold; }
 .rank-apostle { color: #ff7043; font-weight: bold; }
 
-/* Ekklesia box */
-.ekklesia-box {
-  background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(45, 0, 77, 0.9));
-  border: 2px solid #FFD700;
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  color: #FFD700;
-}
-
 /* Admin sidebar */
 .admin-sidebar {
   border: 1px solid #FFD700;

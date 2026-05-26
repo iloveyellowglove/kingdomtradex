@@ -24,7 +24,7 @@ const TESTIMONIALS = [
   {
     name: 'Grace M.',
     role: 'Level 1 Steward',
-    text: 'I was skeptical at first, but the 72-hour security hold and transparent operations gave me confidence. The AI trading has been running for months without a single losing day. The community support through Telegram is incredible.',
+    text: 'I was skeptical at first, but the 72-hour security hold and transparent operations gave me confidence. The AI trading has been running for months without a single losing day. The community support and mentorship have been incredible.',
     rating: 5,
   },
   {

@@ -65,7 +65,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main className="max-w-[1280px] mx-auto px-6">
           {children}
         </main>
-        <Footer user={user ? { role: user.role } : null} />
+        <Footer />
         <OracleChat />
         <SocialProofToast />
         <script dangerouslySetInnerHTML={{

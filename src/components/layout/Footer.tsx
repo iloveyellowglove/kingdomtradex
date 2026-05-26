@@ -1,30 +1,8 @@
 import Logo from '@/components/brand/Logo';
 
-export default function Footer({ user }: { user?: { role: string } | null }) {
+export default function Footer() {
   return (
-    <>
-      {user && (
-        <div className="max-w-[1280px] mx-auto px-6 mt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="ekklesia-box">
-              <h6 className="text-temple-gold font-bold">Join the Ekklesia (Apostle Team)</h6>
-              <p className="text-sm mb-2">Connect with fellow stewards. Receive prophetic market insights. Coordinate the harvest.</p>
-              <a href="https://t.me/yourgroup" target="_blank" rel="noopener" className="inline-block border border-temple-gold text-temple-gold px-4 py-2 rounded-lg text-sm hover:bg-temple-gold hover:text-bg-dark transition mt-2">
-                Join on Telegram
-              </a>
-            </div>
-            <div className="ekklesia-box">
-              <h6 className="text-temple-gold font-bold">Confidential Onboarding</h6>
-              <p className="text-sm mb-2">For private coaching, use BonChat, encrypted and secure. Your financial journey stays between you and your spiritual covering.</p>
-              <a href="https://bonchat.io/yourlink" target="_blank" rel="noopener" className="inline-block border border-text-primary text-text-primary px-4 py-2 rounded-lg text-sm hover:bg-white/5 transition mt-2">
-                Open BonChat
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <footer>
+    <footer>
         <div className="max-w-[1280px] mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -38,6 +16,5 @@ export default function Footer({ user }: { user?: { role: string } | null }) {
           </div>
         </div>
       </footer>
-    </>
   );
 }

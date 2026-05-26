@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fmt } from '@/lib/utils/formatting';
 
 type Step = 'amount' | 'address' | 'confirm';
@@ -23,17 +23,23 @@ export default function DepositPage() {
   const [error, setError] = useState('');
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
   const [depositStatus, setDepositStatus] = useState<string | null>(null);
+  const csrfTokenRef = useRef('');
+
+  useEffect(() => {
+    fetch('/api/csrf')
+      .then((r) => r.json())
+      .then((d) => { csrfTokenRef.current = d.csrfToken || ''; })
+      .catch(() => {});
+  }, []);
 
   async function handleCreateInvoice(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    const csrfToken = document.cookie.split('; ').find((r) => r.startsWith('csrf_guest='))?.split('=')[1] || '';
-
     const res = await fetch('/api/deposit/create-invoice', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
+      headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfTokenRef.current },
       body: JSON.stringify({ currency, amount: parseFloat(amount) }),
     });
 
