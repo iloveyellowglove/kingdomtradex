@@ -22,12 +22,14 @@ export async function GET(
     return NextResponse.json({ success: false, error: 'Session expired.' }, { status: 401 });
   }
 
+  const userId = sessions[0].user_id;
   const { txnId } = await params;
 
   const { data: deposits } = await supabase
     .from('deposits')
     .select('id, txn_id, currency, amount, status, created_at, confirmed_at')
     .eq('txn_id', txnId)
+    .eq('user_id', userId)
     .limit(1);
 
   if (!deposits || deposits.length === 0) {
