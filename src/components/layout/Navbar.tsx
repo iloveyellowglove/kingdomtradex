@@ -62,6 +62,9 @@ export default function Navbar({ user }: NavbarProps) {
                 <NavLink href="/trading" active={pathname === '/trading'}>
                   Trading
                 </NavLink>
+                <NavLink href="/manual-trading" active={pathname === '/manual-trading'}>
+                  Manual Trading <span className="ml-1 px-1.5 py-0.5 rounded text-xs font-bold" style={{ background: 'rgba(139,92,246,0.15)', color: '#8b5cf6' }}>Beta</span>
+                </NavLink>
                 <NavLink href="/earnings" active={pathname === '/earnings'}>
                   Earnings
                 </NavLink>

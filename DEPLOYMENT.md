@@ -52,6 +52,20 @@ Run `sql/atomic_balance_functions.sql` in the Supabase SQL Editor to install the
 
 Run `sql/commissions_unique_constraint.sql` in the Supabase SQL Editor to add idempotency protection on referral commissions.
 
+### 6. Manual Trading Setup
+
+Run the SQL migration to add dummy balance columns and the manual_trades table:
+
+Execute `sql/manual_trading.sql` in the Supabase SQL Editor.
+
+Then run the one-time migration to initialize dummy balances for existing users:
+
+```bash
+npm run migrate:dummy
+```
+
+This sets `dummy_balance = 10000` and `dummy_initialized_at = NOW()` for all users where it is NULL.
+
 ## Demo Data (Development Only)
 
 `sql/seed_demo_data.sql` contains sample data for local development. **Do not run in production.** All demo users share a single password hash.
