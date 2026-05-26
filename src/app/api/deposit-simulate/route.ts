@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
-import { creditUserBalanceWithDepositTotal } from '@/lib/db/atomic';
+import { creditUserBalanceWithDepositTotal, creditUserBalance } from '@/lib/db/atomic';
 import { distributeCommissions } from '@/lib/db/commissions';
 
 export async function POST(request: NextRequest) {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
 
   const { data: userRows } = await supabase
     .from('users')
-    .select('first_deposit_time,bonus_locked,minimum_deposit_to_unlock')
+    .select('first_deposit_time,bonus_locked,bonus_balance,minimum_deposit_to_unlock')
     .eq('id', userId)
     .limit(1);
 
@@ -65,11 +65,20 @@ export async function POST(request: NextRequest) {
 
   if (userRows && userRows.length > 0) {
     const u = userRows[0];
+    const simThreshold = Number(u.minimum_deposit_to_unlock || 100);
     const updates: Record<string, unknown> = {};
     if (!u.first_deposit_time) {
       updates.first_deposit_time = now;
     }
-    if (u.bonus_locked && newTotalDeposited >= Number(u.minimum_deposit_to_unlock || 100)) {
+    if (u.bonus_locked && newTotalDeposited >= simThreshold) {
+      const simBonusAmount = Number(u.bonus_balance || 0);
+      if (simBonusAmount > 0) {
+        try {
+          await creditUserBalance(userId, simBonusAmount);
+        } catch (bonusErr) {
+          console.error('[deposit-simulate] bonus credit failed:', bonusErr);
+        }
+      }
       updates.bonus_locked = false;
       updates.bonus_unlocked_at = now;
     }

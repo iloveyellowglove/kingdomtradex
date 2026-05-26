@@ -100,7 +100,7 @@ export default function DashboardContent({
           accent="gold"
           subline={
             user.bonus_balance > 0 && user.bonus_locked
-              ? `$50.00 bonus locked until $${Math.max(0, Number(user.minimum_deposit_to_unlock || 100) - Number(user.total_deposited_real)).toFixed(2)} more deposited`
+              ? `$${Number(user.bonus_balance).toFixed(2)} bonus locked until $${Math.max(0, Number(user.minimum_deposit_to_unlock || 100) - Number(user.total_deposited_real)).toFixed(2)} more deposited`
               : undefined
           }
         />

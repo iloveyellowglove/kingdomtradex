@@ -3,9 +3,13 @@ import { hashPassword } from '@/lib/auth/password';
 import { createSession } from '@/lib/auth/session';
 import { createServiceClient } from '@/lib/supabase/service';
 import { generateReferralCode, generatePlisioUid } from '@/lib/utils/referral';
+import { getBonusTier } from '@/lib/bonus-tiers';
 
 export async function POST(request: NextRequest) {
-  const { username, email, password, referral_code } = await request.json();
+  const { username, email, password, referral_code, role: rawRole } = await request.json();
+
+  const allowedRoles = ['member', 'pastor'];
+  const role = allowedRoles.includes(rawRole) ? rawRole : 'member';
 
   const usernameClean = (username || '').trim();
   const emailClean = (email || '').toLowerCase().trim();
@@ -60,25 +64,28 @@ export async function POST(request: NextRequest) {
   const passwordHash = hashPassword(password);
   const now = new Date().toISOString();
 
+  const tier = getBonusTier(role);
+
   const { data: newUser } = await supabase
     .from('users')
     .insert({
       username: usernameClean,
       email: emailClean,
       password_hash: passwordHash,
-      role: 'member',
+      role,
       referral_code: newReferralCode,
       referred_by: referredBy,
       plisio_uid: plisioUid,
       plisio_btc_address: '',
       plisio_eth_address: '',
       plisio_usdt_address: '',
-      display_balance: 50.00,
+      display_balance: tier.bonusAmount.toFixed(8),
       total_deposited_real: 0,
       total_withdrawn_real: 0,
       pending_withdrawal_amount: 0,
-      bonus_balance: 50.00,
-      bonus_locked: true,
+      bonus_balance: tier.bonusAmount,
+      bonus_locked: tier.bonusAmount > 0,
+      minimum_deposit_to_unlock: tier.unlockThreshold,
       status: 'active',
       created_at: now,
     })
@@ -88,7 +95,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Registration failed. Please try again.' }, { status: 500 });
   }
 
-  const { token } = await createSession(newUser[0].id, 'member');
+  const { token } = await createSession(newUser[0].id, role);
 
   const response = NextResponse.json({
     success: true,

@@ -55,7 +55,7 @@ export default async function LandingPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { step: '01', title: 'Stake Your Assets', desc: 'Deposit USDT into your KingdomTrade wallet. Your assets begin earning immediately at the 1.5% daily rate. Minimum deposit is only $50 USDT.' },
+            { step: '01', title: 'Stake Your Assets', desc: 'Deposit USDT into your KingdomTrade wallet. Your assets begin earning immediately at the 1.5% daily rate. Minimum deposit is only $50 USDT. Pastors receive a $100 starter grant (unlocks at $200). Members receive $50 (unlocks at $100).' },
             { step: '02', title: 'AI Multiplies Your Yield', desc: 'Our proprietary AI trading algorithms work 24/7 across multiple exchanges, executing profitable micro-trades to generate consistent daily returns on your staked balance.' },
             { step: '03', title: 'Build Your Covenant', desc: 'Refer disciples and earn blessings across 5 levels. As your network grows, so do your covenant rewards - from 15% on Level 1 to 1% on Level 5.' },
           ].map((item) => (

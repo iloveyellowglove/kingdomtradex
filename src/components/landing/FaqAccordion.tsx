@@ -9,7 +9,7 @@ const FAQS = [
   },
   {
     q: 'What is the minimum deposit?',
-    a: 'The minimum deposit is $50 USDT equivalent. There is no maximum limit. Your funds begin earning the 1.5% daily rate immediately after your deposit is confirmed on the blockchain.',
+    a: 'The minimum deposit is $50 USDT equivalent. There is no maximum limit. Your funds begin earning the 1.5% daily rate immediately after your deposit is confirmed on the blockchain. Pastors receive a $100 starter grant (unlocks at $200 deposited). Members receive $50 (unlocks at $100 deposited).',
   },
   {
     q: 'How do withdrawals work?',

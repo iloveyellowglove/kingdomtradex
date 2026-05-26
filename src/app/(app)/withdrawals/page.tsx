@@ -30,11 +30,12 @@ export default async function WithdrawalsPage() {
 
   const { data: userRows } = await supabase
     .from('users')
-    .select('bonus_locked,minimum_deposit_to_unlock,total_deposited_real')
+    .select('bonus_locked,bonus_balance,minimum_deposit_to_unlock,total_deposited_real')
     .eq('id', s[0].user_id)
     .limit(1);
 
   const bonusLocked = userRows?.[0]?.bonus_locked ?? false;
+  const bonusAmount = Number(userRows?.[0]?.bonus_balance || 50);
   const minToUnlock = Number(userRows?.[0]?.minimum_deposit_to_unlock || 100);
   const totalDeposited = Number(userRows?.[0]?.total_deposited_real || 0);
 
@@ -49,9 +50,9 @@ export default async function WithdrawalsPage() {
           background: 'linear-gradient(135deg, rgba(255,215,0,0.08), rgba(106,13,173,0.08))',
         }}>
           <div>
-            <strong>Your $50 Kingdom Starter Grant is currently locked.</strong>
+            <strong>Your ${bonusAmount.toFixed(0)} Kingdom Starter Grant is currently locked.</strong>
             <p className="mb-0 text-sm mt-1">
-              Deposit {Math.max(0, minToUnlock - totalDeposited).toFixed(2)} more USDT (minimum $100 total) to unlock withdrawals. Your $50 bonus is already earning yield.
+              Deposit {Math.max(0, minToUnlock - totalDeposited).toFixed(2)} more USDT (minimum ${minToUnlock.toFixed(0)} total) to unlock withdrawals. Your ${bonusAmount.toFixed(0)} bonus is already earning yield.
             </p>
           </div>
           <a href="/deposit" className="btn-primary px-6 py-2 rounded-lg text-sm font-bold whitespace-nowrap no-underline">
