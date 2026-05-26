@@ -71,12 +71,12 @@ export default function HeroSection({ waitlistCount }: Props) {
   const ctaText = role === 'pastor' ? 'Claim My Free $100' : 'Claim My Free $50';
 
   return (
-    <section className="relative overflow-hidden rounded-2xl mb-12" style={{
+    <section className="relative rounded-2xl mb-12" style={{
       background: 'linear-gradient(135deg, #0e0b1a 0%, #1a0a2e 25%, #0d1b3e 50%, #1a0a2e 75%, #0e0b1a 100%)',
       border: '1px solid #261f3a',
     }}>
-      {/* Subtle gradient orbs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Subtle gradient orbs — clipped to prevent overflow */}
+      <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
         <div style={{
           position: 'absolute', top: '-10%', left: '-5%', width: '40%', height: '50%',
           background: 'radial-gradient(circle, rgba(106,13,173,0.15) 0%, transparent 70%)',
@@ -88,7 +88,7 @@ export default function HeroSection({ waitlistCount }: Props) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-6 py-16 md:py-20" ref={formRef} id="signup">
+      <div className="relative z-10 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 py-16 md:py-20" ref={formRef} id="signup">
         <Logo size="lg" showText={false} className="mb-5" />
 
         {/* Badge */}
@@ -103,7 +103,7 @@ export default function HeroSection({ waitlistCount }: Props) {
         </div>
 
         {/* Dynamic Headline */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-center mb-4 leading-tight whitespace-pre-line" style={{
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 leading-tight whitespace-pre-line max-w-4xl mx-auto" style={{
           background: 'linear-gradient(135deg, #FFD700 0%, #FFE44D 30%, #FFC107 60%, #FFD700 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',

@@ -37,7 +37,7 @@ export async function signupToWaitlist(
   name: string,
   role: 'pastor' | 'member',
   referredBy?: string
-): Promise<{ success: boolean; error?: string; referralCode?: string; position?: number }> {
+): Promise<{ success: boolean; error?: string; referralCode?: string; position?: number; existingReferralCode?: string }> {
   const supabase = createServiceClient();
 
   // Check for duplicate email
