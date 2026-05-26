@@ -104,7 +104,8 @@ export class PlisioDepositService {
 
     const ourCurrency = mapCurrency(currency);
 
-    const { data: depositRows } = await supabase.from('deposits').insert({
+    // UNIQUE constraint on txn_id provides defense-in-depth against race conditions
+    const { data: depositRows, error: insertErr } = await supabase.from('deposits').insert({
       user_id: user.id,
       txn_id: txnId,
       txid: txnId,
@@ -115,7 +116,12 @@ export class PlisioDepositService {
       created_at: new Date().toISOString(),
     }).select();
 
-    const depositId = depositRows?.[0]?.id as number | undefined;
+    // If constraint violation (race condition), treat as duplicate
+    if (insertErr || !depositRows || depositRows.length === 0) {
+      return { success: true, message: 'Duplicate transaction. Already processed.' };
+    }
+
+    const depositId = depositRows[0].id as number | undefined;
 
     const { newTotalDeposited } = await creditUserBalanceWithDepositTotal(user.id, amount);
 
@@ -188,6 +194,24 @@ export class PlisioDepositService {
           if (!existing || existing.length === 0) {
             const ourCurrency = mapCurrency(currency);
 
+            // Insert deposit record first (UNIQUE constraint prevents duplicates)
+            const { data: invDepRows, error: invInsertErr } = await supabase.from('deposits').insert({
+              user_id: user.id,
+              txn_id: txnId,
+              txid: txnId,
+              currency: ourCurrency,
+              amount: amount,
+              address: postData.wallet_hash || 'invoice',
+              status: 'completed',
+              created_at: new Date().toISOString(),
+            }).select();
+
+            if (invInsertErr || !invDepRows || invDepRows.length === 0) {
+              return { success: true, message: 'Duplicate transaction. Already processed.' };
+            }
+
+            const invDepositId = invDepRows[0].id as number | undefined;
+
             const { newTotalDeposited } = await creditUserBalanceWithDepositTotal(user.id, amount);
 
             const updates: Record<string, unknown> = {};
@@ -213,18 +237,6 @@ export class PlisioDepositService {
               await updateUser(user.id, updates);
             }
 
-            const { data: invDepRows } = await supabase.from('deposits').insert({
-              user_id: user.id,
-              txn_id: txnId,
-              txid: txnId,
-              currency: ourCurrency,
-              amount: amount,
-              address: postData.wallet_hash || 'invoice',
-              status: 'completed',
-              created_at: new Date().toISOString(),
-            }).select();
-
-            const invDepositId = invDepRows?.[0]?.id as number | undefined;
             if (invDepositId) {
               try {
                 await distributeCommissions(user.id, amount, invDepositId);

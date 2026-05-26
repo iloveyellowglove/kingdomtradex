@@ -46,7 +46,7 @@ CREATE INDEX IF NOT EXISTS idx_users_plisio_uid    ON users(plisio_uid);
 CREATE TABLE IF NOT EXISTS deposits (
     id              BIGSERIAL PRIMARY KEY,
     user_id         BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    txn_id          VARCHAR(128) DEFAULT NULL,
+    txn_id          VARCHAR(128) DEFAULT NULL UNIQUE,
     txid            VARCHAR(128) DEFAULT NULL,
     currency        VARCHAR(10) NOT NULL DEFAULT 'USDT',
     amount          NUMERIC(18,8) NOT NULL,
