@@ -51,7 +51,11 @@ export default function HeroSection({ waitlistCount }: Props) {
       });
       const data = await res.json();
       if (data.success) {
-        router.push(`/waitlist/dashboard/${data.referralCode}`);
+        if (data.alreadyExists) {
+          router.push(`/waitlist/dashboard/${data.referralCode}?welcome_back=1`);
+        } else {
+          router.push(`/waitlist/dashboard/${data.referralCode}`);
+        }
       } else {
         setError(data.error || 'Something went wrong.');
       }

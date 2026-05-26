@@ -23,6 +23,16 @@ export async function POST(request: NextRequest) {
     );
 
     if (!result.success) {
+      // If duplicate email, return existing referral code for redirect
+      if (result.existingReferralCode) {
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://kingdomtradex.vercel.app';
+        return NextResponse.json({
+          success: true,
+          alreadyExists: true,
+          referralCode: result.existingReferralCode,
+          referralLink: `${appUrl}/waitlist/${result.existingReferralCode}`,
+        });
+      }
       return NextResponse.json({ success: false, error: result.error }, { status: 400 });
     }
 

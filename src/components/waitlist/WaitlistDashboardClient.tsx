@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import type { WaitlistEntry } from '@/lib/types';
 import Logo from '@/components/brand/Logo';
 
@@ -11,7 +12,10 @@ interface Props {
 }
 
 export default function WaitlistDashboardClient({ entry, nextMilestone, referrals }: Props) {
+  const searchParams = useSearchParams();
+  const isWelcomeBack = searchParams.get('welcome_back') === '1';
   const [copied, setCopied] = useState(false);
+  const [showWelcomeBack, setShowWelcomeBack] = useState(isWelcomeBack);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://kingdomtradex.vercel.app';
   const referralLink = `${appUrl}/waitlist/${entry.referral_code}`;
   const creditAmount = entry.role === 'pastor' ? '$100' : '$50';
@@ -42,10 +46,26 @@ export default function WaitlistDashboardClient({ entry, nextMilestone, referral
 
   return (
     <div className="py-8 max-w-2xl mx-auto">
+      {/* Welcome-back toast for returning users */}
+      {showWelcomeBack && (
+        <div className="alert alert-success mb-6 flex items-center justify-between">
+          <span>Welcome back! Here&apos;s your referral dashboard.</span>
+          <button
+            onClick={() => setShowWelcomeBack(false)}
+            className="text-white/60 hover:text-white ml-4 flex-shrink-0"
+            style={{ fontSize: '1.25rem', lineHeight: 1 }}
+          >
+            &times;
+          </button>
+        </div>
+      )}
+
       {/* Top: Confirmation */}
       <div className="text-center mb-8">
         <Logo size="md" className="mb-4" />
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">You&apos;re In! 🎉</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">
+          {isWelcomeBack ? 'Welcome Back!' : 'You\'re In! 🎉'}
+        </h1>
         <p className="text-temple-gold text-lg font-semibold mb-2">
           Your {creditAmount} free credits are reserved.
         </p>

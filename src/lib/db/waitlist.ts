@@ -43,12 +43,12 @@ export async function signupToWaitlist(
   // Check for duplicate email
   const { data: existing } = await supabase
     .from('waitlist')
-    .select('id')
+    .select('id, referral_code')
     .eq('email', email.toLowerCase().trim())
     .limit(1);
 
   if (existing && existing.length > 0) {
-    return { success: false, error: 'This email is already on the waitlist.' };
+    return { success: false, error: 'This email is already on the waitlist.', existingReferralCode: existing[0].referral_code };
   }
 
   // Generate unique referral code
