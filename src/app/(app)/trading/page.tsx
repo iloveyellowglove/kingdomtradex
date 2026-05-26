@@ -29,5 +29,5 @@ export default async function TradingPageServer() {
   const balance = Number(users?.[0]?.display_balance || 0);
   const dailyRate = parseFloat(await getSetting('daily_profit_percentage', '1.5'));
 
-  return <TradingPage dailyRate={dailyRate} balance={balance} />;
+  return <TradingPage dailyRate={dailyRate} balance={balance} userId={userId} />;
 }

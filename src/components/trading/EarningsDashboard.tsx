@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { fmt } from '@/lib/utils/formatting';
 import type { AITradingProfit } from '@/lib/types';
@@ -11,10 +11,26 @@ interface Props {
   profits: AITradingProfit[];
 }
 
+function startOfUTCDay() {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+}
+
+function secondsSinceMidnightUTC() {
+  return (Date.now() - startOfUTCDay().getTime()) / 1000;
+}
+
 export default function EarningsDashboard({ balance, dailyRate, profits }: Props) {
-  const daily = balance * (dailyRate / 100);
-  const weekly = daily * 7;
-  const monthly = daily * 30;
+  const dailyProjection = balance * (dailyRate / 100);
+  const weekly = dailyProjection * 7;
+  const monthly = dailyProjection * 30;
+
+  const [liveEarnings, setLiveEarnings] = useState('0.000000');
+  const [fractionOfDay, setFractionOfDay] = useState(0);
+  const [countdown, setCountdown] = useState({ h: '00', m: '00', s: '00' });
+  const [pulse, setPulse] = useState(false);
+  const prevDigitsRef = useRef('');
+  const animFrameRef = useRef<ReturnType<typeof requestAnimationFrame>>();
 
   // Interactive calculator state
   const [calcAmount, setCalcAmount] = useState(50);
@@ -22,6 +38,40 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
   const calcWeekly = calcDaily * 7;
   const calcMonthly = calcDaily * 30;
   const calcYearly = calcDaily * 365;
+
+  const updateTicker = useCallback(() => {
+    const seconds = secondsSinceMidnightUTC();
+    const fraction = Math.min(seconds / 86400, 1);
+    setFractionOfDay(fraction);
+
+    const earned = (dailyProjection * fraction).toFixed(6);
+    setLiveEarnings(earned);
+
+    // Pulse if last digits changed
+    if (prevDigitsRef.current && prevDigitsRef.current !== earned) {
+      setPulse(true);
+      setTimeout(() => setPulse(false), 200);
+    }
+    prevDigitsRef.current = earned;
+
+    // Countdown to next 00:00 UTC
+    const now = new Date();
+    const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+    const diff = Math.max(0, next.getTime() - now.getTime());
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    setCountdown({ h: String(h).padStart(2, '0'), m: String(m).padStart(2, '0'), s: String(s).padStart(2, '0') });
+
+    animFrameRef.current = requestAnimationFrame(updateTicker);
+  }, [dailyProjection]);
+
+  useEffect(() => {
+    animFrameRef.current = requestAnimationFrame(updateTicker);
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [updateTicker]);
 
   return (
     <div className="py-4 space-y-6">
@@ -46,12 +96,45 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
             <p className="text-temple-gold text-3xl font-extrabold">Up to {dailyRate}% <span className="text-text-muted text-sm font-normal">Daily</span></p>
           </div>
 
-          {/* 4 Stat Cards */}
+          {/* Hero stats: Daily dominant (2x), others smaller */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Staked Balance - 1 col */}
             <StatCard label="Staked Balance" value={`${fmt(balance)} USDT`} gold />
-            <StatCard label="Daily Earnings" value={`${fmt(daily)} USDT`} gold />
-            <StatCard label="Weekly Earnings" value={`${fmt(weekly)} USDT`} gold />
-            <StatCard label="Monthly Earnings" value={`${fmt(monthly)} USDT`} gold />
+
+            {/* Daily Earnings - 2 cols, 2x font */}
+            <div className={`bg-dark-indigo rounded-lg p-4 text-center col-span-2 transition-transform ${pulse ? 'scale-[1.01]' : ''}`}
+              style={{
+                border: '1px solid rgba(255,215,0,0.2)',
+                boxShadow: pulse ? '0 0 20px rgba(255,215,0,0.15)' : 'none',
+              }}>
+              <p className="text-text-muted text-xs mb-1">Daily Earnings (Live)</p>
+              <p className="text-temple-gold font-bold break-all" style={{ fontSize: '1.75rem', lineHeight: 1.2 }}>
+                {liveEarnings} USDT
+              </p>
+              {/* Progress bar */}
+              <div className="mt-2 rounded-full overflow-hidden" style={{ height: 4, background: 'rgba(255,255,255,0.06)' }}>
+                <div className="h-full rounded-full transition-all" style={{
+                  width: `${(fractionOfDay * 100).toFixed(1)}%`,
+                  background: 'linear-gradient(90deg, #FFD700, #FFA500)',
+                  transition: 'width 0.3s linear',
+                }} />
+              </div>
+              <p className="text-text-muted mt-1" style={{ fontSize: '10px' }}>
+                ${liveEarnings.slice(0, -2)} of ${dailyProjection.toFixed(2)} earned today
+              </p>
+              {/* Countdown */}
+              <p className="text-text-muted mt-1" style={{ fontSize: '10px' }}>
+                Next payout in {countdown.h}:{countdown.m}:{countdown.s}
+              </p>
+            </div>
+
+            {/* Weekly Earnings - 1 col */}
+            <StatCard label="Weekly (est)" value={`${fmt(weekly)} USDT`} gold />
+          </div>
+
+          {/* Monthly below */}
+          <div className="grid grid-cols-1 mt-4">
+            <StatCard label="Monthly Earnings (est)" value={`${fmt(monthly)} USDT`} gold />
           </div>
         </div>
       </div>
