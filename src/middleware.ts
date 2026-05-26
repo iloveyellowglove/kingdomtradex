@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
+import { timingSafeEqual, generateCsrfToken } from '@/lib/auth/csrf';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -24,7 +25,21 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/assets') ||
     pathname.includes('.')
   ) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+
+    // Set csrf_guest cookie for unauthenticated visitors if not present
+    if (!request.cookies.get('csrf_guest')?.value) {
+      const guestToken = generateCsrfToken();
+      response.cookies.set('csrf_guest', guestToken, {
+        httpOnly: false,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+      });
+    }
+
+    return response;
   }
 
   const supabase = createServiceClient();
@@ -41,7 +56,19 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
-    return NextResponse.redirect(new URL('/login', request.url));
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    // Set csrf_guest cookie for unauthenticated visitors
+    if (!request.cookies.get('csrf_guest')?.value) {
+      const guestToken = generateCsrfToken();
+      response.cookies.set('csrf_guest', guestToken, {
+        httpOnly: false,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    }
+    return response;
   }
 
   // Validate session against sessions table
@@ -60,7 +87,18 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
-    return NextResponse.redirect(new URL('/login', request.url));
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    if (!request.cookies.get('csrf_guest')?.value) {
+      const guestToken = generateCsrfToken();
+      response.cookies.set('csrf_guest', guestToken, {
+        httpOnly: false,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    }
+    return response;
   }
 
   const session = sessions[0];
@@ -70,7 +108,18 @@ export async function middleware(request: NextRequest) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ success: false, error: 'Session expired' }, { status: 401 });
     }
-    return NextResponse.redirect(new URL('/login', request.url));
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    if (!request.cookies.get('csrf_guest')?.value) {
+      const guestToken = generateCsrfToken();
+      response.cookies.set('csrf_guest', guestToken, {
+        httpOnly: false,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30,
+      });
+    }
+    return response;
   }
 
   // Admin route protection
@@ -88,7 +137,6 @@ export async function middleware(request: NextRequest) {
     const csrfToken = csrfHeader || csrfBody;
 
     if (!csrfToken) {
-      // Check body for API routes
       if (pathname.startsWith('/api/')) {
         return NextResponse.json(
           { success: false, error: 'CSRF token required' },
@@ -98,12 +146,12 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
-    const validSessionCsrf = csrfToken === session.csrf_token;
+    const validSessionCsrf = timingSafeEqual(csrfToken, session.csrf_token);
 
     if (!validSessionCsrf) {
       // Check guest cookie
       const guestToken = request.cookies.get('csrf_guest')?.value;
-      const validGuest = guestToken && csrfToken === guestToken;
+      const validGuest = guestToken && timingSafeEqual(csrfToken, guestToken);
 
       if (!validGuest) {
         if (pathname.startsWith('/api/')) {
