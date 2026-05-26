@@ -34,12 +34,17 @@ export class PlisioClient {
     });
 
     const dataString = JSON.stringify(sorted);
-    const computedHash = crypto
-      .createHmac('sha1', this.apiKey)
-      .update(dataString)
-      .digest('hex');
 
-    return timingSafeEqual(computedHash, providedHash);
+    // Try SHA1 first (Plisio legacy), then SHA256 (current Plisio default)
+    for (const algo of ['sha1', 'sha256']) {
+      const computedHash = crypto
+        .createHmac(algo, this.apiKey)
+        .update(dataString)
+        .digest('hex');
+      if (timingSafeEqual(computedHash, providedHash)) return true;
+    }
+
+    return false;
   }
 
   async createDepositAddresses(uid: string, currencies: string[]) {
