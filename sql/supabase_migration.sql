@@ -73,13 +73,18 @@ CREATE TABLE IF NOT EXISTS withdrawals (
     amount          NUMERIC(18,8) NOT NULL,
     currency        VARCHAR(10) NOT NULL DEFAULT 'USDT',
     address         VARCHAR(255) NOT NULL,
+    wallet_address  TEXT DEFAULT NULL,
+    network         TEXT DEFAULT NULL,
     fee             NUMERIC(18,8) NOT NULL DEFAULT 0.00000000,
     request_time    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     eligible_time   TIMESTAMPTZ NOT NULL,
     processed_time  TIMESTAMPTZ DEFAULT NULL,
-    status          VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','processing','completed','rejected','cancelled')),
+    status          VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','processing','approved','completed','rejected','cancelled')),
     block_reason    VARCHAR(255) DEFAULT NULL,
-    admin_override  SMALLINT NOT NULL DEFAULT 0
+    admin_override  SMALLINT NOT NULL DEFAULT 0,
+    admin_notes     TEXT DEFAULT NULL,
+    reviewed_by     BIGINT DEFAULT NULL REFERENCES users(id),
+    reviewed_at     TIMESTAMPTZ DEFAULT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_withdrawals_user_id       ON withdrawals(user_id);
 CREATE INDEX IF NOT EXISTS idx_withdrawals_status        ON withdrawals(status);

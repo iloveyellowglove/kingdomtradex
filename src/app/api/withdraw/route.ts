@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getSetting } from '@/lib/db/settings';
-import { moveBalanceToPending, reversePendingToBalance } from '@/lib/db/atomic';
+import { debitUserBalanceWithWithdrawalTotal, creditUserBalance } from '@/lib/db/atomic';
+import { getCurrencyById } from '@/lib/currencies';
+
+const MIN_WITHDRAWAL = 25;
 
 export async function POST(request: NextRequest) {
   const token = cookies().get('kingdom_session')?.value;
@@ -22,17 +25,38 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = sessions[0].user_id;
-  const { currency, amount, address } = await request.json();
+  const { amount, currency, wallet_address } = await request.json();
 
-  if (!amount || amount <= 0) {
+  // Validate amount
+  const amt = parseFloat(amount || '0');
+  if (!amt || amt <= 0) {
     return NextResponse.json({ success: false, error: 'Amount must be positive.' }, { status: 400 });
   }
 
-  const currencyUpper = (currency || 'USDT').toUpperCase();
-  if (!['BTC', 'ETH', 'USDT'].includes(currencyUpper)) {
+  if (amt < MIN_WITHDRAWAL) {
+    return NextResponse.json({
+      success: false,
+      error: `Minimum withdrawal is $${MIN_WITHDRAWAL}.00.`,
+    }, { status: 400 });
+  }
+
+  // Validate currency
+  const currencyId = (currency || '').trim();
+  const currencyConfig = getCurrencyById(currencyId);
+  if (!currencyConfig) {
     return NextResponse.json({ success: false, error: 'Invalid currency.' }, { status: 400 });
   }
 
+  // Validate wallet address
+  const walletAddr = (wallet_address || '').trim();
+  if (!walletAddr || walletAddr.length < 10) {
+    return NextResponse.json({
+      success: false,
+      error: 'Please enter a valid wallet address.',
+    }, { status: 400 });
+  }
+
+  // Fetch user
   const { data: users } = await supabase
     .from('users')
     .select('*')
@@ -44,6 +68,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'User not found.' }, { status: 404 });
   }
 
+  // Bonus lock check
   if (user.bonus_locked) {
     return NextResponse.json({
       success: false,
@@ -51,30 +76,43 @@ export async function POST(request: NextRequest) {
     }, { status: 400 });
   }
 
-  if (amount > Number(user.display_balance || 0)) {
-    return NextResponse.json({ success: false, error: 'Insufficient balance.' }, { status: 400 });
-  }
-
+  // Withdrawal lock period check
+  const lockDays = parseInt(await getSetting('withdrawal_lock_days', ''));
   const lockHours = parseInt(await getSetting('withdrawal_lock_hours', '72'));
+  const effectiveLockHours = lockDays ? lockDays * 24 : lockHours;
+
   const firstDepositRaw = user.first_deposit_time || user.created_at;
   if (firstDepositRaw) {
     const firstDeposit = new Date(firstDepositRaw).getTime();
     const diff = Date.now() - firstDeposit;
-    if (diff < lockHours * 3600000) {
-      const eligibleAt = new Date(firstDeposit + lockHours * 3600000);
+    if (diff < effectiveLockHours * 3600000) {
+      const eligibleAt = new Date(firstDeposit + effectiveLockHours * 3600000);
       return NextResponse.json({
         success: false,
-        error: `Security hold: withdrawals available after ${lockHours} hours from first deposit.`,
+        error: `Security hold: withdrawals available after ${lockDays || Math.round(effectiveLockHours / 24)} days from first deposit.`,
         eligible_at: eligibleAt.toISOString(),
       }, { status: 400 });
     }
   }
 
-  const fee = Math.round(amount * 0.005 * 1e8) / 1e8;
-  const now = new Date().toISOString();
+  // Check for existing pending withdrawal
+  const { data: pendingWds } = await supabase
+    .from('withdrawals')
+    .select('id')
+    .eq('user_id', userId)
+    .in('status', ['pending', 'processing'])
+    .limit(1);
 
+  if (pendingWds && pendingWds.length > 0) {
+    return NextResponse.json({
+      success: false,
+      error: 'You already have a pending withdrawal request. Please wait for it to be processed before submitting another.',
+    }, { status: 400 });
+  }
+
+  // Debit balance immediately
   try {
-    await moveBalanceToPending(userId, amount);
+    await debitUserBalanceWithWithdrawalTotal(userId, amt);
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     if (msg.includes('P0002') || msg.includes('Insufficient balance')) {
@@ -83,14 +121,19 @@ export async function POST(request: NextRequest) {
     throw err;
   }
 
+  const now = new Date().toISOString();
+
+  // Insert withdrawal record
   const { data: withdrawal, error: insertErr } = await supabase
     .from('withdrawals')
     .insert({
       user_id: userId,
-      amount: amount.toFixed(8),
-      currency: currencyUpper,
-      address: (address || '').trim(),
-      fee: fee.toFixed(8),
+      amount: amt.toFixed(8),
+      currency: currencyConfig.symbol,
+      address: walletAddr,
+      wallet_address: walletAddr,
+      network: currencyConfig.network,
+      fee: '0.00000000',
       request_time: now,
       eligible_time: now,
       status: 'pending',
@@ -98,14 +141,18 @@ export async function POST(request: NextRequest) {
     .select();
 
   if (insertErr || !withdrawal?.length) {
-    await reversePendingToBalance(userId, amount);
-    console.error('[withdraw] insert failed, balance reversed:', insertErr?.message);
-    return NextResponse.json({ success: false, error: 'Failed to create withdrawal.' }, { status: 500 });
+    // Refund: credit balance back since debit succeeded but insert failed
+    try {
+      await creditUserBalance(userId, amt);
+    } catch (refundErr) {
+      console.error('[withdraw] refund after insert failure failed:', refundErr);
+    }
+    console.error('[withdraw] insert failed:', insertErr?.message);
+    return NextResponse.json({ success: false, error: 'Failed to create withdrawal request.' }, { status: 500 });
   }
 
   return NextResponse.json({
     success: true,
     withdrawal_id: withdrawal[0].id,
-    eligible_time: new Date().toISOString(),
   });
 }
