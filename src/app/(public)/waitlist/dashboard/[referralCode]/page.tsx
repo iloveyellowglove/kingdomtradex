@@ -23,8 +23,6 @@ export default async function WaitlistDashboardPage({
   return (
     <WaitlistDashboardClient
       entry={dashboard.entry}
-      rank={dashboard.rank}
-      totalSignups={dashboard.totalSignups}
       nextMilestone={dashboard.nextMilestone}
       referrals={dashboard.referrals}
     />

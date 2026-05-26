@@ -248,8 +248,8 @@ export default function Navbar({ user }: NavbarProps) {
                 </div>
               </>
             ) : (
-              <Link href="/waitlist" className="btn-primary px-5 py-2 rounded-lg text-sm font-bold">
-                Join the Waitlist
+              <Link href="/#signup" className="btn-primary px-5 py-2 rounded-lg text-sm font-bold">
+                Claim Free Credits
               </Link>
             )}
           </div>

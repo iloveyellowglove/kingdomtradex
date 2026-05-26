@@ -1,110 +1,90 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import Link from 'next/link';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Logo from '@/components/brand/Logo';
-import CrossBackground from '@/components/brand/CrossBackground';
-import CryptoMarquee from '@/components/landing/CryptoMarquee';
 
-type Props = { user: { username: string; role: string } | null; waitlistCount: number };
+type Props = { waitlistCount: number };
 
-const PARTICLES = Array.from({ length: 40 }, (_, i) => ({
-  id: i,
-  left: `${Math.random() * 100}%`,
-  top: `${Math.random() * 100}%`,
-  size: Math.random() * 4 + 1,
-  delay: `${Math.random() * 8}s`,
-  duration: `${Math.random() * 6 + 6}s`,
-  opacity: Math.random() * 0.4 + 0.1,
-}));
+export default function HeroSection({ waitlistCount }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const referredBy = searchParams.get('ref') || undefined;
+  const roleParam = searchParams.get('role');
+  const formRef = useRef<HTMLDivElement>(null);
 
-function AnimatedCounter({ target, suffix = '', decimals = 0 }: { target: number; suffix?: string; decimals?: number }) {
-  const [value, setValue] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const started = useRef(false);
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState<'member' | 'pastor'>(roleParam === 'pastor' ? 'pastor' : 'member');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [animatedCount, setAnimatedCount] = useState(0);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el || started.current) return;
+    const duration = 2000;
+    const start = performance.now();
+    const target = waitlistCount;
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setAnimatedCount(Math.floor(target * eased));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [waitlistCount]);
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          started.current = true;
-          const duration = 2000;
-          const start = performance.now();
-          const animate = (now: number) => {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setValue(target * eased);
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [target]);
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-  return <span ref={ref}>{value.toFixed(decimals)}{suffix}</span>;
-}
+    try {
+      const res = await fetch('/api/waitlist/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim(),
+          name: '',
+          role,
+          referredBy,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        router.push(`/waitlist/dashboard/${data.referralCode}`);
+      } else {
+        setError(data.error || 'Something went wrong.');
+      }
+    } catch {
+      setError('Network error. Please try again.');
+    }
+    setLoading(false);
+  }
 
-export default function HeroSection({ user, waitlistCount }: Props) {
+  const headline = role === 'pastor'
+    ? 'Get $100 Free to Start\nEarning Crypto Daily'
+    : 'Get $50 Free to Start\nEarning Crypto Daily';
+  const ctaText = role === 'pastor' ? 'Claim My Free $100' : 'Claim My Free $50';
+
   return (
     <section className="relative overflow-hidden rounded-2xl mb-12" style={{
       background: 'linear-gradient(135deg, #0e0b1a 0%, #1a0a2e 25%, #0d1b3e 50%, #1a0a2e 75%, #0e0b1a 100%)',
       border: '1px solid #261f3a',
-      minHeight: '580px',
     }}>
-      {/* Animated gradient orbs */}
+      {/* Subtle gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div style={{
-          position: 'absolute', top: '-20%', left: '-10%', width: '50%', height: '60%',
-          background: 'radial-gradient(circle, rgba(106,13,173,0.25) 0%, transparent 70%)',
-          animation: 'heroOrb1 8s ease-in-out infinite',
+          position: 'absolute', top: '-10%', left: '-5%', width: '40%', height: '50%',
+          background: 'radial-gradient(circle, rgba(106,13,173,0.15) 0%, transparent 70%)',
         }} />
         <div style={{
-          position: 'absolute', bottom: '-20%', right: '-10%', width: '50%', height: '60%',
-          background: 'radial-gradient(circle, rgba(255,215,0,0.15) 0%, transparent 70%)',
-          animation: 'heroOrb2 10s ease-in-out infinite',
-        }} />
-        <div style={{
-          position: 'absolute', top: '40%', left: '40%', width: '30%', height: '30%',
-          background: 'radial-gradient(circle, rgba(75,0,130,0.2) 0%, transparent 60%)',
-          animation: 'heroOrb3 12s ease-in-out infinite',
+          position: 'absolute', bottom: '-10%', right: '-5%', width: '40%', height: '50%',
+          background: 'radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%)',
         }} />
       </div>
-
-      {/* Floating particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {PARTICLES.map((p) => (
-          <div
-            key={p.id}
-            className="absolute rounded-full"
-            style={{
-              left: p.left, top: p.top,
-              width: `${p.size}px`, height: `${p.size}px`,
-              background: p.id % 3 === 0 ? '#FFD700' : p.id % 3 === 1 ? '#b47cff' : '#6A0DAD',
-              opacity: p.opacity,
-              animation: `particleFloat ${p.duration} ${p.delay} infinite linear`,
-              boxShadow: p.id % 3 === 0 ? '0 0 6px rgba(255,215,0,0.5)' : 'none',
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Cross watermark background */}
-      <CrossBackground opacity={0.04} />
-
-      {/* Ambient crypto logo marquee */}
-      <CryptoMarquee />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-6 py-16 md:py-20" style={{ minHeight: '580px' }}>
-        {/* Logo */}
+      <div className="relative z-10 flex flex-col items-center justify-center px-6 py-16 md:py-20" ref={formRef} id="signup">
         <Logo size="lg" showText={false} className="mb-5" />
 
         {/* Badge */}
@@ -115,97 +95,104 @@ export default function HeroSection({ user, waitlistCount }: Props) {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-temple-gold opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-temple-gold" />
           </span>
-          <span className="text-temple-gold text-xs font-semibold tracking-wide uppercase">AI Trading Active</span>
+          <span className="text-temple-gold text-xs font-semibold tracking-wide uppercase">Limited Time: Free credits for early members</span>
         </div>
 
-        {/* Heading */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-center mb-4 leading-tight" style={{
+        {/* Dynamic Headline */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-center mb-4 leading-tight whitespace-pre-line" style={{
           background: 'linear-gradient(135deg, #FFD700 0%, #FFE44D 30%, #FFC107 60%, #FFD700 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
         }}>
-          Multiply Your Assets<br />With Kingdom AI
+          {headline}
         </h1>
 
-        <p className="text-text-secondary text-lg md:text-xl text-center max-w-2xl mb-8">
-          Advanced AI trading algorithms work 24/7 to generate consistent daily returns on your staked assets. Join a covenant economy built on biblical stewardship.
+        <p className="text-text-secondary text-lg md:text-xl text-center max-w-2xl mb-2">
+          Sign up in 10 seconds. Get free trading credits.
+        </p>
+        <p className="text-text-muted text-center max-w-2xl mb-8">
+          Our AI trades for you 24/7 and earns you daily returns. Pastors receive $100 free.
         </p>
 
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-12">
-          {user ? (
-            <Link href="/dashboard" className="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-center">
-              Go to Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link href="/waitlist" className="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-center">
-                Join the Waitlist
-              </Link>
-              <Link href="/waitlist/leaderboard" className="inline-block px-10 py-4 rounded-xl text-lg font-semibold text-center transition-all" style={{
-                border: '1px solid #FFD700', color: '#FFD700',
-              }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = '#FFD700'; e.currentTarget.style.color = '#0e0b1a'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#FFD700'; }}
+        {/* The Form */}
+        <div className="w-full max-w-md mx-auto mb-8">
+          {error && <div className="alert alert-danger mb-4">{error}</div>}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
+            <div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full text-lg py-4 px-5 rounded-xl"
+                placeholder="Enter your email address"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: '#fff',
+                  fontSize: '1.05rem',
+                }}
+              />
+            </div>
+
+            {/* Role Selector Pills */}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setRole('member')}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all"
+                style={{
+                  background: role === 'member' ? '#FFD700' : 'transparent',
+                  color: role === 'member' ? '#0e0b1a' : 'rgba(255,255,255,0.6)',
+                  border: role === 'member' ? '2px solid #FFD700' : '2px solid rgba(255,255,255,0.15)',
+                }}
               >
-                View Leaderboard
-              </Link>
-            </>
-          )}
+                Member - $50 Free
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('pastor')}
+                className="flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all"
+                style={{
+                  background: role === 'pastor' ? '#FFD700' : 'transparent',
+                  color: role === 'pastor' ? '#0e0b1a' : 'rgba(255,255,255,0.6)',
+                  border: role === 'pastor' ? '2px solid #FFD700' : '2px solid rgba(255,255,255,0.15)',
+                }}
+              >
+                Pastor - $100 Free
+              </button>
+            </div>
+
+            {/* CTA Button */}
+            <button
+              type="submit"
+              disabled={loading || !email}
+              className="w-full py-4 rounded-xl text-lg font-bold transition-all"
+              style={{
+                background: 'linear-gradient(135deg, #FFD700, #c9a800)',
+                color: '#0e0b1a',
+                opacity: loading || !email ? 0.6 : 1,
+                boxShadow: '0 4px 24px rgba(255,215,0,0.3)',
+              }}
+            >
+              {loading ? 'Reserving Your Credits...' : ctaText}
+            </button>
+          </form>
+
+          <p className="text-text-muted text-xs text-center mt-3">No spam. Only launch updates.</p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-3xl">
-          <div className="text-center p-4 rounded-xl" style={{ background: 'rgba(255,215,0,0.03)', border: '1px solid rgba(255,215,0,0.08)' }}>
-            <p className="text-2xl md:text-3xl font-extrabold text-white mb-1">
-              <span>Up to </span><AnimatedCounter target={1.6} suffix="%" decimals={1} />
-            </p>
-            <p className="text-text-muted text-xs uppercase tracking-wider">Daily Yield</p>
-          </div>
-          <div className="text-center p-4 rounded-xl" style={{ background: 'rgba(255,215,0,0.03)', border: '1px solid rgba(255,215,0,0.08)' }}>
-            <p className="text-2xl md:text-3xl font-extrabold text-white mb-1">
-              <AnimatedCounter target={waitlistCount} suffix="+" />
-            </p>
-            <p className="text-text-muted text-xs uppercase tracking-wider">Waitlist Signups</p>
-          </div>
-          <div className="text-center p-4 rounded-xl" style={{ background: 'rgba(255,215,0,0.03)', border: '1px solid rgba(255,215,0,0.08)' }}>
-            <p className="text-2xl md:text-3xl font-extrabold text-white mb-1">
-              <AnimatedCounter target={5} suffix="" />
-            </p>
-            <p className="text-text-muted text-xs uppercase tracking-wider">Levels of Blessing</p>
-          </div>
-          <div className="text-center p-4 rounded-xl" style={{ background: 'rgba(255,215,0,0.03)', border: '1px solid rgba(255,215,0,0.08)' }}>
-            <p className="text-2xl md:text-3xl font-extrabold text-white mb-1" style={{ fontFamily: 'monospace' }}>
-              June 7, 2026
-            </p>
-            <p className="text-text-muted text-xs uppercase tracking-wider">Launch Date</p>
-          </div>
+        {/* Social Proof */}
+        <div className="text-center">
+          <p className="text-text-secondary text-sm">
+            <span className="text-temple-gold font-bold">{animatedCount.toLocaleString()}</span> people already claimed their free credits
+          </p>
+          <p className="text-temple-gold font-bold text-sm mt-1">Launching June 7, 2026</p>
         </div>
       </div>
-
-      {/* Keyframe styles */}
-      <style jsx>{`
-        @keyframes heroOrb1 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -20px) scale(1.1); }
-          66% { transform: translate(-15px, 10px) scale(0.95); }
-        }
-        @keyframes heroOrb2 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(-25px, -30px) scale(1.15); }
-        }
-        @keyframes heroOrb3 {
-          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
-          50% { transform: translate(20px, 15px) scale(1.2); opacity: 0.8; }
-        }
-        @keyframes particleFloat {
-          0% { transform: translateY(0) translateX(0); opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
-        }
-      `}</style>
     </section>
   );
 }

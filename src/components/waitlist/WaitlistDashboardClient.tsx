@@ -3,33 +3,25 @@
 import { useState } from 'react';
 import type { WaitlistEntry } from '@/lib/types';
 import Logo from '@/components/brand/Logo';
-import CountdownTimer from '@/components/waitlist/CountdownTimer';
 
 interface Props {
   entry: WaitlistEntry;
-  rank: number | null;
-  totalSignups: number;
   nextMilestone: { nextTier: string; needed: number } | null;
   referrals: { name: string; tier: string; joined_at: string }[];
 }
 
-const TIER_DETAILS: Record<string, { badge: string; color: string; label: string; nextCount: number }> = {
-  none: { badge: '', color: '#6e6080', label: 'No Tier', nextCount: 5 },
-  bronze: { badge: '\u{1F949}', color: '#cd7f32', label: 'Bronze Steward', nextCount: 15 },
-  silver: { badge: '\u{1F948}', color: '#b47cff', label: 'Silver Steward', nextCount: 30 },
-  gold: { badge: '\u{1F947}', color: '#FFD700', label: 'Gold Steward', nextCount: -1 },
-  genesis: { badge: '\u{1F451}', color: '#FFD700', label: 'Genesis Steward', nextCount: -1 },
-};
-
-export default function WaitlistDashboardClient({ entry, rank, totalSignups, nextMilestone, referrals }: Props) {
+export default function WaitlistDashboardClient({ entry, nextMilestone, referrals }: Props) {
   const [copied, setCopied] = useState(false);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://kingdomtradex.vercel.app';
   const referralLink = `${appUrl}/waitlist/${entry.referral_code}`;
-  const tierInfo = TIER_DETAILS[entry.tier] || TIER_DETAILS.none;
+  const creditAmount = entry.role === 'pastor' ? '$100' : '$50';
+
   const encoded = encodeURIComponent(referralLink);
-  const shareText = encodeURIComponent(
-    'Join me on the KingdomTradex waitlist! Early access to AI-powered crypto trading with 1.5% daily yield.'
-  );
+  const waText = encodeURIComponent(`I just got ${creditAmount} in free crypto trading credits from KingdomTradex! Sign up with my link and you get free credits too: ${referralLink}`);
+  const twitterText = encodeURIComponent(`Just signed up for @KingdomTradex and got free crypto trading credits! AI trades for you 24/7. Get yours: ${referralLink}`);
+  const smsText = encodeURIComponent(`Check this out - free crypto trading credits: ${referralLink}`);
+  const emailSubject = encodeURIComponent('Free crypto trading credits - check this out');
+  const emailBody = encodeURIComponent(`Hey!\n\nI just signed up for KingdomTradex and got ${creditAmount} in free trading credits. Their AI trades crypto for you and earns daily returns.\n\nSign up with my link to get your free credits:\n${referralLink}`);
 
   function copyLink() {
     navigator.clipboard.writeText(referralLink);
@@ -41,70 +33,36 @@ export default function WaitlistDashboardClient({ entry, rank, totalSignups, nex
     ? Math.min(100, (entry.referral_count / nextMilestone.needed) * 100)
     : entry.referral_count >= 30 ? 100 : 0;
 
+  const tiers = [
+    { count: 5, name: 'Bronze Steward', badge: '\u{1F949}', desc: 'Early access badge' },
+    { count: 15, name: 'Silver Steward', badge: '\u{1F948}', desc: 'Guaranteed early access for 5 friends' },
+    { count: 30, name: 'Gold Steward', badge: '\u{1F947}', desc: 'Genesis NFT + 0.25% lifetime yield boost' },
+    { count: -1, name: 'Genesis Steward', badge: '\u{1F451}', desc: 'Top 10: One-on-one strategy session' },
+  ];
+
   return (
-    <div className="py-8 max-w-3xl mx-auto">
+    <div className="py-8 max-w-2xl mx-auto">
+      {/* Top: Confirmation */}
       <div className="text-center mb-8">
         <Logo size="md" className="mb-4" />
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">Your Waitlist Dashboard</h1>
-        <p className="text-text-muted">Track your referrals and climb the leaderboard</p>
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">You&apos;re In! 🎉</h1>
+        <p className="text-temple-gold text-lg font-semibold mb-2">
+          Your {creditAmount} free credits are reserved.
+        </p>
+        <p className="text-text-muted">
+          You&apos;re <span className="text-white font-bold">#{entry.waitlist_position ?? '-'}</span> on the waitlist
+        </p>
       </div>
 
-      {/* Stats cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="card p-4 text-center">
-          <p className="text-text-muted text-xs mb-1">Your Position</p>
-          <p className="text-temple-gold text-2xl font-extrabold">
-            #{entry.waitlist_position ?? '-'}
-          </p>
-          <p className="text-text-muted text-xs">of {totalSignups.toLocaleString()}</p>
-        </div>
-        <div className="card p-4 text-center">
-          <p className="text-text-muted text-xs mb-1">Referrals</p>
-          <p className="text-temple-gold text-2xl font-extrabold">{entry.referral_count}</p>
-        </div>
-        <div className="card p-4 text-center">
-          <p className="text-text-muted text-xs mb-1">Tier</p>
-          <p className="text-2xl font-extrabold" style={{ color: tierInfo.color }}>
-            {tierInfo.badge} {tierInfo.label}
-          </p>
-        </div>
-        <div className="card p-4 text-center">
-          <p className="text-text-muted text-xs mb-1">Rank</p>
-          <p className="text-temple-gold text-2xl font-extrabold">
-            {rank ? `#${rank}` : '-'}
-          </p>
-          <p className="text-text-muted text-xs">on leaderboard</p>
-        </div>
-      </div>
+      {/* Share Block */}
+      <div className="card p-6 mb-8" style={{ border: '1px solid rgba(255,215,0,0.3)' }}>
+        <h2 className="text-xl font-bold text-center mb-1">Share & Earn More</h2>
+        <p className="text-text-muted text-center text-sm mb-6">
+          Every friend who joins through your link earns you rewards at launch
+        </p>
 
-      {/* Progress to next tier */}
-      {nextMilestone && nextMilestone.needed > 0 && (
-        <div className="card p-6 mb-8">
-          <h3 className="text-lg font-bold mb-3 text-center">Next Milestone</h3>
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-text-muted">{entry.referral_count} referrals</span>
-            <span className="text-temple-gold font-semibold capitalize">{nextMilestone.nextTier}: {nextMilestone.needed} referrals</span>
-          </div>
-          <div className="h-3 rounded-full" style={{ background: '#261f3a' }}>
-            <div
-              className="h-full rounded-full transition-all"
-              style={{
-                width: `${progressPercent}%`,
-                background: 'linear-gradient(90deg, #FFD700, #FFC107)',
-                minWidth: '0',
-              }}
-            />
-          </div>
-          <p className="text-text-muted text-xs text-center mt-2">
-            {nextMilestone.needed - entry.referral_count} more referrals to reach {nextMilestone.nextTier}
-          </p>
-        </div>
-      )}
-
-      {/* Referral link */}
-      <div className="card p-6 mb-8" style={{ border: '1px solid #FFD700' }}>
-        <h3 className="text-lg font-bold mb-3 text-center">Your Referral Link</h3>
-        <div className="flex items-center gap-2 mb-4">
+        {/* Referral Link */}
+        <div className="flex items-center gap-2 mb-6">
           <code className="flex-1 text-left p-3 rounded-lg text-sm break-all" style={{
             background: '#0e0b1a', border: '1px solid #261f3a',
           }}>
@@ -112,86 +70,143 @@ export default function WaitlistDashboardClient({ entry, rank, totalSignups, nex
           </code>
           <button
             onClick={copyLink}
-            className="btn-primary px-4 py-3 rounded-lg text-sm whitespace-nowrap"
+            className="px-5 py-3 rounded-lg text-sm font-bold transition-all flex-shrink-0"
+            style={{
+              background: copied ? '#00c853' : '#FFD700',
+              color: '#0e0b1a',
+            }}
           >
-            {copied ? 'Copied!' : 'Copy'}
+            {copied ? 'Copied!' : 'Copy Link'}
           </button>
         </div>
 
-        {/* Share buttons */}
-        <div className="flex justify-center gap-3 flex-wrap">
+        {/* Share Buttons */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {/* WhatsApp */}
           <a
-            href={`https://twitter.com/intent/tweet?url=${encoded}&text=${shareText}`}
+            href={`https://wa.me/?text=${waText}`}
             target="_blank"
             rel="noopener"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            style={{ background: '#1DA1F2', color: '#fff' }}
-          >
-            Twitter
-          </a>
-          <a
-            href={`https://wa.me/?text=${shareText}%20${encoded}`}
-            target="_blank"
-            rel="noopener"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all hover:scale-105 no-underline"
             style={{ background: '#25D366', color: '#fff' }}
           >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             WhatsApp
           </a>
+
+          {/* Twitter/X */}
+          <a
+            href={`https://twitter.com/intent/tweet?text=${twitterText}`}
+            target="_blank"
+            rel="noopener"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all hover:scale-105 no-underline"
+            style={{ background: '#000', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Twitter
+          </a>
+
+          {/* Facebook */}
           <a
             href={`https://www.facebook.com/sharer/sharer.php?u=${encoded}`}
             target="_blank"
             rel="noopener"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all hover:scale-105 no-underline"
             style={{ background: '#1877F2', color: '#fff' }}
           >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             Facebook
           </a>
+
+          {/* Telegram */}
           <a
-            href={`mailto:?subject=${encodeURIComponent('KingdomTradex Early Access')}&body=${shareText}%20${encoded}`}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            href={`https://t.me/share/url?url=${encoded}&text=${waText}`}
+            target="_blank"
+            rel="noopener"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all hover:scale-105 no-underline"
+            style={{ background: '#0088cc', color: '#fff' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            Telegram
+          </a>
+
+          {/* SMS */}
+          <a
+            href={`sms:?body=${smsText}`}
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all hover:scale-105 no-underline"
+            style={{ background: '#22c55e', color: '#fff' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><line x1="22" y1="6" x2="12" y2="13"/><line x1="2" y1="6" x2="12" y2="13"/></svg>
+            SMS
+          </a>
+
+          {/* Email */}
+          <a
+            href={`mailto:?subject=${emailSubject}&body=${emailBody}`}
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition-all hover:scale-105 no-underline"
             style={{ background: '#6e6080', color: '#fff' }}
           >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><line x1="22" y1="6" x2="12" y2="13"/><line x1="2" y1="6" x2="12" y2="13"/></svg>
             Email
           </a>
         </div>
       </div>
 
-      {/* Tier milestones */}
+      {/* Referral Progress Tracker */}
       <div className="card p-6 mb-8">
-        <h3 className="text-lg font-bold mb-4 text-center">Tier Milestones</h3>
-        <div className="space-y-3">
-          {[
-            { count: 5, tier: 'Bronze Steward', desc: 'Early access badge', badge: '\u{1F949}' },
-            { count: 15, tier: 'Silver Steward', desc: 'Guaranteed early access for 5 friends', badge: '\u{1F948}' },
-            { count: 30, tier: 'Gold Steward', desc: 'Genesis NFT + 0.25% lifetime yield boost', badge: '\u{1F947}' },
-            { count: -1, tier: 'Genesis Steward', desc: 'Top 10: One-on-one strategy session', badge: '\u{1F451}' },
-          ].map((m) => (
-            <div key={m.tier} className="flex items-center gap-4 p-3 rounded-lg" style={{
-              background: entry.tier === m.tier.toLowerCase().split(' ')[0] ? 'rgba(255,215,0,0.08)' : '#151025',
-              border: entry.tier === m.tier.toLowerCase().split(' ')[0] ? '1px solid rgba(255,215,0,0.3)' : '1px solid #261f3a',
-            }}>
-              <span className="text-2xl">{m.badge}</span>
-              <div className="flex-1">
-                <p className="font-bold text-sm">{m.tier}</p>
-                <p className="text-text-muted text-xs">{m.desc}</p>
+        <h3 className="text-lg font-bold mb-4 text-center">Your Referral Progress</h3>
+
+        <div className="flex justify-between text-sm mb-2">
+          <span className="text-text-muted">{entry.referral_count} referrals</span>
+          {nextMilestone && nextMilestone.needed > 0 && (
+            <span className="text-temple-gold font-semibold">
+              Next: {nextMilestone.nextTier} ({nextMilestone.needed} needed)
+            </span>
+          )}
+          {(!nextMilestone || nextMilestone.needed <= 0) && (
+            <span className="text-temple-gold font-semibold">Max tier reached!</span>
+          )}
+        </div>
+
+        <div className="h-3 rounded-full mb-6" style={{ background: '#261f3a' }}>
+          <div
+            className="h-full rounded-full transition-all"
+            style={{
+              width: `${progressPercent}%`,
+              background: 'linear-gradient(90deg, #FFD700, #FFC107)',
+            }}
+          />
+        </div>
+
+        {/* Tier milestones */}
+        <div className="space-y-2">
+          {tiers.map((m) => {
+            const tierKey = m.name.toLowerCase().split(' ')[0];
+            const isCurrent = entry.tier === tierKey;
+            const isAchieved = m.count !== -1 && entry.referral_count >= m.count;
+            return (
+              <div key={m.name} className="flex items-center gap-3 p-3 rounded-lg" style={{
+                background: isCurrent ? 'rgba(255,215,0,0.08)' : 'rgba(255,255,255,0.02)',
+                border: isCurrent ? '1px solid rgba(255,215,0,0.3)' : '1px solid rgba(255,255,255,0.04)',
+                opacity: isAchieved || isCurrent ? 1 : 0.5,
+              }}>
+                <span className="text-xl">{m.badge}</span>
+                <div className="flex-1">
+                  <p className="font-bold text-sm">{m.name}</p>
+                  <p className="text-text-muted text-xs">{m.desc}</p>
+                </div>
+                <span className="text-temple-gold font-bold text-sm">
+                  {m.count === -1 ? 'Top 10' : isAchieved ? 'Achieved' : `${m.count} refs`}
+                </span>
               </div>
-              <span className="text-temple-gold font-bold text-sm">
-                {m.count === -1 ? 'Top 10' : `${m.count} refs`}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* Countdown */}
-      <div className="mb-8">
-        <CountdownTimer />
-      </div>
-
-      {/* Referrals list */}
+      {/* Referrals List */}
       <div className="card mb-8">
-        <div className="card-header"><h5 className="mb-0">Your Referrals</h5></div>
+        <div className="card-header"><h5 className="mb-0">Your Referrals ({referrals.length})</h5></div>
         <div className="card-body p-0">
           {referrals.length > 0 ? (
             <table className="w-full text-sm">
@@ -220,6 +235,15 @@ export default function WaitlistDashboardClient({ entry, rank, totalSignups, nex
             <p className="p-4 text-text-muted mb-0">No referrals yet. Share your link to start climbing!</p>
           )}
         </div>
+      </div>
+
+      {/* Bottom: What's next */}
+      <div className="text-center">
+        <p className="text-text-muted text-sm">We&apos;ll email you before launch on June 7</p>
+        <p className="text-text-muted text-sm">In the meantime, share your link to climb the leaderboard</p>
+        <a href="/waitlist/leaderboard" className="text-temple-gold hover:underline text-sm mt-2 inline-block">
+          View Leaderboard
+        </a>
       </div>
     </div>
   );
