@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 import { PlisioClient } from './plisio-client';
 import { createServiceClient } from '../supabase/service';
 import { getUserById, getUserByPlisioUid, updateUser } from '../db/users';
-import { creditUserBalanceWithDepositTotal, creditUserBalance } from '../db/atomic';
+import { processDepositAtomic } from '../db/atomic';
 import { distributeCommissions } from '../db/commissions';
 
 export class PlisioDepositService {
@@ -123,32 +123,7 @@ export class PlisioDepositService {
 
     const depositId = depositRows[0].id as number | undefined;
 
-    const { newTotalDeposited } = await creditUserBalanceWithDepositTotal(user.id, amount);
-
-    const updates: Record<string, unknown> = {};
-
-    if (!user.first_deposit_time) {
-      updates.first_deposit_time = new Date().toISOString();
-    }
-
-    const unlockThreshold = Number(user.minimum_deposit_to_unlock || 100);
-
-    if (user.bonus_locked && newTotalDeposited >= unlockThreshold) {
-      const bonusAmount = Number(user.bonus_balance || 0);
-      if (bonusAmount > 0) {
-        try {
-          await creditUserBalance(user.id, bonusAmount);
-        } catch (bonusErr) {
-          console.error('[plisio-deposit] bonus credit failed:', bonusErr);
-        }
-      }
-      updates.bonus_locked = false;
-      updates.bonus_unlocked_at = new Date().toISOString();
-    }
-
-    if (Object.keys(updates).length > 0) {
-      await updateUser(user.id, updates);
-    }
+    await processDepositAtomic(user.id, amount);
 
     if (depositId) {
       try {
@@ -212,30 +187,7 @@ export class PlisioDepositService {
 
             const invDepositId = invDepRows[0].id as number | undefined;
 
-            const { newTotalDeposited } = await creditUserBalanceWithDepositTotal(user.id, amount);
-
-            const updates: Record<string, unknown> = {};
-            if (!user.first_deposit_time) {
-              updates.first_deposit_time = new Date().toISOString();
-            }
-            const invUnlockThreshold = Number(user.minimum_deposit_to_unlock || 100);
-
-            if (user.bonus_locked && newTotalDeposited >= invUnlockThreshold) {
-              const invBonusAmount = Number(user.bonus_balance || 0);
-              if (invBonusAmount > 0) {
-                try {
-                  await creditUserBalance(user.id, invBonusAmount);
-                } catch (bonusErr) {
-                  console.error('[plisio-deposit] invoice bonus credit failed:', bonusErr);
-                }
-              }
-              updates.bonus_locked = false;
-              updates.bonus_unlocked_at = new Date().toISOString();
-            }
-
-            if (Object.keys(updates).length > 0) {
-              await updateUser(user.id, updates);
-            }
+            await processDepositAtomic(user.id, amount);
 
             if (invDepositId) {
               try {

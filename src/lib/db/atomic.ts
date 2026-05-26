@@ -75,6 +75,36 @@ export async function moveBalanceToPending(
   };
 }
 
+export async function processDepositAtomic(
+  userId: number,
+  amount: number
+): Promise<{
+  newBalance: number;
+  newTotalDeposited: number;
+  bonusUnlocked: boolean;
+  bonusAmount: number;
+}> {
+  const supabase = createServiceClient();
+  const { data, error } = await supabase.rpc('process_deposit_atomic', {
+    p_user_id: userId,
+    p_amount: round8(amount),
+    p_now: new Date().toISOString(),
+  });
+  if (error) throw new Error(`processDepositAtomic failed: ${error.message}`);
+  const row = (data as unknown as Array<{
+    new_balance: number;
+    new_total_deposited: number;
+    bonus_unlocked: boolean;
+    bonus_amount: number;
+  }>)?.[0];
+  return {
+    newBalance: Number(row?.new_balance ?? 0),
+    newTotalDeposited: Number(row?.new_total_deposited ?? 0),
+    bonusUnlocked: row?.bonus_unlocked ?? false,
+    bonusAmount: Number(row?.bonus_amount ?? 0),
+  };
+}
+
 export async function reversePendingToBalance(
   userId: number,
   amount: number
