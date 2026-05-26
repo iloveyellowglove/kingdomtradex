@@ -1,9 +1,7 @@
 import { createHash } from 'crypto';
 import { PlisioClient } from './plisio-client';
-import { createServiceClient } from '../supabase/service';
 import { getUserById, getUserByPlisioUid, updateUser } from '../db/users';
-import { processDepositAtomic } from '../db/atomic';
-import { distributeCommissions } from '../db/commissions';
+import { processCompletedDeposit } from '../deposit-processing';
 
 export class PlisioDepositService {
   private client: PlisioClient;
@@ -91,55 +89,19 @@ export class PlisioDepositService {
       return { success: false, error: 'User not found for uid: ' + uid };
     }
 
-    const supabase = createServiceClient();
-    const { data: existing } = await supabase
-      .from('deposits')
-      .select('id')
-      .eq('txn_id', txnId)
-      .limit(1);
-
-    if (existing && existing.length > 0) {
-      return { success: true, message: 'Duplicate transaction. Already processed.' };
-    }
-
     const ourCurrency = mapCurrency(currency);
 
-    // UNIQUE constraint on txn_id provides defense-in-depth against race conditions
-    const { data: depositRows, error: insertErr } = await supabase.from('deposits').insert({
-      user_id: user.id,
-      txn_id: txnId,
-      txid: txnId,
+    const result = await processCompletedDeposit({
+      userId: user.id,
+      txnId,
       currency: ourCurrency,
-      amount: amount,
-      address: walletHash,
-      status: 'completed',
-      created_at: new Date().toISOString(),
-    }).select();
-
-    // If constraint violation (race condition), treat as duplicate
-    if (insertErr || !depositRows || depositRows.length === 0) {
-      return { success: true, message: 'Duplicate transaction. Already processed.' };
-    }
-
-    const depositId = depositRows[0].id as number | undefined;
-
-    await processDepositAtomic(user.id, amount);
-
-    if (depositId) {
-      try {
-        await distributeCommissions(user.id, amount, depositId);
-      } catch (commErr) {
-        console.error('[plisio-deposit] commission distribution failed:', commErr);
-      }
-    }
-
-    return {
-      success: true,
-      message: 'Deposit credited.',
-      user_id: user.id,
       amount,
-      currency: ourCurrency,
-    };
+      address: walletHash,
+      paymentProvider: 'plisio',
+      providerPaymentId: txnId,
+    });
+
+    return result;
   }
 
   async handleInvoiceCallback(postData: Record<string, string>) {
@@ -159,43 +121,20 @@ export class PlisioDepositService {
         const userId = parseInt(m[1]);
         const user = await getUserById(userId);
         if (user) {
-          const supabase = createServiceClient();
-          const { data: existing } = await supabase
-            .from('deposits')
-            .select('id')
-            .eq('txn_id', txnId)
-            .limit(1);
+          const ourCurrency = mapCurrency(currency);
 
-          if (!existing || existing.length === 0) {
-            const ourCurrency = mapCurrency(currency);
+          const result = await processCompletedDeposit({
+            userId: user.id,
+            txnId,
+            currency: ourCurrency,
+            amount,
+            address: postData.wallet_hash || 'invoice',
+            paymentProvider: 'plisio',
+            providerPaymentId: txnId,
+          });
 
-            // Insert deposit record first (UNIQUE constraint prevents duplicates)
-            const { data: invDepRows, error: invInsertErr } = await supabase.from('deposits').insert({
-              user_id: user.id,
-              txn_id: txnId,
-              txid: txnId,
-              currency: ourCurrency,
-              amount: amount,
-              address: postData.wallet_hash || 'invoice',
-              status: 'completed',
-              created_at: new Date().toISOString(),
-            }).select();
-
-            if (invInsertErr || !invDepRows || invDepRows.length === 0) {
-              return { success: true, message: 'Duplicate transaction. Already processed.' };
-            }
-
-            const invDepositId = invDepRows[0].id as number | undefined;
-
-            await processDepositAtomic(user.id, amount);
-
-            if (invDepositId) {
-              try {
-                await distributeCommissions(user.id, amount, invDepositId);
-              } catch (commErr) {
-                console.error('[plisio-deposit] invoice commission distribution failed:', commErr);
-              }
-            }
+          if (!result.success) {
+            return result;
           }
         }
       }

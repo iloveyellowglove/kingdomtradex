@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { fmt } from '@/lib/utils/formatting';
+import { DEPOSIT_CURRENCIES } from '@/lib/currencies';
 
 type Step = 'amount' | 'address' | 'confirm';
 
@@ -11,19 +12,53 @@ interface InvoiceData {
   address: string;
   currency: string;
   amount: number;
+  pay_amount?: number;
+  pay_currency?: string;
+  expiration?: string;
 }
 
 const QR_API = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=FFD700&bg=0e0b1a&data=';
 
+const ICON_CDN = 'https://assets.coingecko.com/coins/images';
+
+function coinIconUrl(slug: string): string {
+  // CoinGecko CDN path structure varies; we use a mapping of known slugs to their image IDs
+  const iconMap: Record<string, string> = {
+    'tether': '325/small/Tether.png',
+    'usd-coin': '6319/small/usdc.png',
+    'bitcoin': '1/small/bitcoin.png',
+    'ethereum': '279/small/ethereum.png',
+    'solana': '4128/small/solana.png',
+    'dogecoin': '5/small/dogecoin.png',
+    'litecoin': '2/small/litecoin.png',
+    'ripple': '44/small/xrp.png',
+    'cardano': '975/small/cardano.png',
+    'tron': '1094/small/tron.png',
+    'polygon-ecosystem-token': '4713/small/polygon.png',
+    'polkadot': '12171/small/polkadot.png',
+    'bitcoin-cash': '780/small/bitcoin-cash.png',
+    'shiba-inu': '11939/small/shiba.png',
+    'avalanche-2': '12559/small/avalanche.png',
+    'chainlink': '877/small/chainlink.png',
+    'uniswap': '12504/small/uniswap.png',
+    'kaspa': '25701/small/kaspa.png',
+  };
+  const path = iconMap[slug];
+  if (path) return `${ICON_CDN}/${path}`;
+  return `https://cryptologos.cc/logos/${slug}-logo.png`;
+}
+
 export default function DepositPage() {
   const [step, setStep] = useState<Step>('amount');
-  const [currency, setCurrency] = useState('USDT');
+  const [currencyId, setCurrencyId] = useState('USDT_TRX');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
   const [depositStatus, setDepositStatus] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const csrfTokenRef = useRef('');
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch('/api/csrf')
@@ -31,6 +66,24 @@ export default function DepositPage() {
       .then((d) => { csrfTokenRef.current = d.csrfToken || ''; })
       .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
+
+  const selectedCurrency = DEPOSIT_CURRENCIES.find(c => c.id === currencyId) || DEPOSIT_CURRENCIES[0];
+
+  const stablecoins = DEPOSIT_CURRENCIES.filter(c => c.category === 'stablecoin');
+  const majors = DEPOSIT_CURRENCIES.filter(c => c.category === 'major');
+  const alts = DEPOSIT_CURRENCIES.filter(c => c.category === 'alt');
 
   async function handleCreateInvoice(e: React.FormEvent) {
     e.preventDefault();
@@ -40,7 +93,7 @@ export default function DepositPage() {
     const res = await fetch('/api/deposit/create-invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfTokenRef.current },
-      body: JSON.stringify({ currency, amount: parseFloat(amount) }),
+      body: JSON.stringify({ currency: currencyId, amount: parseFloat(amount) }),
     });
 
     const data = await res.json();
@@ -78,7 +131,7 @@ export default function DepositPage() {
   function reset() {
     setStep('amount');
     setAmount('');
-    setCurrency('USDT');
+    setCurrencyId('USDT_TRX');
     setInvoice(null);
     setDepositStatus(null);
     setError('');
@@ -113,19 +166,95 @@ export default function DepositPage() {
       {/* Step 1: Select amount and currency */}
       {step === 'amount' && (
         <div className="card">
-          <div className="card-header"><h5 className="mb-0">Step 1: Select Currency & Amount</h5></div>
+          <div className="card-header"><h5 className="mb-0">Step 1: Select Currency &amp; Amount</h5></div>
           <div className="card-body">
             <form onSubmit={handleCreateInvoice} className="space-y-4">
               <div>
                 <label className="block text-text-secondary font-medium mb-1">Currency</label>
-                <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full">
-                  <option value="USDT">USDT (TRC-20)</option>
-                  <option value="BTC">Bitcoin (BTC)</option>
-                  <option value="ETH">Ethereum (ETH)</option>
-                </select>
+
+                {/* Custom dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={coinIconUrl(selectedCurrency.iconSlug)}
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="rounded-full flex-shrink-0"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                    <div className="flex-1">
+                      <span className="text-text-primary font-medium">{selectedCurrency.symbol}</span>
+                      <span className="text-text-muted text-sm ml-2">{selectedCurrency.name}</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-text-muted">
+                      {selectedCurrency.network}
+                    </span>
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M1 1l4 4 4-4" />
+                    </svg>
+                  </button>
+
+                  {dropdownOpen && (
+                    <div
+                      className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto"
+                      style={{ background: '#1a1a2e' }}
+                    >
+                      {[
+                        { label: 'Stablecoins', items: stablecoins },
+                        { label: 'Major Coins', items: majors },
+                        { label: 'Altcoins', items: alts },
+                      ].map(group => (
+                        <div key={group.label}>
+                          <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">
+                            {group.label}
+                          </div>
+                          {group.items.map(currency => (
+                            <button
+                              key={currency.id}
+                              type="button"
+                              onClick={() => {
+                                setCurrencyId(currency.id);
+                                setDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/5 transition ${
+                                currency.id === currencyId ? 'bg-white/5 text-temple-gold' : 'text-text-primary'
+                              }`}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={coinIconUrl(currency.iconSlug)}
+                                alt=""
+                                width={22}
+                                height={22}
+                                className="rounded-full flex-shrink-0"
+                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                              />
+                              <span className="flex-1 text-sm">{currency.symbol}</span>
+                              <span className="text-xs text-text-muted">{currency.name}</span>
+                              <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">
+                                {currency.network}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <p className="text-xs text-text-muted mt-1">
+                  Min deposit: $100 USD (members) / $200 USD (pastors)
+                </p>
               </div>
+
               <div>
-                <label className="block text-text-secondary font-medium mb-1">Amount</label>
+                <label className="block text-text-secondary font-medium mb-1">Amount (USD)</label>
                 <div className="flex">
                   <input
                     type="number"
@@ -138,11 +267,15 @@ export default function DepositPage() {
                     className="flex-1 rounded-r-none"
                   />
                   <span className="bg-border border border-border-light text-text-secondary px-4 flex items-center rounded-r-lg">
-                    {currency}
+                    USD
                   </span>
                 </div>
               </div>
-              <button type="submit" disabled={loading || !amount || parseFloat(amount) <= 0} className="btn-primary w-full py-3 rounded-lg">
+              <button
+                type="submit"
+                disabled={loading || !amount || parseFloat(amount) <= 0}
+                className="btn-primary w-full py-3 rounded-lg"
+              >
                 {loading ? 'Generating...' : 'Generate Deposit Address'}
               </button>
             </form>
@@ -162,6 +295,12 @@ export default function DepositPage() {
               <p className="text-text-muted mb-4">
                 Send exactly <strong className="text-temple-gold">{fmt(invoice.amount)} {invoice.currency}</strong> to the address below
               </p>
+
+              {invoice.pay_amount && (
+                <p className="text-text-muted text-xs mb-3">
+                  Expected: {fmt(invoice.pay_amount)} {invoice.pay_currency}
+                </p>
+              )}
 
               {/* QR Code */}
               <div className="inline-block p-4 rounded-xl mb-4" style={{
@@ -189,6 +328,12 @@ export default function DepositPage() {
                 Copy Address
               </button>
 
+              {invoice.expiration && (
+                <p className="text-xs text-text-muted mb-4">
+                  Expires: {new Date(invoice.expiration).toLocaleString()}
+                </p>
+              )}
+
               <div className="alert alert-warning text-sm">
                 <strong>Important:</strong> Only send {invoice.currency} to this address. Sending other currencies will result in permanent loss.
               </div>
@@ -197,7 +342,7 @@ export default function DepositPage() {
 
           <div className="flex gap-4">
             <button onClick={reset} className="flex-1 py-3 rounded-lg text-sm font-medium border border-border-light text-text-primary hover:bg-white/5 transition">
-              Cancel & Start Over
+              Cancel &amp; Start Over
             </button>
             <button onClick={checkStatus} disabled={loading} className="flex-1 btn-primary py-3 rounded-lg text-sm">
               {loading ? 'Checking...' : 'I Have Sent the Funds'}

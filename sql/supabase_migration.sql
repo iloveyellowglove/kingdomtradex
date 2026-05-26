@@ -51,13 +51,17 @@ CREATE TABLE IF NOT EXISTS deposits (
     currency        VARCHAR(10) NOT NULL DEFAULT 'USDT',
     amount          NUMERIC(18,8) NOT NULL,
     address         VARCHAR(255) DEFAULT NULL,
-    status          VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','completed','rejected')),
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    confirmed_at    TIMESTAMPTZ DEFAULT NULL,
-    completed_at    TIMESTAMPTZ DEFAULT NULL
+    status               VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','completed','rejected')),
+    payment_provider     TEXT NOT NULL DEFAULT 'plisio',
+    provider_payment_id  TEXT DEFAULT NULL,
+    created_at           TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    confirmed_at         TIMESTAMPTZ DEFAULT NULL,
+    completed_at         TIMESTAMPTZ DEFAULT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_deposits_user_id ON deposits(user_id);
 CREATE INDEX IF NOT EXISTS idx_deposits_status  ON deposits(status);
+CREATE INDEX IF NOT EXISTS idx_deposits_payment_provider ON deposits(payment_provider);
+CREATE INDEX IF NOT EXISTS idx_deposits_provider_payment_id ON deposits(provider_payment_id);
 
 -- ---------------------------------------------------------------------------
 -- Withdrawals table

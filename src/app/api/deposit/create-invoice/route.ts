@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 import { PlisioClient } from '@/lib/services/plisio-client';
 import { PlisioDepositService } from '@/lib/services/plisio-deposit';
+import { createNowPayment } from '@/lib/nowpayments';
+import { getMinDeposit, getCurrencyById } from '@/lib/currencies';
 
 export async function POST(request: NextRequest) {
   const token = cookies().get('kingdom_session')?.value;
@@ -22,10 +24,21 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = sessions[0].user_id;
-  const { currency, amount } = await request.json();
 
-  const currencyUpper = (currency || 'USDT').toUpperCase();
-  if (!['BTC', 'ETH', 'USDT'].includes(currencyUpper)) {
+  // Fetch user for role-based minimum check
+  const { data: users } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', userId)
+    .limit(1);
+
+  const userRole = users?.[0]?.role || 'member';
+
+  const { currency, amount } = await request.json();
+  const currencyId = (currency || 'USDT_TRX').trim();
+
+  const currencyConfig = getCurrencyById(currencyId);
+  if (!currencyConfig) {
     return NextResponse.json({ success: false, error: 'Invalid currency.' }, { status: 400 });
   }
 
@@ -34,47 +47,123 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Amount must be positive.' }, { status: 400 });
   }
 
-  const apiKey = process.env.PLISIO_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({ success: false, error: 'Payment service not configured.' }, { status: 500 });
+  const minDeposit = getMinDeposit(currencyId, userRole);
+  if (amt < minDeposit) {
+    return NextResponse.json({
+      success: false,
+      error: `Minimum deposit is $${minDeposit} USD for ${userRole === 'pastor' ? 'pastors' : 'members'}.`,
+    }, { status: 400 });
   }
 
-  const client = new PlisioClient(apiKey);
-  const depositService = new PlisioDepositService(client);
-
-  const addressResult = await depositService.generateUserAddresses(userId);
-  if (!addressResult.success || !addressResult.addresses) {
-    return NextResponse.json({ success: false, error: (addressResult as { error?: string }).error || 'Failed to generate deposit address.' }, { status: 500 });
-  }
-
-  const address = addressResult.addresses?.[currencyUpper];
-  if (!address) {
-    return NextResponse.json({ success: false, error: `No deposit address available for ${currencyUpper}.` }, { status: 500 });
-  }
-
-  const txnId = `inv_${userId}_${Date.now()}`;
+  const displaySymbol = currencyConfig.symbol;
   const now = new Date().toISOString();
 
-  const { data: deposit } = await supabase
-    .from('deposits')
-    .insert({
-      user_id: userId,
-      txn_id: txnId,
-      txid: txnId,
-      currency: currencyUpper,
-      amount: amt,
-      address,
-      status: 'pending',
-      created_at: now,
-    })
-    .select();
+  // Try NOWPayments first
+  try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const orderId = `inv_${userId}_${Date.now()}`;
 
-  return NextResponse.json({
-    success: true,
-    deposit_id: deposit?.[0]?.id ?? 0,
-    txn_id: txnId,
-    address,
-    currency: currencyUpper,
-    amount: amt,
-  });
+    const payment = await createNowPayment({
+      priceAmount: amt,
+      priceCurrency: 'USD',
+      payCurrency: currencyConfig.nowpaymentsTicker,
+      orderId,
+      ipnCallbackUrl: `${appUrl}/api/webhooks/nowpayments`,
+    });
+
+    const txnId = `nowpay_${payment.payment_id}`;
+
+    const { data: deposits } = await supabase
+      .from('deposits')
+      .insert({
+        user_id: userId,
+        txn_id: txnId,
+        txid: txnId,
+        currency: displaySymbol,
+        amount: amt,
+        address: payment.pay_address,
+        status: 'pending',
+        payment_provider: 'nowpayments',
+        provider_payment_id: String(payment.payment_id),
+        created_at: now,
+      })
+      .select();
+
+    return NextResponse.json({
+      success: true,
+      deposit_id: deposits?.[0]?.id ?? 0,
+      txn_id: txnId,
+      address: payment.pay_address,
+      pay_amount: payment.pay_amount,
+      pay_currency: payment.pay_currency,
+      currency: displaySymbol,
+      amount: amt,
+      expiration: payment.expiration_estimate_date,
+    });
+  } catch (nowpayErr) {
+    console.warn('[create-invoice] NOWPayments failed, trying Plisio fallback:', nowpayErr);
+
+    // Fallback to Plisio
+    if (!currencyConfig.plisioCurrency) {
+      return NextResponse.json({
+        success: false,
+        error: 'Payment service temporarily unavailable. Please try again.',
+      }, { status: 500 });
+    }
+
+    const plisioApiKey = process.env.PLISIO_API_KEY;
+    if (!plisioApiKey) {
+      return NextResponse.json({
+        success: false,
+        error: 'Payment service not configured.',
+      }, { status: 500 });
+    }
+
+    const client = new PlisioClient(plisioApiKey);
+    const depositService = new PlisioDepositService(client);
+
+    const addressResult = await depositService.generateUserAddresses(userId);
+    if (!addressResult.success || !addressResult.addresses) {
+      return NextResponse.json({
+        success: false,
+        error: (addressResult as { error?: string }).error || 'Failed to generate deposit address.',
+      }, { status: 500 });
+    }
+
+    const displayCurrency = displaySymbol;
+    const address = addressResult.addresses?.[displayCurrency];
+    if (!address) {
+      return NextResponse.json({
+        success: false,
+        error: `No deposit address available for ${displayCurrency}.`,
+      }, { status: 500 });
+    }
+
+    const txnId = `inv_${userId}_${Date.now()}`;
+
+    const { data: plisioDep } = await supabase
+      .from('deposits')
+      .insert({
+        user_id: userId,
+        txn_id: txnId,
+        txid: txnId,
+        currency: displayCurrency,
+        amount: amt,
+        address,
+        status: 'pending',
+        payment_provider: 'plisio',
+        provider_payment_id: txnId,
+        created_at: now,
+      })
+      .select();
+
+    return NextResponse.json({
+      success: true,
+      deposit_id: plisioDep?.[0]?.id ?? 0,
+      txn_id: txnId,
+      address,
+      currency: displayCurrency,
+      amount: amt,
+    });
+  }
 }

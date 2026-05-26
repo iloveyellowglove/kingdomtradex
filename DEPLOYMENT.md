@@ -20,6 +20,9 @@ Output Directory: .next
 | `OPENROUTER_MODEL` | Model name for Oracle (default: openai/gpt-4o-mini) |
 | `RESEND_API_KEY` | Resend API key for transactional email |
 | `NEXT_PUBLIC_APP_URL` | Public URL of the deployed app |
+| `NOWPAYMENTS_API_KEY` | NOWPayments API key for crypto deposit processing |
+| `NOWPAYMENTS_IPN_SECRET` | NOWPayments IPN secret for webhook signature verification |
+| `PLISIO_API_KEY` | Plisio API key (fallback payment gateway) |
 
 ## One-Time Setup
 
@@ -65,6 +68,12 @@ npm run migrate:dummy
 ```
 
 This sets `dummy_balance = 10000` and `dummy_initialized_at = NOW()` for all users where it is NULL.
+
+### 7. NOWPayments Integration
+
+Run `sql/nowpayments_integration.sql` in the Supabase SQL Editor to add `payment_provider` and `provider_payment_id` columns to the deposits table.
+
+Set `NOWPAYMENTS_API_KEY` and `NOWPAYMENTS_IPN_SECRET` in Vercel environment variables. The IPN webhook URL is `https://yourdomain.com/api/webhooks/nowpayments`.
 
 ## Demo Data (Development Only)
 
