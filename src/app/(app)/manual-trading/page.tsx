@@ -1,9 +1,12 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
+import { ENABLE_MANUAL_TRADING } from '@/lib/flags';
 import ManualTradingPage from '@/components/trading/ManualTradingPage';
 
 export default async function ManualTradingServerPage() {
+  if (!ENABLE_MANUAL_TRADING) redirect('/dashboard');
+
   const cookieStore = cookies();
   const token = cookieStore.get('kingdom_session')?.value;
   if (!token) redirect('/login');
