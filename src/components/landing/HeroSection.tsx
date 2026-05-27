@@ -69,8 +69,8 @@ export default function HeroSection({ waitlistCount }: Props) {
 
   return (
     <section className="relative rounded-2xl mb-12 overflow-visible animate-gradient" style={{
-      background: 'linear-gradient(135deg, #0e0b1a 0%, #1a1035 25%, #0d1b3e 50%, #1a1035 75%, #0e0b1a 100%)',
-      backgroundSize: '200% 200%',
+      background: 'linear-gradient(135deg, #0e0b1a, #1a1040, #251545, #1a1040, #0e0b1a)',
+      backgroundSize: '300% 300%',
       border: '1px solid #261f3a',
     }}>
       {/* Grid dot pattern overlay */}
@@ -117,7 +117,7 @@ export default function HeroSection({ waitlistCount }: Props) {
           backgroundClip: 'text',
           paddingTop: '0.15em',
           paddingBottom: '0.15em',
-          textShadow: '0 0 40px rgba(255,215,0,0.15), 0 0 80px rgba(255,215,0,0.05)',
+          textShadow: '0 0 30px rgba(255,215,0,0.3), 0 0 60px rgba(255,215,0,0.1)',
         }}>
           {role === 'pastor'
             ? <><span>Get $100 Free to Start</span><br /><span>Earning Crypto Daily</span></>
