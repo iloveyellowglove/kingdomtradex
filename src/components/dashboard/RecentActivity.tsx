@@ -1,3 +1,5 @@
+'use client';
+
 import type { Deposit, ReferralCommission } from '@/lib/types';
 import { formatCurrency, formatDate } from '@/lib/utils/formatting';
 
