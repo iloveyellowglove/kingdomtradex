@@ -90,6 +90,43 @@ export default function HeroSection({ waitlistCount }: Props) {
           position: 'absolute', bottom: '-10%', right: '-5%', width: '40%', height: '50%',
           background: 'radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%)',
         }} />
+
+        {/* Floating crypto icon watermarks */}
+        {[
+          { icon: 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png', top: '10%', left: '5%', w: 70, op: 0.06, anim: 'float-icon-1', delay: '0s', hideMobile: false },
+          { icon: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png', top: '15%', left: null, right: '8%', w: 60, op: 0.05, anim: 'float-icon-2', delay: '0.8s', hideMobile: false },
+          { icon: 'https://assets.coingecko.com/coins/images/4128/small/solana.png', top: '50%', left: '3%', w: 50, op: 0.04, anim: 'float-icon-3', delay: '1.6s', hideMobile: false },
+          { icon: 'https://assets.coingecko.com/coins/images/325/small/Tether.png', top: '70%', left: null, right: '5%', w: 45, op: 0.05, anim: 'float-icon-4', delay: '0.4s', hideMobile: false },
+          { icon: 'https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png', top: '30%', left: '15%', w: 40, op: 0.04, anim: 'float-icon-1', delay: '2s', hideMobile: false },
+          { icon: 'https://assets.coingecko.com/coins/images/5/small/dogecoin.png', top: '60%', left: null, right: '15%', w: 55, op: 0.06, anim: 'float-icon-2', delay: '1.2s', hideMobile: false },
+          { icon: 'https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png', top: '80%', left: '10%', w: 45, op: 0.04, anim: 'float-icon-3', delay: '2.4s', hideMobile: true },
+          { icon: 'https://assets.coingecko.com/coins/images/975/small/cardano.png', top: '25%', left: null, right: '20%', w: 40, op: 0.05, anim: 'float-icon-4', delay: '0.6s', hideMobile: true },
+          { icon: 'https://assets.coingecko.com/coins/images/6319/small/usdc.png', top: '45%', left: '20%', w: 50, op: 0.04, anim: 'float-icon-1', delay: '3s', hideMobile: true },
+          { icon: 'https://assets.coingecko.com/coins/images/11939/small/shiba.png', top: '75%', left: null, right: '12%', w: 40, op: 0.05, anim: 'float-icon-2', delay: '1.8s', hideMobile: true },
+          { icon: 'https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png', top: '40%', left: null, right: '3%', w: 45, op: 0.04, anim: 'float-icon-3', delay: '2.8s', hideMobile: true },
+          { icon: 'https://assets.coingecko.com/coins/images/13397/small/Graph_Token.png', top: '85%', left: '18%', w: 35, op: 0.04, anim: 'float-icon-4', delay: '3.2s', hideMobile: true },
+        ].map((coin, i) => (
+          <img
+            key={i}
+            src={coin.icon}
+            alt=""
+            className={`${coin.hideMobile ? 'hidden md:block' : ''} ${coin.anim}`}
+            style={{
+              position: 'absolute',
+              top: coin.top,
+              ...(coin.left !== null ? { left: coin.left } : {}),
+              ...(coin.right !== null ? { right: coin.right } : {}),
+              width: coin.w,
+              height: coin.w,
+              opacity: coin.op,
+              animationDelay: coin.delay,
+              pointerEvents: 'none',
+              zIndex: 1,
+              filter: 'grayscale(30%)',
+            }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+        ))}
       </div>
 
       {/* Content */}

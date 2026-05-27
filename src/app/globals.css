@@ -382,6 +382,31 @@ html {
   50% { transform: translateY(-10px); }
 }
 
+@keyframes floatIcon1 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+@keyframes floatIcon2 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-3deg); }
+}
+
+@keyframes floatIcon3 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(4deg); }
+}
+
+@keyframes floatIcon4 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(-5deg); }
+}
+
+.float-icon-1 { animation: floatIcon1 4s ease-in-out infinite; }
+.float-icon-2 { animation: floatIcon2 5s ease-in-out infinite; }
+.float-icon-3 { animation: floatIcon3 6s ease-in-out infinite; }
+.float-icon-4 { animation: floatIcon4 4.5s ease-in-out infinite; }
+
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
