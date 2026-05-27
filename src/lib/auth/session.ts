@@ -1,4 +1,3 @@
-import { randomBytes } from 'crypto';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '../supabase/service';
 import type { SessionData } from '../types';
@@ -6,13 +5,19 @@ import type { SessionData } from '../types';
 const SESSION_COOKIE = 'kingdom_session';
 const SESSION_TTL = 86400; // 24 hours
 
+function generateRandomBytes(length: number): string {
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 export function generateToken(): string {
-  return randomBytes(32).toString('hex');
+  return generateRandomBytes(32);
 }
 
 export async function createSession(userId: number, role: string): Promise<{ token: string; csrfToken: string }> {
   const token = generateToken();
-  const csrfToken = randomBytes(16).toString('hex');
+  const csrfToken = generateRandomBytes(16);
   const supabase = createServiceClient();
   const now = new Date();
   const expiresAt = new Date(now.getTime() + SESSION_TTL * 1000);
