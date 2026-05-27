@@ -1,3 +1,5 @@
+'use client';
+
 export default function ReferralProgram() {
   const levels = [
     { level: 1, pct: 15, desc: 'Your direct referrals' },
@@ -16,13 +18,24 @@ export default function ReferralProgram() {
 
       <div className="card max-w-2xl mx-auto p-8">
         <div className="space-y-3">
-          {levels.map((l) => (
+          {levels.map((l) => {
+            const goldIntensity = Math.max(0.02, 0.1 - (l.level - 1) * 0.02);
+            return (
             <div
               key={l.level}
-              className="flex items-center gap-4 p-4 rounded-xl"
+              className="flex items-center gap-4 p-4 rounded-xl transition-all duration-300"
               style={{
-                background: l.level === 1 ? 'rgba(255,215,0,0.06)' : 'rgba(255,255,255,0.02)',
+                marginLeft: `${(l.level - 1) * 20}px`,
+                background: l.level === 1 ? 'rgba(255,215,0,0.06)' : `rgba(255,255,255,${goldIntensity})`,
                 border: l.level === 1 ? '1px solid rgba(255,215,0,0.2)' : '1px solid rgba(255,255,255,0.04)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = l.level === 1 ? 'rgba(255,215,0,0.12)' : 'rgba(255,215,0,0.06)';
+                e.currentTarget.style.borderColor = 'rgba(255,215,0,0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = l.level === 1 ? 'rgba(255,215,0,0.06)' : `rgba(255,255,255,${goldIntensity})`;
+                e.currentTarget.style.borderColor = l.level === 1 ? 'rgba(255,215,0,0.2)' : 'rgba(255,255,255,0.04)';
               }}
             >
               <span
@@ -43,15 +56,19 @@ export default function ReferralProgram() {
               </div>
               <span className="text-temple-gold text-xl font-extrabold">{l.pct}%</span>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="text-center mt-8">
-          <a href="#signup" className="btn-primary inline-block px-8 py-3 rounded-xl font-bold no-underline">
+          <a href="#signup" className="btn-primary inline-block px-8 py-3 rounded-xl font-bold no-underline cta-btn-glow">
             Start Building Your Network
           </a>
         </div>
       </div>
+
+      {/* Section divider */}
+      <div className="mx-auto mt-12 max-w-lg" style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.15), transparent)' }} />
     </section>
   );
 }

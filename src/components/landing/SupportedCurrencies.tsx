@@ -68,6 +68,9 @@ export default function SupportedCurrencies() {
           Deposit in any supported currency. Minimum $100 for members, $200 for pastors.
         </p>
       </div>
+
+      {/* Section divider */}
+      <div className="mx-auto mt-12 max-w-lg" style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.15), transparent)' }} />
     </section>
   );
 }

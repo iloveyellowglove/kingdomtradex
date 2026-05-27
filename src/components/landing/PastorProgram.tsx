@@ -24,12 +24,15 @@ export default function PastorProgram() {
         <div className="text-center mt-8">
           <a
             href="/?role=pastor#signup"
-            className="btn-primary inline-block px-8 py-3 rounded-xl font-bold no-underline"
+            className="btn-primary inline-block px-8 py-3 rounded-xl font-bold no-underline cta-btn-glow"
           >
             Sign Up as a Pastor
           </a>
         </div>
       </div>
+
+      {/* Section divider */}
+      <div className="mx-auto mt-12 max-w-lg" style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.15), transparent)' }} />
     </section>
   );
 }

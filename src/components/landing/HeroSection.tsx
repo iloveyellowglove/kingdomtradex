@@ -68,10 +68,18 @@ export default function HeroSection({ waitlistCount }: Props) {
   const ctaText = role === 'pastor' ? 'Claim My Free $100' : 'Claim My Free $50';
 
   return (
-    <section className="relative rounded-2xl mb-12 overflow-visible" style={{
-      background: 'linear-gradient(135deg, #0e0b1a 0%, #1a0a2e 25%, #0d1b3e 50%, #1a0a2e 75%, #0e0b1a 100%)',
+    <section className="relative rounded-2xl mb-12 overflow-visible animate-gradient" style={{
+      background: 'linear-gradient(135deg, #0e0b1a 0%, #1a1035 25%, #0d1b3e 50%, #1a1035 75%, #0e0b1a 100%)',
+      backgroundSize: '200% 200%',
       border: '1px solid #261f3a',
     }}>
+      {/* Grid dot pattern overlay */}
+      <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{
+        backgroundImage: 'radial-gradient(rgba(255,215,0,0.07) 1px, transparent 1px)',
+        backgroundSize: '30px 30px',
+        opacity: 0.4,
+      }} />
+
       {/* Subtle gradient orbs — clipped to prevent overflow */}
       <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
         <div style={{
@@ -86,10 +94,12 @@ export default function HeroSection({ waitlistCount }: Props) {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center px-6 sm:px-8 md:px-12 lg:px-16 py-16 md:py-20" ref={formRef} id="signup">
-        <Logo size="lg" showText={false} className="mb-5" />
+        <div className="animate-float">
+          <Logo size="lg" showText={false} className="mb-5" />
+        </div>
 
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6" style={{
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6 animate-badge-pulse" style={{
           background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.2)',
         }}>
           <span className="relative flex h-2 w-2">
@@ -107,6 +117,7 @@ export default function HeroSection({ waitlistCount }: Props) {
           backgroundClip: 'text',
           paddingTop: '0.15em',
           paddingBottom: '0.15em',
+          textShadow: '0 0 40px rgba(255,215,0,0.15), 0 0 80px rgba(255,215,0,0.05)',
         }}>
           {role === 'pastor'
             ? <><span>Get $100 Free to Start</span><br /><span>Earning Crypto Daily</span></>
@@ -115,10 +126,13 @@ export default function HeroSection({ waitlistCount }: Props) {
         </h1>
 
         <p className="text-text-secondary text-lg md:text-xl text-center max-w-2xl mb-2">
-          Sign up in 10 seconds. Get free trading credits.
+          No trading experience needed. Get free credits instantly.
+        </p>
+        <p className="text-text-muted text-center max-w-2xl mb-2">
+          Our AI trades crypto for you 24/7. You earn daily.
         </p>
         <p className="text-text-muted text-center max-w-2xl mb-8">
-          Our AI trades for you 24/7 and earns you daily returns. Pastors receive $100 free.
+          Pastors receive $100 free. Members receive $50.
         </p>
 
         {/* The Form */}
@@ -176,12 +190,11 @@ export default function HeroSection({ waitlistCount }: Props) {
             <button
               type="submit"
               disabled={loading || !email}
-              className="w-full py-4 rounded-xl text-lg font-bold transition-all"
+              className="w-full py-4 rounded-xl text-lg font-bold cta-btn-glow"
               style={{
                 background: 'linear-gradient(135deg, #FFD700, #c9a800)',
                 color: '#0e0b1a',
                 opacity: loading || !email ? 0.6 : 1,
-                boxShadow: '0 4px 24px rgba(255,215,0,0.3)',
               }}
             >
               {loading ? 'Reserving Your Credits...' : ctaText}
@@ -192,7 +205,7 @@ export default function HeroSection({ waitlistCount }: Props) {
         </div>
 
         {/* Social Proof */}
-        <div className="text-center">
+        <div className="text-center animate-fade-in-up">
           <p className="text-text-secondary text-sm">
             <span className="text-temple-gold font-bold">{animatedCount.toLocaleString()}</span> people already claimed their free credits
           </p>

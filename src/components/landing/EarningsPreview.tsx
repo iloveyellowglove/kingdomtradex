@@ -80,11 +80,14 @@ export default function EarningsPreview() {
         </div>
 
         <div className="text-center mt-8">
-          <a href="#signup" className="btn-primary inline-block px-8 py-3 rounded-xl font-bold no-underline">
+          <a href="#signup" className="btn-primary inline-block px-8 py-3 rounded-xl font-bold no-underline cta-btn-glow">
             Claim My Free $50
           </a>
         </div>
       </div>
+
+      {/* Section divider */}
+      <div className="mx-auto mt-12 max-w-lg" style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.15), transparent)' }} />
     </section>
   );
 }
