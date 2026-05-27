@@ -190,7 +190,7 @@ export default function HeroSection({ waitlistCount }: Props) {
             <button
               type="submit"
               disabled={loading || !email}
-              className="w-full py-4 rounded-xl text-lg font-bold cta-btn-glow"
+              className="w-full py-4 rounded-xl text-lg font-bold cta-btn-glow animate-cta-glow"
               style={{
                 background: 'linear-gradient(135deg, #FFD700, #c9a800)',
                 color: '#0e0b1a',
