@@ -65,13 +65,10 @@ export default function HeroSection({ waitlistCount }: Props) {
     setLoading(false);
   }
 
-  const headline = role === 'pastor'
-    ? 'Get $100 Free to Start\nEarning Crypto Daily'
-    : 'Get $50 Free to Start\nEarning Crypto Daily';
   const ctaText = role === 'pastor' ? 'Claim My Free $100' : 'Claim My Free $50';
 
   return (
-    <section className="relative rounded-2xl mb-12" style={{
+    <section className="relative rounded-2xl mb-12 overflow-visible" style={{
       background: 'linear-gradient(135deg, #0e0b1a 0%, #1a0a2e 25%, #0d1b3e 50%, #1a0a2e 75%, #0e0b1a 100%)',
       border: '1px solid #261f3a',
     }}>
@@ -88,7 +85,7 @@ export default function HeroSection({ waitlistCount }: Props) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 py-16 md:py-20" ref={formRef} id="signup">
+      <div className="relative z-10 flex flex-col items-center justify-center px-6 sm:px-8 md:px-12 lg:px-16 py-16 md:py-20" ref={formRef} id="signup">
         <Logo size="lg" showText={false} className="mb-5" />
 
         {/* Badge */}
@@ -103,13 +100,18 @@ export default function HeroSection({ waitlistCount }: Props) {
         </div>
 
         {/* Dynamic Headline */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 leading-tight whitespace-pre-line max-w-4xl mx-auto" style={{
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 leading-tight overflow-visible px-2" style={{
           background: 'linear-gradient(135deg, #FFD700 0%, #FFE44D 30%, #FFC107 60%, #FFD700 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
+          paddingTop: '0.15em',
+          paddingBottom: '0.15em',
         }}>
-          {headline}
+          {role === 'pastor'
+            ? <><span>Get $100 Free to Start</span><br /><span>Earning Crypto Daily</span></>
+            : <><span>Get $50 Free to Start</span><br /><span>Earning Crypto Daily</span></>
+          }
         </h1>
 
         <p className="text-text-secondary text-lg md:text-xl text-center max-w-2xl mb-2">
