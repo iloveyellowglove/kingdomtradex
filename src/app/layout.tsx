@@ -8,8 +8,21 @@ import OracleChat from '@/components/chatbot/OracleChat';
 import SocialProofToast from '@/components/SocialProofToast';
 
 export const metadata: Metadata = {
-  title: 'KingdomTrade Exchange',
-  description: 'A professional cryptocurrency trading platform. Secure blockchain transactions.',
+  title: 'KingdomTradex - Free Crypto Credits + AI-Powered Daily Returns',
+  description: 'Get free crypto trading credits and earn daily returns powered by AI. Pastors receive $100, members receive $50. Join the KingdomTradex waitlist.',
+  openGraph: {
+    title: 'KingdomTradex - Free Crypto Credits + AI-Powered Daily Returns',
+    description: 'Get free crypto trading credits and earn daily returns powered by AI. Pastors receive $100, members receive $50. Join the KingdomTradex waitlist.',
+    type: 'website',
+    url: 'https://kingdomtradex.vercel.app',
+    images: ['https://kingdomtradex.vercel.app/og-image.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'KingdomTradex - Free Crypto Credits + AI-Powered Daily Returns',
+    description: 'Get free crypto trading credits and earn daily returns powered by AI. Pastors receive $100, members receive $50. Join the KingdomTradex waitlist.',
+    images: ['https://kingdomtradex.vercel.app/og-image.png'],
+  },
 };
 
 async function getUser() {

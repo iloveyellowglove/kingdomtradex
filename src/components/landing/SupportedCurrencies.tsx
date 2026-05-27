@@ -42,8 +42,8 @@ export default function SupportedCurrencies() {
   return (
     <section className="mb-12">
       <div className="text-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">Trade 21+ Cryptocurrencies</h2>
-        <p className="text-text-muted">Deposit and trade across a wide range of digital assets</p>
+        <h2 className="text-2xl md:text-3xl font-bold mb-2">Deposit in 21+ Cryptocurrencies</h2>
+        <p className="text-text-muted">Fund your account with any of these supported cryptocurrencies</p>
       </div>
 
       <div className="card max-w-3xl mx-auto p-8">
@@ -65,7 +65,7 @@ export default function SupportedCurrencies() {
         </div>
 
         <p className="text-text-muted text-xs text-center mt-6">
-          Deposit in any supported currency. Minimum $100 for members, $200 for pastors.
+          Deposit in any supported currency. Minimum $100 for members. Pastors: deposit $200 to unlock your $100 bonus (50% instant return).
         </p>
       </div>
 

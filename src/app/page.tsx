@@ -1,9 +1,11 @@
 import { createServiceClient } from '@/lib/supabase/service';
 import HeroSection from '@/components/landing/HeroSection';
+import CountdownTimer from '@/components/waitlist/CountdownTimer';
 import EarningsPreview from '@/components/landing/EarningsPreview';
 import PastorProgram from '@/components/landing/PastorProgram';
 import SupportedCurrencies from '@/components/landing/SupportedCurrencies';
 import ReferralProgram from '@/components/landing/ReferralProgram';
+import Testimonials from '@/components/landing/Testimonials';
 import FaqAccordion from '@/components/landing/FaqAccordion';
 
 export default async function LandingPage() {
@@ -17,6 +19,9 @@ export default async function LandingPage() {
     <div>
       {/* Section 1: Hero with inline signup form */}
       <HeroSection waitlistCount={waitlistCount ?? 0} />
+
+      {/* Countdown timer */}
+      <CountdownTimer />
 
       {/* Section 2: How It Works */}
       <section className="mb-12">
@@ -77,7 +82,10 @@ export default async function LandingPage() {
       {/* Section 6: Referral Program */}
       <ReferralProgram />
 
-      {/* Section 7: FAQ */}
+      {/* Section 7: Testimonials */}
+      <Testimonials />
+
+      {/* Section 8: FAQ */}
       <FaqAccordion />
 
       {/* Psalm */}

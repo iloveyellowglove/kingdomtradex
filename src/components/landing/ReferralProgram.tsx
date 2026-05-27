@@ -62,7 +62,7 @@ export default function ReferralProgram() {
 
         <div className="text-center mt-8">
           <a href="#signup" className="btn-primary inline-block px-8 py-3 rounded-xl font-bold no-underline cta-btn-glow">
-            Start Building Your Network
+            Invite Friends & Earn Together
           </a>
         </div>
       </div>

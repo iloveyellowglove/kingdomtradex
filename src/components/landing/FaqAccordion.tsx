@@ -9,7 +9,7 @@ const FAQS = [
   },
   {
     q: 'How does the AI trading work?',
-    a: 'Our AI algorithms analyze crypto markets 24/7, executing trades across multiple pairs to generate daily returns. You don\'t need any trading experience - the AI handles everything.',
+    a: 'Our AI algorithms analyze crypto markets 24/7, executing trades across multiple pairs to generate daily returns. The AI identifies high-probability setups using technical analysis, order flow, and volatility patterns. It manages risk with stop-losses and position sizing automatically. You don\'t need any trading experience - the AI handles everything from entry to exit.',
   },
   {
     q: 'What cryptocurrencies can I deposit?',

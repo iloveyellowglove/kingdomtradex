@@ -34,7 +34,8 @@ export default function Footer() {
                 { label: 'About', href: '/about' },
                 { label: 'Covenant', href: '/covenant' },
                 { label: 'Leaderboard', href: '/waitlist/leaderboard' },
-                { label: 'Terms', href: '#' },
+                { label: 'Terms', href: '/terms' },
+                { label: 'Privacy', href: '/privacy' },
               ].map((link) => (
                 <a
                   key={link.label}
@@ -74,7 +75,7 @@ export default function Footer() {
         >
           <span>&copy; {new Date().getFullYear()} KingdomTrade Exchange. All rights reserved.</span>
           <span className="italic" style={{ color: '#FFD700' }}>
-            &quot;The earth is the LORD&apos;s, and the fullness thereof. &quot; &mdash; Psalm 24:1
+            &quot;The earth is the LORD&apos;s, and the fullness thereof. &quot; - Psalm 24:1
           </span>
         </div>
       </div>
