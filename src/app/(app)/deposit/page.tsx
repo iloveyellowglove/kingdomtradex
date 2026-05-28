@@ -32,6 +32,12 @@ export default function DepositPage() {
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
   const [depositStatus, setDepositStatus] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [fundingSource, setFundingSource] = useState<'crypto' | 'balance'>('crypto');
+  const [userBalance, setUserBalance] = useState<number | null>(null);
+  const [userRole, setUserRole] = useState<string>('member');
+  const [balanceLoading, setBalanceLoading] = useState(false);
+  const [lockingFunds, setLockingFunds] = useState(false);
+  const [balanceDepositSuccess, setBalanceDepositSuccess] = useState(false);
   const csrfTokenRef = useRef('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +46,20 @@ export default function DepositPage() {
       .then((r) => r.json())
       .then((d) => { csrfTokenRef.current = d.csrfToken || ''; })
       .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    setBalanceLoading(true);
+    fetch('/api/profile/me')
+      .then((r) => r.json())
+      .then((d) => {
+        if (!d.error) {
+          setUserBalance(Number(d.display_balance ?? 0));
+          setUserRole(d.role || 'member');
+        }
+      })
+      .catch(() => {})
+      .finally(() => setBalanceLoading(false));
   }, []);
 
   useEffect(() => {
@@ -54,7 +74,46 @@ export default function DepositPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownOpen]);
 
+  async function handleLockFunds() {
+    setError('');
+    if (!selectedTierConfig) {
+      setError('Please select a lock tier.');
+      return;
+    }
+    setLockingFunds(true);
+
+    const res = await fetch('/api/deposit/from-balance', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfTokenRef.current },
+      body: JSON.stringify({
+        amount: parseFloat(amount),
+        tier: selectedTierConfig.tier,
+      }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      setBalanceDepositSuccess(true);
+      setStep('confirm');
+      setInvoice({
+        deposit_id: data.lock?.deposit_id ?? 0,
+        txn_id: data.lock?.id ?? '',
+        address: '',
+        currency: 'USD',
+        amount: parseFloat(amount),
+      });
+      // Refresh balance
+      setUserBalance(data.newBalance ?? null);
+    } else {
+      setError(data.error || 'Failed to lock funds.');
+    }
+    setLockingFunds(false);
+  }
+
   const selectedCurrency = DEPOSIT_CURRENCIES.find(c => c.id === currencyId) || DEPOSIT_CURRENCIES[0];
+  const minDeposit = userRole === 'pastor' ? 200 : 100;
+  const amountNum = parseFloat(amount) || 0;
+  const amountBelowMin = amount !== '' && amountNum < minDeposit;
 
   const stablecoins = DEPOSIT_CURRENCIES.filter(c => c.category === 'stablecoin');
   const majors = DEPOSIT_CURRENCIES.filter(c => c.category === 'major');
@@ -117,6 +176,7 @@ export default function DepositPage() {
     setInvoice(null);
     setDepositStatus(null);
     setError('');
+    setBalanceDepositSuccess(false);
   }
 
   const summaryAmount = parseFloat(amount) || 0;
@@ -171,6 +231,10 @@ export default function DepositPage() {
                   min="0.01"
                   placeholder="0.00"
                   className="flex-1 rounded-r-none"
+                  style={{
+                    borderColor: amountBelowMin ? '#ef4444' : undefined,
+                    boxShadow: amountBelowMin ? '0 0 0 1px #ef4444' : undefined,
+                  }}
                 />
                 <span className="bg-border border border-border-light text-text-secondary px-4 flex items-center rounded-r-lg">
                   USD
@@ -211,97 +275,197 @@ export default function DepositPage() {
               </div>
             )}
 
+            {/* Funding Source Toggle */}
             <div className="mt-8 border-t border-white/10 pt-6">
-              <label className="block text-text-secondary font-medium mb-1">Currency</label>
-
-              {/* Custom dropdown */}
-              <div className="relative" ref={dropdownRef}>
+              <label className="block text-text-secondary font-medium mb-3">Funding Source</label>
+              <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <button
                   type="button"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition"
+                  onClick={() => setFundingSource('crypto')}
+                  className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all duration-200"
+                  style={{
+                    background: fundingSource === 'crypto' ? '#FFD700' : 'transparent',
+                    color: fundingSource === 'crypto' ? '#0e0b1a' : 'rgba(255,255,255,0.6)',
+                  }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={coinIconUrl(selectedCurrency.iconSlug)}
-                    alt=""
-                    width={24}
-                    height={24}
-                    className="rounded-full flex-shrink-0"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  <div className="flex-1">
-                    <span className="text-text-primary font-medium">{selectedCurrency.symbol}</span>
-                    <span className="text-text-muted text-sm ml-2">{selectedCurrency.name}</span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-text-muted">
-                    {selectedCurrency.network}
-                  </span>
-                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M1 1l4 4 4-4" />
-                  </svg>
+                  Crypto Deposit
                 </button>
-
-                {dropdownOpen && (
-                  <div
-                    className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto"
-                    style={{ background: '#1a1a2e' }}
-                  >
-                    {[
-                      { label: 'Stablecoins', items: stablecoins },
-                      { label: 'Major Coins', items: majors },
-                      { label: 'Altcoins', items: alts },
-                    ].map(group => (
-                      <div key={group.label}>
-                        <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">
-                          {group.label}
-                        </div>
-                        {group.items.map(currency => (
-                          <button
-                            key={currency.id}
-                            type="button"
-                            onClick={() => {
-                              setCurrencyId(currency.id);
-                              setDropdownOpen(false);
-                            }}
-                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/5 transition ${
-                              currency.id === currencyId ? 'bg-white/5 text-temple-gold' : 'text-text-primary'
-                            }`}
-                          >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={coinIconUrl(currency.iconSlug)}
-                              alt=""
-                              width={22}
-                              height={22}
-                              className="rounded-full flex-shrink-0"
-                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                            />
-                            <span className="flex-1 text-sm">{currency.symbol}</span>
-                            <span className="text-xs text-text-muted">{currency.name}</span>
-                            <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">
-                              {currency.network}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setFundingSource('balance')}
+                  className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all duration-200"
+                  style={{
+                    background: fundingSource === 'balance' ? '#FFD700' : 'transparent',
+                    color: fundingSource === 'balance' ? '#0e0b1a' : 'rgba(255,255,255,0.6)',
+                  }}
+                >
+                  Fund from Balance
+                </button>
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={loading || !amount || parseFloat(amount) <= 0 || !selectedTier}
-              className="mt-6 w-full font-bold text-base py-4 rounded-xl transition-colors"
-              style={{
-                background: '#FFD700',
-                color: '#0e0b1a',
-              }}
-            >
-              {loading ? 'Generating...' : 'Generate Deposit Address'}
-            </button>
+            {/* Currency section — crypto only */}
+            {fundingSource === 'crypto' && (
+              <div className="mt-6">
+                <label className="block text-text-secondary font-medium mb-1">Currency</label>
+
+                {/* Custom dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={coinIconUrl(selectedCurrency.iconSlug)}
+                      alt=""
+                      width={24}
+                      height={24}
+                      className="rounded-full flex-shrink-0"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    />
+                    <div className="flex-1">
+                      <span className="text-text-primary font-medium">{selectedCurrency.symbol}</span>
+                      <span className="text-text-muted text-sm ml-2">{selectedCurrency.name}</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-text-muted">
+                      {selectedCurrency.network}
+                    </span>
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M1 1l4 4 4-4" />
+                    </svg>
+                  </button>
+
+                  {dropdownOpen && (
+                    <div
+                      className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto"
+                      style={{ background: '#1a1a2e' }}
+                    >
+                      {[
+                        { label: 'Stablecoins', items: stablecoins },
+                        { label: 'Major Coins', items: majors },
+                        { label: 'Altcoins', items: alts },
+                      ].map(group => (
+                        <div key={group.label}>
+                          <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">
+                            {group.label}
+                          </div>
+                          {group.items.map(currency => (
+                            <button
+                              key={currency.id}
+                              type="button"
+                              onClick={() => {
+                                setCurrencyId(currency.id);
+                                setDropdownOpen(false);
+                              }}
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/5 transition ${
+                                currency.id === currencyId ? 'bg-white/5 text-temple-gold' : 'text-text-primary'
+                              }`}
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={coinIconUrl(currency.iconSlug)}
+                                alt=""
+                                width={22}
+                                height={22}
+                                className="rounded-full flex-shrink-0"
+                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                              />
+                              <span className="flex-1 text-sm">{currency.symbol}</span>
+                              <span className="text-xs text-text-muted">{currency.name}</span>
+                              <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">
+                                {currency.network}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Balance display — balance funding only */}
+            {fundingSource === 'balance' && (
+              <div
+                className="mt-6 rounded-xl p-5"
+                style={{
+                  background: 'rgba(255,215,0,0.04)',
+                  border: '1px solid rgba(255,215,0,0.15)',
+                }}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-text-muted text-sm">Available Balance</span>
+                    {balanceLoading ? (
+                      <div className="text-2xl font-bold text-white mt-1">Loading...</div>
+                    ) : (
+                      <div className="text-2xl font-bold text-temple-gold mt-1">
+                        ${(userBalance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                    )}
+                  </div>
+                  {!balanceLoading && userBalance !== null && amountNum > 0 && userBalance >= amountNum && (
+                    <div className="text-right">
+                      <div className="text-text-muted text-xs">After Lock</div>
+                      <div className="text-sm font-medium" style={{ color: '#22c55e' }}>
+                        ${(userBalance - amountNum).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {!balanceLoading && amountNum > 0 && userBalance !== null && userBalance < amountNum && (
+                  <div className="mt-3 text-sm font-medium p-2 rounded-lg" style={{ color: '#ef4444', background: 'rgba(239,68,68,0.08)' }}>
+                    Insufficient balance. You need ${amountNum.toLocaleString()} but only have ${userBalance.toLocaleString()} available.
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Amount validation messages */}
+            {amountBelowMin && (
+              <div className="mt-4 text-sm font-medium p-3 rounded-lg" style={{ color: '#ef4444', background: 'rgba(239,68,68,0.08)' }}>
+                Minimum deposit is ${minDeposit.toLocaleString()} USD for {userRole === 'pastor' ? 'pastors' : 'members'}. Please increase your amount.
+              </div>
+            )}
+
+            {!selectedTier && amountNum >= minDeposit && (
+              <div className="mt-4 text-sm font-medium p-3 rounded-lg" style={{ color: '#FFD700', background: 'rgba(255,215,0,0.08)' }}>
+                Please select a lock tier above to continue.
+              </div>
+            )}
+
+            {/* Action button */}
+            {fundingSource === 'crypto' ? (
+              <button
+                type="submit"
+                disabled={loading || !amount || amountNum <= 0 || !selectedTier || amountBelowMin}
+                className="mt-6 w-full font-bold text-base py-4 rounded-xl transition-all duration-200"
+                style={{
+                  background: (loading || !amount || amountNum <= 0 || !selectedTier || amountBelowMin) ? 'rgba(255,215,0,0.25)' : '#FFD700',
+                  color: (loading || !amount || amountNum <= 0 || !selectedTier || amountBelowMin) ? 'rgba(14,11,26,0.4)' : '#0e0b1a',
+                  cursor: (loading || !amount || amountNum <= 0 || !selectedTier || amountBelowMin) ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {loading ? 'Generating...' : 'Generate Deposit Address'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleLockFunds}
+                disabled={lockingFunds || !amount || amountNum <= 0 || !selectedTier || amountBelowMin || (userBalance !== null && userBalance < amountNum)}
+                className="mt-6 w-full font-bold text-base py-4 rounded-xl transition-all duration-200"
+                style={{
+                  background: (lockingFunds || !amount || amountNum <= 0 || !selectedTier || amountBelowMin || (userBalance !== null && userBalance < amountNum)) ? 'rgba(255,215,0,0.25)' : '#FFD700',
+                  color: (lockingFunds || !amount || amountNum <= 0 || !selectedTier || amountBelowMin || (userBalance !== null && userBalance < amountNum)) ? 'rgba(14,11,26,0.4)' : '#0e0b1a',
+                  cursor: (lockingFunds || !amount || amountNum <= 0 || !selectedTier || amountBelowMin || (userBalance !== null && userBalance < amountNum)) ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {lockingFunds ? 'Locking Funds...' : 'Lock Funds'}
+              </button>
+            )}
           </form>
         </div>
       )}
@@ -391,9 +555,15 @@ export default function DepositPage() {
             <p className="text-text-muted mb-6">
               Your deposit of <strong className="text-temple-gold">{invoice && fmt(invoice.amount)} {invoice?.currency}</strong> is being processed.
             </p>
-            <div className="alert alert-info text-sm mb-6">
-              Your balance will update once the transaction receives blockchain confirmations. This typically takes 10-30 minutes.
-            </div>
+            {balanceDepositSuccess ? (
+              <div className="alert alert-success text-sm mb-6" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+                Your funds have been locked from your balance. Earnings will begin accruing immediately.
+              </div>
+            ) : (
+              <div className="alert alert-info text-sm mb-6">
+                Your balance will update once the transaction receives blockchain confirmations. This typically takes 10-30 minutes.
+              </div>
+            )}
             <div className="flex gap-4">
               <a href="/dashboard" className="flex-1 btn-primary py-3 rounded-lg text-center no-underline">
                 Back to Dashboard

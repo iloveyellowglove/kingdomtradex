@@ -4,7 +4,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 export const dynamic = 'force-dynamic';
 
 const PROFILE_COLUMNS = [
-  'username', 'email', 'role',
+  'username', 'email', 'role', 'display_balance',
   'avatar_url', 'full_name', 'phone', 'date_of_birth', 'country', 'city', 'address',
 ];
 
