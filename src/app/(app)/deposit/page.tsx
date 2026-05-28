@@ -119,8 +119,14 @@ export default function DepositPage() {
     setError('');
   }
 
+  const summaryAmount = parseFloat(amount) || 0;
+  const showSummary = summaryAmount > 0 && selectedTierConfig;
+  const summaryEarn = showSummary
+    ? summaryAmount * selectedTierConfig!.lock_days * selectedTierConfig!.daily_rate
+    : 0;
+
   return (
-    <div className="py-4 max-w-2xl mx-auto">
+    <div className="py-4 max-w-4xl mx-auto">
       <h2 className="mb-2">Deposit Funds</h2>
       <p className="text-text-muted mb-6">Send crypto to your deposit address to fund your account</p>
 
@@ -147,130 +153,156 @@ export default function DepositPage() {
 
       {/* Step 1: Select amount and currency */}
       {step === 'amount' && (
-        <div className="card">
-          <div style={{ padding: '16px 24px', borderBottom: '1px solid #352c4a', color: '#FFD700', fontWeight: 600, borderRadius: '16px 16px 0 0' }}><h5 className="mb-0">Step 1: Amount, Lock Tier &amp; Currency</h5></div>
-          <div className="card-body">
-            <form onSubmit={handleCreateInvoice} className="space-y-4">
-              <div>
-                <label className="block text-text-secondary font-medium mb-1">Amount (USD)</label>
-                <div className="flex">
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    required
-                    min="0.01"
-                    placeholder="0.00"
-                    className="flex-1 rounded-r-none"
-                  />
-                  <span className="bg-border border border-border-light text-text-secondary px-4 flex items-center rounded-r-lg">
-                    USD
-                  </span>
-                </div>
-                <p className="text-xs text-text-muted mt-1">
-                  Min deposit: $100 USD (members) / $200 USD (pastors)
-                </p>
-              </div>
+        <div className="card p-5 md:p-8">
+          <h3 className="text-lg font-semibold text-white border-b border-white/10 pb-4 mb-6">
+            Step 1: Amount, Lock Tier &amp; Currency
+          </h3>
 
-              <LockTierSelector
-                amount={parseFloat(amount) || 0}
-                selectedTier={selectedTier}
-                onSelect={(tier) => {
-                  setSelectedTier(tier.tier);
-                  setSelectedTierConfig(tier);
+          <form onSubmit={handleCreateInvoice}>
+            <div className="mb-8">
+              <label className="block text-text-secondary font-medium mb-1">Amount (USD)</label>
+              <div className="flex">
+                <input
+                  type="number"
+                  step="0.01"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  required
+                  min="0.01"
+                  placeholder="0.00"
+                  className="flex-1 rounded-r-none"
+                />
+                <span className="bg-border border border-border-light text-text-secondary px-4 flex items-center rounded-r-lg">
+                  USD
+                </span>
+              </div>
+              <p className="text-xs text-text-muted mt-1">
+                Min deposit: $100 USD (members) / $200 USD (pastors)
+              </p>
+            </div>
+
+            <LockTierSelector
+              amount={summaryAmount}
+              selectedTier={selectedTier}
+              onSelect={(tier) => {
+                setSelectedTier(tier.tier);
+                setSelectedTierConfig(tier);
+              }}
+            />
+
+            {/* Deposit Summary Bar */}
+            {showSummary && (
+              <div
+                className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6 rounded-lg p-4"
+                style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: '1px solid rgba(255,255,255,0.06)',
                 }}
-              />
-
-              <div>
-                <label className="block text-text-secondary font-medium mb-1">Currency</label>
-
-                {/* Custom dropdown */}
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    type="button"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={coinIconUrl(selectedCurrency.iconSlug)}
-                      alt=""
-                      width={24}
-                      height={24}
-                      className="rounded-full flex-shrink-0"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                    />
-                    <div className="flex-1">
-                      <span className="text-text-primary font-medium">{selectedCurrency.symbol}</span>
-                      <span className="text-text-muted text-sm ml-2">{selectedCurrency.name}</span>
-                    </div>
-                    <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-text-muted">
-                      {selectedCurrency.network}
-                    </span>
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M1 1l4 4 4-4" />
-                    </svg>
-                  </button>
-
-                  {dropdownOpen && (
-                    <div
-                      className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto"
-                      style={{ background: '#1a1a2e' }}
-                    >
-                      {[
-                        { label: 'Stablecoins', items: stablecoins },
-                        { label: 'Major Coins', items: majors },
-                        { label: 'Altcoins', items: alts },
-                      ].map(group => (
-                        <div key={group.label}>
-                          <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">
-                            {group.label}
-                          </div>
-                          {group.items.map(currency => (
-                            <button
-                              key={currency.id}
-                              type="button"
-                              onClick={() => {
-                                setCurrencyId(currency.id);
-                                setDropdownOpen(false);
-                              }}
-                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/5 transition ${
-                                currency.id === currencyId ? 'bg-white/5 text-temple-gold' : 'text-text-primary'
-                              }`}
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={coinIconUrl(currency.iconSlug)}
-                                alt=""
-                                width={22}
-                                height={22}
-                                className="rounded-full flex-shrink-0"
-                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                              />
-                              <span className="flex-1 text-sm">{currency.symbol}</span>
-                              <span className="text-xs text-text-muted">{currency.name}</span>
-                              <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">
-                                {currency.network}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || !amount || parseFloat(amount) <= 0 || !selectedTier}
-                className="btn-primary w-full py-3 rounded-lg"
               >
-                {loading ? 'Generating...' : 'Generate Deposit Address'}
-              </button>
-            </form>
-          </div>
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>
+                  You deposit <span className="text-white font-semibold">${summaryAmount.toLocaleString()}</span>
+                </span>
+                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '18px' }}>&rarr;</span>
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>
+                  You earn <span style={{ color: '#22c55e' }} className="font-semibold">
+                    ${summaryEarn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span> over {selectedTierConfig!.lock_days} days
+                </span>
+              </div>
+            )}
+
+            <div className="mt-8 border-t border-white/10 pt-6">
+              <label className="block text-text-secondary font-medium mb-1">Currency</label>
+
+              {/* Custom dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={coinIconUrl(selectedCurrency.iconSlug)}
+                    alt=""
+                    width={24}
+                    height={24}
+                    className="rounded-full flex-shrink-0"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                  <div className="flex-1">
+                    <span className="text-text-primary font-medium">{selectedCurrency.symbol}</span>
+                    <span className="text-text-muted text-sm ml-2">{selectedCurrency.name}</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-text-muted">
+                    {selectedCurrency.network}
+                  </span>
+                  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M1 1l4 4 4-4" />
+                  </svg>
+                </button>
+
+                {dropdownOpen && (
+                  <div
+                    className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto"
+                    style={{ background: '#1a1a2e' }}
+                  >
+                    {[
+                      { label: 'Stablecoins', items: stablecoins },
+                      { label: 'Major Coins', items: majors },
+                      { label: 'Altcoins', items: alts },
+                    ].map(group => (
+                      <div key={group.label}>
+                        <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">
+                          {group.label}
+                        </div>
+                        {group.items.map(currency => (
+                          <button
+                            key={currency.id}
+                            type="button"
+                            onClick={() => {
+                              setCurrencyId(currency.id);
+                              setDropdownOpen(false);
+                            }}
+                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/5 transition ${
+                              currency.id === currencyId ? 'bg-white/5 text-temple-gold' : 'text-text-primary'
+                            }`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={coinIconUrl(currency.iconSlug)}
+                              alt=""
+                              width={22}
+                              height={22}
+                              className="rounded-full flex-shrink-0"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                            <span className="flex-1 text-sm">{currency.symbol}</span>
+                            <span className="text-xs text-text-muted">{currency.name}</span>
+                            <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">
+                              {currency.network}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || !amount || parseFloat(amount) <= 0 || !selectedTier}
+              className="mt-6 w-full font-bold text-base py-4 rounded-xl transition-colors"
+              style={{
+                background: '#FFD700',
+                color: '#0e0b1a',
+              }}
+            >
+              {loading ? 'Generating...' : 'Generate Deposit Address'}
+            </button>
+          </form>
         </div>
       )}
 

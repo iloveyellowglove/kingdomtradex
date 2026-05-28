@@ -50,18 +50,17 @@ export default function LockTierSelector({ amount, selectedTier, onSelect }: Pro
   }, [pulseTier]);
 
   return (
-    <div className="space-y-3">
+    <div>
       <label className="block text-text-secondary font-medium mb-1">Lock Tier</label>
-      <p className="text-xs text-text-muted -mt-1 mb-3">
+      <p className="text-xs text-text-muted mb-4">
         Select a lock period for your deposit. Longer locks earn higher daily returns.
       </p>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {TIERS.map((tier) => {
           const selected = selectedTier === tier.tier;
           const pulsing = pulseTier === tier.tier;
           const badge = getBadge(tier.tier);
-          const ratePct = (tier.daily_rate * 100).toFixed(2);
 
           return (
             <button
@@ -71,101 +70,108 @@ export default function LockTierSelector({ amount, selectedTier, onSelect }: Pro
               aria-checked={selected}
               onClick={() => handleSelect(tier)}
               className={[
-                'relative text-left py-5 px-4 rounded-xl transition-all duration-200',
-                'focus:outline-none focus:ring-2 focus:ring-[#FFD700]/50 focus:ring-offset-2 focus:ring-offset-[#0e0b1a]',
+                'relative text-left rounded-xl transition-all duration-200 flex flex-col',
+                'focus:outline-none focus:ring-2 focus:ring-[#FFD700]/40 focus:ring-offset-2 focus:ring-offset-[#0e0b1a]',
               ].join(' ')}
               style={{
+                minHeight: 220,
+                padding: '20px',
                 background: selected
-                  ? 'rgba(255,215,0,0.05)'
-                  : 'rgba(255,255,255,0.03)',
+                  ? 'rgba(255,215,0,0.04)'
+                  : 'rgba(255,255,255,0.02)',
                 border: selected
                   ? '1px solid #FFD700'
                   : '1px solid rgba(255,255,255,0.08)',
                 boxShadow: selected
-                  ? '0 0 20px rgba(255,215,0,0.10)'
+                  ? '0 0 24px rgba(255,215,0,0.08)'
                   : 'none',
                 transform: pulsing ? 'scale(1.02)' : 'scale(1.0)',
                 cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
                 if (!selected) {
-                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!selected) {
                   e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
                 }
               }}
             >
-              {/* Badge */}
-              {badge && (
-                <span
-                  className="absolute top-3 left-3 text-xs font-medium rounded-full px-2 py-0.5"
-                  style={{ background: 'rgba(255,215,0,0.15)', color: '#FFD700' }}
-                >
-                  {badge}
-                </span>
-              )}
-
               {/* Selected checkmark */}
               {selected && (
-                <span className="absolute top-3 right-3" style={{ color: '#FFD700' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <span className="absolute top-4 right-4" style={{ color: '#FFD700' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 13l4 4L19 7" />
                   </svg>
                 </span>
               )}
 
-              {/* Tier label */}
+              {/* Badge or spacer */}
+              {badge ? (
+                <span
+                  className="inline-block self-start text-[10px] uppercase tracking-wider font-bold rounded-full px-2 py-0.5 mb-1"
+                  style={{ background: 'rgba(255,215,0,0.12)', color: '#FFD700' }}
+                >
+                  {badge}
+                </span>
+              ) : (
+                <div style={{ height: 22 }} />
+              )}
+
+              {/* Tier name */}
               <div
-                className="text-base font-semibold mb-1"
+                className="font-semibold text-base mt-1"
                 style={{ color: selected ? '#FFD700' : '#ffffff' }}
               >
                 {tier.label}
               </div>
 
               {/* Lock period */}
-              <div className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              <div className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
                 {tier.lock_days} days
               </div>
 
               {/* Daily rate — hero number */}
-              <div className="flex items-baseline gap-1">
+              <div className="flex items-baseline gap-1 mt-4">
                 <span
-                  className="text-xl md:text-2xl font-bold"
+                  className="text-3xl font-bold"
                   style={{ color: '#FFD700' }}
                 >
-                  {ratePct}%
+                  {(tier.daily_rate * 100).toFixed(2)}%
                 </span>
-                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <span className="text-sm font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>
                   / day
                 </span>
               </div>
 
-              {/* Divider */}
-              <div className="my-3" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+              {/* Bottom section pushed to end */}
+              <div className="mt-auto" style={{ paddingTop: 8 }}>
+                {/* Divider */}
+                <div className="my-4" style={{ height: 1, background: 'rgba(255,255,255,0.08)' }} />
 
-              {/* Total return */}
-              <div className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                Total: {totalReturnPct(tier.lock_days, tier.daily_rate)}% return
-              </div>
-
-              {/* USD profit estimate */}
-              {amount > 0 && (
-                <div className="text-sm font-semibold mt-1" style={{ color: '#22c55e' }}>
-                  ${(amount * tier.lock_days * tier.daily_rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} profit
+                {/* Total return */}
+                <div className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                  Total: {totalReturnPct(tier.lock_days, tier.daily_rate)}% return
                 </div>
-              )}
+
+                {/* USD profit estimate */}
+                {amount > 0 && (
+                  <div className="text-sm font-semibold mt-1" style={{ color: '#22c55e' }}>
+                    ${(amount * tier.lock_days * tier.daily_rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} profit
+                  </div>
+                )}
+              </div>
             </button>
           );
         })}
       </div>
 
       {!selectedTier && (
-        <p className="text-xs text-temple-gold mt-1">Please select a lock tier to continue.</p>
+        <p className="text-xs text-temple-gold mt-3">Please select a lock tier to continue.</p>
       )}
     </div>
   );
