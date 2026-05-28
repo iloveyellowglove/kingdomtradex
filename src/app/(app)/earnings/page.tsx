@@ -19,16 +19,36 @@ export default async function EarningsPage() {
   if (s.length === 0) redirect('/login');
   const userId = s[0].user_id;
 
-  // Fetch user balance
   const { data: users } = await supabase
     .from('users')
-    .select('display_balance')
+    .select('profit_balance, commission_balance, locked_balance')
     .eq('id', userId)
     .limit(1);
 
-  const balance = Number((users?.[0] as { display_balance?: number } | undefined)?.display_balance ?? 0);
+  const u = users?.[0] as { profit_balance?: number; commission_balance?: number; locked_balance?: number } | undefined;
+  const profitBalance = Number(u?.profit_balance ?? 0);
+  const commissionBalance = Number(u?.commission_balance ?? 0);
+  const lockedBalance = Number(u?.locked_balance ?? 0);
 
-  // Fetch daily profit rate from settings
+  const { data: activeLocks } = await supabase
+    .from('deposit_locks')
+    .select('id, amount, daily_rate')
+    .eq('user_id', userId)
+    .eq('status', 'locked');
+
+  const activeLockCount = activeLocks?.length ?? 0;
+  const dailyProjection = (activeLocks ?? []).reduce(
+    (sum, lock) => sum + Number(lock.amount) * Number(lock.daily_rate),
+    0,
+  );
+
+  const { data: profits } = await supabase
+    .from('ai_trading_profits')
+    .select('*')
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
+    .limit(30);
+
   const { data: rateSetting } = await supabase
     .from('settings')
     .select('setting_value')
@@ -37,17 +57,13 @@ export default async function EarningsPage() {
 
   const dailyRate = Number((rateSetting?.[0] as { setting_value?: string } | undefined)?.setting_value ?? 1.5);
 
-  // Fetch AI trading profits
-  const { data: profits } = await supabase
-    .from('ai_trading_profits')
-    .select('*')
-    .eq('user_id', userId)
-    .order('date', { ascending: false })
-    .limit(30);
-
   return (
     <EarningsDashboard
-      balance={balance}
+      profitBalance={profitBalance}
+      commissionBalance={commissionBalance}
+      lockedBalance={lockedBalance}
+      activeLockCount={activeLockCount}
+      dailyProjection={dailyProjection}
       dailyRate={dailyRate}
       profits={profits ?? []}
     />

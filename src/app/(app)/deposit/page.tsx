@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { fmt } from '@/lib/utils/formatting';
-import { DEPOSIT_CURRENCIES } from '@/lib/currencies';
+import { DEPOSIT_CURRENCIES, coinIconUrl } from '@/lib/currencies';
+import LockTierSelector, { type TierConfig } from '@/components/deposit/LockTierSelector';
 
 type Step = 'amount' | 'address' | 'confirm';
 
@@ -19,39 +20,13 @@ interface InvoiceData {
 
 const QR_API = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=FFD700&bg=0e0b1a&data=';
 
-const ICON_CDN = 'https://assets.coingecko.com/coins/images';
-
-function coinIconUrl(slug: string): string {
-  // CoinGecko CDN path structure varies; we use a mapping of known slugs to their image IDs
-  const iconMap: Record<string, string> = {
-    'tether': '325/small/Tether.png',
-    'usd-coin': '6319/small/usdc.png',
-    'bitcoin': '1/small/bitcoin.png',
-    'ethereum': '279/small/ethereum.png',
-    'solana': '4128/small/solana.png',
-    'dogecoin': '5/small/dogecoin.png',
-    'litecoin': '2/small/litecoin.png',
-    'ripple': '44/small/xrp.png',
-    'cardano': '975/small/cardano.png',
-    'tron': '1094/small/tron.png',
-    'polygon-ecosystem-token': '4713/small/polygon.png',
-    'polkadot': '12171/small/polkadot.png',
-    'bitcoin-cash': '780/small/bitcoin-cash.png',
-    'shiba-inu': '11939/small/shiba.png',
-    'avalanche-2': '12559/small/avalanche.png',
-    'chainlink': '877/small/chainlink.png',
-    'uniswap': '12504/small/uniswap.png',
-    'kaspa': '25701/small/kaspa.png',
-  };
-  const path = iconMap[slug];
-  if (path) return `${ICON_CDN}/${path}`;
-  return `https://cryptologos.cc/logos/${slug}-logo.png`;
-}
 
 export default function DepositPage() {
   const [step, setStep] = useState<Step>('amount');
   const [currencyId, setCurrencyId] = useState('USDT_TRX');
   const [amount, setAmount] = useState('');
+  const [selectedTier, setSelectedTier] = useState<string | null>(null);
+  const [selectedTierConfig, setSelectedTierConfig] = useState<TierConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
@@ -93,7 +68,12 @@ export default function DepositPage() {
     const res = await fetch('/api/deposit/create-invoice', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfTokenRef.current },
-      body: JSON.stringify({ currency: currencyId, amount: parseFloat(amount) }),
+      body: JSON.stringify({
+        currency: currencyId,
+        amount: parseFloat(amount),
+        tier: selectedTierConfig?.tier,
+        lock_months: selectedTierConfig?.lock_months,
+      }),
     });
 
     const data = await res.json();
@@ -131,6 +111,8 @@ export default function DepositPage() {
   function reset() {
     setStep('amount');
     setAmount('');
+    setSelectedTier(null);
+    setSelectedTierConfig(null);
     setCurrencyId('USDT_TRX');
     setInvoice(null);
     setDepositStatus(null);
@@ -166,9 +148,40 @@ export default function DepositPage() {
       {/* Step 1: Select amount and currency */}
       {step === 'amount' && (
         <div className="card">
-          <div className="card-header"><h5 className="mb-0">Step 1: Select Currency &amp; Amount</h5></div>
+          <div className="card-header"><h5 className="mb-0">Step 1: Amount, Lock Tier &amp; Currency</h5></div>
           <div className="card-body">
             <form onSubmit={handleCreateInvoice} className="space-y-4">
+              <div>
+                <label className="block text-text-secondary font-medium mb-1">Amount (USD)</label>
+                <div className="flex">
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    required
+                    min="0.01"
+                    placeholder="0.00"
+                    className="flex-1 rounded-r-none"
+                  />
+                  <span className="bg-border border border-border-light text-text-secondary px-4 flex items-center rounded-r-lg">
+                    USD
+                  </span>
+                </div>
+                <p className="text-xs text-text-muted mt-1">
+                  Min deposit: $100 USD (members) / $200 USD (pastors)
+                </p>
+              </div>
+
+              <LockTierSelector
+                amount={parseFloat(amount) || 0}
+                selectedTier={selectedTier}
+                onSelect={(tier) => {
+                  setSelectedTier(tier.tier);
+                  setSelectedTierConfig(tier);
+                }}
+              />
+
               <div>
                 <label className="block text-text-secondary font-medium mb-1">Currency</label>
 
@@ -247,33 +260,11 @@ export default function DepositPage() {
                     </div>
                   )}
                 </div>
-
-                <p className="text-xs text-text-muted mt-1">
-                  Min deposit: $100 USD (members) / $200 USD (pastors)
-                </p>
               </div>
 
-              <div>
-                <label className="block text-text-secondary font-medium mb-1">Amount (USD)</label>
-                <div className="flex">
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    required
-                    min="0.01"
-                    placeholder="0.00"
-                    className="flex-1 rounded-r-none"
-                  />
-                  <span className="bg-border border border-border-light text-text-secondary px-4 flex items-center rounded-r-lg">
-                    USD
-                  </span>
-                </div>
-              </div>
               <button
                 type="submit"
-                disabled={loading || !amount || parseFloat(amount) <= 0}
+                disabled={loading || !amount || parseFloat(amount) <= 0 || !selectedTier}
                 className="btn-primary w-full py-3 rounded-lg"
               >
                 {loading ? 'Generating...' : 'Generate Deposit Address'}

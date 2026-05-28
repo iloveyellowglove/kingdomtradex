@@ -5,6 +5,10 @@
       "schedule": "1 0 * * *"
     },
     {
+      "path": "/api/cron/mature-locks",
+      "schedule": "7 0 * * *"
+    },
+    {
       "path": "/api/cron/process-withdrawals",
       "schedule": "0 2 * * *"
     }

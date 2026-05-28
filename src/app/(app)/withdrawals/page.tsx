@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { fmt } from '@/lib/utils/formatting';
-import { DEPOSIT_CURRENCIES } from '@/lib/currencies';
+import { DEPOSIT_CURRENCIES, coinIconUrl } from '@/lib/currencies';
 
 interface WithdrawalRow {
   id: number;
@@ -15,35 +14,7 @@ interface WithdrawalRow {
   status: string;
   request_time: string;
   admin_notes: string | null;
-}
-
-const ICON_CDN = 'https://assets.coingecko.com/coins/images';
-
-const iconMap: Record<string, string> = {
-  'tether': '325/small/Tether.png',
-  'usd-coin': '6319/small/usdc.png',
-  'bitcoin': '1/small/bitcoin.png',
-  'ethereum': '279/small/ethereum.png',
-  'solana': '4128/small/solana.png',
-  'dogecoin': '5/small/dogecoin.png',
-  'litecoin': '2/small/litecoin.png',
-  'ripple': '44/small/xrp.png',
-  'cardano': '975/small/cardano.png',
-  'tron': '1094/small/tron.png',
-  'polygon-ecosystem-token': '4713/small/polygon.png',
-  'polkadot': '12171/small/polkadot.png',
-  'bitcoin-cash': '780/small/bitcoin-cash.png',
-  'shiba-inu': '11939/small/shiba.png',
-  'avalanche-2': '12559/small/avalanche.png',
-  'chainlink': '877/small/chainlink.png',
-  'uniswap': '12504/small/uniswap.png',
-  'kaspa': '25701/small/kaspa.png',
-};
-
-function coinIconUrl(slug: string): string {
-  const path = iconMap[slug];
-  if (path) return `${ICON_CDN}/${path}`;
-  return `https://cryptologos.cc/logos/${slug}-logo.png`;
+  withdrawal_type: string | null;
 }
 
 function truncateAddress(addr: string): string {
@@ -59,10 +30,9 @@ export default function WithdrawalsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [history, setHistory] = useState<WithdrawalRow[]>([]);
-  const [balance, setBalance] = useState(0);
-  const [locked, setLocked] = useState(false);
-  const [eligibleAt, setEligibleAt] = useState<string | null>(null);
-  const [bonusLocked, setBonusLocked] = useState(false);
+  const [profitBalance, setProfitBalance] = useState(0);
+  const [commissionBalance, setCommissionBalance] = useState(0);
+  const [withdrawalType, setWithdrawalType] = useState<'profit' | 'commission'>('profit');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const csrfTokenRef = useRef('');
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -86,7 +56,6 @@ export default function WithdrawalsPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownOpen]);
 
-  // Fetch history and user state on mount
   useEffect(() => {
     async function loadData() {
       try {
@@ -94,13 +63,11 @@ export default function WithdrawalsPage() {
         const data = await res.json();
         if (data.success) {
           setHistory(data.withdrawals || []);
-          setBalance(data.balance || 0);
-          setLocked(data.locked || false);
-          setEligibleAt(data.eligible_at || null);
-          setBonusLocked(data.bonus_locked || false);
+          setProfitBalance(data.profitBalance || 0);
+          setCommissionBalance(data.commissionBalance || 0);
         }
       } catch {
-        // Silently fail, user can still use the form
+        // Silently fail
       }
     }
     loadData();
@@ -110,6 +77,8 @@ export default function WithdrawalsPage() {
   const stablecoins = DEPOSIT_CURRENCIES.filter(c => c.category === 'stablecoin');
   const majors = DEPOSIT_CURRENCIES.filter(c => c.category === 'major');
   const alts = DEPOSIT_CURRENCIES.filter(c => c.category === 'alt');
+
+  const availableBalance = withdrawalType === 'profit' ? profitBalance : commissionBalance;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -127,6 +96,7 @@ export default function WithdrawalsPage() {
         amount: parseFloat(amount),
         currency: currencyId,
         wallet_address: walletAddress,
+        withdrawal_type: withdrawalType,
       }),
     });
 
@@ -135,13 +105,13 @@ export default function WithdrawalsPage() {
       setSuccess('Withdrawal request submitted. You will receive your funds within 24-48 hours after admin review.');
       setAmount('');
       setWalletAddress('');
-      // Refresh history and balance
       try {
         const hRes = await fetch('/api/withdrawals/history');
         const hData = await hRes.json();
         if (hData.success) {
           setHistory(hData.withdrawals || []);
-          setBalance(hData.balance || 0);
+          setProfitBalance(hData.profitBalance || 0);
+          setCommissionBalance(hData.commissionBalance || 0);
         }
       } catch { /* ignore */ }
     } else {
@@ -158,31 +128,35 @@ export default function WithdrawalsPage() {
       {error && <div className="alert alert-danger mb-4">{error}</div>}
       {success && <div className="alert alert-success mb-4">{success}</div>}
 
-      {/* Lock Warning */}
-      {locked && eligibleAt && (
-        <div className="alert alert-warning mb-6" style={{
-          border: '1px solid #FFD700',
-          background: 'linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,180,0,0.05))',
-        }}>
-          <strong>Withdrawals Locked</strong>
-          <p className="mb-0 text-sm mt-1">
-            Withdrawals are available after {new Date(eligibleAt).toLocaleDateString()}. You must hold your deposit for the required period before withdrawing.
-          </p>
-        </div>
-      )}
-
-      {/* Bonus Lock Warning */}
-      {bonusLocked && (
-        <div className="alert alert-warning mb-6" style={{
-          border: '1px solid #FFD700',
-          background: 'linear-gradient(135deg, rgba(255,215,0,0.08), rgba(106,13,173,0.08))',
-        }}>
-          <strong>Bonus Still Locked</strong>
-          <p className="mb-0 text-sm mt-1">
-            Deposit a minimum of $100 USDT to unlock withdrawals. Your $50 Kingdom Starter Grant is available for trading and earning yield.
-          </p>
-        </div>
-      )}
+      {/* Balance Type Selector */}
+      <div className="flex gap-2 mb-6">
+        <button
+          type="button"
+          onClick={() => setWithdrawalType('profit')}
+          className="flex-1 py-3 rounded-lg text-sm font-bold transition-all"
+          style={{
+            background: withdrawalType === 'profit' ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.03)',
+            border: withdrawalType === 'profit' ? '2px solid #4CAF50' : '1px solid rgba(255,255,255,0.06)',
+            color: withdrawalType === 'profit' ? '#4CAF50' : 'rgba(255,255,255,0.5)',
+          }}
+        >
+          <div>Profit Balance</div>
+          <div className="text-lg mt-1">${profitBalance.toFixed(2)}</div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setWithdrawalType('commission')}
+          className="flex-1 py-3 rounded-lg text-sm font-bold transition-all"
+          style={{
+            background: withdrawalType === 'commission' ? 'rgba(180,124,255,0.15)' : 'rgba(255,255,255,0.03)',
+            border: withdrawalType === 'commission' ? '2px solid #B47CFF' : '1px solid rgba(255,255,255,0.06)',
+            color: withdrawalType === 'commission' ? '#B47CFF' : 'rgba(255,255,255,0.5)',
+          }}
+        >
+          <div>Commission Balance</div>
+          <div className="text-lg mt-1">${commissionBalance.toFixed(2)}</div>
+        </button>
+      </div>
 
       {/* Withdrawal Request Form */}
       <div className="card mb-8" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -200,12 +174,11 @@ export default function WithdrawalsPage() {
                 required
                 min="25"
                 placeholder="Enter amount"
-                disabled={locked}
                 className="w-full"
                 style={{ borderColor: amount ? '#FFD700' : undefined }}
               />
               <p className="text-xs text-text-muted mt-1">
-                Available: <span className="text-temple-gold">{fmt(balance)} USDT</span>
+                Available: <span style={{ color: withdrawalType === 'profit' ? '#4CAF50' : '#B47CFF' }}>${availableBalance.toFixed(2)} USDT</span>
                 &nbsp;&middot;&nbsp; Minimum withdrawal: $25.00
               </p>
             </div>
@@ -217,8 +190,7 @@ export default function WithdrawalsPage() {
                 <button
                   type="button"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  disabled={locked}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition disabled:opacity-50"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -300,7 +272,6 @@ export default function WithdrawalsPage() {
                 required
                 minLength={10}
                 placeholder="Enter your wallet address"
-                disabled={locked}
                 className="w-full"
               />
               <p className="text-xs text-text-muted mt-1">
@@ -311,19 +282,18 @@ export default function WithdrawalsPage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading || locked || !amount || parseFloat(amount) < 25 || !walletAddress.trim()}
+              disabled={loading || !amount || parseFloat(amount) < 25 || parseFloat(amount) > availableBalance || !walletAddress.trim()}
               className="w-full py-3 rounded-lg text-sm font-bold transition"
               style={{
                 background: '#FFD700',
                 color: '#000',
-                opacity: loading || locked ? 0.5 : 1,
+                opacity: loading ? 0.5 : 1,
               }}
             >
               {loading ? 'Submitting...' : 'Submit Withdrawal Request'}
             </button>
           </form>
 
-          {/* Important Notes */}
           <div className="mt-6 text-xs text-text-muted space-y-1">
             <p>Withdrawals are reviewed within 24-48 hours.</p>
             <p>A network fee may apply depending on the blockchain.</p>
@@ -341,6 +311,7 @@ export default function WithdrawalsPage() {
               <thead>
                 <tr>
                   <th className="text-left p-3">Date</th>
+                  <th className="text-left p-3">Type</th>
                   <th className="text-left p-3">Amount</th>
                   <th className="text-left p-3">Currency</th>
                   <th className="text-left p-3">Network</th>
@@ -352,6 +323,14 @@ export default function WithdrawalsPage() {
                 {history.map((w) => (
                   <tr key={w.id}>
                     <td className="p-3"><small>{w.request_time ? new Date(w.request_time).toLocaleDateString() : ''}</small></td>
+                    <td className="p-3">
+                      <span className="px-2 py-0.5 rounded text-xs font-bold" style={{
+                        background: w.withdrawal_type === 'commission' ? 'rgba(180,124,255,0.15)' : 'rgba(255,215,0,0.15)',
+                        color: w.withdrawal_type === 'commission' ? '#B47CFF' : '#FFD700',
+                      }}>
+                        {w.withdrawal_type === 'commission' ? 'Commission' : 'Profit'}
+                      </span>
+                    </td>
                     <td className="p-3">{Number(w.amount).toFixed(2)}</td>
                     <td className="p-3">{w.currency}</td>
                     <td className="p-3"><small>{w.network || ''}</small></td>

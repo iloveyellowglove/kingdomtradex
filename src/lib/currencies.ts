@@ -1,3 +1,32 @@
+export const ICON_CDN = 'https://assets.coingecko.com/coins/images';
+
+export const ICON_MAP: Record<string, string> = {
+  'tether': '325/standard/Tether.png',
+  'usd-coin': '6319/standard/usdc.png',
+  'bitcoin': '1/standard/bitcoin.png',
+  'ethereum': '279/standard/ethereum.png',
+  'solana': '4128/standard/solana.png',
+  'dogecoin': '5/standard/dogecoin.png',
+  'litecoin': '2/standard/litecoin.png',
+  'ripple': '44/standard/xrp-symbol-white-128.png',
+  'cardano': '975/standard/cardano.png',
+  'tron': '1094/standard/tron-logo.png',
+  'polygon-ecosystem-token': '4713/standard/polygon.png',
+  'polkadot': '12171/standard/polkadot.png',
+  'bitcoin-cash': '780/standard/bitcoin-cash-circle.png',
+  'shiba-inu': '11939/standard/shiba.png',
+  'avalanche-2': '12559/standard/Avalanche_Circle_RedWhite_Trans.png',
+  'chainlink': '877/standard/chainlink-new-logo.png',
+  'uniswap': '12504/standard/uniswap-logo.png',
+  'kaspa': '25751/standard/kaspa-icon-exchanges.png',
+};
+
+export function coinIconUrl(slug: string): string {
+  const path = ICON_MAP[slug];
+  if (path) return `${ICON_CDN}/${path}`;
+  return `https://cryptologos.cc/logos/${slug}-logo.png`;
+}
+
 export interface CurrencyConfig {
   id: string;
   name: string;

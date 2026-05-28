@@ -76,6 +76,7 @@ export interface AITradingProfit {
   amount: number;
   percentage: number;
   date: string;
+  deposit_lock_id?: string | null;
   created_at: string;
 }
 

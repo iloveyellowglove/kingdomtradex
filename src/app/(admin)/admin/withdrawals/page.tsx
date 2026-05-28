@@ -17,6 +17,7 @@ type WithdrawalRow = {
   admin_notes: string | null;
   reviewed_by: number | null;
   reviewed_at: string | null;
+  withdrawal_type: string | null;
   users?: { username: string; email: string } | { username: string; email: string }[] | null;
   reviewer?: { username: string } | { username: string }[] | null;
 };
@@ -113,6 +114,7 @@ export default function AdminWithdrawalsPage() {
                   <tr>
                     <th className="text-left p-3">ID</th>
                     <th className="text-left p-3">User</th>
+                    <th className="text-left p-3">Type</th>
                     <th className="text-left p-3">Amount</th>
                     <th className="text-left p-3">Currency</th>
                     <th className="text-left p-3">Network</th>
@@ -130,6 +132,14 @@ export default function AdminWithdrawalsPage() {
                         <td className="p-3">
                           <div className="font-medium">{u.username}</div>
                           <div className="text-xs text-text-muted">{u.email}</div>
+                        </td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 rounded text-xs font-bold" style={{
+                            background: w.withdrawal_type === 'commission' ? 'rgba(180,124,255,0.15)' : 'rgba(255,215,0,0.15)',
+                            color: w.withdrawal_type === 'commission' ? '#B47CFF' : '#FFD700',
+                          }}>
+                            {w.withdrawal_type === 'commission' ? 'Commission' : 'Profit'}
+                          </span>
                         </td>
                         <td className="p-3">{fmt(Number(w.amount))}</td>
                         <td className="p-3">{w.currency}</td>
@@ -232,6 +242,7 @@ export default function AdminWithdrawalsPage() {
                   <tr>
                     <th className="text-left p-3">ID</th>
                     <th className="text-left p-3">User</th>
+                    <th className="text-left p-3">Type</th>
                     <th className="text-left p-3">Amount</th>
                     <th className="text-left p-3">Currency</th>
                     <th className="text-left p-3">Address</th>
@@ -245,6 +256,14 @@ export default function AdminWithdrawalsPage() {
                       <tr key={w.id}>
                         <td className="p-3">#{w.id}</td>
                         <td className="p-3">{u.username}</td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 rounded text-xs font-bold" style={{
+                            background: w.withdrawal_type === 'commission' ? 'rgba(180,124,255,0.15)' : 'rgba(255,215,0,0.15)',
+                            color: w.withdrawal_type === 'commission' ? '#B47CFF' : '#FFD700',
+                          }}>
+                            {w.withdrawal_type === 'commission' ? 'Commission' : 'Profit'}
+                          </span>
+                        </td>
                         <td className="p-3">{fmt(Number(w.amount))}</td>
                         <td className="p-3">{w.currency}</td>
                         <td className="p-3">
@@ -299,6 +318,7 @@ export default function AdminWithdrawalsPage() {
                 <tr>
                   <th className="text-left p-3">ID</th>
                   <th className="text-left p-3">User</th>
+                  <th className="text-left p-3">Type</th>
                   <th className="text-left p-3">Amount</th>
                   <th className="text-left p-3">Currency</th>
                   <th className="text-left p-3">Address</th>
@@ -315,6 +335,14 @@ export default function AdminWithdrawalsPage() {
                     <tr key={w.id}>
                       <td className="p-3">#{w.id}</td>
                       <td className="p-3">{u.username}</td>
+                      <td className="p-3">
+                        <span className="px-2 py-0.5 rounded text-xs font-bold" style={{
+                          background: w.withdrawal_type === 'commission' ? 'rgba(180,124,255,0.15)' : 'rgba(255,215,0,0.15)',
+                          color: w.withdrawal_type === 'commission' ? '#B47CFF' : '#FFD700',
+                        }}>
+                          {w.withdrawal_type === 'commission' ? 'Commission' : 'Profit'}
+                        </span>
+                      </td>
                       <td className="p-3">{fmt(Number(w.amount))}</td>
                       <td className="p-3">{w.currency}</td>
                       <td className="p-3">

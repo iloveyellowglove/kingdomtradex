@@ -2,10 +2,11 @@ import { formatCurrency } from '@/lib/utils/formatting';
 
 interface AIEngineStatusProps {
   dailyRate: number;
-  balance: number;
+  lockedBalance: number;
+  activeLockCount: number;
 }
 
-export default function AIEngineStatus({ dailyRate, balance }: AIEngineStatusProps) {
+export default function AIEngineStatus({ dailyRate, lockedBalance, activeLockCount }: AIEngineStatusProps) {
   const now = new Date();
   const midnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
   const hoursLeft = Math.max(0, Math.floor((midnight.getTime() - now.getTime()) / 3600000));
@@ -40,10 +41,18 @@ export default function AIEngineStatus({ dailyRate, balance }: AIEngineStatusPro
           </div>
           <div>
             <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)' }}>
-              Staked Balance
+              Locked Balance
             </p>
             <p className="mb-0" style={{ fontSize: '18px', fontWeight: 600, color: '#ffffff' }}>
-              {formatCurrency(balance)} USDT
+              {formatCurrency(lockedBalance)} USDT
+            </p>
+          </div>
+          <div>
+            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)' }}>
+              Active Locks
+            </p>
+            <p className="mb-0" style={{ fontSize: '18px', fontWeight: 600, color: '#FFD700' }}>
+              {activeLockCount}
             </p>
           </div>
           <div>
@@ -70,7 +79,7 @@ export default function AIEngineStatus({ dailyRate, balance }: AIEngineStatusPro
 
       <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <p className="mb-0" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
-          Strategy: Multi-exchange arbitrage and momentum. Your staked balance earns up to {dailyRate}% daily yield automatically. The AI engine manages all trading on your behalf.
+          Strategy: Multi-exchange arbitrage and momentum. Your locked deposits earn up to {dailyRate}% daily yield automatically across {activeLockCount} active lock{activeLockCount !== 1 ? 's' : ''}. The AI engine manages all trading on your behalf.
         </p>
       </div>
     </div>

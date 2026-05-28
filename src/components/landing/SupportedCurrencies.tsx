@@ -1,35 +1,6 @@
 'use client';
 
-import { DEPOSIT_CURRENCIES } from '@/lib/currencies';
-
-const ICON_CDN = 'https://assets.coingecko.com/coins/images';
-
-const iconMap: Record<string, string> = {
-  'tether': '325/small/Tether.png',
-  'usd-coin': '6319/small/usdc.png',
-  'bitcoin': '1/small/bitcoin.png',
-  'ethereum': '279/small/ethereum.png',
-  'solana': '4128/small/solana.png',
-  'dogecoin': '5/small/dogecoin.png',
-  'litecoin': '2/small/litecoin.png',
-  'ripple': '44/small/xrp.png',
-  'cardano': '975/small/cardano.png',
-  'tron': '1094/small/tron.png',
-  'polygon-ecosystem-token': '4713/small/polygon.png',
-  'polkadot': '12171/small/polkadot.png',
-  'bitcoin-cash': '780/small/bitcoin-cash.png',
-  'shiba-inu': '11939/small/shiba.png',
-  'avalanche-2': '12559/small/avalanche.png',
-  'chainlink': '877/small/chainlink.png',
-  'uniswap': '12504/small/uniswap.png',
-  'kaspa': '25701/small/kaspa.png',
-};
-
-function coinIconUrl(slug: string): string {
-  const path = iconMap[slug];
-  if (path) return `${ICON_CDN}/${path}`;
-  return `https://cryptologos.cc/logos/${slug}-logo.png`;
-}
+import { DEPOSIT_CURRENCIES, coinIconUrl } from '@/lib/currencies';
 
 export default function SupportedCurrencies() {
   const uniqueCoins = DEPOSIT_CURRENCIES.reduce((acc, c) => {
@@ -57,8 +28,16 @@ export default function SupportedCurrencies() {
                 width={40}
                 height={40}
                 className="rounded-full"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const next = target.nextElementSibling as HTMLElement | null;
+                  if (next) next.style.display = 'flex';
+                }}
               />
+              <div className="hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white">
+                {coin.symbol}
+              </div>
               <span className="text-xs text-text-muted text-center">{coin.symbol}</span>
             </div>
           ))}

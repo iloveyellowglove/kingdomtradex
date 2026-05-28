@@ -11,7 +11,10 @@ import AITradeLog from '@/components/trading/AITradeLog';
 
 interface TradingPageProps {
   dailyRate: number;
-  balance: number;
+  lockedBalance: number;
+  activeLockCount: number;
+  dailyProjection: number;
+  activeTiers: string[];
   userId: number;
 }
 
@@ -23,7 +26,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'order-book', label: 'Order Book' },
 ];
 
-export default function TradingPage({ dailyRate, balance, userId }: TradingPageProps) {
+export default function TradingPage({ dailyRate, lockedBalance, activeLockCount, dailyProjection, activeTiers, userId }: TradingPageProps) {
   const [symbol, setSymbol] = useState('BTC');
   const [tab, setTab] = useState<Tab>('ai-trades');
   const {
@@ -81,7 +84,7 @@ export default function TradingPage({ dailyRate, balance, userId }: TradingPageP
           {/* Tab content */}
           <div className="flex-1 overflow-hidden">
             {tab === 'ai-trades' && (
-              <AITradeLog userId={userId} balance={balance} dailyRate={dailyRate} />
+              <AITradeLog userId={userId} dailyProjection={dailyProjection} activeLockCount={activeLockCount} activeTiers={activeTiers} />
             )}
             {tab === 'market-trades' && (
               <MarketTrades trades={recentTrades} loading={loading} symbol={symbol} />
@@ -101,7 +104,7 @@ export default function TradingPage({ dailyRate, balance, userId }: TradingPageP
       </div>
 
       {/* AI Engine Status */}
-      <AIEngineStatus dailyRate={dailyRate} balance={balance} />
+      <AIEngineStatus dailyRate={dailyRate} lockedBalance={lockedBalance} activeLockCount={activeLockCount} />
     </div>
   );
 }

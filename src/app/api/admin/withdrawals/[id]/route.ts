@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
-import { creditUserBalance } from '@/lib/db/atomic';
+import { creditProfitBalance, creditCommissionBalance } from '@/lib/db/atomic';
 
 export async function PATCH(
   request: NextRequest,
@@ -56,11 +56,16 @@ export async function PATCH(
   }
 
   const now = new Date().toISOString();
+  const wType = wd.withdrawal_type === 'commission' ? 'commission' : 'profit';
 
   if (action === 'reject') {
-    // Credit balance back to user
+    // Credit back to correct balance
     try {
-      await creditUserBalance(wd.user_id, Number(wd.amount));
+      if (wType === 'commission') {
+        await creditCommissionBalance(wd.user_id, Number(wd.amount));
+      } else {
+        await creditProfitBalance(wd.user_id, Number(wd.amount));
+      }
     } catch (creditErr) {
       console.error('[admin/withdrawals] refund credit failed:', creditErr);
       return NextResponse.json({
@@ -81,7 +86,7 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      message: 'Withdrawal rejected. Balance refunded to user.',
+      message: `Withdrawal rejected. Balance refunded to ${wType} balance.`,
     });
   }
 

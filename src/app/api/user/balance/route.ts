@@ -19,14 +19,28 @@ export async function GET() {
     return NextResponse.json({ success: false, error: 'Session expired.' }, { status: 401 });
   }
 
+  const userId = sessions[0].user_id;
+
   const { data: users } = await supabase
     .from('users')
-    .select('display_balance')
-    .eq('id', sessions[0].user_id)
+    .select('display_balance, locked_balance, profit_balance, commission_balance')
+    .eq('id', userId)
     .limit(1);
+
+  const u = users?.[0];
+
+  const { data: locks } = await supabase
+    .from('deposit_locks')
+    .select('*')
+    .eq('user_id', userId)
+    .order('locked_at', { ascending: false });
 
   return NextResponse.json({
     success: true,
-    realBalance: Number(users?.[0]?.display_balance ?? 0),
+    displayBalance: Number(u?.display_balance ?? 0),
+    lockedBalance: Number(u?.locked_balance ?? 0),
+    profitBalance: Number(u?.profit_balance ?? 0),
+    commissionBalance: Number(u?.commission_balance ?? 0),
+    locks: locks ?? [],
   });
 }

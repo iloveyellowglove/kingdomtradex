@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
-import { getSetting } from '@/lib/db/settings';
-import { debitUserBalanceWithWithdrawalTotal, creditUserBalance } from '@/lib/db/atomic';
+import { debitProfitBalance, debitCommissionBalance, creditProfitBalance, creditCommissionBalance } from '@/lib/db/atomic';
 import { getCurrencyById } from '@/lib/currencies';
 
 const MIN_WITHDRAWAL = 25;
@@ -25,7 +24,13 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = sessions[0].user_id;
-  const { amount, currency, wallet_address } = await request.json();
+  const { amount, currency, wallet_address, withdrawal_type } = await request.json();
+
+  // Validate withdrawal_type
+  const wType = (withdrawal_type || 'profit').trim();
+  if (!['profit', 'commission'].includes(wType)) {
+    return NextResponse.json({ success: false, error: 'Invalid withdrawal type.' }, { status: 400 });
+  }
 
   // Validate amount
   const amt = parseFloat(amount || '0');
@@ -59,7 +64,7 @@ export async function POST(request: NextRequest) {
   // Fetch user
   const { data: users } = await supabase
     .from('users')
-    .select('*')
+    .select('profit_balance, commission_balance')
     .eq('id', userId)
     .limit(1);
 
@@ -68,31 +73,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'User not found.' }, { status: 404 });
   }
 
-  // Bonus lock check
-  if (user.bonus_locked) {
+  // Check sufficient balance for selected type
+  const availableBalance = wType === 'profit'
+    ? Number(user.profit_balance ?? 0)
+    : Number(user.commission_balance ?? 0);
+
+  if (amt > availableBalance) {
     return NextResponse.json({
       success: false,
-      error: 'Please deposit a minimum of $100 USDT to unlock withdrawals. Your $50 Kingdom Starter Grant is available for trading and earning yield.',
+      error: `Insufficient ${wType} balance. Available: $${availableBalance.toFixed(2)}.`,
     }, { status: 400 });
-  }
-
-  // Withdrawal lock period check
-  const lockDays = parseInt(await getSetting('withdrawal_lock_days', ''));
-  const lockHours = parseInt(await getSetting('withdrawal_lock_hours', '72'));
-  const effectiveLockHours = lockDays ? lockDays * 24 : lockHours;
-
-  const firstDepositRaw = user.first_deposit_time || user.created_at;
-  if (firstDepositRaw) {
-    const firstDeposit = new Date(firstDepositRaw).getTime();
-    const diff = Date.now() - firstDeposit;
-    if (diff < effectiveLockHours * 3600000) {
-      const eligibleAt = new Date(firstDeposit + effectiveLockHours * 3600000);
-      return NextResponse.json({
-        success: false,
-        error: `Security hold: withdrawals available after ${lockDays || Math.round(effectiveLockHours / 24)} days from first deposit.`,
-        eligible_at: eligibleAt.toISOString(),
-      }, { status: 400 });
-    }
   }
 
   // Check for existing pending withdrawal
@@ -110,12 +100,16 @@ export async function POST(request: NextRequest) {
     }, { status: 400 });
   }
 
-  // Debit balance immediately
+  // Debit from the correct balance
   try {
-    await debitUserBalanceWithWithdrawalTotal(userId, amt);
+    if (wType === 'profit') {
+      await debitProfitBalance(userId, amt);
+    } else {
+      await debitCommissionBalance(userId, amt);
+    }
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    if (msg.includes('P0002') || msg.includes('Insufficient balance')) {
+    if (msg.includes('P0002') || msg.includes('Insufficient')) {
       return NextResponse.json({ success: false, error: 'Insufficient balance.' }, { status: 400 });
     }
     throw err;
@@ -137,13 +131,18 @@ export async function POST(request: NextRequest) {
       request_time: now,
       eligible_time: now,
       status: 'pending',
+      withdrawal_type: wType,
     })
     .select();
 
   if (insertErr || !withdrawal?.length) {
-    // Refund: credit balance back since debit succeeded but insert failed
+    // Refund: credit back since debit succeeded but insert failed
     try {
-      await creditUserBalance(userId, amt);
+      if (wType === 'profit') {
+        await creditProfitBalance(userId, amt);
+      } else {
+        await creditCommissionBalance(userId, amt);
+      }
     } catch (refundErr) {
       console.error('[withdraw] refund after insert failure failed:', refundErr);
     }

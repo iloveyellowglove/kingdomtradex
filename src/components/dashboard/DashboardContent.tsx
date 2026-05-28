@@ -1,14 +1,19 @@
 'use client';
 
 import type { User, DownlineCounts, WithdrawalLock, Deposit, ReferralCommission } from '@/lib/types';
-import { formatDate } from '@/lib/utils/formatting';
 import StatsCard from '@/components/dashboard/StatsCard';
 import YieldVaultCard from '@/components/dashboard/YieldVaultCard';
 import RecentActivity from '@/components/dashboard/RecentActivity';
 import DisciplesSummary from '@/components/dashboard/DisciplesSummary';
+import LockedDeposits from '@/components/dashboard/LockedDeposits';
+import Link from 'next/link';
 
 interface DashboardProps {
-  user: User;
+  user: User & {
+    locked_balance?: number;
+    profit_balance?: number;
+    commission_balance?: number;
+  };
   downlineCounts: DownlineCounts;
   deposits: Deposit[];
   commissions: ReferralCommission[];
@@ -26,7 +31,6 @@ export default function DashboardContent({
   downlineCounts,
   deposits,
   commissions,
-  withdrawalLock,
   totalPaidComm,
   totalPendingComm,
   dailyRate,
@@ -34,6 +38,11 @@ export default function DashboardContent({
 }: DashboardProps) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://kingdomtradex.vercel.app';
   const referralLink = `${appUrl}/register?ref=${user.referral_code}`;
+
+  const lockedBalance = Number(user.locked_balance ?? 0);
+  const profitBalance = Number(user.profit_balance ?? 0);
+  const commissionBalance = Number(user.commission_balance ?? 0);
+  const totalPortfolio = lockedBalance + profitBalance + commissionBalance + Number(user.display_balance ?? 0);
 
   function copyReferralLink() {
     navigator.clipboard.writeText(referralLink);
@@ -66,51 +75,80 @@ export default function DashboardContent({
         </div>
       </div>
 
-      {/* Alerts */}
-      {withdrawalLock && (
-        <div className="rounded-xl p-4" style={{ background: 'rgba(255,215,0,0.04)', border: '1px solid rgba(255,215,0,0.15)' }}>
-          <div className="flex items-start gap-3">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: '1px', flexShrink: 0 }}>
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-              <line x1="12" y1="9" x2="12" y2="13" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-            <div>
-              <p className="mb-0" style={{ fontSize: '14px', fontWeight: 500, color: '#FFD700' }}>
-                Withdrawals locked until {formatDate(withdrawalLock.lock_expiry_time)}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* Pending withdrawal alert */}
       {Number(user.pending_withdrawal_amount) > 0 && (
         <div className="rounded-xl p-4" style={{ background: 'rgba(180,124,255,0.04)', border: '1px solid rgba(180,124,255,0.15)' }}>
           <p className="mb-0" style={{ fontSize: '14px', color: '#f0edf5' }}>
-            Pending withdrawal: <strong>{Number(user.pending_withdrawal_amount).toFixed(2)} USDT</strong> (processing in 72 hours after request)
+            Pending withdrawal: <strong>{Number(user.pending_withdrawal_amount).toFixed(2)} USDT</strong>
           </p>
         </div>
       )}
 
+      {/* 3-Balance Layout */}
+      <div className="space-y-4">
+        {/* Locked Principal — collapsible */}
+        <LockedDeposits userId={user.id} />
+
+        {/* Available Profit */}
+        <div className="rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div>
+            <p className="text-sm text-text-muted mb-0">Available Profit</p>
+            <p className="text-2xl font-bold mb-0" style={{ color: '#4CAF50' }}>
+              ${profitBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </p>
+          </div>
+          <Link
+            href="/withdrawals?type=profit"
+            className="px-4 py-2 rounded-lg text-sm font-bold transition-colors no-underline"
+            style={{ background: '#4CAF50', color: '#000', whiteSpace: 'nowrap' }}
+          >
+            Withdraw
+          </Link>
+        </div>
+
+        {/* Commission Earnings */}
+        <div className="rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div>
+            <p className="text-sm text-text-muted mb-0">Commission Earnings</p>
+            <p className="text-2xl font-bold mb-0" style={{ color: '#B47CFF' }}>
+              ${commissionBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </p>
+          </div>
+          <Link
+            href="/withdrawals?type=commission"
+            className="px-4 py-2 rounded-lg text-sm font-bold transition-colors no-underline"
+            style={{ background: '#B47CFF', color: '#000', whiteSpace: 'nowrap' }}
+          >
+            Withdraw
+          </Link>
+        </div>
+
+        {/* Total Portfolio Value */}
+        <div className="rounded-xl p-4 text-center"
+          style={{ background: 'rgba(255,215,0,0.04)', border: '1px solid rgba(255,215,0,0.12)' }}>
+          <p className="text-sm text-text-muted mb-0">Total Portfolio Value</p>
+          <p className="text-3xl font-bold mb-0" style={{ color: '#FFD700' }}>
+            ${totalPortfolio.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+          </p>
+        </div>
+      </div>
+
       {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard
-          label="Display Balance"
-          value={user.display_balance}
-          accent="gold"
-          subline={
-            user.bonus_balance > 0 && user.bonus_locked
-              ? `$${Number(user.bonus_balance).toFixed(2)} bonus locked until $${Math.max(0, Number(user.minimum_deposit_to_unlock || 100) - Number(user.total_deposited_real)).toFixed(2)} more deposited`
-              : undefined
-          }
-        />
         <StatsCard label="Total Deposited" value={user.total_deposited_real} />
         <StatsCard label="Total Earned" value={totalEarned} />
         <StatsCard label="Total Withdrawn" value={user.total_withdrawn_real} />
+        <StatsCard
+          label="Pending Rewards"
+          value={totalPendingComm}
+          accent="gold"
+        />
       </div>
 
       {/* Yield Vault */}
-      <YieldVaultCard dailyRate={dailyRate} balance={Number(user.display_balance)} />
+      <YieldVaultCard dailyRate={dailyRate} balance={profitBalance + lockedBalance} />
 
       {/* Two-column activity section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

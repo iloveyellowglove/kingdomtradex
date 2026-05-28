@@ -10,13 +10,22 @@ interface AITrade {
   amount: number;
   price: number;
   strategy: string;
+  tier: string;
   pl: number;
 }
 
+const TIER_LABELS: Record<string, string> = {
+  growth: 'Growth',
+  builder: 'Builder',
+  kingdom: 'Kingdom',
+  legacy: 'Legacy',
+};
+
 interface AITradeLogProps {
   userId: number;
-  balance: number;
-  dailyRate: number;
+  dailyProjection: number;
+  activeLockCount: number;
+  activeTiers: string[];
 }
 
 const PAIR_LIST = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'BNB/USDT', 'ETH/BTC'];
@@ -58,7 +67,7 @@ function shuffle<T>(arr: T[], rand: () => number): T[] {
   return a;
 }
 
-function generateTrades(userId: number, dailyProjection: number): AITrade[] {
+function generateTrades(userId: number, dailyProjection: number, activeTiers: string[]): AITrade[] {
   const seed = hashCode(`${userId}_${getUTCDay()}`);
   const rand = seededRandom(seed);
   const N = 8 + Math.floor(rand() * 11); // 8-18 trades
@@ -66,11 +75,13 @@ function generateTrades(userId: number, dailyProjection: number): AITrade[] {
   const now = new Date();
   const dayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
+  const tiers = activeTiers.length > 0 ? activeTiers : ['growth'];
+
   // Edge case: very small stake (< $0.10 daily) - all wins
   if (dailyProjection < 0.10) {
     const trades: AITrade[] = [];
     for (let i = 0; i < N; i++) {
-      trades.push(makeTrade(rand, i, dayStart, now, dailyProjection / N, true));
+      trades.push(makeTrade(rand, i, dayStart, now, dailyProjection / N, true, tiers));
     }
     trades.sort((a, b) => b.time.localeCompare(a.time));
     return trades;
@@ -84,7 +95,6 @@ function generateTrades(userId: number, dailyProjection: number): AITrade[] {
   // Generate losses first (magnitudes smaller than wins)
   const losses: number[] = [];
   for (let i = 0; i < lossCount; i++) {
-    // Avg loss magnitude ~0.03-0.05 fraction of daily, but should be smaller than avg win
     const lossMag = dailyProjection * (0.01 + rand() * 0.04);
     losses.push(Math.round(lossMag * 100) / 100);
   }
@@ -105,10 +115,10 @@ function generateTrades(userId: number, dailyProjection: number): AITrade[] {
 
   // Build trades
   const winTrades: AITrade[] = wins.map((pl, i) =>
-    makeTrade(rand, i, dayStart, now, pl, true)
+    makeTrade(rand, i, dayStart, now, pl, true, tiers)
   );
   const lossTrades: AITrade[] = losses.map((pl, i) =>
-    makeTrade(rand, winCount + i, dayStart, now, -pl, false)
+    makeTrade(rand, winCount + i, dayStart, now, -pl, false, tiers)
   );
 
   // Shuffle and sort newest first
@@ -124,23 +134,22 @@ function makeTrade(
   now: Date,
   pl: number,
   isWin: boolean,
+  tiers: string[],
 ): AITrade {
   const pair = PAIR_LIST[Math.floor(rand() * PAIR_LIST.length)];
   const side = rand() > 0.5 ? 'BUY' : 'SELL';
+  const tier = TIER_LABELS[tiers[Math.floor(rand() * tiers.length)]] || 'Growth';
 
-  // Strategy bias: wins favor arbitrage/mean reversion, losses favor momentum/range bound
   let strategy: string;
   if (isWin) {
     strategy = WIN_STRATEGIES[Math.floor(rand() * WIN_STRATEGIES.length)];
   } else {
     strategy = LOSS_STRATEGIES[Math.floor(rand() * LOSS_STRATEGIES.length)];
   }
-  // Occasionally mix it up (20% chance of picking any strategy)
   if (rand() < 0.20) {
     strategy = ALL_STRATEGIES[Math.floor(rand() * ALL_STRATEGIES.length)];
   }
 
-  // Random time throughout the day (only past)
   const maxSeconds = Math.min(
     (now.getTime() - dayStart.getTime()) / 1000,
     86399
@@ -161,13 +170,13 @@ function makeTrade(
     amount,
     price,
     strategy,
+    tier,
     pl: Math.round(pl * 100) / 100,
   };
 }
 
-export default function AITradeLog({ userId, balance, dailyRate }: AITradeLogProps) {
-  const dailyProjection = balance * (dailyRate / 100);
-  const trades = useMemo(() => generateTrades(userId, dailyProjection), [userId, dailyProjection]);
+export default function AITradeLog({ userId, dailyProjection, activeLockCount, activeTiers }: AITradeLogProps) {
+  const trades = useMemo(() => generateTrades(userId, dailyProjection, activeTiers), [userId, dailyProjection, activeTiers]);
 
   const winCount = trades.filter((t) => t.pl >= 0).length;
   const winRate = trades.length > 0 ? Math.round((winCount / trades.length) * 100) : 0;
@@ -218,11 +227,12 @@ export default function AITradeLog({ userId, balance, dailyRate }: AITradeLogPro
           <thead>
             <tr>
               <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '18%' }}>Time</th>
-              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '14%' }}>Pair</th>
-              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '13%' }}>Side</th>
-              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '20%' }}>Amt</th>
-              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '18%' }}>Price</th>
-              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '17%' }}>P/L</th>
+              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '12%' }}>Pair</th>
+              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '12%' }}>Tier</th>
+              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '11%' }}>Side</th>
+              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '18%' }}>Amt</th>
+              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '16%' }}>Price</th>
+              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '15%' }}>P/L</th>
             </tr>
           </thead>
           <tbody>
@@ -230,10 +240,15 @@ export default function AITradeLog({ userId, balance, dailyRate }: AITradeLogPro
               <tr
                 key={i}
                 style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}
-                title={`${t.strategy} · ${t.pair}`}
+                title={`${t.strategy} · ${t.tier} · ${t.pair}`}
               >
                 <td className="p-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>{t.time}</td>
                 <td className="p-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>{t.base}</td>
+                <td className="p-1.5">
+                  <span style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '4px', background: 'rgba(255,215,0,0.1)', color: '#FFD700' }}>
+                    {t.tier}
+                  </span>
+                </td>
                 <td className="p-1.5" style={{ color: t.side === 'BUY' ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
                   {t.side}
                 </td>
@@ -256,9 +271,16 @@ export default function AITradeLog({ userId, balance, dailyRate }: AITradeLogPro
 
       {/* Summary footer */}
       <div className="p-3 border-t flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 flex-shrink-0" style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
-        <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
-          Win rate today: <span style={{ color: '#FFD700' }}>{winRate}%</span> ({winCount}/{trades.length} trades)
-        </span>
+        <div>
+          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
+            Win rate: <span style={{ color: '#FFD700' }}>{winRate}%</span> ({winCount}/{trades.length})
+          </span>
+          {activeLockCount > 0 && (
+            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginLeft: 8 }}>
+              &middot; {activeLockCount} active lock{activeLockCount !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
         <span style={{ fontSize: '13px', fontWeight: 700, color: totalPL >= 0 ? '#FFD700' : '#ef4444' }}>
           Today&apos;s P/L: {totalPL >= 0 ? '+' : ''}{totalPL.toFixed(2)} USDT
         </span>

@@ -6,6 +6,13 @@ import { PlisioDepositService } from '@/lib/services/plisio-deposit';
 import { createNowPayment } from '@/lib/nowpayments';
 import { getMinDeposit, getCurrencyById } from '@/lib/currencies';
 
+const VALID_TIERS: Record<string, number> = {
+  growth: 6,
+  builder: 12,
+  kingdom: 24,
+  legacy: 36,
+};
+
 export async function POST(request: NextRequest) {
   const token = cookies().get('kingdom_session')?.value;
   if (!token) {
@@ -34,7 +41,7 @@ export async function POST(request: NextRequest) {
 
   const userRole = users?.[0]?.role || 'member';
 
-  const { currency, amount } = await request.json();
+  const { currency, amount, tier, lock_months } = await request.json();
   const currencyId = (currency || 'USDT_TRX').trim();
 
   const currencyConfig = getCurrencyById(currencyId);
@@ -45,6 +52,23 @@ export async function POST(request: NextRequest) {
   const amt = parseFloat(amount || '0');
   if (!amt || amt <= 0) {
     return NextResponse.json({ success: false, error: 'Amount must be positive.' }, { status: 400 });
+  }
+
+  // Validate tier selection
+  const tierStr = (tier || '').trim();
+  if (!tierStr || !(tierStr in VALID_TIERS)) {
+    return NextResponse.json({
+      success: false,
+      error: `Invalid lock tier. Must be one of: ${Object.keys(VALID_TIERS).join(', ')}.`,
+    }, { status: 400 });
+  }
+  const expectedLockMonths = VALID_TIERS[tierStr];
+  const lockMonthsVal = parseInt(String(lock_months ?? '0'), 10);
+  if (lockMonthsVal !== expectedLockMonths) {
+    return NextResponse.json({
+      success: false,
+      error: `Lock months ${lockMonthsVal} does not match tier ${tierStr} (expected ${expectedLockMonths}).`,
+    }, { status: 400 });
   }
 
   const minDeposit = getMinDeposit(currencyId, userRole);
@@ -85,6 +109,8 @@ export async function POST(request: NextRequest) {
         status: 'pending',
         payment_provider: 'nowpayments',
         provider_payment_id: String(payment.payment_id),
+        tier: tierStr,
+        lock_months: lockMonthsVal,
         created_at: now,
       })
       .select();
@@ -153,6 +179,8 @@ export async function POST(request: NextRequest) {
         status: 'pending',
         payment_provider: 'plisio',
         provider_payment_id: txnId,
+        tier: tierStr,
+        lock_months: lockMonthsVal,
         created_at: now,
       })
       .select();

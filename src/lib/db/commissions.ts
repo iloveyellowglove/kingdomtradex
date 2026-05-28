@@ -1,6 +1,6 @@
 import { createServiceClient } from '../supabase/service';
 import { getSetting } from './settings';
-import { creditUserBalance } from './atomic';
+import { creditCommissionBalance } from './atomic';
 import type { ReferralCommission } from '../types';
 
 export async function getCommissionsByUser(
@@ -111,7 +111,7 @@ export async function distributeCommissions(
     }
 
     try {
-      await creditUserBalance(uplineUser.id, commissionAmount);
+      await creditCommissionBalance(uplineUser.id, commissionAmount);
     } catch (creditErr) {
       console.error('[commissions] credit failed L' + level + ':', creditErr);
       break;

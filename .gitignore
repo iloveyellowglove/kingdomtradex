@@ -18,5 +18,8 @@ next-env.d.ts
 # Sensitive SQL files (use .example templates instead)
 sql/create_admin.sql
 
+# CodeGraph index (auto-generated)
+.codegraph/
+
 # Claude Code
 .claude/

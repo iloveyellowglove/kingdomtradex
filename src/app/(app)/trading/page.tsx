@@ -22,12 +22,37 @@ export default async function TradingPageServer() {
 
   const { data: users } = await supabase
     .from('users')
-    .select('display_balance')
+    .select('locked_balance')
     .eq('id', userId)
     .limit(1);
 
-  const balance = Number(users?.[0]?.display_balance || 0);
+  const u = users?.[0] as { locked_balance?: number } | undefined;
+  const lockedBalance = Number(u?.locked_balance ?? 0);
+
+  const { data: activeLocks } = await supabase
+    .from('deposit_locks')
+    .select('id, amount, daily_rate, tier')
+    .eq('user_id', userId)
+    .eq('status', 'locked');
+
+  const activeLockCount = activeLocks?.length ?? 0;
+  const dailyProjection = (activeLocks ?? []).reduce(
+    (sum, lock) => sum + Number(lock.amount) * Number(lock.daily_rate),
+    0,
+  );
+
+  const uniqueTiers = (activeLocks ?? []).map(l => l.tier).filter((v, i, a) => a.indexOf(v) === i);
+
   const dailyRate = parseFloat(await getSetting('daily_profit_percentage', '1.5'));
 
-  return <TradingPage dailyRate={dailyRate} balance={balance} userId={userId} />;
+  return (
+    <TradingPage
+      dailyRate={dailyRate}
+      lockedBalance={lockedBalance}
+      activeLockCount={activeLockCount}
+      dailyProjection={dailyProjection}
+      activeTiers={uniqueTiers}
+      userId={userId}
+    />
+  );
 }

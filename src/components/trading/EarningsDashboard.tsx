@@ -6,7 +6,11 @@ import { fmt } from '@/lib/utils/formatting';
 import type { AITradingProfit } from '@/lib/types';
 
 interface Props {
-  balance: number;
+  profitBalance: number;
+  commissionBalance: number;
+  lockedBalance: number;
+  activeLockCount: number;
+  dailyProjection: number;
   dailyRate: number;
   profits: AITradingProfit[];
 }
@@ -20,8 +24,15 @@ function secondsSinceMidnightUTC() {
   return (Date.now() - startOfUTCDay().getTime()) / 1000;
 }
 
-export default function EarningsDashboard({ balance, dailyRate, profits }: Props) {
-  const dailyProjection = balance * (dailyRate / 100);
+export default function EarningsDashboard({
+  profitBalance,
+  commissionBalance,
+  lockedBalance,
+  activeLockCount,
+  dailyProjection,
+  dailyRate,
+  profits,
+}: Props) {
   const weekly = dailyProjection * 7;
   const monthly = dailyProjection * 30;
 
@@ -32,7 +43,6 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
   const prevDigitsRef = useRef('');
   const animFrameRef = useRef<ReturnType<typeof requestAnimationFrame>>();
 
-  // Interactive calculator state
   const [calcAmount, setCalcAmount] = useState(50);
   const calcDaily = calcAmount * (dailyRate / 100);
   const calcWeekly = calcDaily * 7;
@@ -47,14 +57,12 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
     const earned = (dailyProjection * fraction).toFixed(6);
     setLiveEarnings(earned);
 
-    // Pulse if last digits changed
     if (prevDigitsRef.current && prevDigitsRef.current !== earned) {
       setPulse(true);
       setTimeout(() => setPulse(false), 200);
     }
     prevDigitsRef.current = earned;
 
-    // Countdown to next 00:00 UTC
     const now = new Date();
     const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
     const diff = Math.max(0, next.getTime() - now.getTime());
@@ -73,6 +81,14 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
     };
   }, [updateTicker]);
 
+  const tierFromPercentage = (pct: number): string => {
+    if (pct >= 0.59) return 'Legacy';
+    if (pct >= 0.49) return 'Kingdom';
+    if (pct >= 0.39) return 'Builder';
+    if (pct >= 0.29) return 'Growth';
+    return '';
+  };
+
   return (
     <div className="py-4 space-y-6">
       {/* Hero Card */}
@@ -80,7 +96,6 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
         border: '1px solid transparent',
         borderImage: 'linear-gradient(135deg, #FFD700, #6A0DAD) 1',
       }}>
-        {/* Faint cross behind title */}
         <div className="absolute left-6 top-6 pointer-events-none" style={{ opacity: 0.06 }}>
           <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="36" y="8" width="8" height="64" rx="3" fill="#FFD700" />
@@ -91,17 +106,16 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div>
               <h2 className="text-temple-gold mb-1" style={{ fontSize: '1.5rem' }}>Kingdom Yield Vault</h2>
-              <p className="text-text-muted text-sm">Your balance earns yield daily through AI-powered trading</p>
+              <p className="text-text-muted text-sm">
+                Earning from {activeLockCount} active lock{activeLockCount !== 1 ? 's' : ''}
+              </p>
             </div>
             <p className="text-temple-gold text-3xl font-extrabold">Up to {dailyRate}% <span className="text-text-muted text-sm font-normal">Daily</span></p>
           </div>
 
-          {/* Hero stats: Daily dominant (2x), others smaller */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Staked Balance - 1 col */}
-            <StatCard label="Staked Balance" value={`${fmt(balance)} USDT`} gold />
+            <StatCard label="Available Profit" value={`${fmt(profitBalance)} USDT`} gold />
 
-            {/* Daily Earnings - 2 cols, 2x font */}
             <div className={`bg-dark-indigo rounded-lg p-4 text-center col-span-2 transition-transform ${pulse ? 'scale-[1.01]' : ''}`}
               style={{
                 border: '1px solid rgba(255,215,0,0.2)',
@@ -111,7 +125,6 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
               <p className="text-temple-gold font-bold break-all" style={{ fontSize: '1.75rem', lineHeight: 1.2 }}>
                 {liveEarnings} USDT
               </p>
-              {/* Progress bar */}
               <div className="mt-2 rounded-full overflow-hidden" style={{ height: 4, background: 'rgba(255,255,255,0.06)' }}>
                 <div className="h-full rounded-full transition-all" style={{
                   width: `${(fractionOfDay * 100).toFixed(1)}%`,
@@ -122,34 +135,45 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
               <p className="text-text-muted mt-1" style={{ fontSize: '10px' }}>
                 ${liveEarnings.slice(0, -2)} of ${dailyProjection.toFixed(2)} earned today
               </p>
-              {/* Countdown */}
               <p className="text-text-muted mt-1" style={{ fontSize: '10px' }}>
                 Next payout in {countdown.h}:{countdown.m}:{countdown.s}
               </p>
             </div>
 
-            {/* Weekly Earnings - 1 col */}
             <StatCard label="Weekly (est)" value={`${fmt(weekly)} USDT`} gold />
           </div>
 
-          {/* Monthly below */}
-          <div className="grid grid-cols-1 mt-4">
+          <div className="grid grid-cols-2 gap-4 mt-4">
             <StatCard label="Monthly Earnings (est)" value={`${fmt(monthly)} USDT`} gold />
+            <StatCard label="Locked Balance" value={`${fmt(lockedBalance)} USDT`} />
           </div>
         </div>
       </div>
 
-      {/* Stake Your USDT */}
+      {/* Active Locks Info */}
       <div className="card">
         <div className="card-body p-6">
-          <h3 className="text-lg font-bold mb-3">Stake Your USDT</h3>
+          <h3 className="text-lg font-bold mb-3">Your Yield Position</h3>
           <p className="mb-3">
-            Your entire balance of <span className="text-temple-gold font-semibold">{fmt(balance)} USDT</span> is earning yield automatically.
+            You have <span className="text-temple-gold font-semibold">{activeLockCount} active deposit lock{activeLockCount !== 1 ? 's' : ''}</span> generating
+            {' '}<span className="text-temple-gold font-semibold">${dailyProjection.toFixed(2)} USDT/day</span> in yield.
           </p>
-          <p className="text-text-muted text-sm mb-4">Staked funds earn up to {dailyRate}% daily yield. Withdraw anytime.</p>
-          <Link href="/deposit" className="btn-primary inline-block px-6 py-3 rounded-lg text-sm font-semibold">
-            Deposit More
-          </Link>
+          <p className="text-text-muted text-sm mb-4">
+            Available profit balance: <span className="text-green-400 font-semibold">${profitBalance.toFixed(2)} USDT</span>
+            {commissionBalance > 0 && (
+              <> &middot; Commission balance: <span className="text-purple-400 font-semibold">${commissionBalance.toFixed(2)} USDT</span></>
+            )}
+          </p>
+          <div className="flex gap-3">
+            <Link href="/deposit" className="btn-primary inline-block px-6 py-3 rounded-lg text-sm font-semibold">
+              Deposit More
+            </Link>
+            <Link href="/withdrawals" className="inline-block px-6 py-3 rounded-lg text-sm font-semibold transition-all" style={{
+              border: '1px solid #FFD700', color: '#FFD700',
+            }}>
+              Withdraw Earnings
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -221,6 +245,7 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
                 <tr>
                   <th className="text-left p-3">Date</th>
                   <th className="text-left p-3">Rate</th>
+                  <th className="text-left p-3">Tier</th>
                   <th className="text-left p-3">Profit Earned</th>
                 </tr>
               </thead>
@@ -229,6 +254,17 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
                   <tr key={p.id}>
                     <td className="p-3">{p.date}</td>
                     <td className="p-3">{p.percentage}%</td>
+                    <td className="p-3">
+                      {p.deposit_lock_id ? (
+                        <span className="px-2 py-0.5 rounded text-xs font-bold" style={{
+                          background: 'rgba(255,215,0,0.1)', color: '#FFD700',
+                        }}>
+                          {tierFromPercentage(p.percentage)}
+                        </span>
+                      ) : (
+                        <span className="text-text-muted">—</span>
+                      )}
+                    </td>
                     <td className="p-3 text-temple-gold font-semibold">{Number(p.amount).toFixed(2)} USDT</td>
                   </tr>
                 ))}
@@ -237,7 +273,7 @@ export default function EarningsDashboard({ balance, dailyRate, profits }: Props
           ) : (
             <div className="p-8 text-center">
               <p className="text-text-muted mb-0">No earnings history yet.</p>
-              <p className="text-text-muted text-xs mt-1">Profits are credited daily to your balance. Check back after the next daily distribution.</p>
+              <p className="text-text-muted text-xs mt-1">Profits are credited daily to your Available Profit balance. Check back after the next daily distribution.</p>
             </div>
           )}
         </div>

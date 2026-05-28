@@ -22,7 +22,7 @@ export default async function DashboardPage() {
   if (s.length === 0) redirect('/login');
   const userId = s[0].user_id;
 
-  // Get user
+  // Get user (with new balance columns)
   const { data: users } = await supabase
     .from('users')
     .select('*')
