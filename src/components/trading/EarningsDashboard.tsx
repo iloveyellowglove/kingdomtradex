@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { fmt } from '@/lib/utils/formatting';
 import type { AITradingProfit } from '@/lib/types';
@@ -41,7 +41,6 @@ export default function EarningsDashboard({
   const [countdown, setCountdown] = useState({ h: '00', m: '00', s: '00' });
   const [pulse, setPulse] = useState(false);
   const prevDigitsRef = useRef('');
-  const animFrameRef = useRef<ReturnType<typeof requestAnimationFrame>>();
 
   const [calcAmount, setCalcAmount] = useState(50);
   const calcDaily = calcAmount * (dailyRate / 100);
@@ -49,37 +48,40 @@ export default function EarningsDashboard({
   const calcMonthly = calcDaily * 30;
   const calcYearly = calcDaily * 365;
 
-  const updateTicker = useCallback(() => {
-    const seconds = secondsSinceMidnightUTC();
-    const fraction = Math.min(seconds / 86400, 1);
-    setFractionOfDay(fraction);
-
-    const earned = (dailyProjection * fraction).toFixed(6);
-    setLiveEarnings(earned);
-
-    if (prevDigitsRef.current && prevDigitsRef.current !== earned) {
-      setPulse(true);
-      setTimeout(() => setPulse(false), 200);
-    }
-    prevDigitsRef.current = earned;
-
-    const now = new Date();
-    const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
-    const diff = Math.max(0, next.getTime() - now.getTime());
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    setCountdown({ h: String(h).padStart(2, '0'), m: String(m).padStart(2, '0'), s: String(s).padStart(2, '0') });
-
-    animFrameRef.current = requestAnimationFrame(updateTicker);
-  }, [dailyProjection]);
+  const dailyProjectionRef = useRef(dailyProjection);
+  dailyProjectionRef.current = dailyProjection;
 
   useEffect(() => {
-    animFrameRef.current = requestAnimationFrame(updateTicker);
-    return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    let rafId: number;
+
+    const tick = () => {
+      const seconds = secondsSinceMidnightUTC();
+      const fraction = Math.min(seconds / 86400, 1);
+      setFractionOfDay(fraction);
+
+      const earned = (dailyProjectionRef.current * fraction).toFixed(6);
+      setLiveEarnings(earned);
+
+      if (prevDigitsRef.current && prevDigitsRef.current !== earned) {
+        setPulse(true);
+        setTimeout(() => setPulse(false), 200);
+      }
+      prevDigitsRef.current = earned;
+
+      const now = new Date();
+      const next = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+      const diff = Math.max(0, next.getTime() - now.getTime());
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setCountdown({ h: String(h).padStart(2, '0'), m: String(m).padStart(2, '0'), s: String(s).padStart(2, '0') });
+
+      rafId = requestAnimationFrame(tick);
     };
-  }, [updateTicker]);
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
 
   const tierFromPercentage = (pct: number): string => {
     if (pct >= 1.79) return 'Legacy';
