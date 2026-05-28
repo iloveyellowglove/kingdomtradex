@@ -137,7 +137,7 @@ function makeTrade(
   );
   const tradeSeconds = Math.floor((index / 18) * maxSeconds + rand() * Math.max(maxSeconds / 18, 60));
   const tradeDate = new Date(dayStart.getTime() + Math.min(tradeSeconds, maxSeconds) * 1000);
-  const timeStr = tradeDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const timeStr = tradeDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 
   const basePrice = pair === 'BTC/USDT' ? 67500 : pair === 'ETH/USDT' ? 3450 : pair === 'SOL/USDT' ? 145 : pair === 'BNB/USDT' ? 580 : 19.5;
   const price = Math.round((basePrice + (rand() - 0.5) * basePrice * 0.02) * 100) / 100;
@@ -204,16 +204,16 @@ export default function AITradeLog({ userId, dailyProjection, activeLockCount, a
 
       {/* Trade table */}
       <div className="overflow-y-auto flex-1" style={{ overflowX: 'auto' }}>
-        <table className="w-full" style={{ fontSize: '11px', minWidth: 580 }}>
+        <table className="w-full" style={{ fontSize: '12px' }}>
           <thead>
             <tr>
-              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '18%' }}>Time</th>
-              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '12%' }}>Pair</th>
-              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '12%' }}>Tier</th>
-              <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '11%' }}>Side</th>
-              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '18%' }}>Amt</th>
-              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '16%' }}>Price</th>
-              <th className="text-right p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '15%' }}>P/L</th>
+              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Time</th>
+              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Pair</th>
+              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Tier</th>
+              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Side</th>
+              <th className="text-right px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Amt</th>
+              <th className="text-right px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Price</th>
+              <th className="text-right px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>P/L</th>
             </tr>
           </thead>
           <tbody>
@@ -223,24 +223,27 @@ export default function AITradeLog({ userId, dailyProjection, activeLockCount, a
                 style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}
                 title={`${t.strategy} · ${t.tier} · ${t.pair}`}
               >
-                <td className="p-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>{t.time}</td>
-                <td className="p-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>{t.base}</td>
-                <td className="p-1.5">
-                  <span style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '4px', background: 'rgba(255,215,0,0.1)', color: '#FFD700', marginRight: 4 }}>
+                <td className="px-1 py-1" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px' }}>{t.time}</td>
+                <td className="px-1 py-1" style={{ color: 'rgba(255,255,255,0.8)', fontSize: '11px' }}>{t.base}</td>
+                <td className="px-1 py-1">
+                  <span style={{ fontSize: '10px', padding: '0px 4px', borderRadius: '3px', background: 'rgba(255,215,0,0.1)', color: '#FFD700' }}>
                     {t.tier}
                   </span>
                 </td>
-                <td className="p-1.5" style={{ color: t.side === 'BUY' ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
-                  {t.side}
+                <td className="px-1 py-1">
+                  <span style={{ fontSize: '10px', padding: '0px 4px', borderRadius: '3px', background: t.side === 'BUY' ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)', color: t.side === 'BUY' ? '#22c55e' : '#ef4444', fontWeight: 600 }}>
+                    {t.side}
+                  </span>
                 </td>
-                <td className="text-right p-1.5" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                <td className="text-right px-1 py-1" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px' }}>
                   {t.amount < 0.01 ? t.amount.toFixed(4) : t.amount.toFixed(2)}
                 </td>
-                <td className="text-right p-1.5" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                <td className="text-right px-1 py-1" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '11px' }}>
                   {t.price < 10 ? t.price.toFixed(4) : t.price.toFixed(2)}
                 </td>
-                <td className="text-right p-1.5 font-medium" style={{
+                <td className="text-right px-1 py-1 font-medium" style={{
                   color: t.pl >= 0 ? '#FFD700' : '#c4524a',
+                  fontSize: '11px',
                 }}>
                   {t.pl >= 0 ? '+' : '-'}{Math.abs(t.pl).toFixed(2)}
                 </td>

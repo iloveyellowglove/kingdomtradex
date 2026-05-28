@@ -148,7 +148,7 @@ export default function DepositPage() {
       {/* Step 1: Select amount and currency */}
       {step === 'amount' && (
         <div className="card">
-          <div className="card-header" style={{ background: 'none' }}><h5 className="mb-0">Step 1: Amount, Lock Tier &amp; Currency</h5></div>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid #352c4a', color: '#FFD700', fontWeight: 600, borderRadius: '16px 16px 0 0' }}><h5 className="mb-0">Step 1: Amount, Lock Tier &amp; Currency</h5></div>
           <div className="card-body">
             <form onSubmit={handleCreateInvoice} className="space-y-4">
               <div>
