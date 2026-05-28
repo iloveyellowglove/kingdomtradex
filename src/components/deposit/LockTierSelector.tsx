@@ -34,7 +34,7 @@ interface Props {
   onSelect: (tier: TierConfig) => void;
 }
 
-export default function LockTierSelector({ amount: _amount, selectedTier, onSelect }: Props) {
+export default function LockTierSelector({ selectedTier, onSelect }: Props) {
   const [pulseTier, setPulseTier] = useState<string | null>(null);
 
   const handleSelect = useCallback((tier: TierConfig) => {
