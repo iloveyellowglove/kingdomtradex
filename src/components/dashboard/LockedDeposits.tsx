@@ -8,7 +8,7 @@ interface DepositLock {
   deposit_id: number;
   amount: number;
   tier: string;
-  lock_months: number;
+  lock_days: number;
   daily_rate: number;
   locked_at: string;
   unlocks_at: string;

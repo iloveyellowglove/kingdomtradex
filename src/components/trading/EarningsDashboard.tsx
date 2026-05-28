@@ -82,10 +82,10 @@ export default function EarningsDashboard({
   }, [updateTicker]);
 
   const tierFromPercentage = (pct: number): string => {
-    if (pct >= 0.59) return 'Legacy';
-    if (pct >= 0.49) return 'Kingdom';
-    if (pct >= 0.39) return 'Builder';
-    if (pct >= 0.29) return 'Growth';
+    if (pct >= 1.79) return 'Legacy';
+    if (pct >= 1.39) return 'Kingdom';
+    if (pct >= 1.19) return 'Builder';
+    if (pct >= 0.99) return 'Growth';
     return '';
   };
 

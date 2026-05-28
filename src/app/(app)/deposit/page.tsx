@@ -72,7 +72,7 @@ export default function DepositPage() {
         currency: currencyId,
         amount: parseFloat(amount),
         tier: selectedTierConfig?.tier,
-        lock_months: selectedTierConfig?.lock_months,
+        lock_days: selectedTierConfig?.lock_days,
       }),
     });
 

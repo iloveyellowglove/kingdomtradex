@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS deposit_locks (
     deposit_id      BIGINT NOT NULL REFERENCES deposits(id),
     amount          NUMERIC(20,8) NOT NULL,
     tier            TEXT NOT NULL CHECK (tier IN ('growth','builder','kingdom','legacy')),
-    lock_months     INT NOT NULL CHECK (lock_months IN (6, 12, 24, 36)),
+    lock_days     INT NOT NULL CHECK (lock_days IN (60, 90, 120, 180)),
     daily_rate      NUMERIC(10,6) NOT NULL,
     locked_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
     unlocks_at      TIMESTAMPTZ NOT NULL,
@@ -36,15 +36,15 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_deposit_locks_deposit_id ON deposit_locks(
 CREATE TABLE IF NOT EXISTS lock_tiers (
     tier        TEXT PRIMARY KEY,
     label       TEXT NOT NULL,
-    lock_months INT NOT NULL,
+    lock_days INT NOT NULL,
     daily_rate  NUMERIC(10,6) NOT NULL,
     description TEXT,
     sort_order  INT NOT NULL DEFAULT 0
 );
 
-INSERT INTO lock_tiers (tier, label, lock_months, daily_rate, description, sort_order) VALUES
-    ('growth',   'Growth',   6,  0.003000, '6-month lock period',  1),
-    ('builder',  'Builder',  12, 0.004000, '1-year lock period',   2),
-    ('kingdom',  'Kingdom',  24, 0.005000, '2-year lock period',   3),
-    ('legacy',   'Legacy',   36, 0.006000, '3-year lock period',   4)
+INSERT INTO lock_tiers (tier, label, lock_days, daily_rate, description, sort_order) VALUES
+    ('growth',   'Growth',   60,  0.010000, '60-day lock period',  1),
+    ('builder',  'Builder',  90,  0.012000, '90-day lock period',  2),
+    ('kingdom',  'Kingdom',  120, 0.014000, '120-day lock period', 3),
+    ('legacy',   'Legacy',   180, 0.018000, '180-day lock period', 4)
 ON CONFLICT (tier) DO NOTHING;

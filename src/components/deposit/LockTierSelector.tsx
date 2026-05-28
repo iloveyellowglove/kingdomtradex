@@ -1,29 +1,31 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
+
 export interface TierConfig {
   tier: string;
   label: string;
-  lock_months: number;
+  lock_days: number;
   daily_rate: number;
   description: string;
   sort_order: number;
 }
 
 const TIERS: TierConfig[] = [
-  { tier: 'growth',  label: 'Growth',  lock_months: 6,  daily_rate: 0.003000, description: '6-month lock period',  sort_order: 1 },
-  { tier: 'builder', label: 'Builder', lock_months: 12, daily_rate: 0.004000, description: '1-year lock period',   sort_order: 2 },
-  { tier: 'kingdom', label: 'Kingdom', lock_months: 24, daily_rate: 0.005000, description: '2-year lock period',   sort_order: 3 },
-  { tier: 'legacy',  label: 'Legacy',  lock_months: 36, daily_rate: 0.006000, description: '3-year lock period',   sort_order: 4 },
+  { tier: 'growth',  label: 'Growth',  lock_days: 60,  daily_rate: 0.010000, description: '60-day lock period',  sort_order: 1 },
+  { tier: 'builder', label: 'Builder', lock_days: 90,  daily_rate: 0.012000, description: '90-day lock period',  sort_order: 2 },
+  { tier: 'kingdom', label: 'Kingdom', lock_days: 120, daily_rate: 0.014000, description: '120-day lock period', sort_order: 3 },
+  { tier: 'legacy',  label: 'Legacy',  lock_days: 180, daily_rate: 0.018000, description: '180-day lock period', sort_order: 4 },
 ];
 
-function projectedReturn(amount: number, dailyRate: number, lockMonths: number): number {
-  return amount * dailyRate * (lockMonths * 30);
+function totalReturnPct(lockDays: number, dailyRate: number): string {
+  return (lockDays * dailyRate * 100).toFixed(0);
 }
 
-function formatPeriod(months: number): string {
-  if (months < 12) return `${months} months`;
-  const years = months / 12;
-  return years === 1 ? '1 year' : `${years} years`;
+function getBadge(tier: string): string | null {
+  if (tier === 'kingdom') return 'POPULAR';
+  if (tier === 'legacy') return 'BEST VALUE';
+  return null;
 }
 
 interface Props {
@@ -32,64 +34,124 @@ interface Props {
   onSelect: (tier: TierConfig) => void;
 }
 
-export default function LockTierSelector({ amount, selectedTier, onSelect }: Props) {
+export default function LockTierSelector({ amount: _amount, selectedTier, onSelect }: Props) {
+  const [pulseTier, setPulseTier] = useState<string | null>(null);
+
+  const handleSelect = useCallback((tier: TierConfig) => {
+    onSelect(tier);
+    setPulseTier(tier.tier);
+  }, [onSelect]);
+
+  useEffect(() => {
+    if (pulseTier) {
+      const t = setTimeout(() => setPulseTier(null), 200);
+      return () => clearTimeout(t);
+    }
+  }, [pulseTier]);
+
   return (
     <div className="space-y-3">
       <label className="block text-text-secondary font-medium mb-1">Lock Tier</label>
-      <p className="text-xs text-text-muted -mt-1 mb-3">Select a lock period for your deposit. Longer locks earn higher daily returns.</p>
+      <p className="text-xs text-text-muted -mt-1 mb-3">
+        Select a lock period for your deposit. Longer locks earn higher daily returns.
+      </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {TIERS.map((tier) => {
           const selected = selectedTier === tier.tier;
-          const proj = projectedReturn(amount || 0, tier.daily_rate, tier.lock_months);
+          const pulsing = pulseTier === tier.tier;
+          const badge = getBadge(tier.tier);
+          const ratePct = (tier.daily_rate * 100).toFixed(2);
 
           return (
             <button
               key={tier.tier}
               type="button"
-              onClick={() => onSelect(tier)}
-              className="text-left p-4 rounded-xl transition-all duration-200"
+              role="radio"
+              aria-checked={selected}
+              onClick={() => handleSelect(tier)}
+              className={[
+                'relative text-left py-5 px-4 rounded-xl transition-all duration-200',
+                'focus:outline-none focus:ring-2 focus:ring-[#FFD700]/50 focus:ring-offset-2 focus:ring-offset-[#0e0b1a]',
+              ].join(' ')}
               style={{
-                background: selected ? 'rgba(255,215,0,0.08)' : 'rgba(255,255,255,0.03)',
+                background: selected
+                  ? 'rgba(255,215,0,0.05)'
+                  : 'rgba(255,255,255,0.03)',
                 border: selected
-                  ? '2px solid #FFD700'
-                  : '1px solid rgba(255,255,255,0.06)',
+                  ? '1px solid #FFD700'
+                  : '1px solid rgba(255,255,255,0.08)',
                 boxShadow: selected
-                  ? '0 0 20px rgba(255,215,0,0.15), inset 0 0 20px rgba(255,215,0,0.03)'
+                  ? '0 0 20px rgba(255,215,0,0.10)'
                   : 'none',
+                transform: pulsing ? 'scale(1.02)' : 'scale(1.0)',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                if (!selected) {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!selected) {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                }
               }}
             >
-              <div className="flex items-center gap-2 mb-2">
+              {/* Badge */}
+              {badge && (
                 <span
-                  className="text-sm font-bold"
-                  style={{ color: selected ? '#FFD700' : '#E2E8F0' }}
+                  className="absolute top-3 left-3 text-xs font-medium rounded-full px-2 py-0.5"
+                  style={{ background: 'rgba(255,215,0,0.15)', color: '#FFD700' }}
                 >
-                  {tier.label}
+                  {badge}
                 </span>
-                {selected && (
-                  <span className="text-xs px-1.5 py-0.5 rounded font-medium bg-[#FFD700] text-black">
-                    Selected
-                  </span>
-                )}
-              </div>
-
-              <div className="text-xs text-text-muted mb-2">{formatPeriod(tier.lock_months)} lock</div>
-
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-lg font-bold" style={{ color: selected ? '#FFD700' : '#E2E8F0' }}>
-                  {(tier.daily_rate * 100).toFixed(2)}%
-                </span>
-                <span className="text-xs text-text-muted">/ day</span>
-              </div>
-
-              {amount > 0 && (
-                <div className="mt-3 pt-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-                  <div className="text-xs text-text-muted">Projected return</div>
-                  <div className="text-sm font-semibold text-success">
-                    +${proj.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD
-                  </div>
-                </div>
               )}
+
+              {/* Selected checkmark */}
+              {selected && (
+                <span className="absolute top-3 right-3" style={{ color: '#FFD700' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
+              )}
+
+              {/* Tier label */}
+              <div
+                className="text-base font-semibold mb-1"
+                style={{ color: selected ? '#FFD700' : '#ffffff' }}
+              >
+                {tier.label}
+              </div>
+
+              {/* Lock period */}
+              <div className="text-sm mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                {tier.lock_days} days
+              </div>
+
+              {/* Daily rate — hero number */}
+              <div className="flex items-baseline gap-1">
+                <span
+                  className="text-xl md:text-2xl font-bold"
+                  style={{ color: '#FFD700' }}
+                >
+                  {ratePct}%
+                </span>
+                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  / day
+                </span>
+              </div>
+
+              {/* Divider */}
+              <div className="my-3" style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+
+              {/* Total return */}
+              <div className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                Total: {totalReturnPct(tier.lock_days, tier.daily_rate)}% return
+              </div>
             </button>
           );
         })}

@@ -35,7 +35,7 @@ export async function processCompletedDeposit(params: {
 
   let depositId: number;
   let tier: string | null = null;
-  let lockMonths: number | null = null;
+  let lockDays: number | null = null;
 
   if (existingDep && existingDep.length > 0) {
     const dep = existingDep[0];
@@ -53,7 +53,7 @@ export async function processCompletedDeposit(params: {
 
     depositId = dep.id;
     tier = dep.tier ?? null;
-    lockMonths = dep.lock_months ?? null;
+    lockDays = dep.lock_days ?? null;
 
     // Ensure status is completed
     if (dep.status !== 'completed') {
@@ -83,7 +83,7 @@ export async function processCompletedDeposit(params: {
 
     depositId = depositRows[0].id;
     tier = depositRows[0].tier ?? null;
-    lockMonths = depositRows[0].lock_months ?? null;
+    lockDays = depositRows[0].lock_days ?? null;
   }
 
   // Look up user for bonus handling and first_deposit_time
@@ -138,40 +138,40 @@ export async function processCompletedDeposit(params: {
   }
 
   // Lock deposit with tier (if tier is set) or fall back to simple lock
-  if (tier && lockMonths) {
+  if (tier && lockDays) {
     const { data: tierRow } = await supabase
       .from('lock_tiers')
       .select('daily_rate')
       .eq('tier', tier)
       .single();
 
-    const dailyRate = tierRow?.daily_rate ?? 0.003;
+    const dailyRate = tierRow?.daily_rate ?? 0.01;
 
     await lockDeposit(
       params.userId,
       depositId,
       lockAmount,
       tier,
-      lockMonths,
+      lockDays,
       Number(dailyRate),
     );
   } else {
-    // Fallback: deposit without tier — use a default 6-month growth lock
+    // Fallback: deposit without tier — use a default 60-day growth lock
     const { data: tierRow } = await supabase
       .from('lock_tiers')
-      .select('daily_rate, lock_months')
+      .select('daily_rate, lock_days')
       .eq('tier', 'growth')
       .single();
 
-    const dailyRate = tierRow?.daily_rate ?? 0.003;
-    const fallbackMonths = tierRow?.lock_months ?? 6;
+    const dailyRate = tierRow?.daily_rate ?? 0.01;
+    const fallbackDays = tierRow?.lock_days ?? 60;
 
     await lockDeposit(
       params.userId,
       depositId,
       lockAmount,
       'growth',
-      fallbackMonths,
+      fallbackDays,
       Number(dailyRate),
     );
   }

@@ -144,7 +144,7 @@ CREATE OR REPLACE FUNCTION lock_deposit(
   p_deposit_id BIGINT,
   p_amount     NUMERIC,
   p_tier       TEXT,
-  p_lock_months INT,
+  p_lock_days INT,
   p_daily_rate NUMERIC
 )
 RETURNS SETOF deposit_locks AS $$
@@ -152,11 +152,11 @@ DECLARE
   v_lock deposit_locks;
 BEGIN
   INSERT INTO deposit_locks (
-    user_id, deposit_id, amount, tier, lock_months, daily_rate,
+    user_id, deposit_id, amount, tier, lock_days, daily_rate,
     locked_at, unlocks_at, status
   ) VALUES (
-    p_user_id, p_deposit_id, p_amount, p_tier, p_lock_months, p_daily_rate,
-    now(), now() + (p_lock_months || ' months')::interval, 'locked'
+    p_user_id, p_deposit_id, p_amount, p_tier, p_lock_days, p_daily_rate,
+    now(), now() + (p_lock_days || ' days')::interval, 'locked'
   )
   RETURNING * INTO v_lock;
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 
-const DAILY_RATE = 0.008; // 0.8% daily
+const DAILY_RATE = 0.01; // 1.0% daily
 
 function calcBalance(principal: number, days: number): number {
   let balance = principal;

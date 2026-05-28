@@ -196,7 +196,7 @@ export interface DepositLock {
   deposit_id: number;
   amount: number;
   tier: string;
-  lock_months: number;
+  lock_days: number;
   daily_rate: number;
   locked_at: string;
   unlocks_at: string;
@@ -209,7 +209,7 @@ export async function lockDeposit(
   depositId: number,
   amount: number,
   tier: string,
-  lockMonths: number,
+  lockDays: number,
   dailyRate: number
 ): Promise<DepositLock> {
   const supabase = createServiceClient();
@@ -218,7 +218,7 @@ export async function lockDeposit(
     p_deposit_id: depositId,
     p_amount: round8(amount),
     p_tier: tier,
-    p_lock_months: lockMonths,
+    p_lock_days: lockDays,
     p_daily_rate: dailyRate,
   });
   if (error) throw new Error(`lockDeposit failed: ${error.message}`);
