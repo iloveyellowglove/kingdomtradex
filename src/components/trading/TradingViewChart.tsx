@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PAIRS } from '@/lib/pairs';
 
 declare global {
@@ -17,11 +17,13 @@ interface TradingViewChartProps {
 
 export default function TradingViewChart({ symbol }: TradingViewChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     container.innerHTML = '';
+    setLoading(true);
 
     const script = document.createElement('script');
     script.src = 'https://s3.tradingview.com/tv.js';
@@ -47,7 +49,9 @@ export default function TradingViewChart({ symbol }: TradingViewChartProps) {
           'paneProperties.backgroundType': 'solid',
         },
       });
+      setLoading(false);
     };
+    script.onerror = () => setLoading(false);
     container.appendChild(script);
   }, [symbol]);
 
@@ -56,7 +60,26 @@ export default function TradingViewChart({ symbol }: TradingViewChartProps) {
       background: 'rgba(255,255,255,0.03)',
       border: '1px solid rgba(255,255,255,0.06)',
     }}>
-      <div id="tv-chart-container" ref={containerRef} style={{ height: 550 }} />
+      {loading && (
+        <div className="flex items-center justify-center" style={{ height: 550 }}>
+          <div className="text-center">
+            <div className="inline-block mb-4" style={{
+              width: 48, height: 48,
+              border: '3px solid rgba(255,255,255,0.08)',
+              borderTopColor: '#FFD700',
+              borderRadius: '50%',
+              animation: 'spin 0.8s linear infinite',
+            }} />
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>Loading chart...</p>
+          </div>
+          <style jsx>{`
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      )}
+      <div id="tv-chart-container" ref={containerRef} style={{ height: 550, display: loading ? 'none' : 'block' }} />
     </div>
   );
 }

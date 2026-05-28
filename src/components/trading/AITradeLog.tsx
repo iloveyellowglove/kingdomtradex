@@ -67,7 +67,7 @@ function shuffle<T>(arr: T[], rand: () => number): T[] {
   return a;
 }
 
-function generateTrades(userId: number, dailyProjection: number, activeTiers: string[]): AITrade[] {
+function generateTrades(userId: number, _dailyProjection: number, activeTiers: string[]): AITrade[] {
   const seed = hashCode(`${userId}_${getUTCDay()}`);
   const rand = seededRandom(seed);
   const N = 8 + Math.floor(rand() * 11); // 8-18 trades
@@ -77,41 +77,22 @@ function generateTrades(userId: number, dailyProjection: number, activeTiers: st
 
   const tiers = activeTiers.length > 0 ? activeTiers : ['growth'];
 
-  // Edge case: very small stake (< $0.10 daily) - all wins
-  if (dailyProjection < 0.10) {
-    const trades: AITrade[] = [];
-    for (let i = 0; i < N; i++) {
-      trades.push(makeTrade(rand, i, dayStart, now, dailyProjection / N, true, tiers));
-    }
-    trades.sort((a, b) => b.time.localeCompare(a.time));
-    return trades;
-  }
-
   // Win rate between 70% and 80%
   const winRate = 0.70 + rand() * 0.10;
   const winCount = Math.round(N * winRate);
   const lossCount = N - winCount;
 
-  // Generate losses first (magnitudes smaller than wins)
+  // Wins: +0.50 to +5.00
+  const wins: number[] = [];
+  for (let i = 0; i < winCount; i++) {
+    wins.push(Math.round((0.50 + rand() * 4.50) * 100) / 100);
+  }
+
+  // Losses: -0.25 to -3.00
   const losses: number[] = [];
   for (let i = 0; i < lossCount; i++) {
-    const lossMag = dailyProjection * (0.01 + rand() * 0.04);
-    losses.push(Math.round(lossMag * 100) / 100);
+    losses.push(Math.round((0.25 + rand() * 2.75) * 100) / 100);
   }
-  const totalLosses = losses.reduce((s, l) => s + l, 0);
-
-  // Wins must cover losses + reach dailyProjection
-  const totalWinsNeeded = dailyProjection + totalLosses;
-
-  // Distribute wins
-  const winWeights: number[] = [];
-  for (let i = 0; i < winCount; i++) {
-    winWeights.push(0.3 + rand() * 1.4);
-  }
-  const totalWinWeight = winWeights.reduce((s, w) => s + w, 0);
-  const wins: number[] = winWeights.map((w) =>
-    Math.round((totalWinsNeeded * (w / totalWinWeight)) * 100) / 100
-  );
 
   // Build trades
   const winTrades: AITrade[] = wins.map((pl, i) =>
@@ -222,8 +203,8 @@ export default function AITradeLog({ userId, dailyProjection, activeLockCount, a
       </div>
 
       {/* Trade table */}
-      <div className="overflow-y-auto flex-1" style={{ overflowX: 'hidden' }}>
-        <table className="w-full" style={{ fontSize: '11px', tableLayout: 'fixed' }}>
+      <div className="overflow-y-auto flex-1" style={{ overflowX: 'auto' }}>
+        <table className="w-full" style={{ fontSize: '11px', minWidth: 580 }}>
           <thead>
             <tr>
               <th className="text-left p-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)', width: '18%' }}>Time</th>
@@ -245,7 +226,7 @@ export default function AITradeLog({ userId, dailyProjection, activeLockCount, a
                 <td className="p-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>{t.time}</td>
                 <td className="p-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>{t.base}</td>
                 <td className="p-1.5">
-                  <span style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '4px', background: 'rgba(255,215,0,0.1)', color: '#FFD700' }}>
+                  <span style={{ fontSize: '10px', padding: '1px 6px', borderRadius: '4px', background: 'rgba(255,215,0,0.1)', color: '#FFD700', marginRight: 4 }}>
                     {t.tier}
                   </span>
                 </td>
