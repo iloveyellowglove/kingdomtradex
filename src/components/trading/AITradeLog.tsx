@@ -40,7 +40,6 @@ const PAIR_AMT_MAX: Record<string, number> = {
   'BNB/USDT': 0.1, 'ETH/BTC': 2.0, 'SOL/ETH': 5.0,
 };
 
-const TIERS = ['Growth', 'Builder', 'Kingdom', 'Legacy'];
 const ALL_STRATEGIES = ['Arbitrage', 'Momentum', 'Mean Reversion', 'Range Bound'];
 const VERBS = ['analyzing', 'scanning', 'evaluating', 'executing on'];
 
@@ -56,14 +55,6 @@ function randomTier(): string {
   if (r < 0.70) return 'Builder';
   if (r < 0.90) return 'Kingdom';
   return 'Legacy';
-}
-
-function randomPL(): number {
-  const isWin = Math.random() < 0.75;
-  if (isWin) {
-    return Math.round((0.50 + Math.random() * 7.50) * 100) / 100;
-  }
-  return -(Math.round((0.25 + Math.random() * 3.75) * 100) / 100);
 }
 
 function randomAmount(pair: string): number {
@@ -142,7 +133,7 @@ function generateInitialTrades(): AITrade[] {
   return trades;
 }
 
-export default function AITradeLog({ userId: _userId, dailyProjection: _dp, activeLockCount, activeTiers: _at }: AITradeLogProps) {
+export default function AITradeLog({ activeLockCount }: AITradeLogProps) {
   const [trades, setTrades] = useState<AITrade[]>(() => generateInitialTrades());
   const [highlightId, setHighlightId] = useState<number | null>(null);
   const [statusIdx, setStatusIdx] = useState(0);
