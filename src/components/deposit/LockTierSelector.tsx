@@ -34,7 +34,7 @@ interface Props {
   onSelect: (tier: TierConfig) => void;
 }
 
-export default function LockTierSelector({ selectedTier, onSelect }: Props) {
+export default function LockTierSelector({ amount, selectedTier, onSelect }: Props) {
   const [pulseTier, setPulseTier] = useState<string | null>(null);
 
   const handleSelect = useCallback((tier: TierConfig) => {
@@ -152,6 +152,13 @@ export default function LockTierSelector({ selectedTier, onSelect }: Props) {
               <div className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
                 Total: {totalReturnPct(tier.lock_days, tier.daily_rate)}% return
               </div>
+
+              {/* USD profit estimate */}
+              {amount > 0 && (
+                <div className="text-sm font-semibold mt-1" style={{ color: '#22c55e' }}>
+                  ${(amount * tier.lock_days * tier.daily_rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} profit
+                </div>
+              )}
             </button>
           );
         })}
