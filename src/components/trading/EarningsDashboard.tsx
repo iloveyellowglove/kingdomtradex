@@ -36,8 +36,9 @@ export default function EarningsDashboard({
   const weekly = dailyProjection * 7;
   const monthly = dailyProjection * 30;
 
-  const [liveEarnings, setLiveEarnings] = useState('0.000000');
-  const [fractionOfDay, setFractionOfDay] = useState(0);
+  const initialFraction = Math.min(secondsSinceMidnightUTC() / 86400, 1);
+  const [liveEarnings, setLiveEarnings] = useState((dailyProjection * initialFraction).toFixed(6));
+  const [fractionOfDay, setFractionOfDay] = useState(initialFraction);
   const [countdown, setCountdown] = useState({ h: '00', m: '00', s: '00' });
   const [pulse, setPulse] = useState(false);
   const prevDigitsRef = useRef('');
@@ -53,8 +54,11 @@ export default function EarningsDashboard({
 
   useEffect(() => {
     let rafId: number;
+    let mounted = true;
 
     const tick = () => {
+      if (!mounted) return;
+
       const seconds = secondsSinceMidnightUTC();
       const fraction = Math.min(seconds / 86400, 1);
       setFractionOfDay(fraction);
@@ -79,8 +83,13 @@ export default function EarningsDashboard({
       rafId = requestAnimationFrame(tick);
     };
 
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
+    // Fire immediately on mount so counter starts at the correct value
+    tick();
+
+    return () => {
+      mounted = false;
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const tierFromPercentage = (pct: number): string => {

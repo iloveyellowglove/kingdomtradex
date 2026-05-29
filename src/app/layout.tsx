@@ -6,6 +6,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import OracleChat from '@/components/chatbot/OracleChat';
 import SocialProofToast from '@/components/SocialProofToast';
+import TawkToWidget from '@/components/layout/TawkToWidget';
 
 export const metadata: Metadata = {
   title: 'KingdomTradex - Free Crypto Credits + AI-Powered Daily Returns',
@@ -81,6 +82,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Footer />
         <OracleChat />
         <SocialProofToast />
+        <TawkToWidget />
         <script dangerouslySetInnerHTML={{
           __html: `(function(){var n=document.getElementById('mainNav');if(n){window.addEventListener('scroll',function(){n.classList.toggle('scrolled',window.scrollY>20)});}})();`
         }} />

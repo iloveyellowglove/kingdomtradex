@@ -77,6 +77,9 @@ export default function Navbar({ user }: NavbarProps) {
                 <NavLink href="/referral-tree" active={pathname === '/referral-tree'}>
                   Disciples
                 </NavLink>
+                <NavLink href="/support" active={pathname === '/support'}>
+                  Support
+                </NavLink>
                 {user.role === 'admin' && (
                   <NavLink href="/admin" active={pathname.startsWith('/admin')} highlight>
                     Admin

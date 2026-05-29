@@ -10,6 +10,7 @@ const TABS = [
   { href: '/admin/withdrawals', label: 'Withdrawals' },
   { href: '/admin/commissions', label: 'Commissions' },
   { href: '/admin/kyc', label: 'KYC Review' },
+  { href: '/admin/support', label: 'Support' },
   { href: '/admin/settings', label: 'Settings' },
 ];
 
