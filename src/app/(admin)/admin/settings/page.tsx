@@ -12,6 +12,7 @@ type SettingRow = {
 const MISSING_SETTINGS: { key: string; value: string; description: string }[] = [
   { key: 'openrouter_api_key', value: '', description: 'API key for OpenRouter AI provider' },
   { key: 'openrouter_model', value: 'mistralai/mistral-7b-instruct', description: 'Model used for AI oracle chatbot' },
+  { key: 'cold_wallet_xmr', value: '', description: 'XMR cold wallet address for auto-split deposits (overrides COLD_WALLET_XMR env)' },
 ];
 
 export default async function AdminSettingsPage() {

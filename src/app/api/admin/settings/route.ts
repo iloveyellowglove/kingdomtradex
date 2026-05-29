@@ -16,6 +16,7 @@ const ALLOWED_KEYS = [
   'commission_l3',
   'commission_l4',
   'commission_l5',
+  'cold_wallet_xmr',
 ];
 
 const PERCENTAGE_KEYS = ['daily_profit_percentage', 'commission_l1', 'commission_l2', 'commission_l3', 'commission_l4', 'commission_l5'];
