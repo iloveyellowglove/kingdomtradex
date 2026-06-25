@@ -9,8 +9,7 @@ export default function AITradeFeed() {
   const [flashId, setFlashId] = useState(0);
   const [userScrolled, setUserScrolled] = useState(false);
   const [burstMsg, setBurstMsg] = useState('');
-  const listRef = useRef<HTMLDivElement>(null);
-  const topRef = useRef<HTMLDivElement>(null);
+  const feedRef = useRef<HTMLDivElement>(null);
 
   const handleTrade = useCallback((trade: SimulatedTrade) => {
     setTrades(getRecentTrades().slice(0, 60));
@@ -31,18 +30,25 @@ export default function AITradeFeed() {
     return () => stopSimulator();
   }, [handleTrade, handleBurst]);
 
-  // Auto-scroll to top when new trades arrive (unless user scrolled)
+  // Auto-scroll feed container to top when new trades arrive (unless user scrolled down)
   useEffect(() => {
-    if (!userScrolled && topRef.current) {
-      topRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if (!userScrolled && feedRef.current) {
+      feedRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [trades.length, userScrolled]);
 
   const handleScroll = useCallback(() => {
-    if (listRef.current) {
-      setUserScrolled(listRef.current.scrollTop > 60);
+    if (feedRef.current) {
+      setUserScrolled(feedRef.current.scrollTop > 50);
     }
   }, []);
+
+  function jumpToLive() {
+    setUserScrolled(false);
+    if (feedRef.current) {
+      feedRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
 
   const filtered = filter === 'all' ? trades : trades.filter(t => t.side === filter);
   const winRate = getWinRate();
@@ -97,13 +103,20 @@ export default function AITradeFeed() {
 
       {/* Trade list */}
       <div
-        ref={listRef}
+        ref={feedRef}
         onScroll={handleScroll}
         className="flex-1 overflow-y-auto relative"
         style={{ maxHeight: 'calc(100vh - 380px)', minHeight: 360 }}
       >
-        {/* Anchor for auto-scroll */}
-        <div ref={topRef} />
+        {/* Sticky "New trades" button */}
+        {userScrolled && (
+          <button
+            onClick={jumpToLive}
+            className="sticky top-2 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full text-xs font-bold shadow-lg"
+            style={{ background: '#F0B90B', color: '#0B0E11' }}>
+            ↓ New trades — jump to live
+          </button>
+        )}
 
         {filtered.map(t => (
           <div key={t.id}
@@ -137,16 +150,6 @@ export default function AITradeFeed() {
           </div>
         ))}
       </div>
-
-      {/* Jump to live button */}
-      {userScrolled && (
-        <button
-          onClick={() => { setUserScrolled(false); topRef.current?.scrollIntoView({ behavior: 'smooth' }); }}
-          className="absolute bottom-20 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-xs font-bold shadow-lg z-10"
-          style={{ background: '#F0B90B', color: '#0B0E11' }}>
-          ↓ New trades
-        </button>
-      )}
 
       {/* Bottom stats bar */}
       <div className="flex items-center justify-between px-4 py-3 border-t flex-shrink-0 text-xs" style={{ borderColor: '#2B3139', background: '#161A1E' }}>
