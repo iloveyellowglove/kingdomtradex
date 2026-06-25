@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { seedTrades, getRecentTrades, SimulatedTrade } from '@/lib/ai-trade-simulator';
+import { seedTrades, getRecentTrades } from '@/lib/ai-trade-simulator';
 
 export default function AITradingHeader() {
   const [tickerItems, setTickerItems] = useState<string[]>([]);
