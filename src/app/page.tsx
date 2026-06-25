@@ -1,4 +1,3 @@
-import { lazy } from 'react';
 import LandingNavbar from '@/components/landing/LandingNavbar';
 import HeroSection from '@/components/landing/HeroSection';
 import SignupCreditBanner from '@/components/landing/SignupCreditBanner';
