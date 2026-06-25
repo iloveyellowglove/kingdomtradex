@@ -39,7 +39,7 @@ export default function TierComparison() {
 
       {/* Mobile: horizontal scroll; Desktop: grid */}
       <div className="flex md:grid md:grid-cols-4 gap-4 overflow-x-auto pb-4 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
-        {TIERS.map((tier, i) => (
+        {TIERS.map((tier) => (
           <div
             key={tier.key}
             className="flex-shrink-0 w-[260px] md:w-auto snap-center rounded-2xl p-5 relative transition hover:scale-[1.02]"

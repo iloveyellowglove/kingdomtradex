@@ -72,7 +72,6 @@ export function verifyBackupCode(code: string, hashedCodes: string[]): number {
 // ── Email OTP ────────────────────────────────────────────────────────────────
 
 const OTP_LENGTH = 6;
-const OTP_EXPIRY_MS = 5 * 60 * 1000;   // 5 minutes
 const OTP_RATE_LIMIT = 5;               // max requests per hour
 const OTP_RATE_WINDOW_MS = 60 * 60 * 1000;
 

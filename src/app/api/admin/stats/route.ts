@@ -5,7 +5,6 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const supabase = createServiceClient();
-  const now = new Date().toISOString();
   const dayAgo = new Date(Date.now() - 86400000).toISOString();
   const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
   const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString();

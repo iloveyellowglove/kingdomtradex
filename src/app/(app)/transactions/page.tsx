@@ -26,7 +26,6 @@ export default function TransactionsPage() {
   const [txns, setTxns] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [type, setType] = useState('');
-  const [status, setStatus] = useState('');
   const [search, setSearch] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
@@ -38,7 +37,6 @@ export default function TransactionsPage() {
     try {
       const params = new URLSearchParams();
       if (type) params.set('type', type);
-      if (status) params.set('status', status);
       if (search) params.set('search', search);
       if (from) params.set('from', from);
       if (to) params.set('to', to);
@@ -52,14 +50,13 @@ export default function TransactionsPage() {
       }
     } catch { /* ignore */ }
     setLoading(false);
-  }, [type, status, search, from, to, page]);
+  }, [type, search, from, to, page]);
 
   useEffect(() => { load(); }, [load]);
 
   function exportCsv() {
     const params = new URLSearchParams();
     if (type) params.set('type', type);
-    if (status) params.set('status', status);
     params.set('export', '1');
     window.open(`/api/transactions?${params}`, '_blank');
   }

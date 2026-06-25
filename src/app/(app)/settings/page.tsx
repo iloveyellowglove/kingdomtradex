@@ -182,7 +182,6 @@ export default function SettingsPage() {
 }
 
 function EmailOtpCard() {
-  const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [otpCode, setOtpCode] = useState('');
