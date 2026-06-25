@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { TIER_LIST } from '@/lib/tiers';
 
 interface LockedDeposit {
   id: string;
@@ -137,22 +138,17 @@ export default function PortfolioTabs({ userId }: Props) {
           {/* Tiers tab */}
           {tab === 'tiers' && (
             <div className="space-y-2">
-              {[
-                { tier: 'silver', label: 'Silver', days: 180, rate: 0.012, color: '#C0C0C0' },
-                { tier: 'gold', label: 'Gold', days: 270, rate: 0.018, color: '#F0B90B' },
-                { tier: 'platinum', label: 'Platinum', days: 360, rate: 0.024, color: '#E5E4E2' },
-                { tier: 'diamond', label: 'Diamond', days: 540, rate: 0.03, color: '#B9F2FF' },
-              ].map(t => {
-                const holds = holdings.filter(h => h.tier === t.tier);
+              {TIER_LIST.map(t => {
+                const holds = holdings.filter(h => h.tier === t.key);
                 const totalLocked = holds.reduce((s, h) => s + h.amount, 0);
                 const maxPerTier = 100000;
                 const pct = Math.min(100, (totalLocked / maxPerTier) * 100);
                 return (
-                  <div key={t.tier} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                  <div key={t.key} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <span className="text-xs font-bold" style={{ color: t.color }}>{t.label}</span>
-                        <span className="text-xs text-white/30 ml-2">{t.days} days · {(t.rate * 100).toFixed(1)}% daily</span>
+                        <span className="text-xs font-bold" style={{ color: t.color }}>{t.name}</span>
+                        <span className="text-xs text-white/30 ml-2">{t.duration} days · {(t.dailyRate * 100).toFixed(1)}% daily</span>
                       </div>
                       <span className="text-xs text-white/50">{holds.length} deposit{holds.length !== 1 ? 's' : ''}</span>
                     </div>

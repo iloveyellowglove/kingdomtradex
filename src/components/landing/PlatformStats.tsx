@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { TIER_LIST } from '@/lib/tiers';
 
 interface StatData {
   users: number;
@@ -12,12 +13,7 @@ export default function PlatformStats() {
   const [stats, setStats] = useState<StatData>({
     users: 0,
     deposited: 0,
-    rates: [
-      { tier: 'silver', label: 'Silver', days: 180, dailyRate: 0.012, color: '#C0C0C0' },
-      { tier: 'gold', label: 'Gold', days: 270, dailyRate: 0.018, color: '#F0B90B' },
-      { tier: 'platinum', label: 'Platinum', days: 360, dailyRate: 0.024, color: '#E5E4E2' },
-      { tier: 'diamond', label: 'Diamond', days: 540, dailyRate: 0.03, color: '#B9F2FF' },
-    ],
+    rates: TIER_LIST.map(t => ({ tier: t.key, label: t.name, days: t.duration, dailyRate: t.dailyRate, color: t.color })),
   });
 
   useEffect(() => {

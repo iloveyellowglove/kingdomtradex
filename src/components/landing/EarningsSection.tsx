@@ -5,13 +5,10 @@ import Link from 'next/link';
 import AnimatedNumber from '@/components/landing/AnimatedNumber';
 import EarningsLineChart from '@/components/charts/EarningsLineChart';
 
+import { TIER_LIST } from '@/lib/tiers';
+
 const PRESETS = [100, 500, 1000, 5000];
-const TIERS = [
-  { label: '6M', days: 180, rate: 0.012 },
-  { label: '9M', days: 270, rate: 0.018 },
-  { label: '12M', days: 360, rate: 0.024 },
-  { label: '18M', days: 540, rate: 0.03 },
-];
+const TIERS = TIER_LIST.map(t => ({ label: `${Math.round(t.duration / 30)}M`, days: t.duration, rate: t.dailyRate }));
 
 export default function EarningsSection() {
   const [amount, setAmount] = useState(1000);

@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AnimatedNumber from '@/components/landing/AnimatedNumber';
+import { TIER_LIST } from '@/lib/tiers';
 
 export default function HeroSection() {
   const router = useRouter();
@@ -17,13 +18,7 @@ export default function HeroSection() {
   const [error, setError] = useState('');
   const [tierTab, setTierTab] = useState<'popular' | 'all'>('popular');
 
-  const tiers = [
-    { name: 'Silver', dur: '6 Months', rate: '1.2%', monthly: '~36%', color: '#C0C0C0' },
-    { name: 'Gold', dur: '9 Months', rate: '1.8%', monthly: '~54%', color: '#F0B90B' },
-    { name: 'Platinum', dur: '12 Months', rate: '2.4%', monthly: '~72%', color: '#E5E4E2' },
-    { name: 'Diamond', dur: '18 Months', rate: '3.0%', monthly: '~90%', color: '#B9F2FF' },
-  ];
-
+  const tiers = TIER_LIST;
   const displayTiers = tierTab === 'popular' ? tiers.slice(0, 4) : tiers;
 
   async function handleSubmit(e: React.FormEvent) {
@@ -136,18 +131,18 @@ export default function HeroSection() {
               </div>
               <div className="space-y-1">
                 {displayTiers.map(t => (
-                  <div key={t.name} className="flex items-center justify-between py-3 px-3 rounded-lg transition" style={{ background: '#0B0E11' }}>
+                  <div key={t.key} className="flex items-center justify-between py-3 px-3 rounded-lg transition" style={{ background: '#0B0E11' }}>
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: `${t.color}15` }}>
                         <div className="w-3 h-3 rounded-full" style={{ background: t.color }} />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-[#EAECEF]">{t.name}</p>
-                        <p className="text-xs text-[#5E6673]">{t.dur}</p>
+                        <p className="text-xs text-[#5E6673]">{Math.round(t.duration / 30)} Months</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-[#0ECB81] tabular-nums">{t.rate}</p>
+                      <p className="text-sm font-bold text-[#0ECB81] tabular-nums">{(t.dailyRate * 100).toFixed(1)}%</p>
                       <p className="text-[10px] text-[#5E6673]">daily</p>
                     </div>
                   </div>
@@ -166,13 +161,13 @@ export default function HeroSection() {
             <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Top Performing Tiers</h3>
             <div className="grid grid-cols-2 gap-2">
               {tiers.map(t => (
-                <div key={t.name} className="p-3 rounded-lg flex items-center gap-2" style={{ background: '#0B0E11' }}>
+                <div key={t.key} className="p-3 rounded-lg flex items-center gap-2" style={{ background: '#0B0E11' }}>
                   <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${t.color}15` }}>
                     <div className="w-2 h-2 rounded-full" style={{ background: t.color }} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium text-[#EAECEF]">{t.name} · {t.dur}</p>
-                    <p className="text-xs font-bold text-[#0ECB81] tabular-nums">{t.rate} daily</p>
+                    <p className="text-xs font-medium text-[#EAECEF]">{t.name} · {Math.round(t.duration / 30)}M</p>
+                    <p className="text-xs font-bold text-[#0ECB81] tabular-nums">{(t.dailyRate * 100).toFixed(1)}% daily</p>
                   </div>
                 </div>
               ))}

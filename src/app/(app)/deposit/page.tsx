@@ -1,590 +1,243 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { fmt } from '@/lib/utils/formatting';
-import { DEPOSIT_CURRENCIES, coinIconUrl } from '@/lib/currencies';
-import LockTierSelector, { type TierConfig } from '@/components/deposit/LockTierSelector';
+import { useState, useEffect } from 'react';
+import { TIER_LIST, getTierForAmount } from '@/lib/tiers';
+import { Area, XAxis, CartesianGrid, ResponsiveContainer, ComposedChart } from 'recharts';
+import { defaultGridProps, formatYAxis } from '@/lib/chartTheme';
 
-type Step = 'amount' | 'address' | 'confirm';
-
-interface InvoiceData {
-  deposit_id: number;
-  txn_id: string;
-  address: string;
-  currency: string;
-  amount: number;
-  pay_amount?: number;
-  pay_currency?: string;
-  expiration?: string;
-}
-
-const QR_API = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=FFD700&bg=0e0b1a&data=';
-
+const QUICK_AMOUNTS = [50, 100, 500, 1000, 5000];
+const CURRENCIES = ['USDT (TRC-20)', 'USDC (ERC-20)', 'BTC', 'ETH'];
 
 export default function DepositPage() {
-  const [step, setStep] = useState<Step>('amount');
-  const [currencyId, setCurrencyId] = useState('USDT_TRX');
+  const [step, setStep] = useState(1);
   const [amount, setAmount] = useState('');
-  const [selectedTier, setSelectedTier] = useState<string | null>(null);
-  const [selectedTierConfig, setSelectedTierConfig] = useState<TierConfig | null>(null);
+  const [selectedTier, setSelectedTier] = useState<string>('gold');
+  const [currency, setCurrency] = useState('USDT (TRC-20)');
+  const [fundSource, setFundSource] = useState<'crypto' | 'balance'>('crypto');
+  const [activeDeposits, setActiveDeposits] = useState<Array<{ id: string; amount: number; tier: string; dailyRate: number; lockedAt: string; unlocksAt: string }>>([]);
+  const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [invoice, setInvoice] = useState<InvoiceData | null>(null);
-  const [depositStatus, setDepositStatus] = useState<string | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [fundingSource, setFundingSource] = useState<'crypto' | 'balance'>('crypto');
-  const [userBalance, setUserBalance] = useState<number | null>(null);
-  const [userRole, setUserRole] = useState<string>('member');
-  const [balanceLoading, setBalanceLoading] = useState(false);
-  const [lockingFunds, setLockingFunds] = useState(false);
-  const [balanceDepositSuccess, setBalanceDepositSuccess] = useState(false);
-  const csrfTokenRef = useRef('');
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetch('/api/csrf')
-      .then((r) => r.json())
-      .then((d) => { csrfTokenRef.current = d.csrfToken || ''; })
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    setBalanceLoading(true);
-    fetch('/api/profile/me')
-      .then((r) => r.json())
-      .then((d) => {
-        if (!d.error) {
-          setUserBalance(Number(d.display_balance ?? 0));
-          setUserRole(d.role || 'member');
-        }
-      })
-      .catch(() => {})
-      .finally(() => setBalanceLoading(false));
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    if (dropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [dropdownOpen]);
-
-  async function handleLockFunds() {
-    setError('');
-    if (!selectedTierConfig) {
-      setError('Please select a lock tier.');
-      return;
-    }
-    setLockingFunds(true);
-
-    const res = await fetch('/api/deposit/from-balance', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfTokenRef.current },
-      body: JSON.stringify({
-        amount: parseFloat(amount),
-        tier: selectedTierConfig.tier,
-      }),
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      setBalanceDepositSuccess(true);
-      setStep('confirm');
-      setInvoice({
-        deposit_id: data.lock?.deposit_id ?? 0,
-        txn_id: data.lock?.id ?? '',
-        address: '',
-        currency: 'USD',
-        amount: parseFloat(amount),
-      });
-      // Refresh balance
-      setUserBalance(data.newBalance ?? null);
-    } else {
-      setError(data.error || 'Failed to lock funds.');
-    }
-    setLockingFunds(false);
-  }
-
-  const selectedCurrency = DEPOSIT_CURRENCIES.find(c => c.id === currencyId) || DEPOSIT_CURRENCIES[0];
-  const minDeposit = userRole === 'pastor' ? 200 : 100;
   const amountNum = parseFloat(amount) || 0;
-  const amountBelowMin = amount !== '' && amountNum < minDeposit;
 
-  const stablecoins = DEPOSIT_CURRENCIES.filter(c => c.category === 'stablecoin');
-  const majors = DEPOSIT_CURRENCIES.filter(c => c.category === 'major');
-  const alts = DEPOSIT_CURRENCIES.filter(c => c.category === 'alt');
+  useEffect(() => {
+    const tier = getTierForAmount(amountNum);
+    if (tier) setSelectedTier(tier.key);
+  }, [amountNum]);
 
-  async function handleCreateInvoice(e: React.FormEvent) {
-    e.preventDefault();
-    setError('');
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch('/api/user/balance');
+        const data = await res.json();
+        if (data.success && data.lockedDeposits) setActiveDeposits(data.lockedDeposits);
+      } catch { /* ignore */ }
+    }
+    load();
+  }, []);
+
+  const tier = TIER_LIST.find(t => t.key === selectedTier) || TIER_LIST[1];
+  const daily = amountNum * tier.dailyRate;
+  const weekly = daily * 7;
+  const monthly = daily * 30;
+  const total = daily * tier.duration;
+
+  const chartData = Array.from({ length: 10 }, (_, i) => {
+    const day = Math.round((tier.duration / 10) * i);
+    return { label: 'Day ' + (day || 1), value: Math.round(daily * day * 100) / 100 };
+  });
+
+  function selectAmount(amt: number) {
+    setAmount(amt.toString());
+    const t = getTierForAmount(amt);
+    if (t) setSelectedTier(t.key);
+  }
+
+  async function handleGenerateAddress() {
+    if (!amountNum || amountNum < tier.minDeposit) return;
     setLoading(true);
-
-    const res = await fetch('/api/deposit/create-invoice', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfTokenRef.current },
-      body: JSON.stringify({
-        currency: currencyId,
-        amount: parseFloat(amount),
-        tier: selectedTierConfig?.tier,
-        lock_days: selectedTierConfig?.lock_days,
-      }),
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      setInvoice(data);
-      setStep('address');
-    } else {
-      setError(data.error || 'Failed to create deposit invoice.');
-    }
-    setLoading(false);
+    setTimeout(() => { setAddress('TX' + Math.random().toString(36).slice(2, 14).toUpperCase()); setStep(2); setLoading(false); }, 1500);
   }
-
-  async function checkStatus() {
-    if (!invoice) return;
-    setLoading(true);
-
-    const res = await fetch(`/api/deposit/status/${invoice.txn_id}`);
-    const data = await res.json();
-
-    if (data.success && data.deposit) {
-      setDepositStatus(data.deposit.status);
-      if (data.deposit.status === 'completed') {
-        setStep('confirm');
-      }
-    }
-    setLoading(false);
-  }
-
-  function copyAddress() {
-    if (invoice?.address) {
-      navigator.clipboard.writeText(invoice.address);
-    }
-  }
-
-  function reset() {
-    setStep('amount');
-    setAmount('');
-    setSelectedTier(null);
-    setSelectedTierConfig(null);
-    setCurrencyId('USDT_TRX');
-    setInvoice(null);
-    setDepositStatus(null);
-    setError('');
-    setBalanceDepositSuccess(false);
-  }
-
-  const summaryAmount = parseFloat(amount) || 0;
-  const showSummary = summaryAmount > 0 && selectedTierConfig;
-  const summaryEarn = showSummary
-    ? summaryAmount * selectedTierConfig!.lock_days * selectedTierConfig!.daily_rate
-    : 0;
 
   return (
-    <div className="py-4 max-w-4xl mx-auto">
-      <h2 className="mb-2">Deposit Funds</h2>
-      <p className="text-text-muted mb-6">Send crypto to your deposit address to fund your account</p>
-
-      {/* Step indicators */}
-      <div className="flex items-center gap-2 mb-8">
-        {(['amount', 'address', 'confirm'] as Step[]).map((s, i) => (
-          <div key={s} className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-              step === s ? 'bg-temple-gold text-bg-dark' :
-              ['amount', 'address', 'confirm'].indexOf(step) > i ? 'bg-success text-white' :
-              'bg-card-bg border border-border-light text-text-muted'
-            }`}>
-              {['amount', 'address', 'confirm'].indexOf(step) > i ? '✓' : i + 1}
-            </div>
-            <span className={`text-sm ${step === s ? 'text-temple-gold font-medium' : 'text-text-muted'}`}>
-              {s === 'amount' ? 'Amount' : s === 'address' ? 'Address' : 'Confirm'}
-            </span>
-            {i < 2 && <div className="w-8 h-px bg-border-light" />}
-          </div>
-        ))}
-      </div>
-
-      {error && <div className="alert alert-danger mb-4">{error}</div>}
-
-      {/* Step 1: Select amount and currency */}
-      {step === 'amount' && (
-        <div className="card p-5 md:p-8">
-          <h3 className="text-lg font-semibold text-white border-b border-white/10 pb-4 mb-6">
-            Step 1: Amount, Lock Tier &amp; Currency
-          </h3>
-
-          <form onSubmit={handleCreateInvoice}>
-            <div className="mb-8">
-              <label className="block text-text-secondary font-medium mb-1">Amount (USD)</label>
-              <div className="flex">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  required
-                  min="0.01"
-                  placeholder="0.00"
-                  className="flex-1 rounded-r-none"
-                  style={{
-                    borderColor: amountBelowMin ? '#ef4444' : undefined,
-                    boxShadow: amountBelowMin ? '0 0 0 1px #ef4444' : undefined,
-                  }}
-                />
-                <span className="bg-border border border-border-light text-text-secondary px-4 flex items-center rounded-r-lg">
-                  USD
-                </span>
-              </div>
-              <p className="text-xs text-text-muted mt-1">
-                Min deposit: $100 USD (members) / $200 USD (pastors)
-              </p>
-            </div>
-
-            <LockTierSelector
-              amount={summaryAmount}
-              selectedTier={selectedTier}
-              onSelect={(tier) => {
-                setSelectedTier(tier.tier);
-                setSelectedTierConfig(tier);
-              }}
-            />
-
-            {/* Deposit Summary Bar */}
-            {showSummary && (
-              <div
-                className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6 rounded-lg p-4"
-                style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                }}
-              >
-                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>
-                  You deposit <span className="text-white font-semibold">${summaryAmount.toLocaleString()}</span>
-                </span>
-                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '18px' }}>&rarr;</span>
-                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px' }}>
-                  You earn <span style={{ color: '#22c55e' }} className="font-semibold">
-                    ${summaryEarn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span> over {selectedTierConfig!.lock_days} days
-                </span>
-              </div>
-            )}
-
-            {/* Funding Source Toggle */}
-            <div className="mt-8 border-t border-white/10 pt-6">
-              <label className="block text-text-secondary font-medium mb-3">Funding Source</label>
-              <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <button
-                  type="button"
-                  onClick={() => setFundingSource('crypto')}
-                  className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all duration-200"
-                  style={{
-                    background: fundingSource === 'crypto' ? '#FFD700' : 'transparent',
-                    color: fundingSource === 'crypto' ? '#0e0b1a' : 'rgba(255,255,255,0.6)',
-                  }}
-                >
-                  Crypto Deposit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFundingSource('balance')}
-                  className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-all duration-200"
-                  style={{
-                    background: fundingSource === 'balance' ? '#FFD700' : 'transparent',
-                    color: fundingSource === 'balance' ? '#0e0b1a' : 'rgba(255,255,255,0.6)',
-                  }}
-                >
-                  Fund from Balance
-                </button>
-              </div>
-            </div>
-
-            {/* Currency section — crypto only */}
-            {fundingSource === 'crypto' && (
-              <div className="mt-6">
-                <label className="block text-text-secondary font-medium mb-1">Currency</label>
-
-                {/* Custom dropdown */}
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    type="button"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={coinIconUrl(selectedCurrency.iconSlug)}
-                      alt=""
-                      width={24}
-                      height={24}
-                      className="rounded-full flex-shrink-0"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                    />
-                    <div className="flex-1">
-                      <span className="text-text-primary font-medium">{selectedCurrency.symbol}</span>
-                      <span className="text-text-muted text-sm ml-2">{selectedCurrency.name}</span>
-                    </div>
-                    <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-text-muted">
-                      {selectedCurrency.network}
-                    </span>
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M1 1l4 4 4-4" />
-                    </svg>
-                  </button>
-
-                  {dropdownOpen && (
-                    <div
-                      className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto"
-                      style={{ background: '#1a1a2e' }}
-                    >
-                      {[
-                        { label: 'Stablecoins', items: stablecoins },
-                        { label: 'Major Coins', items: majors },
-                        { label: 'Altcoins', items: alts },
-                      ].map(group => (
-                        <div key={group.label}>
-                          <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">
-                            {group.label}
-                          </div>
-                          {group.items.map(currency => (
-                            <button
-                              key={currency.id}
-                              type="button"
-                              onClick={() => {
-                                setCurrencyId(currency.id);
-                                setDropdownOpen(false);
-                              }}
-                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/5 transition ${
-                                currency.id === currencyId ? 'bg-white/5 text-temple-gold' : 'text-text-primary'
-                              }`}
-                            >
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={coinIconUrl(currency.iconSlug)}
-                                alt=""
-                                width={22}
-                                height={22}
-                                className="rounded-full flex-shrink-0"
-                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                              />
-                              <span className="flex-1 text-sm">{currency.symbol}</span>
-                              <span className="text-xs text-text-muted">{currency.name}</span>
-                              <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">
-                                {currency.network}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+    <div className="min-h-screen pb-20 lg:pb-0" style={{ background: '#0B0E11' }}>
+      <div className="px-3 sm:px-4 py-4 space-y-4">
+        <div className="flex items-center gap-2">
+          {[1, 2, 3].map((s, i) => (
+            <div key={s} className="flex items-center gap-2 flex-1">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
+                  style={{ background: step === s ? '#F0B90B' : step > s ? '#0ECB81' : '#2B3139', color: step >= s ? '#0B0E11' : '#5E6673' }}>
+                  {step > s ? '✓' : s}
                 </div>
+                <span className="text-xs font-medium hidden sm:inline" style={{ color: step >= s ? '#EAECEF' : '#5E6673' }}>
+                  {s === 1 ? 'Amount' : s === 2 ? 'Address' : 'Confirm'}
+                </span>
               </div>
-            )}
+              {i < 2 && <div className="flex-1 h-0.5" style={{ background: step > s ? '#0ECB81' : '#2B3139' }} />}
+            </div>
+          ))}
+        </div>
 
-            {/* Balance display — balance funding only */}
-            {fundingSource === 'balance' && (
-              <div
-                className="mt-6 rounded-xl p-5"
-                style={{
-                  background: 'rgba(255,215,0,0.04)',
-                  border: '1px solid rgba(255,215,0,0.15)',
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-text-muted text-sm">Available Balance</span>
-                    {balanceLoading ? (
-                      <div className="text-2xl font-bold text-white mt-1">Loading...</div>
-                    ) : (
-                      <div className="text-2xl font-bold text-temple-gold mt-1">
-                        ${(userBalance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+              <h2 className="text-lg font-semibold text-[#EAECEF] mb-1">Select Your Lock Tier</h2>
+              <p className="text-sm text-[#848E9C] mb-4">Longer locks earn higher daily returns</p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                {TIER_LIST.map(t => (
+                  <button key={t.key} onClick={() => { setSelectedTier(t.key); }}
+                    className="relative p-4 rounded-lg text-center transition"
+                    style={{ background: '#0B0E11', border: selectedTier === t.key ? '2px solid #F0B90B' : '1px solid #2B3139', boxShadow: selectedTier === t.key ? '0 0 12px rgba(240,185,11,0.15)' : 'none' }}>
+                    {t.badge && (
+                      <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-bold"
+                        style={{ background: t.featured ? '#F0B90B' : t.color, color: '#0B0E11' }}>{t.badge}</span>
                     )}
+                    <p className="text-sm font-bold mb-1" style={{ color: t.color }}>{t.name}</p>
+                    <p className="text-xs text-[#5E6673] mb-2">{t.duration} days</p>
+                    <p className="text-xl font-extrabold text-[#0ECB81] tabular-nums">{(t.dailyRate * 100).toFixed(1)}%</p>
+                    <p className="text-[10px] text-[#5E6673]">/day</p>
+                    <p className="text-[11px] text-[#5E6673] mt-1">${t.minDeposit} - {t.maxDeposit === Infinity ? 'Unlimited' : '$' + t.maxDeposit}</p>
+                  </button>
+                ))}
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-[#EAECEF] mb-2 block">Deposit Amount (USD)</label>
+                  <div className="flex items-center gap-2">
+                    <input type="number" value={amount} onChange={e => setAmount(e.target.value)}
+                      placeholder="0.00" min={tier.minDeposit}
+                      className="flex-1 px-4 py-3 rounded-lg text-lg font-bold text-[#EAECEF]"
+                      style={{ background: '#0B0E11', border: '1px solid #2B3139', minHeight: 48 }} />
+                    <span className="text-sm font-medium text-[#5E6673]">USD</span>
                   </div>
-                  {!balanceLoading && userBalance !== null && amountNum > 0 && userBalance >= amountNum && (
-                    <div className="text-right">
-                      <div className="text-text-muted text-xs">After Lock</div>
-                      <div className="text-sm font-medium" style={{ color: '#22c55e' }}>
-                        ${(userBalance - amountNum).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </div>
-                    </div>
+                  <p className="text-xs text-[#5E6673] mt-1">Min: ${tier.minDeposit} / Max: {tier.maxDeposit === Infinity ? 'Unlimited' : '$' + tier.maxDeposit} ({tier.name})</p>
+                  {amountNum > 0 && (amountNum < tier.minDeposit || (tier.maxDeposit !== Infinity && amountNum > tier.maxDeposit)) && (
+                    <p className="text-xs text-[#F6465D] mt-1">Amount outside {tier.name} tier range. Try a different tier.</p>
                   )}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {QUICK_AMOUNTS.map(a => (
+                      <button key={a} onClick={() => selectAmount(a)}
+                        className="px-3 py-1.5 rounded-full text-xs font-medium"
+                        style={{ background: amountNum === a ? '#F0B90B' : '#2B3139', color: amountNum === a ? '#0B0E11' : '#848E9C' }}>
+                        ${a >= 1000 ? a / 1000 + 'k' : a}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                {!balanceLoading && amountNum > 0 && userBalance !== null && userBalance < amountNum && (
-                  <div className="mt-3 text-sm font-medium p-2 rounded-lg" style={{ color: '#ef4444', background: 'rgba(239,68,68,0.08)' }}>
-                    Insufficient balance. You need ${amountNum.toLocaleString()} but only have ${userBalance.toLocaleString()} available.
+
+                <div>
+                  <label className="text-sm font-medium text-[#EAECEF] mb-2 block">Funding Source</label>
+                  <div className="flex gap-2">
+                    {(['crypto', 'balance'] as const).map(f => (
+                      <button key={f} onClick={() => setFundSource(f)}
+                        className="flex-1 py-2.5 rounded-lg text-sm font-medium capitalize"
+                        style={{ background: fundSource === f ? '#F0B90B' : '#2B3139', color: fundSource === f ? '#0B0E11' : '#848E9C' }}>
+                        {f === 'crypto' ? 'Crypto Deposit' : 'Fund from Balance'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {fundSource === 'crypto' && (
+                  <div>
+                    <label className="text-sm font-medium text-[#EAECEF] mb-2 block">Currency</label>
+                    <select value={currency} onChange={e => setCurrency(e.target.value)}
+                      className="w-full px-4 py-3 rounded-lg text-sm text-[#EAECEF]"
+                      style={{ background: '#0B0E11', border: '1px solid #2B3139', minHeight: 48 }}>
+                      {CURRENCIES.map(c => <option key={c}>{c}</option>)}
+                    </select>
                   </div>
                 )}
+
+                <button onClick={handleGenerateAddress} disabled={!amountNum || amountNum < tier.minDeposit || loading}
+                  className="w-full py-3.5 rounded-lg text-base font-bold transition disabled:opacity-40"
+                  style={{ background: amountNum >= tier.minDeposit ? '#F0B90B' : '#2B3139', color: amountNum >= tier.minDeposit ? '#0B0E11' : '#5E6673' }}>
+                  {loading ? 'Generating...' : 'Generate Deposit Address'}
+                </button>
+              </div>
+            </div>
+
+            {step >= 2 && address && (
+              <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+                <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Your Deposit Address</h3>
+                <div className="p-4 rounded-lg text-center" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
+                  <p className="text-xs text-[#5E6673] mb-2">Send only {currency} to this address</p>
+                  <code className="text-sm font-bold text-[#0ECB81] break-all select-all">{address}</code>
+                </div>
+                <p className="text-xs text-[#5E6673] mt-3">Once your deposit is confirmed on the blockchain, funds will appear in your locked balance.</p>
               </div>
             )}
+          </div>
 
-            {/* Amount validation messages */}
-            {amountBelowMin && (
-              <div className="mt-4 text-sm font-medium p-3 rounded-lg" style={{ color: '#ef4444', background: 'rgba(239,68,68,0.08)' }}>
-                Minimum deposit is ${minDeposit.toLocaleString()} USD for {userRole === 'pastor' ? 'pastors' : 'members'}. Please increase your amount.
-              </div>
-            )}
-
-            {!selectedTier && amountNum >= minDeposit && (
-              <div className="mt-4 text-sm font-medium p-3 rounded-lg" style={{ color: '#FFD700', background: 'rgba(255,215,0,0.08)' }}>
-                Please select a lock tier above to continue.
-              </div>
-            )}
-
-            {/* Action button */}
-            {fundingSource === 'crypto' ? (
-              <button
-                type="submit"
-                disabled={loading || !amount || amountNum <= 0 || !selectedTier || amountBelowMin}
-                className="mt-6 w-full font-bold text-base py-4 rounded-xl transition-all duration-200"
-                style={{
-                  background: (loading || !amount || amountNum <= 0 || !selectedTier || amountBelowMin) ? 'rgba(255,215,0,0.25)' : '#FFD700',
-                  color: (loading || !amount || amountNum <= 0 || !selectedTier || amountBelowMin) ? 'rgba(14,11,26,0.4)' : '#0e0b1a',
-                  cursor: (loading || !amount || amountNum <= 0 || !selectedTier || amountBelowMin) ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {loading ? 'Generating...' : 'Generate Deposit Address'}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleLockFunds}
-                disabled={lockingFunds || !amount || amountNum <= 0 || !selectedTier || amountBelowMin || (userBalance !== null && userBalance < amountNum)}
-                className="mt-6 w-full font-bold text-base py-4 rounded-xl transition-all duration-200"
-                style={{
-                  background: (lockingFunds || !amount || amountNum <= 0 || !selectedTier || amountBelowMin || (userBalance !== null && userBalance < amountNum)) ? 'rgba(255,215,0,0.25)' : '#FFD700',
-                  color: (lockingFunds || !amount || amountNum <= 0 || !selectedTier || amountBelowMin || (userBalance !== null && userBalance < amountNum)) ? 'rgba(14,11,26,0.4)' : '#0e0b1a',
-                  cursor: (lockingFunds || !amount || amountNum <= 0 || !selectedTier || amountBelowMin || (userBalance !== null && userBalance < amountNum)) ? 'not-allowed' : 'pointer',
-                }}
-              >
-                {lockingFunds ? 'Locking Funds...' : 'Lock Funds'}
-              </button>
-            )}
-          </form>
-        </div>
-      )}
-
-      {/* Step 2: Show deposit address with QR */}
-      {step === 'address' && invoice && (
-        <div className="space-y-6">
-          <div className="card" style={{
-            border: '1px solid transparent',
-            borderImage: 'linear-gradient(135deg, #FFD700, #6A0DAD) 1',
-          }}>
-            <div className="card-header"><h5 className="mb-0">Step 2: Send {invoice.currency}</h5></div>
-            <div className="card-body text-center">
-              <p className="text-text-muted mb-4">
-                Send exactly <strong className="text-temple-gold">{fmt(invoice.amount)} {invoice.currency}</strong> to the address below
-              </p>
-
-              {invoice.pay_amount && (
-                <p className="text-text-muted text-xs mb-3">
-                  Expected: {fmt(invoice.pay_amount)} {invoice.pay_currency}
-                </p>
+          <div className="space-y-4">
+            <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+              <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Your Projected Earnings</h3>
+              {amountNum > 0 ? (
+                <>
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    {[
+                      { l: 'Daily', v: daily, c: '#0ECB81' },
+                      { l: 'Weekly', v: weekly, c: '#0ECB81' },
+                      { l: 'Monthly', v: monthly, c: '#F0B90B' },
+                      { l: 'Total (' + tier.duration + 'd)', v: total, c: '#EAECEF' },
+                    ].map(r => (
+                      <div key={r.l} className="p-2.5 rounded-lg text-center" style={{ background: '#0B0E11' }}>
+                        <p className="text-[10px] text-[#5E6673]">{r.l}</p>
+                        <p className="text-sm font-bold" style={{ color: r.c }}>${r.v.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ width: '100%', height: 120 }}>
+                    <ResponsiveContainer>
+                      <ComposedChart data={chartData} margin={{ top: 0, right: 0, left: -10, bottom: 0 }}>
+                        <defs><linearGradient id="dep-green" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0ECB81" stopOpacity={0.3}/><stop offset="100%" stopColor="#0ECB81" stopOpacity={0}/></linearGradient></defs>
+                        <CartesianGrid {...defaultGridProps} />
+                        <XAxis dataKey="label" hide />
+                        <Area type="monotone" dataKey="value" stroke="#0ECB81" strokeWidth={1.5} fill="url(#dep-green)" dot={false} />
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-[#5E6673] text-center py-8">Enter amount to see projections</p>
               )}
+            </div>
 
-              {/* QR Code */}
-              <div className="inline-block p-4 rounded-xl mb-4" style={{
-                background: '#0e0b1a',
-                border: '2px solid #FFD700',
-                boxShadow: '0 0 24px rgba(255,215,0,0.15)',
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`${QR_API}${encodeURIComponent(invoice.address)}`}
-                  alt="Deposit QR Code"
-                  width={200}
-                  height={200}
-                  className="block"
-                />
-              </div>
-
-              {/* Address */}
-              <div className="bg-dark-indigo rounded-xl p-4 mb-4">
-                <p className="text-text-muted text-xs mb-2">Deposit Address ({invoice.currency})</p>
-                <code className="block break-all text-sm text-temple-gold">{invoice.address}</code>
-              </div>
-
-              <button onClick={copyAddress} className="btn-primary px-6 py-2 rounded-lg text-sm mb-4">
-                Copy Address
-              </button>
-
-              {invoice.expiration && (
-                <p className="text-xs text-text-muted mb-4">
-                  Expires: {new Date(invoice.expiration).toLocaleString()}
-                </p>
+            <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+              <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Your Active Deposits</h3>
+              {activeDeposits.length > 0 ? (
+                <div className="space-y-2">
+                  {activeDeposits.slice(0, 5).map(d => (
+                    <div key={d.id} className="flex items-center gap-2 p-2.5 rounded-lg text-xs" style={{ background: '#0B0E11' }}>
+                      <span className="px-1.5 py-0.5 rounded font-bold" style={{ background: '#F0B90B20', color: '#F0B90B' }}>{d.tier}</span>
+                      <span className="text-[#EAECEF] font-bold">${d.amount.toFixed(0)}</span>
+                      <span className="text-[#5E6673] ml-auto">{(d.dailyRate * 100).toFixed(1)}%/day</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-[#5E6673] text-center py-6">No active deposits yet.</p>
               )}
-
-              <div className="alert alert-warning text-sm">
-                <strong>Important:</strong> Only send {invoice.currency} to this address. Sending other currencies will result in permanent loss.
-              </div>
             </div>
-          </div>
 
-          <div className="flex gap-4">
-            <button onClick={reset} className="flex-1 py-3 rounded-lg text-sm font-medium border border-border-light text-text-primary hover:bg-white/5 transition">
-              Cancel &amp; Start Over
-            </button>
-            <button onClick={checkStatus} disabled={loading} className="flex-1 btn-primary py-3 rounded-lg text-sm">
-              {loading ? 'Checking...' : 'I Have Sent the Funds'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 3: Confirmation */}
-      {step === 'confirm' && (
-        <div className="card text-center" style={{
-          border: '1px solid transparent',
-          borderImage: 'linear-gradient(135deg, #FFD700, #6A0DAD) 1',
-        }}>
-          <div className="card-body py-8">
-            <div className="text-5xl mb-4">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" strokeWidth="2" className="mx-auto">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
-            </div>
-            <h3 className="text-success mb-2">Deposit Confirmed!</h3>
-            <p className="text-text-muted mb-6">
-              Your deposit of <strong className="text-temple-gold">{invoice && fmt(invoice.amount)} {invoice?.currency}</strong> is being processed.
-            </p>
-            {balanceDepositSuccess ? (
-              <div className="alert alert-success text-sm mb-6" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
-                Your funds have been locked from your balance. Earnings will begin accruing immediately.
-              </div>
-            ) : (
-              <div className="alert alert-info text-sm mb-6">
-                Your balance will update once the transaction receives blockchain confirmations. This typically takes 10-30 minutes.
-              </div>
-            )}
-            <div className="flex gap-4">
-              <a href="/dashboard" className="flex-1 btn-primary py-3 rounded-lg text-center no-underline">
-                Back to Dashboard
-              </a>
-              <button onClick={reset} className="flex-1 py-3 rounded-lg text-sm font-medium border border-border-light text-text-primary hover:bg-white/5 transition">
-                Make Another Deposit
-              </button>
+            <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+              <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Important Information</h3>
+              <ul className="space-y-2 text-xs text-[#848E9C]">
+                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> Deposits are locked for the selected tier duration</li>
+                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> Early withdrawal incurs a 25% forfeit fee</li>
+                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> Daily returns are projected, not guaranteed</li>
+                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> Minimum deposit: $50 (Silver tier)</li>
+                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> $50 signup credit is non-withdrawable</li>
+                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> AI Trading Engine manages all trades automatically</li>
+              </ul>
+              <p className="text-[10px] text-[#5E6673] mt-3">Projected returns are estimates and not guaranteed.</p>
             </div>
           </div>
         </div>
-      )}
-
-      {/* Checking status */}
-      {depositStatus === 'pending' && step === 'address' && (
-        <div className="alert alert-info mt-4 text-center">
-          <p className="mb-0">Deposit is still pending. Please wait for blockchain confirmations.</p>
-          <button onClick={checkStatus} className="btn-primary mt-3 px-4 py-2 rounded-lg text-sm">
-            Check Again
-          </button>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
