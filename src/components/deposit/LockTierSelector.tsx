@@ -12,10 +12,10 @@ export interface TierConfig {
 }
 
 const TIERS: TierConfig[] = [
-  { tier: 'growth',  label: 'Growth',  lock_days: 60,  daily_rate: 0.010000, description: '60-day lock period',  sort_order: 1 },
-  { tier: 'builder', label: 'Builder', lock_days: 90,  daily_rate: 0.012000, description: '90-day lock period',  sort_order: 2 },
-  { tier: 'kingdom', label: 'Kingdom', lock_days: 120, daily_rate: 0.014000, description: '120-day lock period', sort_order: 3 },
-  { tier: 'legacy',  label: 'Legacy',  lock_days: 180, daily_rate: 0.018000, description: '180-day lock period', sort_order: 4 },
+  { tier: 'silver',   label: 'Silver',   lock_days: 180, daily_rate: 0.012000, description: '180-day lock period',  sort_order: 1 },
+  { tier: 'gold',     label: 'Gold',     lock_days: 270, daily_rate: 0.015000, description: '270-day lock period',  sort_order: 2 },
+  { tier: 'platinum', label: 'Platinum', lock_days: 360, daily_rate: 0.020000, description: '360-day lock period',  sort_order: 3 },
+  { tier: 'diamond',  label: 'Diamond',  lock_days: 540, daily_rate: 0.030000, description: '540-day lock period',  sort_order: 4 },
 ];
 
 function totalReturnPct(lockDays: number, dailyRate: number): string {
@@ -23,8 +23,8 @@ function totalReturnPct(lockDays: number, dailyRate: number): string {
 }
 
 function getBadge(tier: string): string | null {
-  if (tier === 'kingdom') return 'POPULAR';
-  if (tier === 'legacy') return 'BEST VALUE';
+  if (tier === 'platinum') return 'POPULAR';
+  if (tier === 'diamond') return 'BEST VALUE';
   return null;
 }
 

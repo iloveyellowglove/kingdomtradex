@@ -24,7 +24,7 @@ const HOURS_KEYS = ['withdrawal_lock_hours'];
 const MIN_AMOUNT_KEYS = ['min_deposit_usdt', 'min_deposit_btc', 'min_deposit_eth', 'min_withdrawal_usdt'];
 
 async function validateAdmin(req: NextRequest) {
-  const token = req.cookies.get('kingdom_session')?.value;
+  const token = req.cookies.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) return null;
 
   const supabase = createServiceClient();

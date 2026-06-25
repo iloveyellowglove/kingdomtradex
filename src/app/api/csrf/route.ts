@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 
 export async function GET() {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
     return NextResponse.json({ csrfToken: '' }, { status: 401 });
   }

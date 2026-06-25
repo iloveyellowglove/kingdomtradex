@@ -4,7 +4,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 export const dynamic = 'force-dynamic';
 
 async function validateAdmin(req: NextRequest) {
-  const token = req.cookies.get('kingdom_session')?.value;
+  const token = req.cookies.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) return null;
 
   const supabase = createServiceClient();

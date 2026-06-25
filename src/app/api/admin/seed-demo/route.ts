@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+import { timingSafeEqual } from '@/lib/auth/csrf';
+
 export async function POST(request: NextRequest) {
   const seedToken = request.headers.get('X-Seed-Token');
-  if (!seedToken || seedToken !== process.env.CRON_SECRET) {
+  if (!seedToken || !timingSafeEqual(seedToken, process.env.CRON_SECRET || '')) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 

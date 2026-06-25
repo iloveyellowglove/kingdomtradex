@@ -15,7 +15,7 @@ export default async function AdminDashboardPage() {
     .select('total_deposited_real');
 
   const sumTotalDeposited = (totalDeposited ?? []).reduce(
-    (s, u) => s + Number((u as { total_deposited_real: number }).total_deposited_real || 0),
+    (s: number, u: Record<string, unknown>) => s + Number((u as { total_deposited_real: number }).total_deposited_real || 0),
     0
   );
 

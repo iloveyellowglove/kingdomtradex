@@ -5,7 +5,7 @@ import EarningsDashboard from '@/components/trading/EarningsDashboard';
 
 export default async function EarningsPage() {
   const cookieStore = cookies();
-  const token = cookieStore.get('kingdom_session')?.value;
+  const token = cookieStore.get('__Host-kingdom_session')?.value;
   if (!token) redirect('/login');
 
   const supabase = createServiceClient();
@@ -38,7 +38,7 @@ export default async function EarningsPage() {
 
   const activeLockCount = activeLocks?.length ?? 0;
   const dailyProjection = (activeLocks ?? []).reduce(
-    (sum, lock) => sum + Number(lock.amount) * Number(lock.daily_rate),
+    (sum: number, lock: Record<string, unknown>) => sum + Number(lock.amount) * Number(lock.daily_rate),
     0,
   );
 

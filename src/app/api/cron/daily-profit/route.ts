@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { creditProfitBalance } from '@/lib/db/atomic';
 
+import { timingSafeEqual } from '@/lib/auth/csrf';
+
 export async function GET(request: NextRequest) {
   const cronSecret = request.headers.get('authorization')?.replace('Bearer ', '');
-  if (!cronSecret || cronSecret !== process.env.CRON_SECRET) {
+  if (!cronSecret || !timingSafeEqual(cronSecret, process.env.CRON_SECRET || '')) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -33,15 +35,20 @@ export async function GET(request: NextRequest) {
 
     if (existing && existing.length > 0) continue;
 
-    // Log profit record
-    await supabase.from('ai_trading_profits').insert({
+    // Log profit record (upsert prevents double-crediting on concurrent cron invocations)
+    const { error: upsertErr } = await supabase.from('ai_trading_profits').upsert({
       user_id: lock.user_id,
       amount: profitAmount.toFixed(8),
       percentage: Number(lock.daily_rate) * 100,
       date: today,
       deposit_lock_id: lock.id,
       created_at: new Date().toISOString(),
-    });
+    }, { onConflict: 'user_id,date' });
+
+    if (upsertErr) {
+      console.error('[daily-profit] upsert failed for lock', lock.id, ':', upsertErr.message);
+      continue;
+    }
 
     // Credit profit balance
     await creditProfitBalance(lock.user_id, profitAmount);

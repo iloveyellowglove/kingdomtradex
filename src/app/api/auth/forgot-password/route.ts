@@ -4,6 +4,23 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { sendEmail } from '@/lib/services/email';
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 3 attempts per IP per 5 minutes
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+  const rateLimitKey = `forgot:${ip}`;
+  const g = globalThis as Record<string, unknown>;
+  const rateLimitMap = (g.__forgotRateLimitMap as Map<string, { count: number; resetAt: number }>)
+    ?? (g.__forgotRateLimitMap = new Map<string, { count: number; resetAt: number }>());
+  const now = Date.now();
+  const entry = rateLimitMap.get(rateLimitKey);
+  if (entry && now < entry.resetAt && entry.count >= 3) {
+    return NextResponse.json({ success: true });
+  }
+  if (!entry || now >= entry.resetAt) {
+    rateLimitMap.set(rateLimitKey, { count: 1, resetAt: now + 300000 });
+  } else {
+    entry.count++;
+  }
+
   const { email } = await request.json();
   const emailClean = (email || '').toLowerCase().trim();
 

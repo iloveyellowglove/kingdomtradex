@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 
 async function getUserId(): Promise<number | null> {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) return null;
 
   const supabase = createServiceClient();
@@ -20,7 +20,7 @@ async function getUserId(): Promise<number | null> {
 }
 
 async function isAdmin(): Promise<boolean> {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) return false;
 
   const supabase = createServiceClient();

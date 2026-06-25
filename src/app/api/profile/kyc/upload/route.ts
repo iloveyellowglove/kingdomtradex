@@ -7,7 +7,7 @@ const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get('kingdom_session')?.value;
+  const token = req.cookies.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

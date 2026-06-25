@@ -122,7 +122,7 @@ async function getReferralIds(userId: number): Promise<number[]> {
     .select('id')
     .eq('referred_by', userId)
     .eq('status', 'active');
-  return (data ?? []).map((d) => d.id);
+  return (data ?? []).map((d: Record<string, unknown>) => d.id);
 }
 
 async function getReferralIdsForList(userIds: number[]): Promise<number[]> {
@@ -133,7 +133,7 @@ async function getReferralIdsForList(userIds: number[]): Promise<number[]> {
     .select('id')
     .in('referred_by', userIds)
     .eq('status', 'active');
-  return (data ?? []).map((d) => d.id);
+  return (data ?? []).map((d: Record<string, unknown>) => d.id);
 }
 
 export async function searchUsers(

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { verifyNowPaymentsIPN } from '@/lib/nowpayments-verify';
+import { verifyNowPaymentsIPNRaw } from '@/lib/nowpayments-verify';
 import { processCompletedDeposit } from '@/lib/deposit-processing';
 import { executeConversion, createPayout } from '@/lib/nowpayments-custody';
 import { createDepositSplit, updateDepositSplit, getDepositSplitByDepositId, getColdWalletXmr } from '@/lib/db/deposit-splits';
@@ -26,10 +26,11 @@ function isUsdtDeposit(payCurrency: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  const rawBody = await request.text();
   let body: Record<string, unknown>;
 
   try {
-    body = await request.json();
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
 
   let validSignature: boolean;
   try {
-    validSignature = verifyNowPaymentsIPN(body, signature);
+    validSignature = verifyNowPaymentsIPNRaw(rawBody, signature);
   } catch {
     return NextResponse.json({ error: 'Signature verification unavailable' }, { status: 500 });
   }

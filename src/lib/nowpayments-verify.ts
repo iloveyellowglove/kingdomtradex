@@ -21,6 +21,25 @@ export function verifyNowPaymentsIPN(
   );
 }
 
+/** Verify IPN against raw body bytes (preferred — avoids JSON re-serialization skew). */
+export function verifyNowPaymentsIPNRaw(
+  rawBody: string,
+  signature: string
+): boolean {
+  const ipnSecret = process.env.NOWPAYMENTS_IPN_SECRET;
+  if (!ipnSecret) throw new Error('NOWPAYMENTS_IPN_SECRET not configured');
+
+  const hmac = crypto.createHmac('sha512', ipnSecret);
+  hmac.update(rawBody);
+  const computedSig = hmac.digest('hex');
+
+  if (computedSig.length !== signature.length) return false;
+  return crypto.timingSafeEqual(
+    Buffer.from(computedSig, 'hex'),
+    Buffer.from(signature, 'hex')
+  );
+}
+
 function sortObject(obj: Record<string, unknown>): Record<string, unknown> {
   return Object.keys(obj)
     .sort()

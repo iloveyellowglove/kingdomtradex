@@ -5,7 +5,7 @@ import { creditUserBalanceWithDepositTotal, creditUserBalance } from '@/lib/db/a
 import { distributeCommissions } from '@/lib/db/commissions';
 
 export async function POST(request: NextRequest) {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
   }

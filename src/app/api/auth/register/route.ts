@@ -24,6 +24,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Password must be at least 8 characters.' }, { status: 400 });
   }
 
+  // Rate limit: 1 registration per IP per 24 hours
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+  const g = globalThis as Record<string, unknown>;
+  const registerMap = (g.__registerRateLimitMap as Map<string, number>)
+    ?? (g.__registerRateLimitMap = new Map<string, number>());
+  const lastRegister = registerMap.get(ip);
+  if (lastRegister && (Date.now() - lastRegister) < 86400000) {
+    return NextResponse.json({ success: false, error: 'Please wait 24 hours before creating another account.' }, { status: 429 });
+  }
+  registerMap.set(ip, Date.now());
+
   const supabase = createServiceClient();
 
   const { data: existing } = await supabase
@@ -102,7 +113,7 @@ export async function POST(request: NextRequest) {
     user_id: newUser[0].id,
     referral_code: newReferralCode,
   });
-  response.cookies.set('kingdom_session', token, {
+  response.cookies.set('__Host-kingdom_session', token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',

@@ -4,6 +4,23 @@ import { createSession } from '@/lib/auth/session';
 import { createServiceClient } from '@/lib/supabase/service';
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 attempts per IP per 60 seconds
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+  const rateLimitKey = `login:${ip}`;
+  const g = globalThis as Record<string, unknown>;
+  const rateLimitMap = (g.__loginRateLimitMap as Map<string, { count: number; resetAt: number }>)
+    ?? (g.__loginRateLimitMap = new Map<string, { count: number; resetAt: number }>());
+  const now = Date.now();
+  const entry = rateLimitMap.get(rateLimitKey);
+  if (entry && now < entry.resetAt && entry.count >= 5) {
+    return NextResponse.json({ success: false, error: 'Too many login attempts. Try again later.' }, { status: 429 });
+  }
+  if (!entry || now >= entry.resetAt) {
+    rateLimitMap.set(rateLimitKey, { count: 1, resetAt: now + 60000 });
+  } else {
+    entry.count++;
+  }
+
   const { email, password } = await request.json();
 
   const emailClean = (email || '').toLowerCase().trim();
@@ -50,7 +67,7 @@ export async function POST(request: NextRequest) {
   }
 
   const response = NextResponse.json({ success: true });
-  response.cookies.set('kingdom_session', token, {
+  response.cookies.set('__Host-kingdom_session', token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',

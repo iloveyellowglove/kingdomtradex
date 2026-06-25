@@ -1,6 +1,6 @@
 import { createServiceClient } from './supabase/service';
 import { lockDeposit } from './db/atomic';
-import { distributeCommissions } from './db/commissions';
+import { distributeCommissions, confirmCommissions } from './db/commissions';
 
 export interface DepositResult {
   success: boolean;
@@ -156,29 +156,31 @@ export async function processCompletedDeposit(params: {
       Number(dailyRate),
     );
   } else {
-    // Fallback: deposit without tier — use a default 60-day growth lock
+    // Fallback: deposit without tier — use a default 180-day silver lock
     const { data: tierRow } = await supabase
       .from('lock_tiers')
       .select('daily_rate, lock_days')
-      .eq('tier', 'growth')
+      .eq('tier', 'silver')
       .single();
 
-    const dailyRate = tierRow?.daily_rate ?? 0.01;
-    const fallbackDays = tierRow?.lock_days ?? 60;
+    const dailyRate = tierRow?.daily_rate ?? 0.012;
+    const fallbackDays = tierRow?.lock_days ?? 180;
 
     await lockDeposit(
       params.userId,
       depositId,
       lockAmount,
-      'growth',
+      'silver',
       fallbackDays,
       Number(dailyRate),
     );
   }
 
-  // Distribute referral commissions
+  // Create pending referral commissions (confirmed below after lock succeeds)
   try {
     await distributeCommissions(params.userId, params.amount, depositId);
+    // Confirm commissions now that the deposit lock is in place
+    await confirmCommissions(depositId);
   } catch (commErr) {
     console.error('[deposit-processing] commission distribution failed:', commErr);
   }

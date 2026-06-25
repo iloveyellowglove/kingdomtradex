@@ -191,3 +191,61 @@ export interface PlisioAddressResult {
   error?: string;
   addresses?: Record<string, string>;
 }
+
+// Social Share
+export interface SocialShare {
+  id: string;
+  user_id: number;
+  testimony_id: string | null;
+  platform: string;
+  click_count: number;
+  created_at: string;
+}
+
+// Share Verification
+export interface ShareVerification {
+  id: string;
+  user_id: number;
+  withdrawal_id: number;
+  share_id: string;
+  verified_at: string;
+}
+
+// Testimony
+export interface Testimony {
+  id: string;
+  user_id: number;
+  withdrawal_id: number;
+  amount: number;
+  initials: string;
+  referral_code: string;
+  created_at: string;
+}
+
+// NOWPayments Invoice
+export interface NowPaymentsInvoice {
+  payment_id: number;
+  payment_status: string;
+  pay_address: string;
+  pay_amount: number;
+  pay_currency: string;
+  price_amount: number;
+  price_currency: string;
+  order_id: string;
+  expiration_estimate_date: string;
+}
+
+// Deposit Lock
+export interface DepositLock {
+  id: string;
+  user_id: number;
+  deposit_id: number;
+  amount: number;
+  tier: string;
+  lock_days: number;
+  daily_rate: number;
+  locked_at: string;
+  unlocks_at: string;
+  status: 'locked' | 'matured' | 'withdrawn';
+  created_at: string;
+}

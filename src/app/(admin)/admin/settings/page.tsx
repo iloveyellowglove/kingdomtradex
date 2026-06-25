@@ -17,7 +17,7 @@ const MISSING_SETTINGS: { key: string; value: string; description: string }[] = 
 
 export default async function AdminSettingsPage() {
   const cookieStore = cookies();
-  const token = cookieStore.get('kingdom_session')?.value;
+  const token = cookieStore.get('__Host-kingdom_session')?.value;
 
   let csrfToken = '';
   if (token) {

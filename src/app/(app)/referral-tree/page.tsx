@@ -28,7 +28,7 @@ async function fetchDownline(parentId: number, currentLevel: number, maxDepth: n
 
 export default async function ReferralTreePage() {
   const cookieStore = cookies();
-  const token = cookieStore.get('kingdom_session')?.value;
+  const token = cookieStore.get('__Host-kingdom_session')?.value;
   if (!token) redirect('/login');
 
   const supabase = createServiceClient();

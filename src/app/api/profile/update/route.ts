@@ -13,7 +13,7 @@ const ALLOWED_FIELDS = [
 ] as const;
 
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get('kingdom_session')?.value;
+  const token = req.cookies.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

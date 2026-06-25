@@ -11,7 +11,7 @@ const PROFILE_COLUMNS = [
 const BASE_COLUMNS = ['username', 'email', 'role', 'display_balance'];
 
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get('kingdom_session')?.value;
+  const token = req.cookies.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

@@ -7,7 +7,7 @@ import { getCurrencyById } from '@/lib/currencies';
 const MIN_WITHDRAWAL = 25;
 
 export async function POST(request: NextRequest) {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
   }
@@ -24,6 +24,74 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = sessions[0].user_id;
+
+  // === SHARE GATE CHECK ===
+  // Fetch user role for bonus tier info
+  const { data: userRows } = await supabase
+    .from('users')
+    .select('role, first_deposit_time')
+    .eq('id', userId)
+    .limit(1);
+
+  const userRow = userRows?.[0];
+
+  // If user has never deposited, block withdrawal entirely
+  if (!userRow?.first_deposit_time) {
+    return NextResponse.json({
+      success: false,
+      error: 'You must make a deposit before withdrawing.',
+    }, { status: 400 });
+  }
+
+  // Check if user has any completed withdrawals
+  const { data: completedWds } = await supabase
+    .from('withdrawals')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('status', 'completed')
+    .order('id', { ascending: false })
+    .limit(1);
+
+  const hasCompletedWithdrawal = completedWds && completedWds.length > 0;
+
+  if (hasCompletedWithdrawal) {
+    // AFTER a completed withdrawal: check for verified share on the LAST completed withdrawal
+    const lastCompletedId = completedWds[0].id;
+
+    const { data: verifications } = await supabase
+      .from('share_verifications')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('withdrawal_id', lastCompletedId)
+      .limit(1);
+
+    if (!verifications || verifications.length === 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'You must share your last withdrawal testimony before requesting a new withdrawal.',
+        share_required: true,
+      }, { status: 400 });
+    }
+  } else {
+    // FIRST withdrawal: check for generic share
+    const { data: genericShare } = await supabase
+      .from('social_shares')
+      .select('id')
+      .eq('user_id', userId)
+      .is('testimony_id', null)
+      .limit(1);
+
+    if (!genericShare || genericShare.length === 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'You must share your referral link before your first withdrawal.',
+        share_required: true,
+        generic_share: true,
+      }, { status: 400 });
+    }
+  }
+  // === END SHARE GATE ===
+
   const { amount, currency, wallet_address, withdrawal_type } = await request.json();
 
   // Validate withdrawal_type
@@ -34,6 +102,9 @@ export async function POST(request: NextRequest) {
 
   // Validate amount
   const amt = parseFloat(amount || '0');
+  if (!isFinite(amt)) {
+    return NextResponse.json({ success: false, error: 'Invalid amount.' }, { status: 400 });
+  }
   if (!amt || amt <= 0) {
     return NextResponse.json({ success: false, error: 'Amount must be positive.' }, { status: 400 });
   }
@@ -150,8 +221,57 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Failed to create withdrawal request.' }, { status: 500 });
   }
 
+  // Generate testimony for this withdrawal
+  let testimonyUrl: string | null = null;
+  try {
+    const userInitials = await (async () => {
+      const { data: userData } = await supabase
+        .from('users')
+        .select('username, referral_code')
+        .eq('id', userId)
+        .single();
+
+      if (!userData) return 'ANON';
+      const name = (userData.username || '').trim();
+      if (!name) return 'ANON';
+      const parts = name.split(/\s+/);
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    })();
+
+    const { data: userData } = await supabase
+      .from('users')
+      .select('referral_code')
+      .eq('id', userId)
+      .single();
+
+    const referralCode = userData?.referral_code || '';
+
+    const { data: testimony } = await supabase
+      .from('testimonies')
+      .insert({
+        user_id: userId,
+        withdrawal_id: withdrawal[0].id,
+        amount: amt.toFixed(8),
+        initials: userInitials,
+        referral_code: referralCode,
+      })
+      .select()
+      .single();
+
+    if (testimony) {
+      testimonyUrl = `/testimony/${testimony.id}`;
+    }
+  } catch (e) {
+    console.error('[withdraw] testimony generation failed:', e);
+    // Non-fatal: withdrawal succeeded, testimony can be generated later if needed
+  }
+
   return NextResponse.json({
     success: true,
     withdrawal_id: withdrawal[0].id,
+    testimony_url: testimonyUrl,
   });
 }

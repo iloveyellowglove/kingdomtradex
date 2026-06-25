@@ -96,7 +96,7 @@ export async function completeProcessingWithdrawals(): Promise<number> {
         status: 'completed',
         processed_time: new Date().toISOString(),
       })
-      .in('id', data.map((d) => d.id));
+      .in('id', data.map((d: Record<string, unknown>) => d.id));
   }
 
   return data?.length ?? 0;

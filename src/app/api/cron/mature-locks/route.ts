@@ -3,16 +3,18 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { matureDepositLock } from '@/lib/db/atomic';
 import { sendEmail } from '@/lib/services/email';
 
+import { timingSafeEqual } from '@/lib/auth/csrf';
+
 const TIER_LABELS: Record<string, string> = {
-  growth: 'Growth',
-  builder: 'Builder',
-  kingdom: 'Kingdom',
-  legacy: 'Legacy',
+  silver: 'Silver',
+  gold: 'Gold',
+  platinum: 'Platinum',
+  diamond: 'Diamond',
 };
 
 export async function GET(request: NextRequest) {
   const cronSecret = request.headers.get('authorization')?.replace('Bearer ', '');
-  if (!cronSecret || cronSecret !== process.env.CRON_SECRET) {
+  if (!cronSecret || !timingSafeEqual(cronSecret, process.env.CRON_SECRET || '')) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 

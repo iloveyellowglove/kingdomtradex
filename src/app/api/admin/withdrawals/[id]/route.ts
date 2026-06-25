@@ -7,7 +7,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
   }

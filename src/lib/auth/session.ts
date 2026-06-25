@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { createServiceClient } from '../supabase/service';
 import type { SessionData } from '../types';
 
-const SESSION_COOKIE = 'kingdom_session';
+const SESSION_COOKIE = '__Host-kingdom_session';
 const SESSION_TTL = 86400; // 24 hours
 
 function generateRandomBytes(length: number): string {
@@ -27,7 +27,7 @@ export async function createSession(userId: number, role: string): Promise<{ tok
     .from('sessions')
     .select('session_token')
     .limit(1);
-  console.log('[session] table accessible:', !tableError, '| error:', tableError ?? 'none');
+  if (process.env.NODE_ENV !== 'production') console.log('[session] table accessible:', !tableError, '| error:', tableError ?? 'none');
 
   const { error: insertError } = await supabase.from('sessions').insert({
     session_token: token,
@@ -43,7 +43,7 @@ export async function createSession(userId: number, role: string): Promise<{ tok
     throw new Error(`Failed to create session: ${insertError.message}`);
   }
 
-  console.log('[session] insert OK, token first 16:', token.substring(0, 16));
+  console.log('[session] insert OK');
   return { token, csrfToken };
 }
 

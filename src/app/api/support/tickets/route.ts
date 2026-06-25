@@ -5,7 +5,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 const VALID_CATEGORIES = ['deposit_issue', 'withdrawal_issue', 'account', 'trading', 'other'];
 
 async function getUserId(): Promise<number | null> {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) return null;
 
   const supabase = createServiceClient();
@@ -22,7 +22,7 @@ async function getUserId(): Promise<number | null> {
 }
 
 async function getUserRole(): Promise<string | null> {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) return null;
 
   const supabase = createServiceClient();

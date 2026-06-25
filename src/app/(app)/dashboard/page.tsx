@@ -7,8 +7,40 @@ import { PlisioDepositService } from '@/lib/services/plisio-deposit';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 
 export default async function DashboardPage() {
+  // DEV BYPASS: Skip auth when no real Supabase is configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl || supabaseUrl === 'http://localhost:54321') {
+    const stubUser = {
+      id: 1, username: 'dev_user', email: 'dev@localhost', password_hash: '',
+      role: 'member' as const, referral_code: 'DEV12345', referred_by: null,
+      display_balance: 1000, total_deposited_real: 500, total_withdrawn_real: 0,
+      pending_withdrawal_amount: 0, bonus_balance: 50, bonus_locked: false,
+      minimum_deposit_to_unlock: 200, bonus_unlocked_at: null,
+      first_deposit_time: new Date().toISOString(), plisio_uid: null,
+      plisio_btc_address: null, plisio_eth_address: null, plisio_usdt_address: null,
+      created_at: new Date().toISOString(), last_login: null,
+      status: 'active' as const, profit_balance: 25.50,
+      commission_balance: 12.00, locked_balance: 500,
+    } as import('@/lib/types').User & { locked_balance?: number; profit_balance?: number; commission_balance?: number };
+    return (
+      <DashboardContent
+        user={stubUser}
+        downlineCounts={{ level_1: 3, level_2: 7, level_3: 12, level_4: 5, level_5: 1 }}
+        deposits={[]}
+        commissions={[]}
+        withdrawalLock={null}
+        totalPaidComm={45.00}
+        totalPendingComm={8.50}
+        depositAddresses={null}
+        depositAddressError={null}
+        dailyRate={1.5}
+        totalEarned={128.40}
+      />
+    );
+  }
+
   const cookieStore = cookies();
-  const token = cookieStore.get('kingdom_session')?.value;
+  const token = cookieStore.get('__Host-kingdom_session')?.value;
   if (!token) redirect('/login');
 
   const supabase = createServiceClient();

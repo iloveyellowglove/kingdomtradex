@@ -6,7 +6,7 @@ import TradingPage from '@/components/trading/TradingPage';
 
 export default async function TradingPageServer() {
   const cookieStore = cookies();
-  const token = cookieStore.get('kingdom_session')?.value;
+  const token = cookieStore.get('__Host-kingdom_session')?.value;
   if (!token) redirect('/login');
 
   const supabase = createServiceClient();
@@ -37,11 +37,11 @@ export default async function TradingPageServer() {
 
   const activeLockCount = activeLocks?.length ?? 0;
   const dailyProjection = (activeLocks ?? []).reduce(
-    (sum, lock) => sum + Number(lock.amount) * Number(lock.daily_rate),
+    (sum: number, lock: Record<string, unknown>) => sum + Number(lock.amount) * Number(lock.daily_rate),
     0,
   );
 
-  const uniqueTiers = (activeLocks ?? []).map(l => l.tier).filter((v, i, a) => a.indexOf(v) === i);
+  const uniqueTiers = (activeLocks ?? []).map((l: Record<string, unknown>) => l.tier).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
 
   const dailyRate = parseFloat(await getSetting('daily_profit_percentage', '1.8'));
 

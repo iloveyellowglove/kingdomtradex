@@ -3,8 +3,14 @@ import { redirect } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase/service';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  // DEV BYPASS: Skip auth when no real Supabase is configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl || supabaseUrl === 'http://localhost:54321') {
+    return <>{children}</>;
+  }
+
   const cookieStore = cookies();
-  const token = cookieStore.get('kingdom_session')?.value;
+  const token = cookieStore.get('__Host-kingdom_session')?.value;
 
   if (!token || token.length !== 64) {
     redirect('/login');

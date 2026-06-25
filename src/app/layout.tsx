@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 
 async function getUser() {
   const cookieStore = cookies();
-  const token = cookieStore.get('kingdom_session')?.value;
+  const token = cookieStore.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) return null;
 
   const supabase = createServiceClient();

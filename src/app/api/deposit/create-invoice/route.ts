@@ -7,14 +7,14 @@ import { createNowPayment } from '@/lib/nowpayments';
 import { getMinDeposit, getCurrencyById } from '@/lib/currencies';
 
 const VALID_TIERS: Record<string, number> = {
-  growth: 60,
-  builder: 90,
-  kingdom: 120,
-  legacy: 180,
+  silver: 180,
+  gold: 270,
+  platinum: 360,
+  diamond: 540,
 };
 
 export async function POST(request: NextRequest) {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
   }
@@ -50,6 +50,9 @@ export async function POST(request: NextRequest) {
   }
 
   const amt = parseFloat(amount || '0');
+  if (!isFinite(amt)) {
+    return NextResponse.json({ success: false, error: 'Invalid amount.' }, { status: 400 });
+  }
   if (!amt || amt <= 0) {
     return NextResponse.json({ success: false, error: 'Amount must be positive.' }, { status: 400 });
   }

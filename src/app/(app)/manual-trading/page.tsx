@@ -8,7 +8,7 @@ export default async function ManualTradingServerPage() {
   if (!ENABLE_MANUAL_TRADING) redirect('/dashboard');
 
   const cookieStore = cookies();
-  const token = cookieStore.get('kingdom_session')?.value;
+  const token = cookieStore.get('__Host-kingdom_session')?.value;
   if (!token) redirect('/login');
 
   const supabase = createServiceClient();

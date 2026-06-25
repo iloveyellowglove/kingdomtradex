@@ -8,7 +8,7 @@ import { PAIRS } from '@/lib/pairs';
 const BINANCE = 'https://api.binance.com/api/v3';
 
 export async function POST(request: NextRequest) {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
   }

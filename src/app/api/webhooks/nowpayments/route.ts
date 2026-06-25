@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { verifyNowPaymentsIPN } from '@/lib/nowpayments-verify';
+import { verifyNowPaymentsIPNRaw } from '@/lib/nowpayments-verify';
 import { processCompletedDeposit } from '@/lib/deposit-processing';
 
 // Map NOWPayments status to our internal status
@@ -26,10 +26,11 @@ function mapStatus(npStatus: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  const rawBody = await request.text();
   let body: Record<string, unknown>;
 
   try {
-    body = await request.json();
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   let validSignature: boolean;
   try {
-    validSignature = verifyNowPaymentsIPN(body, signature);
+    validSignature = verifyNowPaymentsIPNRaw(rawBody, signature);
   } catch {
     return NextResponse.json({ error: 'Signature verification unavailable' }, { status: 500 });
   }
@@ -92,6 +93,17 @@ export async function POST(request: NextRequest) {
 
   // Process completed deposits
   if (internalStatus === 'completed') {
+    // Check for duplicate processing via existing deposit_lock
+    const { data: existingLock } = await supabase
+      .from('deposit_locks')
+      .select('id')
+      .eq('deposit_id', deposit.id)
+      .limit(1);
+
+    if (existingLock && existingLock.length > 0) {
+      return NextResponse.json({ success: true, message: 'Already processed.' });
+    }
+
     const result = await processCompletedDeposit({
       userId: deposit.user_id,
       txnId: deposit.txn_id,

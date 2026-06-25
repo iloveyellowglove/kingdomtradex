@@ -24,7 +24,7 @@ export async function getTotalPendingCommissions(userId: number): Promise<number
     .select('amount')
     .eq('user_id', userId)
     .eq('status', 'pending');
-  return (data ?? []).reduce((sum, r) => sum + Number(r.amount), 0);
+  return (data ?? []).reduce((sum: number, r: Record<string, unknown>) => sum + Number(r.amount), 0);
 }
 
 export async function getTotalPaidCommissions(userId: number): Promise<number> {
@@ -34,7 +34,7 @@ export async function getTotalPaidCommissions(userId: number): Promise<number> {
     .select('amount')
     .eq('user_id', userId)
     .eq('status', 'paid');
-  return (data ?? []).reduce((sum, r) => sum + Number(r.amount), 0);
+  return (data ?? []).reduce((sum: number, r: Record<string, unknown>) => sum + Number(r.amount), 0);
 }
 
 export async function createCommission(c: {
@@ -110,21 +110,35 @@ export async function distributeCommissions(
       break;
     }
 
+    // Commission is created as 'pending' — it will be confirmed when the deposit matures
+    currentUserId = uplineUser.id;
+  }
+}
+
+export async function confirmCommissions(depositId: number): Promise<void> {
+  const supabase = createServiceClient();
+
+  // Fetch all pending commissions for this deposit
+  const { data: commissions } = await supabase
+    .from('referral_commissions')
+    .select('id, user_id, amount')
+    .eq('source_deposit_id', depositId)
+    .eq('status', 'pending');
+
+  if (!commissions || commissions.length === 0) return;
+
+  for (const c of commissions) {
     try {
-      await creditCommissionBalance(uplineUser.id, commissionAmount);
+      await creditCommissionBalance(c.user_id, Number(c.amount));
     } catch (creditErr) {
-      console.error('[commissions] credit failed L' + level + ':', creditErr);
-      break;
+      console.error('[commissions] confirm credit failed for commission', c.id, ':', creditErr);
+      continue;
     }
 
     await supabase
       .from('referral_commissions')
       .update({ status: 'paid', paid_at: new Date().toISOString() })
-      .eq('user_id', uplineUser.id)
-      .eq('source_deposit_id', depositId)
-      .eq('level', level);
-
-    currentUserId = uplineUser.id;
+      .eq('id', c.id);
   }
 }
 

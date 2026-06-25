@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 const VALID_DOC_TYPES = ['passport', 'national_id', 'drivers_license'];
 
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get('kingdom_session')?.value;
+  const token = req.cookies.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get('kingdom_session')?.value;
+  const token = req.cookies.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

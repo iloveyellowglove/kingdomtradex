@@ -11,7 +11,7 @@ const VALID_TIERS: Record<string, { lock_days: number; daily_rate: number }> = {
 };
 
 export async function POST(request: NextRequest) {
-  const token = cookies().get('kingdom_session')?.value;
+  const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
   }
