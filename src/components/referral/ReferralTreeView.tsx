@@ -5,7 +5,7 @@ export default function ReferralTreeView({ tree }: { tree: ReferralTreeNode[] })
     return (
       <div className="card">
         <div className="card-body text-center py-8">
-          <p className="text-text-muted mb-0">No disciples yet. Share your referral code to start building your network.</p>
+          <p className="text-kt-text-tertiary mb-0">No disciples yet. Share your referral code to start building your network.</p>
         </div>
       </div>
     );
@@ -26,13 +26,13 @@ function TreeNode({ node }: { node: ReferralTreeNode }) {
       <div className="card mb-2 p-3 hover:shadow-gold-glow transition">
         <div className="flex justify-between items-center">
           <div>
-            <strong className="text-text-primary">{node.username}</strong>
-            <span className="text-text-muted text-sm ml-2">Level {node.level}</span>
+            <strong className="text-kt-text-primary">{node.username}</strong>
+            <span className="text-kt-text-tertiary text-sm ml-2">Level {node.level}</span>
           </div>
           <div className="text-right">
-            <span className="text-temple-gold">{Number(node.display_balance).toFixed(6)} USDT</span>
+            <span className="text-kt-gold">{Number(node.display_balance).toFixed(6)} USDT</span>
             <br />
-            <small className="text-text-muted">{new Date(node.created_at).toLocaleDateString()}</small>
+            <small className="text-kt-text-tertiary">{new Date(node.created_at).toLocaleDateString()}</small>
           </div>
         </div>
       </div>

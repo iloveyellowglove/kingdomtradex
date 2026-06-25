@@ -15,8 +15,8 @@ export default function RegisterPage() {
             </div>
             <h3 className="text-center mb-6">Create Account</h3>
             <RegisterForm csrfToken={csrfToken} />
-            <div className="text-center mt-4 pt-4 border-t border-border">
-              <small className="text-text-muted">Already have an account? <a href="/login" className="text-temple-gold">Log In</a></small>
+            <div className="text-center mt-4 pt-4 border-t border-kt-border">
+              <small className="text-kt-text-tertiary">Already have an account? <a href="/login" className="text-kt-gold">Log In</a></small>
             </div>
           </div>
         </div>

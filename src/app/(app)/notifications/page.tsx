@@ -85,19 +85,19 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="py-4 max-w-lg mx-auto px-4">
+    <div className="py-4 px-4 lg:px-6">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-xl font-bold text-white">Notifications</h2>
+        <h2 className="text-xl font-bold text-kt-text-primary">Notifications</h2>
         {unreadCount > 0 && (
           <button
             onClick={markAllRead}
-            className="text-xs text-[#FFD700] font-medium hover:underline"
+            className="text-xs text-kt-gold font-medium hover:underline"
           >
             Mark all read ({unreadCount})
           </button>
         )}
       </div>
-      <p className="text-sm text-white/40 mb-4">Stay updated on your account activity</p>
+      <p className="text-sm text-kt-text-tertiary mb-4">Stay updated on your account activity</p>
 
       {/* Filters */}
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
@@ -164,12 +164,12 @@ export default function NotificationsPage() {
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-xs font-medium text-white/30">{TYPE_LABELS[n.type] || n.type}</span>
                   {!n.read && (
-                    <span className="text-[10px] text-[#FFD700] font-medium">New</span>
+                    <span className="text-[10px] text-kt-gold font-medium">New</span>
                   )}
                 </div>
                 <p className={`text-sm ${n.read ? 'text-white/50' : 'text-white'}`}>{n.title}</p>
                 <p className="text-xs text-white/35 mt-0.5">{n.message}</p>
-                <p className="text-[10px] text-white/20 mt-1.5">{timeAgo(n.createdAt)}</p>
+                <p className="text-[10px] text-kt-text-tertiary mt-1.5">{timeAgo(n.createdAt)}</p>
               </div>
             </button>
           ))}

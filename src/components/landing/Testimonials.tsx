@@ -42,7 +42,7 @@ export default function Testimonials() {
     <section ref={sectionRef} className={`mb-12 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Trusted by the Community</h2>
-        <p className="text-text-muted">Hear from early members experiencing daily returns</p>
+        <p className="text-kt-text-tertiary">Hear from early members experiencing daily returns</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -69,11 +69,11 @@ export default function Testimonials() {
                 {t.initials}
               </span>
               <div>
-                <p className="text-text-primary font-semibold text-sm">{t.name}</p>
-                <p className="text-temple-gold text-xs">{t.role}</p>
+                <p className="text-kt-text-primary font-semibold text-sm">{t.name}</p>
+                <p className="text-kt-gold text-xs">{t.role}</p>
               </div>
             </div>
-            <p className="text-text-secondary text-sm leading-relaxed italic">
+            <p className="text-kt-text-secondary text-sm leading-relaxed italic">
               &ldquo;{t.text}&rdquo;
             </p>
           </div>

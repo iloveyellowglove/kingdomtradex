@@ -23,8 +23,8 @@ export default function OfflinePage() {
           </svg>
         </div>
 
-        <h1 className="text-2xl font-bold text-white mb-2">You&apos;re Offline</h1>
-        <p className="text-sm text-white/40 mb-6">
+        <h1 className="text-2xl font-bold text-kt-text-primary mb-2">You&apos;re Offline</h1>
+        <p className="text-sm text-kt-text-tertiary mb-6">
           It looks like you&apos;ve lost your internet connection. Check your connection and try again.
         </p>
 

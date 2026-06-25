@@ -87,19 +87,19 @@ export default function KycPage() {
   if (loading) return <div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-[#F0B90B] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="py-4 max-w-lg mx-auto px-4" style={{ background: '#0B0E11', minHeight: '100vh' }}>
-      <h2 className="text-xl font-bold text-[#EAECEF] mb-1">KYC Verification</h2>
-      <p className="text-sm text-[#848E9C] mb-6">Complete all levels to unlock full platform access</p>
+    <div className="py-4 px-4 lg:px-6" style={{ background: '#0B0E11', minHeight: '100vh' }}>
+      <h2 className="text-xl font-bold text-kt-text-primary mb-1">KYC Verification</h2>
+      <p className="text-sm text-kt-text-secondary mb-6">Complete all levels to unlock full platform access</p>
 
-      {error && <div className="mb-4 p-3 rounded-lg text-sm text-[#F6465D]" style={{ background: 'rgba(246,70,93,0.1)', border: '1px solid rgba(246,70,93,0.2)' }}>{error}</div>}
-      {success && <div className="mb-4 p-3 rounded-lg text-sm text-[#0ECB81]" style={{ background: 'rgba(14,203,129,0.1)', border: '1px solid rgba(14,203,129,0.2)' }}>{success}</div>}
+      {error && <div className="mb-4 p-3 rounded-lg text-sm text-kt-red" style={{ background: 'rgba(246,70,93,0.1)', border: '1px solid rgba(246,70,93,0.2)' }}>{error}</div>}
+      {success && <div className="mb-4 p-3 rounded-lg text-sm text-kt-green" style={{ background: 'rgba(14,203,129,0.1)', border: '1px solid rgba(14,203,129,0.2)' }}>{success}</div>}
 
       {/* Progress bar */}
       <div className="mb-6">
-        <div className="flex justify-between text-xs text-[#5E6673] mb-2">
+        <div className="flex justify-between text-xs text-kt-text-tertiary mb-2">
           {LEVELS.map(l => <span key={l.level} style={{ color: currentLevel >= l.level ? '#0ECB81' : '#5E6673' }}>L{l.level}</span>)}
         </div>
-        <div className="h-2 rounded-full" style={{ background: '#2B3139' }}>
+        <div className="h-2 rounded-full bg-kt-elevated">
           <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(currentLevel / 4) * 100}%`, background: '#0ECB81' }} />
         </div>
       </div>
@@ -118,28 +118,28 @@ export default function KycPage() {
                 <span className="text-xl">{l.icon}</span>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-[#EAECEF]">{l.name}</span>
-                    {isComplete && <span className="text-xs text-[#0ECB81] font-bold">✓ Complete</span>}
-                    {isNext && <span className="text-xs text-[#F0B90B] font-bold">Next Step</span>}
+                    <span className="text-sm font-bold text-kt-text-primary">{l.name}</span>
+                    {isComplete && <span className="text-xs text-kt-green font-bold">✓ Complete</span>}
+                    {isNext && <span className="text-xs text-kt-gold font-bold">Next Step</span>}
                   </div>
-                  <p className="text-xs text-[#848E9C]">{l.desc}</p>
+                  <p className="text-xs text-kt-text-secondary">{l.desc}</p>
                 </div>
               </div>
-              <p className="text-xs text-[#5E6673] mb-2">{l.unlocks}</p>
+              <p className="text-xs text-kt-text-tertiary mb-2">{l.unlocks}</p>
               {isNext && (
                 <div>
                   {(l.level === 3) && (
                     <div className="space-y-2 mb-3">
-                      <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile(setIdDocFile)} className="w-full text-xs text-[#EAECEF]" />
-                      {idDocFile && <p className="text-[10px] text-[#0ECB81]">ID: {idDocFile.name}</p>}
-                      <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile(setSelfieFile)} className="w-full text-xs text-[#EAECEF]" />
-                      {selfieFile && <p className="text-[10px] text-[#0ECB81]">Selfie: {selfieFile.name}</p>}
+                      <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile(setIdDocFile)} className="w-full text-xs text-kt-text-primary" />
+                      {idDocFile && <p className="text-[10px] text-kt-green">ID: {idDocFile.name}</p>}
+                      <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile(setSelfieFile)} className="w-full text-xs text-kt-text-primary" />
+                      {selfieFile && <p className="text-[10px] text-kt-green">Selfie: {selfieFile.name}</p>}
                     </div>
                   )}
                   {(l.level === 4) && (
                     <div className="mb-3">
-                      <input type="file" accept="image/jpeg,image/png,image/webp,.pdf" onChange={handleFile(setProofFile)} className="w-full text-xs text-[#EAECEF]" />
-                      {proofFile && <p className="text-[10px] text-[#0ECB81]">{proofFile.name}</p>}
+                      <input type="file" accept="image/jpeg,image/png,image/webp,.pdf" onChange={handleFile(setProofFile)} className="w-full text-xs text-kt-text-primary" />
+                      {proofFile && <p className="text-[10px] text-kt-green">{proofFile.name}</p>}
                     </div>
                   )}
                   <button onClick={() => handleAction(l.level)} disabled={submitting}

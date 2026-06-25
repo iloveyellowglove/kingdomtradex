@@ -75,7 +75,7 @@ export default function InstallBanner() {
           </svg>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-bold text-white">Add to Home Screen</p>
+          <p className="text-sm font-bold text-kt-text-primary">Add to Home Screen</p>
           <p className="text-xs text-white/40">Install KingdomTradex for quick access</p>
         </div>
         <button

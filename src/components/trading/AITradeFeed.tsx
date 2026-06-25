@@ -60,12 +60,12 @@ export default function AITradeFeed() {
       <div className="p-4 border-b flex-shrink-0" style={{ borderColor: '#2B3139' }}>
         <div className="flex items-center gap-2 mb-2">
           <span className="w-2.5 h-2.5 rounded-full animate-pulse" style={{ background: '#0ECB81' }} />
-          <span className="text-base font-bold text-[#EAECEF]">Live AI Trades</span>
-          <span className="text-xs text-[#848E9C] ml-auto">{trades.length} trades</span>
+          <span className="text-base font-bold text-kt-text-primary">Live AI Trades</span>
+          <span className="text-xs text-kt-text-secondary ml-auto">{trades.length} trades</span>
         </div>
 
         {/* Scanning bar */}
-        <div className="relative h-0.5 mb-2 rounded-full overflow-hidden" style={{ background: '#2B3139' }}>
+        <div className="relative h-0.5 mb-2 rounded-full overflow-hidden bg-kt-elevated">
           <div
             className="absolute inset-y-0 rounded-full"
             style={{
@@ -78,10 +78,10 @@ export default function AITradeFeed() {
 
         {/* Burst message */}
         {burstMsg && (
-          <p className="text-xs text-[#F0B90B] mb-2 font-medium">{burstMsg}</p>
+          <p className="text-xs text-kt-gold mb-2 font-medium">{burstMsg}</p>
         )}
         {!burstMsg && (
-          <p className="text-xs text-[#848E9C] mb-2">AI is executing trades...</p>
+          <p className="text-xs text-kt-text-secondary mb-2">AI is executing trades...</p>
         )}
 
         {/* Filter pills */}
@@ -131,10 +131,10 @@ export default function AITradeFeed() {
                 ? (t.side === 'BUY' ? 'rgba(14,203,129,0.08)' : 'rgba(246,70,93,0.06)')
                 : 'transparent',
             }}>
-            <span className="text-[13px] text-[#848E9C] w-20 flex-shrink-0 font-mono">
+            <span className="text-[13px] text-kt-text-secondary w-20 flex-shrink-0 font-mono">
               {t.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </span>
-            <span className="text-[16px] font-bold text-[#EAECEF] w-20 flex-shrink-0">{t.pair}</span>
+            <span className="text-[16px] font-bold text-kt-text-primary w-20 flex-shrink-0">{t.pair}</span>
             <span className="px-2 py-0.5 rounded text-[11px] font-medium flex-shrink-0"
               style={{ background: `${t.tierColor}18`, color: t.tierColor, minWidth: 60, textAlign: 'center' }}>{t.tier}</span>
             <span className="px-3 py-1 rounded-full text-[11px] font-bold flex-shrink-0 text-center"
@@ -153,8 +153,8 @@ export default function AITradeFeed() {
 
       {/* Bottom stats bar */}
       <div className="flex items-center justify-between px-4 py-3 border-t flex-shrink-0 text-xs" style={{ borderColor: '#2B3139', background: '#161A1E' }}>
-        <span className="text-[#848E9C]">Win Rate: <span className="text-[#EAECEF] font-bold">{winRate}%</span></span>
-        <span className="text-[#848E9C]">Trades Today: <span className="text-[#EAECEF] font-bold">{trades.filter(t => t.time.getDate() === new Date().getDate()).length}</span></span>
+        <span className="text-kt-text-secondary">Win Rate: <span className="text-kt-text-primary font-bold">{winRate}%</span></span>
+        <span className="text-kt-text-secondary">Trades Today: <span className="text-kt-text-primary font-bold">{trades.filter(t => t.time.getDate() === new Date().getDate()).length}</span></span>
         <span className="font-bold tabular-nums" style={{ color: todayPnL >= 0 ? '#0ECB81' : '#F6465D' }}>
           {todayPnL >= 0 ? '+' : ''}{todayPnL.toFixed(2)}%
         </span>

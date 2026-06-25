@@ -138,7 +138,7 @@ export default function PrincipalTab() {
           </svg>
         </div>
         <div>
-          <p className="text-sm font-semibold text-[#FFD700]">Platform Credit - Non-withdrawable</p>
+          <p className="text-sm font-semibold text-kt-gold">Platform Credit - Non-withdrawable</p>
           <p className="text-xs text-white/50">
             Your ${signupCredit.toFixed(2)} signup credit is provided by the platform and cannot be withdrawn.
             Only deposited funds can be withdrawn as principal.
@@ -191,9 +191,9 @@ export default function PrincipalTab() {
                       style={{ background: `${tierColor(d.tier)}20`, color: tierColor(d.tier) }}>
                       {d.tier.toUpperCase()}
                     </span>
-                    <span className="ml-2 text-white font-bold">${d.amount.toFixed(2)}</span>
+                    <span className="ml-2 text-kt-text-primary font-bold">${d.amount.toFixed(2)}</span>
                   </div>
-                  <span className={`text-xs font-medium ${isMatured ? 'text-green-400' : 'text-[#FFC107]'}`}>
+                  <span className={`text-xs font-medium ${isMatured ? 'text-green-400' : 'text-kt-gold'}`}>
                     {isMatured ? 'Matured' : formatTimeRemaining(d.timeRemaining)}
                   </span>
                 </div>
@@ -203,19 +203,19 @@ export default function PrincipalTab() {
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div>
                         <span className="text-white/40">Tier:</span>
-                        <span className="ml-1 text-white capitalize">{d.tier}</span>
+                        <span className="ml-1 text-kt-text-primary capitalize">{d.tier}</span>
                       </div>
                       <div>
                         <span className="text-white/40">Lock:</span>
-                        <span className="ml-1 text-white">{d.lockDays} days</span>
+                        <span className="ml-1 text-kt-text-primary">{d.lockDays} days</span>
                       </div>
                       <div>
                         <span className="text-white/40">Daily Rate:</span>
-                        <span className="ml-1 text-[#4CAF50]">{(d.dailyRate * 100).toFixed(2)}%</span>
+                        <span className="ml-1 text-kt-green">{(d.dailyRate * 100).toFixed(2)}%</span>
                       </div>
                       <div>
                         <span className="text-white/40">Matures:</span>
-                        <span className="ml-1 text-white">{new Date(d.unlocksAt).toLocaleDateString()}</span>
+                        <span className="ml-1 text-kt-text-primary">{new Date(d.unlocksAt).toLocaleDateString()}</span>
                       </div>
                     </div>
 
@@ -249,27 +249,27 @@ export default function PrincipalTab() {
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           {/* Currency */}
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">Receive Currency</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Receive Currency</label>
             <div className="relative" ref={dropdownRef}>
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-white/10 text-left hover:border-[#FFD700]/50 transition"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-kt-border text-left hover:border-[#FFD700]/50 transition"
                 style={{ background: 'rgba(255,255,255,0.04)', minHeight: 48 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={coinIconUrl(selectedCurrency.iconSlug)} alt="" width={24} height={24} className="rounded-full flex-shrink-0"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                 <div className="flex-1">
-                  <span className="text-white font-medium">{selectedCurrency.symbol}</span>
+                  <span className="text-kt-text-primary font-medium">{selectedCurrency.symbol}</span>
                   <span className="text-white/40 text-sm ml-2">{selectedCurrency.name}</span>
                 </div>
-                <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-white/40">{selectedCurrency.network}</span>
+                <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-kt-hover-bg text-white/40">{selectedCurrency.network}</span>
                 <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 1l4 4 4-4"/></svg>
               </button>
 
               {dropdownOpen && (
-                <div className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-72 overflow-y-auto"
+                <div className="absolute left-0 right-0 top-full mt-1 border border-kt-border rounded-lg shadow-2xl z-50 max-h-72 overflow-y-auto"
                   style={{ background: '#1a1a2e' }}>
                   {[
                     { label: 'Stablecoins', items: stablecoins },
@@ -277,7 +277,7 @@ export default function PrincipalTab() {
                     { label: 'Altcoins', items: alts },
                   ].map(group => (
                     <div key={group.label}>
-                      <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">{group.label}</div>
+                      <div className="px-4 py-2 text-xs font-semibold text-kt-text-tertiary uppercase tracking-wider">{group.label}</div>
                       {group.items.map(currency => (
                         <button
                           key={currency.id}
@@ -289,9 +289,9 @@ export default function PrincipalTab() {
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={coinIconUrl(currency.iconSlug)} alt="" width={22} height={22} className="rounded-full flex-shrink-0"
                             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                          <span className="flex-1 text-sm text-white">{currency.symbol}</span>
+                          <span className="flex-1 text-sm text-kt-text-primary">{currency.symbol}</span>
                           <span className="text-xs text-white/40">{currency.name}</span>
-                          <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">{currency.network}</span>
+                          <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-white/40">{currency.network}</span>
                         </button>
                       ))}
                     </div>
@@ -303,7 +303,7 @@ export default function PrincipalTab() {
 
           {/* Wallet address */}
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">Wallet Address</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Wallet Address</label>
             <input
               type="text"
               value={walletAddress}
@@ -311,7 +311,7 @@ export default function PrincipalTab() {
               required
               minLength={10}
               placeholder={`Your ${selectedCurrency.network} address`}
-              className="w-full px-4 py-3 rounded-lg text-white text-base"
+              className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -347,7 +347,7 @@ export default function PrincipalTab() {
         <div className="space-y-3">
           <div className="flex justify-between">
             <span className="text-white/50">Deposit:</span>
-            <span className="text-white font-bold">${selectedDeposit?.amount.toFixed(2)}</span>
+            <span className="text-kt-text-primary font-bold">${selectedDeposit?.amount.toFixed(2)}</span>
           </div>
           {selectedDeposit && selectedDeposit.timeRemaining > 0 && (
             <>
@@ -356,8 +356,8 @@ export default function PrincipalTab() {
                 <span>-${selectedDeposit.forfeitAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-white font-semibold">Net amount:</span>
-                <span className="text-[#FFD700] font-bold">${selectedDeposit.netIfEarly.toFixed(2)}</span>
+                <span className="text-kt-text-primary font-semibold">Net amount:</span>
+                <span className="text-kt-gold font-bold">${selectedDeposit.netIfEarly.toFixed(2)}</span>
               </div>
             </>
           )}

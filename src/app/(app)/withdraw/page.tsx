@@ -39,9 +39,9 @@ export default function WithdrawPage() {
   ];
 
   return (
-    <div className="py-4 max-w-2xl mx-auto px-4">
-      <h2 className="text-xl font-bold text-white mb-1">Withdraw</h2>
-      <p className="text-sm text-white/40 mb-6">Withdraw your earnings to any wallet</p>
+    <div className="py-4 px-4 lg:px-6">
+      <h2 className="text-xl font-bold text-kt-text-primary mb-1">Withdraw</h2>
+      <p className="text-sm text-kt-text-tertiary mb-6">Withdraw your earnings to any wallet</p>
 
       {/* Balance summary cards */}
       <div className="grid grid-cols-2 gap-3 mb-6">
@@ -49,14 +49,14 @@ export default function WithdrawPage() {
           className="p-4 rounded-xl"
           style={{ background: 'rgba(76,175,80,0.06)', border: '1px solid rgba(76,175,80,0.15)' }}
         >
-          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Profit Balance</p>
-          <p className="text-2xl font-bold text-[#4CAF50]">${balances.profit.toFixed(2)}</p>
+          <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-1">Profit Balance</p>
+          <p className="text-2xl font-bold text-kt-green">${balances.profit.toFixed(2)}</p>
         </div>
         <div
           className="p-4 rounded-xl"
           style={{ background: 'rgba(180,124,255,0.06)', border: '1px solid rgba(180,124,255,0.15)' }}
         >
-          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Commission Balance</p>
+          <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-1">Commission Balance</p>
           <p className="text-2xl font-bold text-[#B47CFF]">${balances.commission.toFixed(2)}</p>
         </div>
       </div>

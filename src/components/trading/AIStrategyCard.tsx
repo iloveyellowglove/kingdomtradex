@@ -33,8 +33,8 @@ export default function AIStrategyCard({ lockedBalance, activeLockCount, highest
 
   return (
     <div className="rounded-xl p-4" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-      <h3 className="text-sm font-bold text-[#EAECEF] mb-1">Your Active Strategy</h3>
-      <p className="text-xs text-[#848E9C] mb-3">Multi-Exchange Arbitrage &amp; Momentum</p>
+      <h3 className="text-sm font-bold text-kt-text-primary mb-1">Your Active Strategy</h3>
+      <p className="text-xs text-kt-text-secondary mb-3">Multi-Exchange Arbitrage &amp; Momentum</p>
 
       <div className="grid grid-cols-2 gap-2 mb-2">
         {[
@@ -44,7 +44,7 @@ export default function AIStrategyCard({ lockedBalance, activeLockCount, highest
           { l: 'Next Distribution', v: countdown, c: '#848E9C' },
         ].map(s => (
           <div key={s.l} className="p-2.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
-            <p className="text-[10px] text-[#5E6673] mb-0.5">{s.l}</p>
+            <p className="text-[10px] text-kt-text-tertiary mb-0.5">{s.l}</p>
             <p className="text-sm font-bold tabular-nums" style={{ color: s.c }}>{s.v}</p>
           </div>
         ))}
@@ -53,14 +53,14 @@ export default function AIStrategyCard({ lockedBalance, activeLockCount, highest
       {/* 5th stat: total earnings */}
       <div className="p-2.5 rounded-lg mb-3" style={{ background: 'rgba(14,203,129,0.05)', border: '1px solid rgba(14,203,129,0.1)' }}>
         <div className="flex items-center justify-between">
-          <span className="text-[10px] text-[#5E6673]">Your Total Earnings</span>
-          <span className="text-base font-bold text-[#0ECB81] tabular-nums">
+          <span className="text-[10px] text-kt-text-tertiary">Your Total Earnings</span>
+          <span className="text-base font-bold text-kt-green tabular-nums">
             ${totalEarned.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </span>
         </div>
       </div>
 
-      <p className="text-xs text-[#848E9C] mb-3">
+      <p className="text-xs text-kt-text-secondary mb-3">
         Your locked deposits earn projected daily yield automatically. The AI engine manages all trading on your behalf.
       </p>
 

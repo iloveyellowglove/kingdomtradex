@@ -173,7 +173,7 @@ export default function ProfitTab() {
           )}
         </div>
         <div>
-          <p className="text-sm font-semibold text-white">
+          <p className="text-sm font-semibold text-kt-text-primary">
             {kycLevel >= 2 ? 'KYC Level 2 - ID Verified' : kycLevel >= 1 ? 'KYC Level 1 - Email Verified' : 'KYC Level 0 - Unverified'}
           </p>
           <p className="text-xs text-white/50">
@@ -189,7 +189,7 @@ export default function ProfitTab() {
       {/* Countdown timer */}
       {countdown && (
         <div
-          className="flex items-center gap-2 p-3 rounded-lg mb-4 text-sm text-[#FFC107]"
+          className="flex items-center gap-2 p-3 rounded-lg mb-4 text-sm text-kt-gold"
           style={{ background: 'rgba(255,193,7,0.08)', border: '1px solid rgba(255,193,7,0.2)' }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -199,8 +199,8 @@ export default function ProfitTab() {
 
       {/* Available balance */}
       <div className="mb-4 text-center">
-        <p className="text-xs text-white/40 uppercase tracking-wider">Available Profit Balance</p>
-        <p className="text-3xl font-bold text-[#4CAF50]">${availableProfit.toFixed(2)}</p>
+        <p className="text-xs text-kt-text-tertiary uppercase tracking-wider">Available Profit Balance</p>
+        <p className="text-3xl font-bold text-kt-green">${availableProfit.toFixed(2)}</p>
       </div>
 
       {error && (
@@ -217,7 +217,7 @@ export default function ProfitTab() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Amount */}
         <div>
-          <label className="block text-sm text-white/60 font-medium mb-1.5">Amount (USD)</label>
+          <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Amount (USD)</label>
           <div className="relative">
             <input
               type="number"
@@ -228,7 +228,7 @@ export default function ProfitTab() {
               onChange={(e) => setAmount(e.target.value)}
               required
               placeholder="25.00"
-              className="w-full px-4 py-3 rounded-lg text-white text-base"
+              className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -244,32 +244,32 @@ export default function ProfitTab() {
               MAX
             </button>
           </div>
-          <p className="text-xs text-white/40 mt-1">Min: $25.00 · Available: ${availableProfit.toFixed(2)}</p>
+          <p className="text-xs text-kt-text-tertiary mt-1">Min: $25.00 · Available: ${availableProfit.toFixed(2)}</p>
         </div>
 
         {/* Currency */}
         <div>
-          <label className="block text-sm text-white/60 font-medium mb-1.5">Receive Currency</label>
+          <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Receive Currency</label>
           <div className="relative" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-white/10 text-left hover:border-[#FFD700]/50 transition"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-kt-border text-left hover:border-[#FFD700]/50 transition"
               style={{ background: 'rgba(255,255,255,0.04)', minHeight: 48 }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={coinIconUrl(selectedCurrency.iconSlug)} alt="" width={24} height={24} className="rounded-full flex-shrink-0"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               <div className="flex-1">
-                <span className="text-white font-medium">{selectedCurrency.symbol}</span>
+                <span className="text-kt-text-primary font-medium">{selectedCurrency.symbol}</span>
                 <span className="text-white/40 text-sm ml-2">{selectedCurrency.name}</span>
               </div>
-              <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-white/40">{selectedCurrency.network}</span>
+              <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-kt-hover-bg text-white/40">{selectedCurrency.network}</span>
               <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 1l4 4 4-4"/></svg>
             </button>
 
             {dropdownOpen && (
-              <div className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-72 overflow-y-auto"
+              <div className="absolute left-0 right-0 top-full mt-1 border border-kt-border rounded-lg shadow-2xl z-50 max-h-72 overflow-y-auto"
                 style={{ background: '#1a1a2e' }}>
                 {[
                   { label: 'Stablecoins', items: stablecoins },
@@ -277,7 +277,7 @@ export default function ProfitTab() {
                   { label: 'Altcoins', items: alts },
                 ].map(group => (
                   <div key={group.label}>
-                    <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">{group.label}</div>
+                    <div className="px-4 py-2 text-xs font-semibold text-kt-text-tertiary uppercase tracking-wider">{group.label}</div>
                     {group.items.map(currency => (
                       <button
                         key={currency.id}
@@ -289,9 +289,9 @@ export default function ProfitTab() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={coinIconUrl(currency.iconSlug)} alt="" width={22} height={22} className="rounded-full flex-shrink-0"
                           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                        <span className="flex-1 text-sm text-white">{currency.symbol}</span>
+                        <span className="flex-1 text-sm text-kt-text-primary">{currency.symbol}</span>
                         <span className="text-xs text-white/40">{currency.name}</span>
-                        <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">{currency.network}</span>
+                        <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-white/40">{currency.network}</span>
                       </button>
                     ))}
                   </div>
@@ -303,7 +303,7 @@ export default function ProfitTab() {
 
         {/* Wallet address */}
         <div>
-          <label className="block text-sm text-white/60 font-medium mb-1.5">Wallet Address</label>
+          <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Wallet Address</label>
           <input
             type="text"
             value={walletAddress}
@@ -311,14 +311,14 @@ export default function ProfitTab() {
             required
             minLength={10}
             placeholder={`Your ${selectedCurrency.network} address`}
-            className="w-full px-4 py-3 rounded-lg text-white text-base"
+            className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
             style={{
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.08)',
               minHeight: 48,
             }}
           />
-          <p className="text-xs text-white/40 mt-1">Double check the address. Wrong addresses cannot be recovered.</p>
+          <p className="text-xs text-kt-text-tertiary mt-1">Double check the address. Wrong addresses cannot be recovered.</p>
         </div>
 
         {/* Submit */}
@@ -347,15 +347,15 @@ export default function ProfitTab() {
         <div className="space-y-3">
           <div className="flex justify-between">
             <span className="text-white/50">Amount:</span>
-            <span className="text-white font-bold">${parseFloat(amount || '0').toFixed(2)}</span>
+            <span className="text-kt-text-primary font-bold">${parseFloat(amount || '0').toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-white/50">Currency:</span>
-            <span className="text-white">{selectedCurrency.symbol} ({selectedCurrency.network})</span>
+            <span className="text-kt-text-primary">{selectedCurrency.symbol} ({selectedCurrency.network})</span>
           </div>
           <div className="flex justify-between">
             <span className="text-white/50">Wallet:</span>
-            <span className="text-white text-xs font-mono max-w-[180px] truncate">{walletAddress.trim()}</span>
+            <span className="text-kt-text-primary text-xs font-mono max-w-[180px] truncate">{walletAddress.trim()}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-white/50">Network Fee:</span>

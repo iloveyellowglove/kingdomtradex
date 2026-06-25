@@ -60,7 +60,7 @@ function PriceCard({ coin }: { coin: Coin }) {
           </div>
         )}
       </div>
-      <p className="text-text-muted text-xs uppercase tracking-wider mb-2">{coin.name}</p>
+      <p className="text-kt-text-tertiary text-xs uppercase tracking-wider mb-2">{coin.name}</p>
       <p className={`text-xl font-bold mb-1 transition-colors ${
         flash === 'up' ? 'text-success' : flash === 'down' ? 'text-danger' : 'text-white'
       }`}>
@@ -111,7 +111,7 @@ export default function LiveMarkets() {
     <section ref={sectionRef} className={`mb-12 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
       <div className="text-center mb-6">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Live Market Prices</h2>
-        <p className="text-text-muted">Real-time cryptocurrency prices from CoinGecko</p>
+        <p className="text-kt-text-tertiary">Real-time cryptocurrency prices from CoinGecko</p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {coins.map((coin) => (

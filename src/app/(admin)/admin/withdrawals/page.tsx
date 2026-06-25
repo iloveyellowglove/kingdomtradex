@@ -105,7 +105,7 @@ export default function AdminWithdrawalsPage() {
           Pending Review ({pending.length})
         </h4>
         {pending.length === 0 ? (
-          <p className="text-text-muted text-sm">No pending withdrawals.</p>
+          <p className="text-kt-text-tertiary text-sm">No pending withdrawals.</p>
         ) : (
           <div className="card">
             <div className="card-body p-0 overflow-x-auto">
@@ -131,7 +131,7 @@ export default function AdminWithdrawalsPage() {
                         <td className="p-3">#{w.id}</td>
                         <td className="p-3">
                           <div className="font-medium">{u.username}</div>
-                          <div className="text-xs text-text-muted">{u.email}</div>
+                          <div className="text-xs text-kt-text-tertiary">{u.email}</div>
                         </td>
                         <td className="p-3">
                           <span className="px-2 py-0.5 rounded text-xs font-bold" style={{
@@ -155,14 +155,14 @@ export default function AdminWithdrawalsPage() {
                             <button
                               onClick={() => setApproveId(w.id)}
                               disabled={loading}
-                              className="px-3 py-1 rounded text-xs font-bold bg-green-600 text-white hover:bg-green-500 transition"
+                              className="px-3 py-1 rounded text-xs font-bold bg-green-600 text-kt-text-primary hover:bg-green-500 transition"
                             >
                               Approve
                             </button>
                             <button
                               onClick={() => { setRejectId(w.id); setRejectNotes(''); }}
                               disabled={loading}
-                              className="px-3 py-1 rounded text-xs font-bold bg-red-600 text-white hover:bg-red-500 transition"
+                              className="px-3 py-1 rounded text-xs font-bold bg-red-600 text-kt-text-primary hover:bg-red-500 transition"
                             >
                               Reject
                             </button>
@@ -177,13 +177,13 @@ export default function AdminWithdrawalsPage() {
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => handleAction(w.id, 'approve')}
-                                  className="px-3 py-1 rounded text-xs font-bold bg-green-600 text-white"
+                                  className="px-3 py-1 rounded text-xs font-bold bg-green-600 text-kt-text-primary"
                                 >
                                   Confirm Approve
                                 </button>
                                 <button
                                   onClick={() => setApproveId(null)}
-                                  className="px-3 py-1 rounded text-xs border border-border-light text-text-muted"
+                                  className="px-3 py-1 rounded text-xs border border-kt-border text-kt-text-tertiary"
                                 >
                                   Cancel
                                 </button>
@@ -205,13 +205,13 @@ export default function AdminWithdrawalsPage() {
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => handleAction(w.id, 'reject', rejectNotes)}
-                                  className="px-3 py-1 rounded text-xs font-bold bg-red-600 text-white"
+                                  className="px-3 py-1 rounded text-xs font-bold bg-red-600 text-kt-text-primary"
                                 >
                                   Confirm Reject
                                 </button>
                                 <button
                                   onClick={() => { setRejectId(null); setRejectNotes(''); }}
-                                  className="px-3 py-1 rounded text-xs border border-border-light text-text-muted"
+                                  className="px-3 py-1 rounded text-xs border border-kt-border text-kt-text-tertiary"
                                 >
                                   Cancel
                                 </button>
@@ -275,7 +275,7 @@ export default function AdminWithdrawalsPage() {
                           <button
                             onClick={() => handleAction(w.id, 'complete')}
                             disabled={loading}
-                            className="px-3 py-1 rounded text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 transition"
+                            className="px-3 py-1 rounded text-xs font-bold bg-blue-600 text-kt-text-primary hover:bg-blue-500 transition"
                           >
                             Mark Completed
                           </button>
@@ -299,7 +299,7 @@ export default function AdminWithdrawalsPage() {
             className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${
               filter === f
                 ? 'bg-temple-gold text-bg-dark'
-                : 'border border-border-light text-text-muted hover:text-text-primary'
+                : 'border border-kt-border text-kt-text-tertiary hover:text-kt-text-primary'
             }`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -311,7 +311,7 @@ export default function AdminWithdrawalsPage() {
       <div className="card">
         <div className="card-body p-0 overflow-x-auto">
           {filtered.length === 0 ? (
-            <p className="p-6 text-text-muted text-center mb-0">No withdrawals found.</p>
+            <p className="p-6 text-kt-text-tertiary text-center mb-0">No withdrawals found.</p>
           ) : (
             <table className="w-full text-sm">
               <thead>

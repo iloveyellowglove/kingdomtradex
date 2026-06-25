@@ -15,8 +15,8 @@ export default function LoginPage() {
             </div>
             <h3 className="text-center mb-6">Log In</h3>
             <LoginForm csrfToken={csrfToken} />
-            <div className="text-center mt-4 pt-4 border-t border-border">
-              <small className="text-text-muted">Don&apos;t have an account? <a href="/register" className="text-temple-gold">Register</a></small>
+            <div className="text-center mt-4 pt-4 border-t border-kt-border">
+              <small className="text-kt-text-tertiary">Don&apos;t have an account? <a href="/register" className="text-kt-gold">Register</a></small>
             </div>
           </div>
         </div>

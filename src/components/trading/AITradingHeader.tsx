@@ -26,13 +26,13 @@ export default function AITradingHeader() {
     >
       <div className="flex items-center gap-2 flex-shrink-0">
         <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#0ECB81' }} />
-        <span className="text-sm font-semibold text-[#EAECEF] whitespace-nowrap">AI Trading Engine</span>
+        <span className="text-sm font-semibold text-kt-text-primary whitespace-nowrap">AI Trading Engine</span>
       </div>
 
       <div className="flex-1 overflow-hidden">
         <div className="flex gap-8 whitespace-nowrap text-xs" style={{ animation: 'marquee 15s linear infinite' }}>
           {[...tickerItems, ...tickerItems, ...tickerItems].map((item, i) => (
-            <span key={i} className={item.includes('BUY') ? 'text-[#0ECB81]' : 'text-[#F6465D]'}>
+            <span key={i} className={item.includes('BUY') ? 'text-kt-green' : 'text-kt-red'}>
               {item}
             </span>
           ))}

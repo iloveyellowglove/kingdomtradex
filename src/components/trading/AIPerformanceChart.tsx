@@ -43,10 +43,10 @@ export default function AIPerformanceChart({ dailyRate, lockedBalance }: Props) 
           <span className="text-xl sm:text-2xl font-bold tabular-nums" style={{ color: totalPnL >= 0 ? '#0ECB81' : '#F6465D' }}>
             {totalPnL >= 0 ? '+' : ''}${totalPnL.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </span>
-          <span className="text-xs text-[#848E9C] ml-2">Total P&amp;L</span>
+          <span className="text-xs text-kt-text-secondary ml-2">Total P&amp;L</span>
         </div>
-        <span className="text-xs text-[#848E9C]">
-          Win Rate: <span className="text-[#EAECEF] font-bold">{winRate}%</span>
+        <span className="text-xs text-kt-text-secondary">
+          Win Rate: <span className="text-kt-text-primary font-bold">{winRate}%</span>
         </span>
       </div>
 
@@ -90,7 +90,7 @@ export default function AIPerformanceChart({ dailyRate, lockedBalance }: Props) 
         </div>
       )}
 
-      <p className="text-[10px] text-[#5E6673] mt-2">AI trading results are projections based on engine activity. Past performance does not indicate future results.</p>
+      <p className="text-[10px] text-kt-text-tertiary mt-2">AI trading results are projections based on engine activity. Past performance does not indicate future results.</p>
     </div>
   );
 }

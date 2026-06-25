@@ -176,14 +176,14 @@ export default function AdminSupportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="mb-1">Support Tickets</h2>
-          <p className="text-text-muted text-sm">
+          <p className="text-kt-text-tertiary text-sm">
             {openCount} open ticket{openCount !== 1 ? 's' : ''} &middot; {tickets.length} total
           </p>
         </div>
         {selectedTicket && (
           <button
             onClick={backToList}
-            className="flex items-center gap-2 text-text-muted hover:text-white text-sm transition"
+            className="flex items-center gap-2 text-kt-text-tertiary hover:text-white text-sm transition"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -199,7 +199,7 @@ export default function AdminSupportPage() {
           style={{ color: '#ef4444', background: 'rgba(239,68,68,0.08)' }}
         >
           {error}
-          <button onClick={() => setError('')} className="ml-2 text-white/50 hover:text-white">&times;</button>
+          <button onClick={() => setError('')} className="ml-2 text-kt-text-tertiary hover:text-white">&times;</button>
         </div>
       )}
 
@@ -208,8 +208,8 @@ export default function AdminSupportPage() {
         <div className="card p-5 mb-6">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="text-lg font-semibold text-white">{selectedTicket.subject}</h3>
-              <p className="text-text-muted text-xs mt-1">
+              <h3 className="text-lg font-semibold text-kt-text-primary">{selectedTicket.subject}</h3>
+              <p className="text-kt-text-tertiary text-xs mt-1">
                 {selectedTicket.username || `User #${selectedTicket.user_id}`} &middot; {categoryLabel(selectedTicket.category)} &middot; Created {timeAgo(selectedTicket.created_at)}
               </p>
             </div>
@@ -219,7 +219,7 @@ export default function AdminSupportPage() {
                 value={selectedTicket.status}
                 onChange={(e) => handleStatusChange(e.target.value)}
                 disabled={updatingStatus}
-                className="bg-bg-dark border border-border-light rounded-lg px-3 py-1.5 text-sm text-text-primary"
+                className="bg-kt-bg border border-kt-border rounded-lg px-3 py-1.5 text-sm text-kt-text-primary"
               >
                 {STATUS_OPTIONS.filter((s) => s.value).map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
@@ -228,16 +228,16 @@ export default function AdminSupportPage() {
             </div>
           </div>
 
-          <p className="text-text-secondary text-sm mb-6 p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <p className="text-kt-text-secondary text-sm mb-6 p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
             {selectedTicket.description}
           </p>
 
           {/* Messages */}
           <div className="space-y-4 mb-6">
             {detailLoading ? (
-              <p className="text-text-muted text-sm text-center">Loading messages...</p>
+              <p className="text-kt-text-tertiary text-sm text-center">Loading messages...</p>
             ) : messages.length === 0 ? (
-              <p className="text-text-muted text-sm text-center">No messages yet.</p>
+              <p className="text-kt-text-tertiary text-sm text-center">No messages yet.</p>
             ) : (
               messages.map((msg) => (
                 <div
@@ -258,9 +258,9 @@ export default function AdminSupportPage() {
                     }}>
                       {msg.sender_role === 'admin' ? 'Support Team' : selectedTicket.username || `User #${selectedTicket.user_id}`}
                     </span>
-                    <span className="text-xs text-text-muted">{timeAgo(msg.created_at)}</span>
+                    <span className="text-xs text-kt-text-tertiary">{timeAgo(msg.created_at)}</span>
                   </div>
-                  <p className="text-sm text-text-secondary whitespace-pre-wrap">{msg.message}</p>
+                  <p className="text-sm text-kt-text-secondary whitespace-pre-wrap">{msg.message}</p>
                 </div>
               ))
             )}
@@ -274,7 +274,7 @@ export default function AdminSupportPage() {
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Type your reply as admin..."
                 rows={3}
-                className="w-full bg-bg-dark border border-border-light rounded-lg px-4 py-2.5 text-text-primary resize-y text-sm mb-3"
+                className="w-full bg-kt-bg border border-kt-border rounded-lg px-4 py-2.5 text-kt-text-primary resize-y text-sm mb-3"
               />
               <button
                 onClick={handleReply}
@@ -301,7 +301,7 @@ export default function AdminSupportPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-bg-dark border border-border-light rounded-lg px-3 py-2 text-sm text-text-primary"
+              className="bg-kt-bg border border-kt-border rounded-lg px-3 py-2 text-sm text-kt-text-primary"
             >
               {STATUS_OPTIONS.map((s) => (
                 <option key={s.value} value={s.value}>{s.label}</option>
@@ -311,7 +311,7 @@ export default function AdminSupportPage() {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="bg-bg-dark border border-border-light rounded-lg px-3 py-2 text-sm text-text-primary"
+              className="bg-kt-bg border border-kt-border rounded-lg px-3 py-2 text-sm text-kt-text-primary"
             >
               {CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>{c.label}</option>
@@ -323,23 +323,23 @@ export default function AdminSupportPage() {
           <div className="card p-0">
             {loading ? (
               <div className="p-8 text-center">
-                <p className="text-text-muted text-sm">Loading tickets...</p>
+                <p className="text-kt-text-tertiary text-sm">Loading tickets...</p>
               </div>
             ) : tickets.length === 0 ? (
               <div className="p-8 text-center">
-                <p className="text-text-muted">No tickets found.</p>
+                <p className="text-kt-text-tertiary">No tickets found.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-white/5">
-                      <th className="text-left p-4 text-text-muted text-xs font-medium">ID</th>
-                      <th className="text-left p-4 text-text-muted text-xs font-medium">User</th>
-                      <th className="text-left p-4 text-text-muted text-xs font-medium">Subject</th>
-                      <th className="text-left p-4 text-text-muted text-xs font-medium">Category</th>
-                      <th className="text-left p-4 text-text-muted text-xs font-medium">Status</th>
-                      <th className="text-left p-4 text-text-muted text-xs font-medium">Updated</th>
+                      <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">ID</th>
+                      <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">User</th>
+                      <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">Subject</th>
+                      <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">Category</th>
+                      <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">Status</th>
+                      <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">Updated</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -347,14 +347,14 @@ export default function AdminSupportPage() {
                       <tr
                         key={ticket.id}
                         onClick={() => viewTicket(ticket)}
-                        className="border-b border-white/5 cursor-pointer hover:bg-white/5 transition"
+                        className="border-b border-kt-border cursor-pointer hover:bg-white/5 transition"
                       >
-                        <td className="p-4 text-text-muted text-xs">#{ticket.id}</td>
-                        <td className="p-4 text-white text-sm">{ticket.username || `User #${ticket.user_id}`}</td>
-                        <td className="p-4 text-white font-medium">{ticket.subject}</td>
-                        <td className="p-4 text-text-muted text-xs">{categoryLabel(ticket.category)}</td>
+                        <td className="p-4 text-kt-text-tertiary text-xs">#{ticket.id}</td>
+                        <td className="p-4 text-kt-text-primary text-sm">{ticket.username || `User #${ticket.user_id}`}</td>
+                        <td className="p-4 text-kt-text-primary font-medium">{ticket.subject}</td>
+                        <td className="p-4 text-kt-text-tertiary text-xs">{categoryLabel(ticket.category)}</td>
                         <td className="p-4">{statusBadge(ticket.status)}</td>
-                        <td className="p-4 text-text-muted text-xs">{timeAgo(ticket.updated_at)}</td>
+                        <td className="p-4 text-kt-text-tertiary text-xs">{timeAgo(ticket.updated_at)}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -121,9 +121,9 @@ export default function WithdrawalsPage() {
   }
 
   return (
-    <div className="py-4 max-w-2xl mx-auto">
+    <div className="py-4 px-4 lg:px-6">
       <h2 className="mb-2">Withdraw Funds</h2>
-      <p className="text-text-muted mb-6">Request a withdrawal to your external wallet</p>
+      <p className="text-kt-text-tertiary mb-6">Request a withdrawal to your external wallet</p>
 
       {error && <div className="alert alert-danger mb-4">{error}</div>}
       {success && <div className="alert alert-success mb-4">{success}</div>}
@@ -165,7 +165,7 @@ export default function WithdrawalsPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Amount */}
             <div>
-              <label className="block text-text-secondary font-medium mb-1">Amount (USD)</label>
+              <label className="block text-kt-text-secondary font-medium mb-1">Amount (USD)</label>
               <input
                 type="number"
                 step="0.01"
@@ -177,7 +177,7 @@ export default function WithdrawalsPage() {
                 className="w-full"
                 style={{ borderColor: amount ? '#FFD700' : undefined }}
               />
-              <p className="text-xs text-text-muted mt-1">
+              <p className="text-xs text-kt-text-tertiary mt-1">
                 Available: <span style={{ color: withdrawalType === 'profit' ? '#4CAF50' : '#B47CFF' }}>${availableBalance.toFixed(2)} USDT</span>
                 &nbsp;&middot;&nbsp; Minimum withdrawal: $25.00
               </p>
@@ -185,12 +185,12 @@ export default function WithdrawalsPage() {
 
             {/* Currency Dropdown */}
             <div>
-              <label className="block text-text-secondary font-medium mb-1">Currency</label>
+              <label className="block text-kt-text-secondary font-medium mb-1">Currency</label>
               <div className="relative" ref={dropdownRef}>
                 <button
                   type="button"
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-border-light bg-bg-dark text-left hover:border-temple-gold/50 transition"
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-kt-border bg-kt-bg text-left hover:border-temple-gold/50 transition"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -202,10 +202,10 @@ export default function WithdrawalsPage() {
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                   <div className="flex-1">
-                    <span className="text-text-primary font-medium">{selectedCurrency.symbol}</span>
-                    <span className="text-text-muted text-sm ml-2">{selectedCurrency.name}</span>
+                    <span className="text-kt-text-primary font-medium">{selectedCurrency.symbol}</span>
+                    <span className="text-kt-text-tertiary text-sm ml-2">{selectedCurrency.name}</span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-white/5 text-text-muted">
+                  <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-kt-hover-bg text-kt-text-tertiary">
                     {selectedCurrency.network}
                   </span>
                   <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -215,7 +215,7 @@ export default function WithdrawalsPage() {
 
                 {dropdownOpen && (
                   <div
-                    className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto"
+                    className="absolute left-0 right-0 top-full mt-1 border border-kt-border rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto"
                     style={{ background: '#1a1a2e' }}
                   >
                     {[
@@ -224,7 +224,7 @@ export default function WithdrawalsPage() {
                       { label: 'Altcoins', items: alts },
                     ].map(group => (
                       <div key={group.label}>
-                        <div className="px-4 py-2 text-xs font-semibold text-white/30 uppercase tracking-wider">
+                        <div className="px-4 py-2 text-xs font-semibold text-kt-text-tertiary uppercase tracking-wider">
                           {group.label}
                         </div>
                         {group.items.map(currency => (
@@ -236,7 +236,7 @@ export default function WithdrawalsPage() {
                               setDropdownOpen(false);
                             }}
                             className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/5 transition ${
-                              currency.id === currencyId ? 'bg-white/5 text-temple-gold' : 'text-text-primary'
+                              currency.id === currencyId ? 'bg-white/5 text-kt-gold' : 'text-kt-text-primary'
                             }`}
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -249,8 +249,8 @@ export default function WithdrawalsPage() {
                               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                             />
                             <span className="flex-1 text-sm">{currency.symbol}</span>
-                            <span className="text-xs text-text-muted">{currency.name}</span>
-                            <span className="px-1.5 py-0.5 rounded text-xs bg-white/5 text-white/40">
+                            <span className="text-xs text-kt-text-tertiary">{currency.name}</span>
+                            <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-white/40">
                               {currency.network}
                             </span>
                           </button>
@@ -264,7 +264,7 @@ export default function WithdrawalsPage() {
 
             {/* Wallet Address */}
             <div>
-              <label className="block text-text-secondary font-medium mb-1">Wallet Address</label>
+              <label className="block text-kt-text-secondary font-medium mb-1">Wallet Address</label>
               <input
                 type="text"
                 value={walletAddress}
@@ -274,7 +274,7 @@ export default function WithdrawalsPage() {
                 placeholder="Enter your wallet address"
                 className="w-full"
               />
-              <p className="text-xs text-text-muted mt-1">
+              <p className="text-xs text-kt-text-tertiary mt-1">
                 Make sure this is a valid {selectedCurrency.network} address.
               </p>
             </div>
@@ -294,7 +294,7 @@ export default function WithdrawalsPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-xs text-text-muted space-y-1">
+          <div className="mt-6 text-xs text-kt-text-tertiary space-y-1">
             <p>Withdrawals are reviewed within 24-48 hours.</p>
             <p>A network fee may apply depending on the blockchain.</p>
             <p>Ensure your wallet address is correct. Funds sent to wrong addresses cannot be recovered.</p>
@@ -361,7 +361,7 @@ export default function WithdrawalsPage() {
               </tbody>
             </table>
           ) : (
-            <p className="p-6 text-text-muted text-center mb-0">No withdrawal history yet.</p>
+            <p className="p-6 text-kt-text-tertiary text-center mb-0">No withdrawal history yet.</p>
           )}
         </div>
       </div>

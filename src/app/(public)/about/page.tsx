@@ -19,7 +19,7 @@ export default function AboutPage() {
         >
           About KingdomTradex
         </h1>
-        <p className="text-text-secondary text-lg md:text-xl max-w-2xl mx-auto mb-8">
+        <p className="text-kt-text-secondary text-lg md:text-xl max-w-2xl mx-auto mb-8">
           Building the future of faith-driven crypto trading
         </p>
         <div className="mx-auto" style={{ width: 80, height: 2, background: 'linear-gradient(90deg, transparent, #FFD700, transparent)' }} />
@@ -45,7 +45,7 @@ export default function AboutPage() {
           </div>
           <div className="flex-1">
             <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{ color: '#FFD700' }}>Our Mission</h2>
-            <p className="text-text-secondary leading-relaxed text-base md:text-lg">
+            <p className="text-kt-text-secondary leading-relaxed text-base md:text-lg">
               KingdomTradex is an AI-powered cryptocurrency trading platform built on biblical principles of stewardship and multiplication. We combine advanced trading algorithms with a covenant economy that rewards community growth. Our mission is to make crypto trading accessible to everyone, regardless of experience, while building a community rooted in trust and shared prosperity.
             </p>
           </div>
@@ -59,7 +59,7 @@ export default function AboutPage() {
       <section className="py-16 md:py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">How KingdomTradex Works</h2>
-          <p className="text-text-muted text-center mb-12">A simple, automated path to earning crypto daily</p>
+          <p className="text-kt-text-tertiary text-center mb-12">A simple, automated path to earning crypto daily</p>
 
           <div className="relative">
             {/* Dotted line connecting steps (desktop only) */}
@@ -130,7 +130,7 @@ export default function AboutPage() {
                     {item.icon}
                   </div>
                   <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                  <p className="text-text-muted text-sm leading-relaxed">{item.desc}</p>
+                  <p className="text-kt-text-tertiary text-sm leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -151,7 +151,7 @@ export default function AboutPage() {
       <section className="py-16 md:py-20 px-6">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">The Covenant Economy</h2>
-          <p className="text-text-secondary text-center leading-relaxed mb-10 max-w-2xl mx-auto">
+          <p className="text-kt-text-secondary text-center leading-relaxed mb-10 max-w-2xl mx-auto">
             Our referral system is built on the biblical principle that those who sow into the Kingdom will reap a harvest. When you introduce others to the platform, you participate in their growth through five generations of blessings.
           </p>
 
@@ -185,7 +185,7 @@ export default function AboutPage() {
                   >
                     {item.level}
                   </span>
-                  <span className="flex-1 text-text-primary font-medium">{item.name}</span>
+                  <span className="flex-1 text-kt-text-primary font-medium">{item.name}</span>
                   <span
                     className="text-xl font-extrabold"
                     style={{
@@ -227,11 +227,11 @@ export default function AboutPage() {
                   border: '1px solid rgba(255,255,255,0.12)',
                 }}
               >
-                <span className="text-white text-xl font-bold">JR</span>
+                <span className="text-kt-text-primary text-xl font-bold">JR</span>
               </div>
               <h3 className="text-xl font-bold mb-1">James E. Ricker</h3>
-              <p className="text-temple-gold text-sm font-medium mb-3">Founder & Managing Member</p>
-              <p className="text-text-muted text-sm leading-relaxed">
+              <p className="text-kt-gold text-sm font-medium mb-3">Founder & Managing Member</p>
+              <p className="text-kt-text-tertiary text-sm leading-relaxed">
                 Entrepreneur and registered agent for Kingdom Trade Solutions LLC. Based in Sanford, Maine.
               </p>
             </div>
@@ -253,11 +253,11 @@ export default function AboutPage() {
                   border: '1px solid rgba(255,255,255,0.12)',
                 }}
               >
-                <span className="text-white text-xl font-bold">KT</span>
+                <span className="text-kt-text-primary text-xl font-bold">KT</span>
               </div>
               <h3 className="text-xl font-bold mb-1">KingdomTradex Team</h3>
-              <p className="text-temple-gold text-sm font-medium mb-3">Development & Operations</p>
-              <p className="text-text-muted text-sm leading-relaxed">
+              <p className="text-kt-gold text-sm font-medium mb-3">Development & Operations</p>
+              <p className="text-kt-text-tertiary text-sm leading-relaxed">
                 Our distributed team of developers, traders, and community builders works around the clock to deliver consistent results for our members.
               </p>
             </div>
@@ -303,12 +303,12 @@ export default function AboutPage() {
                   <span className="text-xs uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.35)' }}>
                     {row.label}
                   </span>
-                  <span className="text-text-primary font-medium">{row.value}</span>
+                  <span className="text-kt-text-primary font-medium">{row.value}</span>
                 </div>
               ))}
             </div>
 
-            <p className="text-text-muted text-xs mt-8 leading-relaxed">
+            <p className="text-kt-text-tertiary text-xs mt-8 leading-relaxed">
               Kingdom Trade Solutions LLC is a registered limited liability company in the State of Maine. Company records are publicly verifiable through the Maine Secretary of State.
             </p>
           </div>
@@ -332,18 +332,18 @@ export default function AboutPage() {
           >
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <span className="text-text-muted text-sm" style={{ width: 120 }}>Email</span>
+                <span className="text-kt-text-tertiary text-sm" style={{ width: 120 }}>Email</span>
                 <a href="mailto:support@kingdomtradex.com" className="no-underline font-medium" style={{ color: '#FFD700' }}>
                   support@kingdomtradex.com
                 </a>
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-text-muted text-sm" style={{ width: 120 }}>Location</span>
-                <span className="text-text-primary">Sanford, Maine, USA</span>
+                <span className="text-kt-text-tertiary text-sm" style={{ width: 120 }}>Location</span>
+                <span className="text-kt-text-primary">Sanford, Maine, USA</span>
               </div>
               <div className="flex items-center gap-4">
-                <span className="text-text-muted text-sm" style={{ width: 120 }}>Response Time</span>
-                <span className="text-text-primary">We typically respond within 24 hours</span>
+                <span className="text-kt-text-tertiary text-sm" style={{ width: 120 }}>Response Time</span>
+                <span className="text-kt-text-primary">We typically respond within 24 hours</span>
               </div>
             </div>
           </div>
@@ -371,7 +371,7 @@ export default function AboutPage() {
           >
             &quot;But thou shalt remember the LORD thy God: for it is he that giveth thee power to get wealth, that he may establish his covenant.&quot;
           </p>
-          <p className="text-temple-gold font-bold text-lg tracking-wide">Deuteronomy 8:18</p>
+          <p className="text-kt-gold font-bold text-lg tracking-wide">Deuteronomy 8:18</p>
         </div>
       </section>
     </div>

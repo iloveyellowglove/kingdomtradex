@@ -22,13 +22,13 @@ export default function TradingHeatmap() {
 
   return (
     <div className="rounded-xl p-4" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-      <h4 className="text-sm font-bold text-[#EAECEF] mb-3">Trading Pairs Activity</h4>
+      <h4 className="text-sm font-bold text-kt-text-primary mb-3">Trading Pairs Activity</h4>
       <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
         {pairs.map(p => (
           <div key={p.pair}
             className="rounded-lg p-2 text-center transition"
             style={{ background: bgColor(p.change), minHeight: 50 }}>
-            <p className="text-xs font-semibold text-[#EAECEF]">{p.pair}</p>
+            <p className="text-xs font-semibold text-kt-text-primary">{p.pair}</p>
             <p className="text-[10px] font-medium tabular-nums" style={{ color: p.change >= 0 ? '#0ECB81' : '#F6465D' }}>
               {p.change >= 0 ? '+' : ''}{p.change.toFixed(1)}%
             </p>

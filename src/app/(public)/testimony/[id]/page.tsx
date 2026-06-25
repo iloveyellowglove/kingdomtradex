@@ -63,10 +63,10 @@ export default async function TestimonyPage({ params, searchParams }: Props) {
   const referralUrl = `/waitlist/${testimony.referral_code}`;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+    <main className="min-h-screen bg-gradient-to-b from-kt-bg via-kt-surface to-kt-bg flex items-center justify-center px-4">
       <div className="max-w-lg w-full bg-slate-800/60 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 text-center space-y-6">
         <div className="text-5xl mb-4">🙏</div>
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-bold text-kt-text-primary">
           {testimony.initials} withdrew{' '}
           <span className="text-emerald-400">${amountDisplay}</span>
         </h1>
@@ -76,7 +76,7 @@ export default async function TestimonyPage({ params, searchParams }: Props) {
         </p>
         <Link
           href={referralUrl}
-          className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 px-8 rounded-xl transition-colors text-lg"
+          className="inline-block bg-emerald-600 hover:bg-emerald-500 text-kt-text-primary font-semibold py-3 px-8 rounded-xl transition-colors text-lg"
         >
           Join KingdomTrade Now
         </Link>

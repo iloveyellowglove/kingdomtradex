@@ -182,7 +182,7 @@ export default function ManualTradingPage({
         <p className="mb-1" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
           Your Balance
         </p>
-        <p className="mb-0 text-temple-gold font-bold" style={{ fontSize: '2rem' }}>
+        <p className="mb-0 text-kt-gold font-bold" style={{ fontSize: '2rem' }}>
           ${fmt(realBalance)} USDT
         </p>
         {realBalance === 0 && (

@@ -42,9 +42,9 @@ export default function BalanceSummary({
     <div className="space-y-4">
       {/* Est. Total Value */}
       <div className="text-center">
-        <p className="text-xs text-white/40 mb-1">Est. Total Value</p>
+        <p className="text-xs text-kt-text-tertiary mb-1">Est. Total Value</p>
         <div className="flex items-center justify-center gap-2">
-          <span className="text-3xl sm:text-4xl font-bold text-white tabular-nums">
+          <span className="text-3xl sm:text-4xl font-bold text-kt-text-primary tabular-nums">
             {hidden ? '••••••' : `$${fmt(totalValue)}`}
           </span>
           <button
@@ -67,7 +67,7 @@ export default function BalanceSummary({
       <div className="flex items-center justify-between">
         <div>
           <span className="text-xs text-white/40">Today&apos;s PnL </span>
-          <span className={`text-sm font-bold tabular-nums ${todayPnL >= 0 ? 'text-[#4CAF50]' : 'text-[#F44336]'}`}>
+          <span className={`text-sm font-bold tabular-nums ${todayPnL >= 0 ? 'text-kt-green' : 'text-[#F44336]'}`}>
             {todayPnL >= 0 ? '+' : ''}{fmt(todayPnL)} ({todayPnLPercent >= 0 ? '+' : ''}{todayPnLPercent.toFixed(2)}%)
           </span>
         </div>
@@ -81,11 +81,11 @@ export default function BalanceSummary({
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
           <p className="text-[10px] text-white/30">Profit</p>
-          <p className="text-sm font-bold text-[#4CAF50] tabular-nums">{hidden ? '•••' : `$${fmt(profitBalance)}`}</p>
+          <p className="text-sm font-bold text-kt-green tabular-nums">{hidden ? '•••' : `$${fmt(profitBalance)}`}</p>
         </div>
         <div className="p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
           <p className="text-[10px] text-white/30">Locked</p>
-          <p className="text-sm font-bold text-[#FFD700] tabular-nums">{hidden ? '•••' : `$${fmt(lockedBalance)}`}</p>
+          <p className="text-sm font-bold text-kt-gold tabular-nums">{hidden ? '•••' : `$${fmt(lockedBalance)}`}</p>
         </div>
         <div className="p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
           <p className="text-[10px] text-white/30">Commissions</p>

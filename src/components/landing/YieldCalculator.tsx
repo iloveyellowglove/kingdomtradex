@@ -27,15 +27,15 @@ export default function YieldCalculator() {
     <section ref={sectionRef} className={`card p-8 mb-12 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Yield Calculator</h2>
-        <p className="text-text-muted">See how your assets can grow with AI-powered daily returns</p>
+        <p className="text-kt-text-tertiary">See how your assets can grow with AI-powered daily returns</p>
       </div>
 
       <div className="max-w-2xl mx-auto">
         {/* Slider */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-3">
-            <span className="text-text-muted text-sm">Stake Amount</span>
-            <span className="text-temple-gold text-2xl font-bold">${amount.toLocaleString()}</span>
+            <span className="text-kt-text-tertiary text-sm">Stake Amount</span>
+            <span className="text-kt-gold text-2xl font-bold">${amount.toLocaleString()}</span>
           </div>
           <input
             type="range"
@@ -77,7 +77,7 @@ export default function YieldCalculator() {
               cursor: pointer;
             }
           `}</style>
-          <div className="flex justify-between text-text-muted text-xs mt-1">
+          <div className="flex justify-between text-kt-text-tertiary text-xs mt-1">
             <span>$100</span>
             <span>$50,000</span>
             <span>$100,000</span>
@@ -86,20 +86,20 @@ export default function YieldCalculator() {
 
         {/* Results */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-dark-indigo rounded-xl p-5 text-center">
-            <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Daily Earnings</p>
-            <p className="text-temple-gold text-2xl font-extrabold">${daily.toFixed(2)}</p>
-            <p className="text-text-muted text-xs mt-1">at 1.2% daily rate</p>
+          <div className="bg-kt-bg rounded-xl p-5 text-center">
+            <p className="text-kt-text-tertiary text-xs uppercase tracking-wider mb-1">Daily Earnings</p>
+            <p className="text-kt-gold text-2xl font-extrabold">${daily.toFixed(2)}</p>
+            <p className="text-kt-text-tertiary text-xs mt-1">at 1.2% daily rate</p>
           </div>
-          <div className="bg-dark-indigo rounded-xl p-5 text-center">
-            <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Monthly Earnings</p>
-            <p className="text-temple-gold text-2xl font-extrabold">${monthly.toFixed(2)}</p>
-            <p className="text-text-muted text-xs mt-1">{((monthly / amount) * 100).toFixed(0)}% return</p>
+          <div className="bg-kt-bg rounded-xl p-5 text-center">
+            <p className="text-kt-text-tertiary text-xs uppercase tracking-wider mb-1">Monthly Earnings</p>
+            <p className="text-kt-gold text-2xl font-extrabold">${monthly.toFixed(2)}</p>
+            <p className="text-kt-text-tertiary text-xs mt-1">{((monthly / amount) * 100).toFixed(0)}% return</p>
           </div>
-          <div className="bg-dark-indigo rounded-xl p-5 text-center">
-            <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Yearly Earnings</p>
-            <p className="text-temple-gold text-2xl font-extrabold">${yearly.toFixed(2)}</p>
-            <p className="text-text-muted text-xs mt-1">compounding power</p>
+          <div className="bg-kt-bg rounded-xl p-5 text-center">
+            <p className="text-kt-text-tertiary text-xs uppercase tracking-wider mb-1">Yearly Earnings</p>
+            <p className="text-kt-gold text-2xl font-extrabold">${yearly.toFixed(2)}</p>
+            <p className="text-kt-text-tertiary text-xs mt-1">compounding power</p>
           </div>
         </div>
 

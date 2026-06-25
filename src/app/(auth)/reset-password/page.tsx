@@ -54,7 +54,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
                 <h3 className="text-center mb-4">Reset Password</h3>
                 {error && <div className="alert alert-danger">{error}</div>}
                 <div className="text-center">
-                  <p className="text-text-muted mb-4">This reset link is invalid or has expired.</p>
+                  <p className="text-kt-text-tertiary mb-4">This reset link is invalid or has expired.</p>
                   <a href="/forgot-password" className="btn-primary inline-block px-6 py-3 rounded-lg">Request New Reset Link</a>
                 </div>
               </>

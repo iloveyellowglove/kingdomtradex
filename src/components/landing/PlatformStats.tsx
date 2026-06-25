@@ -40,14 +40,14 @@ export default function PlatformStats() {
         className="rounded-xl p-4"
         style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
       >
-        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">Platform Stats</h3>
+        <h3 className="text-xs font-semibold text-kt-text-secondary uppercase tracking-wider mb-3">Platform Stats</h3>
         <div className="grid grid-cols-2 gap-3">
           <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-lg font-bold text-white tabular-nums">{stats.users.toLocaleString()}</p>
+            <p className="text-lg font-bold text-kt-text-primary tabular-nums">{stats.users.toLocaleString()}</p>
             <p className="text-[10px] text-white/40">Total Users</p>
           </div>
           <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-lg font-bold text-[#4CAF50] tabular-nums">${stats.deposited >= 1000 ? `${(stats.deposited / 1000).toFixed(0)}k` : stats.deposited.toFixed(0)}</p>
+            <p className="text-lg font-bold text-kt-green tabular-nums">${stats.deposited >= 1000 ? `${(stats.deposited / 1000).toFixed(0)}k` : stats.deposited.toFixed(0)}</p>
             <p className="text-[10px] text-white/40">Total Deposited</p>
           </div>
         </div>
@@ -58,7 +58,7 @@ export default function PlatformStats() {
         className="rounded-xl p-4"
         style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
       >
-        <h3 className="text-xs font-semibold text-white/60 uppercase tracking-wider mb-3">Active Tier Rates</h3>
+        <h3 className="text-xs font-semibold text-kt-text-secondary uppercase tracking-wider mb-3">Active Tier Rates</h3>
         <div className="space-y-1.5">
           {stats.rates.map(r => (
             <div key={r.tier} className="flex items-center justify-between py-1.5 px-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>

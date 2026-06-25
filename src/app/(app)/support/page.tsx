@@ -167,7 +167,7 @@ export default function SupportPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="mb-1">Support</h2>
-          <p className="text-text-muted text-sm">Get help with your account, deposits, and trading</p>
+          <p className="text-kt-text-tertiary text-sm">Get help with your account, deposits, and trading</p>
         </div>
         {!selectedTicket && (
           <button
@@ -189,7 +189,7 @@ export default function SupportPage() {
           style={{ color: '#ef4444', background: 'rgba(239,68,68,0.08)' }}
         >
           {error}
-          <button onClick={() => setError('')} className="ml-2 text-white/50 hover:text-white">&times;</button>
+          <button onClick={() => setError('')} className="ml-2 text-kt-text-tertiary hover:text-white">&times;</button>
         </div>
       )}
 
@@ -205,10 +205,10 @@ export default function SupportPage() {
       {/* Create Ticket Form */}
       {showForm && !selectedTicket && (
         <div className="card p-5 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Create Support Ticket</h3>
+          <h3 className="text-lg font-semibold text-kt-text-primary mb-4">Create Support Ticket</h3>
           <form onSubmit={handleCreate}>
             <div className="mb-4">
-              <label className="block text-text-secondary font-medium mb-1 text-sm">Subject</label>
+              <label className="block text-kt-text-secondary font-medium mb-1 text-sm">Subject</label>
               <input
                 type="text"
                 value={subject}
@@ -220,11 +220,11 @@ export default function SupportPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-text-secondary font-medium mb-1 text-sm">Category</label>
+              <label className="block text-kt-text-secondary font-medium mb-1 text-sm">Category</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-bg-dark border border-border-light rounded-lg px-4 py-2.5 text-text-primary"
+                className="w-full bg-kt-bg border border-kt-border rounded-lg px-4 py-2.5 text-kt-text-primary"
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -233,14 +233,14 @@ export default function SupportPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-text-secondary font-medium mb-1 text-sm">Description</label>
+              <label className="block text-kt-text-secondary font-medium mb-1 text-sm">Description</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
                 placeholder="Describe your issue in detail..."
                 rows={4}
-                className="w-full bg-bg-dark border border-border-light rounded-lg px-4 py-2.5 text-text-primary resize-y"
+                className="w-full bg-kt-bg border border-kt-border rounded-lg px-4 py-2.5 text-kt-text-primary resize-y"
               />
             </div>
 
@@ -265,7 +265,7 @@ export default function SupportPage() {
         <div className="card p-5 mb-6">
           <button
             onClick={backToList}
-            className="flex items-center gap-2 text-text-muted hover:text-white text-sm mb-4 transition"
+            className="flex items-center gap-2 text-kt-text-tertiary hover:text-white text-sm mb-4 transition"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -274,23 +274,23 @@ export default function SupportPage() {
           </button>
 
           <div className="flex items-start justify-between mb-2">
-            <h3 className="text-lg font-semibold text-white">{selectedTicket.subject}</h3>
+            <h3 className="text-lg font-semibold text-kt-text-primary">{selectedTicket.subject}</h3>
             {statusBadge(selectedTicket.status)}
           </div>
-          <p className="text-text-muted text-xs mb-4">
+          <p className="text-kt-text-tertiary text-xs mb-4">
             {categoryLabel(selectedTicket.category)} &middot; Created {timeAgo(selectedTicket.created_at)}
           </p>
 
-          <p className="text-text-secondary text-sm mb-6 p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <p className="text-kt-text-secondary text-sm mb-6 p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
             {selectedTicket.description}
           </p>
 
           {/* Messages */}
           <div className="space-y-4 mb-6">
             {detailLoading ? (
-              <p className="text-text-muted text-sm text-center">Loading messages...</p>
+              <p className="text-kt-text-tertiary text-sm text-center">Loading messages...</p>
             ) : messages.length === 0 ? (
-              <p className="text-text-muted text-sm text-center">No messages yet.</p>
+              <p className="text-kt-text-tertiary text-sm text-center">No messages yet.</p>
             ) : (
               messages.map((msg) => (
                 <div
@@ -311,9 +311,9 @@ export default function SupportPage() {
                     }}>
                       {msg.sender_role === 'admin' ? 'Support Team' : 'You'}
                     </span>
-                    <span className="text-xs text-text-muted">{timeAgo(msg.created_at)}</span>
+                    <span className="text-xs text-kt-text-tertiary">{timeAgo(msg.created_at)}</span>
                   </div>
-                  <p className="text-sm text-text-secondary whitespace-pre-wrap">{msg.message}</p>
+                  <p className="text-sm text-kt-text-secondary whitespace-pre-wrap">{msg.message}</p>
                 </div>
               ))
             )}
@@ -327,7 +327,7 @@ export default function SupportPage() {
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Type your reply..."
                 rows={3}
-                className="w-full bg-bg-dark border border-border-light rounded-lg px-4 py-2.5 text-text-primary resize-y text-sm mb-3"
+                className="w-full bg-kt-bg border border-kt-border rounded-lg px-4 py-2.5 text-kt-text-primary resize-y text-sm mb-3"
               />
               <button
                 onClick={handleReply}
@@ -351,15 +351,15 @@ export default function SupportPage() {
         <div className="card p-0">
           {loading ? (
             <div className="p-8 text-center">
-              <p className="text-text-muted text-sm">Loading tickets...</p>
+              <p className="text-kt-text-tertiary text-sm">Loading tickets...</p>
             </div>
           ) : tickets.length === 0 ? (
             <div className="p-8 text-center">
-              <p className="text-text-muted mb-2">No support tickets yet.</p>
+              <p className="text-kt-text-tertiary mb-2">No support tickets yet.</p>
               {!showForm && (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="text-temple-gold text-sm hover:underline"
+                  className="text-kt-gold text-sm hover:underline"
                 >
                   Create your first ticket
                 </button>
@@ -370,10 +370,10 @@ export default function SupportPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/5">
-                    <th className="text-left p-4 text-text-muted text-xs font-medium">Subject</th>
-                    <th className="text-left p-4 text-text-muted text-xs font-medium">Category</th>
-                    <th className="text-left p-4 text-text-muted text-xs font-medium">Status</th>
-                    <th className="text-left p-4 text-text-muted text-xs font-medium">Updated</th>
+                    <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">Subject</th>
+                    <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">Category</th>
+                    <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">Status</th>
+                    <th className="text-left p-4 text-kt-text-tertiary text-xs font-medium">Updated</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -381,12 +381,12 @@ export default function SupportPage() {
                     <tr
                       key={ticket.id}
                       onClick={() => viewTicket(ticket)}
-                      className="border-b border-white/5 cursor-pointer hover:bg-white/5 transition"
+                      className="border-b border-kt-border cursor-pointer hover:bg-white/5 transition"
                     >
-                      <td className="p-4 text-white font-medium">{ticket.subject}</td>
-                      <td className="p-4 text-text-muted">{categoryLabel(ticket.category)}</td>
+                      <td className="p-4 text-kt-text-primary font-medium">{ticket.subject}</td>
+                      <td className="p-4 text-kt-text-tertiary">{categoryLabel(ticket.category)}</td>
                       <td className="p-4">{statusBadge(ticket.status)}</td>
-                      <td className="p-4 text-text-muted text-xs">{timeAgo(ticket.updated_at)}</td>
+                      <td className="p-4 text-kt-text-tertiary text-xs">{timeAgo(ticket.updated_at)}</td>
                     </tr>
                   ))}
                 </tbody>

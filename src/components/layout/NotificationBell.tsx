@@ -141,15 +141,15 @@ export default function NotificationBell() {
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute right-0 top-full mt-2 w-80 border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden"
+          className="absolute right-0 top-full mt-2 w-80 border border-kt-border rounded-xl shadow-2xl z-50 overflow-hidden"
           style={{ background: '#1a1a2e', animation: 'dropdownIn 150ms ease-out' }}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-            <h4 className="text-sm font-bold text-white">Notifications</h4>
+            <h4 className="text-sm font-bold text-kt-text-primary">Notifications</h4>
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
-                className="text-xs text-[#FFD700] hover:underline font-medium"
+                className="text-xs text-kt-gold hover:underline font-medium"
               >
                 Mark all read
               </button>
@@ -168,7 +168,7 @@ export default function NotificationBell() {
                   <button
                     key={n.id}
                     onClick={() => markRead(n.id)}
-                    className="w-full text-left px-4 py-3 hover:bg-white/5 transition flex gap-3 items-start border-b border-white/5 last:border-b-0"
+                    className="w-full text-left px-4 py-3 hover:bg-white/5 transition flex gap-3 items-start border-b border-kt-border last:border-b-0"
                   >
                     <div
                       className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -178,15 +178,15 @@ export default function NotificationBell() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <p className={`text-sm truncate ${n.read ? 'text-white/50' : 'text-white font-medium'}`}>
+                        <p className={`text-sm truncate ${n.read ? 'text-white/50' : 'text-kt-text-primary font-medium'}`}>
                           {n.title}
                         </p>
                         {!n.read && (
                           <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#F44336' }} />
                         )}
                       </div>
-                      <p className="text-xs text-white/40 truncate mt-0.5">{n.message}</p>
-                      <p className="text-[10px] text-white/25 mt-1">{timeAgo(n.createdAt)}</p>
+                      <p className="text-xs text-kt-text-tertiary truncate mt-0.5">{n.message}</p>
+                      <p className="text-[10px] text-kt-text-tertiary mt-1">{timeAgo(n.createdAt)}</p>
                     </div>
                   </button>
                 );
@@ -197,7 +197,7 @@ export default function NotificationBell() {
           <Link
             href="/notifications"
             onClick={() => setOpen(false)}
-            className="block text-center px-4 py-2.5 text-xs font-bold text-[#FFD700] hover:bg-white/5 transition border-t border-white/5"
+            className="block text-center px-4 py-2.5 text-xs font-bold text-kt-gold hover:bg-white/5 transition border-t border-white/5"
           >
             View All Notifications
           </Link>

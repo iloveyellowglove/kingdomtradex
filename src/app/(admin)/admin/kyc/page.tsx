@@ -74,7 +74,7 @@ export default function AdminKycPage() {
 
       {submissions.length === 0 ? (
         <div className="rounded-xl p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p className="text-text-muted text-sm">No pending KYC submissions.</p>
+          <p className="text-kt-text-tertiary text-sm">No pending KYC submissions.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -86,12 +86,12 @@ export default function AdminKycPage() {
             >
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="text-white text-sm font-semibold">
+                  <p className="text-kt-text-primary text-sm font-semibold">
                     {sub.full_name || sub.username}
-                    <span className="text-text-muted text-xs ml-2">#{sub.id}</span>
+                    <span className="text-kt-text-tertiary text-xs ml-2">#{sub.id}</span>
                   </p>
-                  {sub.email && <p className="text-text-muted text-xs">{sub.email}</p>}
-                  <p className="text-text-muted text-xs mt-1">
+                  {sub.email && <p className="text-kt-text-tertiary text-xs">{sub.email}</p>}
+                  <p className="text-kt-text-tertiary text-xs mt-1">
                     {sub.kyc_document_type} &middot; Submitted {sub.kyc_submitted_at ? new Date(sub.kyc_submitted_at).toLocaleString() : 'unknown'}
                   </p>
                 </div>
@@ -104,7 +104,7 @@ export default function AdminKycPage() {
                     href={sub.kyc_document_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-temple-gold text-xs hover:underline"
+                    className="text-kt-gold text-xs hover:underline"
                   >
                     View ID Document
                   </a>
@@ -114,7 +114,7 @@ export default function AdminKycPage() {
                     href={sub.kyc_selfie_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-temple-gold text-xs hover:underline"
+                    className="text-kt-gold text-xs hover:underline"
                   >
                     View Selfie
                   </a>
@@ -146,7 +146,7 @@ export default function AdminKycPage() {
                     </button>
                     <button
                       onClick={() => { setRejectId(null); setRejectReason(''); }}
-                      className="px-3 py-1.5 rounded text-xs text-text-muted"
+                      className="px-3 py-1.5 rounded text-xs text-kt-text-tertiary"
                     >
                       Cancel
                     </button>

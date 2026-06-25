@@ -44,9 +44,9 @@ export default function LeaderboardPage() {
   }
 
   return (
-    <div className="py-4 max-w-lg mx-auto px-4">
-      <h2 className="text-xl font-bold text-white mb-1">Leaderboard</h2>
-      <p className="text-sm text-white/40 mb-6">Top performers across the platform</p>
+    <div className="py-4 px-4 lg:px-6">
+      <h2 className="text-xl font-bold text-kt-text-primary mb-1">Leaderboard</h2>
+      <p className="text-sm text-kt-text-tertiary mb-6">Top performers across the platform</p>
 
       {/* My rank */}
       {myRank && (
@@ -59,7 +59,7 @@ export default function LeaderboardPage() {
             #{myRank}
           </div>
           <div>
-            <p className="text-sm font-bold text-[#FFD700]">Your {tab === 'earnings' ? 'Earnings' : 'Referral'} Rank</p>
+            <p className="text-sm font-bold text-kt-gold">Your {tab === 'earnings' ? 'Earnings' : 'Referral'} Rank</p>
             <p className="text-xs text-white/40">You&apos;re on the board! Keep growing.</p>
           </div>
         </div>
@@ -130,9 +130,9 @@ export default function LeaderboardPage() {
 
                 {/* Name + stats */}
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium truncate ${isMe ? 'text-[#FFD700]' : 'text-white'}`}>
+                  <p className={`text-sm font-medium truncate ${isMe ? 'text-kt-gold' : 'text-white'}`}>
                     {row.displayName}
-                    {isMe && <span className="text-[10px] ml-1 text-[#FFD700]/50">(you)</span>}
+                    {isMe && <span className="text-[10px] ml-1 text-kt-gold/50">(you)</span>}
                   </p>
                   <div className="flex gap-3 text-[10px] text-white/30">
                     {tab === 'earnings' ? (
@@ -145,7 +145,7 @@ export default function LeaderboardPage() {
 
                 {/* Right stat */}
                 <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-bold text-[#4CAF50]">
+                  <p className="text-sm font-bold text-kt-green">
                     {tab === 'earnings'
                       ? `$${row.totalEarned.toFixed(0)}`
                       : row.totalReferrals}
@@ -160,7 +160,7 @@ export default function LeaderboardPage() {
         </div>
       )}
 
-      <p className="text-center text-[10px] text-white/20 mt-6">
+      <p className="text-center text-[10px] text-kt-text-tertiary mt-6">
         Rankings update every 6 hours. Names are anonymized for privacy.
       </p>
     </div>

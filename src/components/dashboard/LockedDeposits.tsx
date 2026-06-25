@@ -70,7 +70,7 @@ export default function LockedDeposits({ userId }: { userId: number }) {
   if (loading) {
     return (
       <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <p className="text-text-muted text-sm mb-0">Loading locked deposits...</p>
+        <p className="text-kt-text-tertiary text-sm mb-0">Loading locked deposits...</p>
       </div>
     );
   }
@@ -78,7 +78,7 @@ export default function LockedDeposits({ userId }: { userId: number }) {
   if (activeLocks.length === 0 && maturedLocks.length === 0) {
     return (
       <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-        <p className="text-text-muted mb-0">No active locks. Make a deposit to start earning.</p>
+        <p className="text-kt-text-tertiary mb-0">No active locks. Make a deposit to start earning.</p>
       </div>
     );
   }
@@ -126,12 +126,12 @@ export default function LockedDeposits({ userId }: { userId: number }) {
                       ${Number(lock.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
-                  <div className="text-xs text-text-muted">
+                  <div className="text-xs text-kt-text-tertiary">
                     {(Number(lock.daily_rate) * 100).toFixed(2)}% daily
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row justify-between text-xs text-text-muted mb-2 gap-1">
+                <div className="flex flex-col sm:flex-row justify-between text-xs text-kt-text-tertiary mb-2 gap-1">
                   <span>Locked: {new Date(lock.locked_at).toLocaleDateString()}</span>
                   <span>Matures: {new Date(lock.unlocks_at).toLocaleDateString()}</span>
                 </div>
@@ -143,7 +143,7 @@ export default function LockedDeposits({ userId }: { userId: number }) {
                     background: `linear-gradient(90deg, ${accent}, ${accent}88)`,
                   }} />
                 </div>
-                <p className="text-xs text-text-muted mb-0">
+                <p className="text-xs text-kt-text-tertiary mb-0">
                   {remaining > 0 ? `${remaining} days remaining` : 'Matured'}
                 </p>
               </div>
@@ -152,7 +152,7 @@ export default function LockedDeposits({ userId }: { userId: number }) {
 
           {maturedLocks.length > 0 && (
             <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-              <p className="text-xs font-bold text-text-muted mb-2 flex items-center gap-1">
+              <p className="text-xs font-bold text-kt-text-tertiary mb-2 flex items-center gap-1">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" strokeWidth="2">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                   <polyline points="22 4 12 14.01 9 11.01" />

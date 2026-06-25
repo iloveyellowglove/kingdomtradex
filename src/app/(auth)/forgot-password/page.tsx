@@ -15,8 +15,8 @@ export default function ForgotPasswordPage() {
             </div>
             <h3 className="text-center mb-6">Forgot Password</h3>
             <ForgotPasswordForm csrfToken={csrfToken} />
-            <div className="text-center mt-4 pt-4 border-t border-border">
-              <small className="text-text-muted"><a href="/login" className="text-temple-gold">Back to Login</a></small>
+            <div className="text-center mt-4 pt-4 border-t border-kt-border">
+              <small className="text-kt-text-tertiary"><a href="/login" className="text-kt-gold">Back to Login</a></small>
             </div>
           </div>
         </div>

@@ -40,9 +40,9 @@ export default function ReferralTreePage() {
   }
 
   return (
-    <div className="py-4 max-w-2xl mx-auto px-4">
+    <div className="py-4 px-4 lg:px-6">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-xl font-bold text-white">Referrals</h2>
+        <h2 className="text-xl font-bold text-kt-text-primary">Referrals</h2>
         <button
           onClick={copyLink}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition"
@@ -59,7 +59,7 @@ export default function ReferralTreePage() {
           {copied ? 'Copied!' : referralCode || 'Copy Link'}
         </button>
       </div>
-      <p className="text-sm text-white/40 mb-6">Grow your network and earn commissions across 5 levels</p>
+      <p className="text-sm text-kt-text-tertiary mb-6">Grow your network and earn commissions across 5 levels</p>
 
       {/* Tab bar */}
       <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>

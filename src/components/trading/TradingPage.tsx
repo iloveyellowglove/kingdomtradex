@@ -24,7 +24,7 @@ export default function TradingPage({ dailyRate, lockedBalance, activeLockCount,
   useEffect(() => { seedTrades(30); }, []);
 
   return (
-    <div className="min-h-screen pb-20 lg:pb-0" style={{ background: '#0B0E11' }}>
+    <div className="min-h-screen pb-20 lg:pb-0 bg-kt-bg">
       <AITradingHeader />
 
       <div className="px-3 sm:px-4 py-4 space-y-4">
@@ -38,7 +38,7 @@ export default function TradingPage({ dailyRate, lockedBalance, activeLockCount,
           </div>
           <div className="lg:col-span-1 space-y-3">
             <div>
-              <p className="text-[10px] text-[#5E6673] mb-1 px-1">Platform AI Performance</p>
+              <p className="text-[10px] text-kt-text-tertiary mb-1 px-1">Platform AI Performance</p>
               <AIPerformanceChart dailyRate={dailyRate} lockedBalance={lockedBalance} />
             </div>
             <AIStrategyCard
@@ -51,7 +51,7 @@ export default function TradingPage({ dailyRate, lockedBalance, activeLockCount,
           </div>
         </div>
 
-        <p className="text-center text-[10px] text-[#5E6673]">
+        <p className="text-center text-[10px] text-kt-text-tertiary">
           AI trading results are projections based on engine activity. Past performance does not indicate future results.
         </p>
       </div>

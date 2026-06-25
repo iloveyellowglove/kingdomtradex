@@ -80,17 +80,17 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
   function renderDisplayValue(s: SettingRow) {
     if (API_KEY_FIELDS.includes(s.setting_key)) {
       if (!s.setting_value) {
-        return <span className="text-text-muted italic">(empty)</span>;
+        return <span className="text-kt-text-tertiary italic">(empty)</span>;
       }
       if (revealed[s.setting_key]) {
-        return <span className="font-mono text-temple-gold">{s.setting_value}</span>;
+        return <span className="font-mono text-kt-gold">{s.setting_value}</span>;
       }
       return <span className="font-mono">{maskValue(s.setting_value)}</span>;
     }
     if (s.setting_value) {
       return s.setting_value;
     }
-    return <span className="text-text-muted italic">(empty)</span>;
+    return <span className="text-kt-text-tertiary italic">(empty)</span>;
   }
 
   function renderEditInput() {
@@ -101,7 +101,7 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
         <select
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
-          className="bg-dark-indigo border border-royal-purple rounded px-2 py-1 text-sm text-white w-full max-w-xs"
+          className="bg-kt-bg border border-royal-purple rounded px-2 py-1 text-sm text-kt-text-primary w-full max-w-xs"
           autoFocus
         >
           {MODEL_OPTIONS.map((opt) => (
@@ -119,7 +119,7 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
           type="text"
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
-          className="bg-dark-indigo border border-royal-purple rounded px-2 py-1 text-sm font-mono text-white w-full max-w-xs"
+          className="bg-kt-bg border border-royal-purple rounded px-2 py-1 text-sm font-mono text-kt-text-primary w-full max-w-xs"
           autoFocus
         />
       );
@@ -130,7 +130,7 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
         type="text"
         value={editValue}
         onChange={(e) => setEditValue(e.target.value)}
-        className="bg-dark-indigo border border-royal-purple rounded px-2 py-1 text-sm font-mono text-white w-full max-w-xs"
+        className="bg-kt-bg border border-royal-purple rounded px-2 py-1 text-sm font-mono text-kt-text-primary w-full max-w-xs"
         autoFocus
       />
     );
@@ -150,7 +150,7 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
           </button>
           <button
             onClick={cancelEdit}
-            className="px-2 py-1 text-xs rounded border border-text-muted text-text-muted hover:text-white whitespace-nowrap"
+            className="px-2 py-1 text-xs rounded border border-text-muted text-kt-text-tertiary hover:text-white whitespace-nowrap"
           >
             Cancel
           </button>
@@ -161,7 +161,7 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
     return (
       <div className="flex items-center gap-2">
         <span
-          className="font-mono cursor-pointer hover:text-temple-gold border-b border-dotted border-text-muted"
+          className="font-mono cursor-pointer hover:text-kt-gold border-b border-dotted border-text-muted"
           onClick={() => startEdit(s)}
         >
           {renderDisplayValue(s)}
@@ -169,7 +169,7 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
         {API_KEY_FIELDS.includes(s.setting_key) && s.setting_value && !revealed[s.setting_key] && (
           <button
             onClick={() => toggleReveal(s.setting_key)}
-            className="text-xs text-text-muted hover:text-white underline"
+            className="text-xs text-kt-text-tertiary hover:text-white underline"
           >
             show
           </button>
@@ -177,7 +177,7 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
         {API_KEY_FIELDS.includes(s.setting_key) && s.setting_value && revealed[s.setting_key] && (
           <button
             onClick={() => toggleReveal(s.setting_key)}
-            className="text-xs text-text-muted hover:text-white underline"
+            className="text-xs text-kt-text-tertiary hover:text-white underline"
           >
             hide
           </button>
@@ -202,7 +202,7 @@ export default function SettingsTable({ settings: initial, csrfToken }: Props) {
               <tr key={s.id}>
                 <td className="p-3"><code>{s.setting_key}</code></td>
                 <td className="p-3">{renderValueCell(s)}</td>
-                <td className="p-3"><small className="text-text-muted">{s.description || '-'}</small></td>
+                <td className="p-3"><small className="text-kt-text-tertiary">{s.description || '-'}</small></td>
               </tr>
             ))}
           </tbody>

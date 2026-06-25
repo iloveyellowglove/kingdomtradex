@@ -35,18 +35,18 @@ export default function LoginForm({ csrfToken }: { csrfToken: string }) {
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && <div className="alert alert-danger">{error}</div>}
       <div>
-        <label htmlFor="email" className="block text-text-secondary font-medium mb-1">Email</label>
+        <label htmlFor="email" className="block text-kt-text-secondary font-medium mb-1">Email</label>
         <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full" autoFocus />
       </div>
       <div>
-        <label htmlFor="password" className="block text-text-secondary font-medium mb-1">Password</label>
+        <label htmlFor="password" className="block text-kt-text-secondary font-medium mb-1">Password</label>
         <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full" />
       </div>
       <button type="submit" disabled={loading} className="btn-primary w-full py-3 rounded-lg">
         {loading ? 'Logging in...' : 'Log In'}
       </button>
       <div className="text-center">
-        <a href="/forgot-password" className="text-sm text-text-secondary hover:text-temple-gold">Forgot password?</a>
+        <a href="/forgot-password" className="text-sm text-kt-text-secondary hover:text-kt-gold">Forgot password?</a>
       </div>
     </form>
   );

@@ -75,25 +75,25 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-white mb-4">Overview</h2>
+      <h2 className="text-xl font-bold text-kt-text-primary mb-4">Overview</h2>
 
       {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="rounded-xl p-6" style={cardStyle}>
-          <p className="text-xs text-text-muted uppercase tracking-wider mb-2">Total Users</p>
-          <p className="text-2xl font-bold text-white">{(userCount ?? 0).toLocaleString()}</p>
+          <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-2">Total Users</p>
+          <p className="text-2xl font-bold text-kt-text-primary">{(userCount ?? 0).toLocaleString()}</p>
         </div>
         <div className="rounded-xl p-6" style={cardStyle}>
-          <p className="text-xs text-text-muted uppercase tracking-wider mb-2">Total Deposited</p>
-          <p className="text-2xl font-bold text-white">{fmtDollar(sumTotalDeposited)}</p>
+          <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-2">Total Deposited</p>
+          <p className="text-2xl font-bold text-kt-text-primary">{fmtDollar(sumTotalDeposited)}</p>
         </div>
         <div className="rounded-xl p-6" style={cardStyle}>
-          <p className="text-xs text-text-muted uppercase tracking-wider mb-2">Completed Deposits</p>
-          <p className="text-2xl font-bold text-white">{(completedDeposits ?? 0).toLocaleString()}</p>
+          <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-2">Completed Deposits</p>
+          <p className="text-2xl font-bold text-kt-text-primary">{(completedDeposits ?? 0).toLocaleString()}</p>
         </div>
         <div className="rounded-xl p-6" style={cardStyle}>
-          <p className="text-xs text-text-muted uppercase tracking-wider mb-2">Pending Withdrawals</p>
-          <p className="text-2xl font-bold text-white">{(pendingWds ?? 0).toLocaleString()}</p>
+          <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-2">Pending Withdrawals</p>
+          <p className="text-2xl font-bold text-kt-text-primary">{(pendingWds ?? 0).toLocaleString()}</p>
         </div>
       </div>
 
@@ -101,31 +101,31 @@ export default async function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Signups */}
         <div className="rounded-xl p-6" style={cardStyle}>
-          <h3 className="text-sm font-semibold text-white mb-4">Recent Signups</h3>
+          <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Recent Signups</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-white/5">
-                  <th className="text-left py-2 pr-3 text-text-muted text-xs font-medium">Username</th>
-                  <th className="text-left py-2 pr-3 text-text-muted text-xs font-medium">Email</th>
-                  <th className="text-left py-2 pr-3 text-text-muted text-xs font-medium">KYC</th>
-                  <th className="text-left py-2 text-text-muted text-xs font-medium">Joined</th>
+                  <th className="text-left py-2 pr-3 text-kt-text-tertiary text-xs font-medium">Username</th>
+                  <th className="text-left py-2 pr-3 text-kt-text-tertiary text-xs font-medium">Email</th>
+                  <th className="text-left py-2 pr-3 text-kt-text-tertiary text-xs font-medium">KYC</th>
+                  <th className="text-left py-2 text-kt-text-tertiary text-xs font-medium">Joined</th>
                 </tr>
               </thead>
               <tbody>
                 {(recentUsers ?? []).map((u: { username: string; email: string; kyc_status: string; created_at: string }, i: number) => (
                   <tr key={i} className="border-b border-white/5">
-                    <td className="py-2.5 pr-3 text-white text-sm">{u.username}</td>
-                    <td className="py-2.5 pr-3 text-white/50 text-xs">{u.email || '-'}</td>
+                    <td className="py-2.5 pr-3 text-kt-text-primary text-sm">{u.username}</td>
+                    <td className="py-2.5 pr-3 text-kt-text-tertiary text-xs">{u.email || '-'}</td>
                     <td className="py-2.5 pr-3">{kycBadge(u.kyc_status)}</td>
-                    <td className="py-2.5 text-white/50 text-xs">
+                    <td className="py-2.5 text-kt-text-tertiary text-xs">
                       {new Date(u.created_at).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
                 {(!recentUsers || recentUsers.length === 0) && (
                   <tr>
-                    <td colSpan={4} className="py-4 text-center text-text-muted text-sm">No users yet.</td>
+                    <td colSpan={4} className="py-4 text-center text-kt-text-tertiary text-sm">No users yet.</td>
                   </tr>
                 )}
               </tbody>
@@ -135,12 +135,12 @@ export default async function AdminDashboardPage() {
 
         {/* Pending Actions */}
         <div className="rounded-xl p-6" style={cardStyle}>
-          <h3 className="text-sm font-semibold text-white mb-4">Pending Actions</h3>
+          <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Pending Actions</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
               <div>
-                <p className="text-white text-sm font-medium">Pending Withdrawals</p>
-                <p className="text-text-muted text-xs">Awaiting processing</p>
+                <p className="text-kt-text-primary text-sm font-medium">Pending Withdrawals</p>
+                <p className="text-kt-text-tertiary text-xs">Awaiting processing</p>
               </div>
               <span
                 className="inline-flex items-center justify-center rounded-full text-sm font-bold"
@@ -157,8 +157,8 @@ export default async function AdminDashboardPage() {
 
             <div className="flex items-center justify-between p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
               <div>
-                <p className="text-white text-sm font-medium">Pending KYC Reviews</p>
-                <p className="text-text-muted text-xs">Identity verification needed</p>
+                <p className="text-kt-text-primary text-sm font-medium">Pending KYC Reviews</p>
+                <p className="text-kt-text-tertiary text-xs">Identity verification needed</p>
               </div>
               <span
                 className="inline-flex items-center justify-center rounded-full text-sm font-bold"

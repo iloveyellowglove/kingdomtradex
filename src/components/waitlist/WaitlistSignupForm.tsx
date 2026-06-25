@@ -53,20 +53,20 @@ export default function WaitlistSignupForm({ referredByName }: Props) {
     }}>
       {referredByName && (
         <div className="text-center mb-6">
-          <p className="text-temple-gold font-semibold">
+          <p className="text-kt-gold font-semibold">
             You were invited by {referredByName}
           </p>
         </div>
       )}
 
       <h2 className="text-2xl font-bold text-center mb-2">Secure Your Spot</h2>
-      <p className="text-text-muted text-center mb-6">Join the waitlist and earn rewards for referring others</p>
+      <p className="text-kt-text-tertiary text-center mb-6">Join the waitlist and earn rewards for referring others</p>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-text-secondary font-medium mb-1">Email</label>
+          <label className="block text-kt-text-secondary font-medium mb-1">Email</label>
           <input
             type="email"
             value={email}
@@ -77,7 +77,7 @@ export default function WaitlistSignupForm({ referredByName }: Props) {
           />
         </div>
         <div>
-          <label className="block text-text-secondary font-medium mb-1">Name (optional)</label>
+          <label className="block text-kt-text-secondary font-medium mb-1">Name (optional)</label>
           <input
             type="text"
             value={name}
@@ -87,7 +87,7 @@ export default function WaitlistSignupForm({ referredByName }: Props) {
           />
         </div>
         <div>
-          <label className="block text-text-secondary font-medium mb-1">I am a</label>
+          <label className="block text-kt-text-secondary font-medium mb-1">I am a</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as 'pastor' | 'member')}
@@ -106,7 +106,7 @@ export default function WaitlistSignupForm({ referredByName }: Props) {
         </button>
       </form>
 
-      <p className="text-text-muted text-xs text-center mt-4">
+      <p className="text-kt-text-tertiary text-xs text-center mt-4">
         No spam. Only launch updates and your referral dashboard.
       </p>
     </div>

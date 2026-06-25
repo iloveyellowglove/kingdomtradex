@@ -11,12 +11,12 @@ const STEPS = [
 
 export default function SignupCreditBanner() {
   return (
-    <section className="py-12 lg:py-20" style={{ background: '#1E2329' }}>
+    <section className="py-12 lg:py-20 bg-kt-surface">
       <div className="max-w-[1200px] mx-auto px-6 text-center">
-        <h2 className="text-[22px] sm:text-[28px] font-semibold text-[#EAECEF] mb-2">
-          See What Your <span style={{ color: '#F0B90B' }}>$50 Free Credits</span> Can Become
+        <h2 className="text-[22px] sm:text-[28px] font-semibold text-kt-text-primary mb-2">
+          See What Your <span className="text-kt-gold">$50 Free Credits</span> Can Become
         </h2>
-        <p className="text-sm text-[#848E9C] mb-10 max-w-[500px] mx-auto">
+        <p className="text-sm text-kt-text-secondary mb-10 max-w-[500px] mx-auto">
           Your $50 starting credit, growing with projected daily returns at our current Gold tier rate.
         </p>
 
@@ -27,7 +27,7 @@ export default function SignupCreditBanner() {
               {i < STEPS.length - 1 && (
                 <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 text-[#2B3139] text-xl">→</div>
               )}
-              <p className="text-xs text-[#5E6673] mb-2">{s.label}</p>
+              <p className="text-xs text-kt-text-tertiary mb-2">{s.label}</p>
               <p className={`${s.size} font-bold`} style={{ color: s.color }}>
                 <AnimatedNumber value={s.val} prefix="$" decimals={2} duration={1.2} />
               </p>
@@ -40,7 +40,7 @@ export default function SignupCreditBanner() {
           style={{ background: '#F0B90B', color: '#0B0E11' }}>
           Claim My Free $50
         </a>
-        <p className="mt-3 text-xs text-[#5E6673] max-w-[500px] mx-auto">
+        <p className="mt-3 text-xs text-kt-text-tertiary max-w-[500px] mx-auto">
           Credits are non-withdrawable. Profits from credits can be withdrawn based on KYC level. Projected returns are estimates and not guaranteed.
         </p>
       </div>

@@ -68,8 +68,8 @@ export default function WithdrawalHistory() {
       <div className="space-y-3">
         {[1, 2, 3].map(i => (
           <div key={i} className="rounded-lg p-4 animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <div className="h-4 w-24 bg-white/5 rounded mb-2" />
-            <div className="h-3 w-32 bg-white/5 rounded" />
+            <div className="h-4 w-24 bg-kt-hover-bg rounded mb-2" />
+            <div className="h-3 w-32 bg-kt-hover-bg rounded" />
           </div>
         ))}
       </div>
@@ -150,7 +150,7 @@ export default function WithdrawalHistory() {
                 </div>
 
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-white font-bold">
+                  <span className="text-kt-text-primary font-bold">
                     ${Number(w.amount).toFixed(2)}
                     {w.forfeit_amount && Number(w.forfeit_amount) > 0 && (
                       <span className="text-red-400 text-xs ml-1">(-${Number(w.forfeit_amount).toFixed(2)} fee)</span>

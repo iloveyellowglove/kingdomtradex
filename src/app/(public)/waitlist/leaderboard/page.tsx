@@ -20,14 +20,14 @@ export default async function LeaderboardPage() {
         <h1 className="text-2xl md:text-3xl font-bold mb-2">
           <CrossDove size={24} /> Waitlist Leaderboard
         </h1>
-        <p className="text-text-muted">Top referrers earning early access rewards</p>
+        <p className="text-kt-text-tertiary">Top referrers earning early access rewards</p>
       </div>
 
       {/* Stats */}
       <div className="text-center mb-8">
         <div className="card p-6 inline-block min-w-[200px]">
-          <p className="text-text-muted text-sm mb-1">Total Waitlist Members</p>
-          <p className="text-temple-gold text-4xl font-extrabold">{totalCount.toLocaleString()}</p>
+          <p className="text-kt-text-tertiary text-sm mb-1">Total Waitlist Members</p>
+          <p className="text-kt-gold text-4xl font-extrabold">{totalCount.toLocaleString()}</p>
         </div>
       </div>
 

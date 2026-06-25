@@ -74,7 +74,7 @@ export default function AdminBroadcastPage() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-white mb-4">Broadcast Message</h2>
+      <h2 className="text-xl font-bold text-kt-text-primary mb-4">Broadcast Message</h2>
 
       {result && (
         <div className={`mb-4 p-3 rounded-lg text-sm ${result.ok ? 'text-green-400' : 'text-red-400'}`}
@@ -89,11 +89,11 @@ export default function AdminBroadcastPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Compose */}
         <div className="rounded-xl p-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <h3 className="text-sm font-semibold text-white mb-4">Compose Broadcast</h3>
+          <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Compose Broadcast</h3>
 
           <form onSubmit={handleSend} className="space-y-4">
             <div>
-              <label className="block text-xs text-white/50 mb-1.5">Title</label>
+              <label className="block text-xs text-kt-text-tertiary mb-1.5">Title</label>
               <input
                 type="text"
                 value={title}
@@ -101,26 +101,26 @@ export default function AdminBroadcastPage() {
                 maxLength={100}
                 required
                 placeholder="Important Announcement"
-                className="w-full px-4 py-2.5 rounded-lg text-sm text-white"
+                className="w-full px-4 py-2.5 rounded-lg text-sm text-kt-text-primary"
                 style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', minHeight: 44 }}
               />
             </div>
 
             <div>
-              <label className="block text-xs text-white/50 mb-1.5">Message</label>
+              <label className="block text-xs text-kt-text-tertiary mb-1.5">Message</label>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={4}
                 required
                 placeholder="Your message to users..."
-                className="w-full px-4 py-2.5 rounded-lg text-sm text-white resize-none"
+                className="w-full px-4 py-2.5 rounded-lg text-sm text-kt-text-primary resize-none"
                 style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
               />
             </div>
 
             <div>
-              <label className="block text-xs text-white/50 mb-1.5">Target Segment</label>
+              <label className="block text-xs text-kt-text-tertiary mb-1.5">Target Segment</label>
               <div className="grid grid-cols-2 gap-2">
                 {segments.map(s => (
                   <button
@@ -144,10 +144,10 @@ export default function AdminBroadcastPage() {
             {/* Preview */}
             {title && message && (
               <div className="p-4 rounded-lg" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Preview</p>
-                <p className="text-sm font-bold text-white">{title}</p>
-                <p className="text-xs text-white/50 mt-1">{message}</p>
-                <p className="text-[10px] text-white/25 mt-2">
+                <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">Preview</p>
+                <p className="text-sm font-bold text-kt-text-primary">{title}</p>
+                <p className="text-xs text-kt-text-tertiary mt-1">{message}</p>
+                <p className="text-[10px] text-kt-text-tertiary mt-2">
                   Sending to: {segments.find(s => s.key === segment)?.label}
                 </p>
               </div>
@@ -166,7 +166,7 @@ export default function AdminBroadcastPage() {
 
         {/* History */}
         <div className="rounded-xl p-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <h3 className="text-sm font-semibold text-white mb-4">Broadcast History</h3>
+          <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Broadcast History</h3>
 
           {historyLoading ? (
             <div className="space-y-2">
@@ -181,12 +181,12 @@ export default function AdminBroadcastPage() {
               {history.map(b => (
                 <div key={b.id} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-medium text-white truncate">{b.title}</p>
-                    <span className="text-[10px] text-white/25 flex-shrink-0 ml-2">
+                    <p className="text-sm font-medium text-kt-text-primary truncate">{b.title}</p>
+                    <span className="text-[10px] text-kt-text-tertiary flex-shrink-0 ml-2">
                       {new Date(b.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <p className="text-xs text-white/40 truncate">{b.message}</p>
+                  <p className="text-xs text-kt-text-tertiary truncate">{b.message}</p>
                 </div>
               ))}
             </div>

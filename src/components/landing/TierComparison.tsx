@@ -6,11 +6,11 @@ import { TIER_LIST } from '@/lib/tiers';
 
 export default function TierComparison() {
   return (
-    <section id="tiers" className="py-16 lg:py-20" style={{ background: '#0B0E11' }}>
+    <section id="tiers" className="py-16 lg:py-20 bg-kt-bg">
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-10">
-          <h2 className="text-[22px] sm:text-[28px] font-semibold text-[#EAECEF] mb-2">Lock Tiers &amp; Rates</h2>
-          <p className="text-sm text-[#848E9C] max-w-[500px] mx-auto">
+          <h2 className="text-[22px] sm:text-[28px] font-semibold text-kt-text-primary mb-2">Lock Tiers &amp; Rates</h2>
+          <p className="text-sm text-kt-text-secondary max-w-[500px] mx-auto">
             Choose a lock duration to begin earning daily projected returns. Longer locks earn higher rates.
           </p>
         </div>
@@ -53,16 +53,16 @@ export default function TierComparison() {
                 <div className="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: `${t.color}15` }}>
                   <div className="w-4 h-4 rounded-full" style={{ background: t.color }} />
                 </div>
-                <h3 className="font-semibold text-[#EAECEF] mb-0.5">{t.name}</h3>
-                <p className="text-xs text-[#5E6673] mb-3">{Math.round(t.duration / 30)} Months · {t.duration} days</p>
-                <p className="text-[28px] font-extrabold text-[#0ECB81] mb-1">
+                <h3 className="font-semibold text-kt-text-primary mb-0.5">{t.name}</h3>
+                <p className="text-xs text-kt-text-tertiary mb-3">{Math.round(t.duration / 30)} Months · {t.duration} days</p>
+                <p className="text-[28px] font-extrabold text-kt-green mb-1">
                   <AnimatedNumber value={t.dailyRate * 100} suffix="%" decimals={1} duration={1.2} />
                 </p>
-                <p className="text-xs text-[#5E6673] mb-4">daily rate</p>
+                <p className="text-xs text-kt-text-tertiary mb-4">daily rate</p>
                 <div className="space-y-1.5 mb-4 text-left">
-                  <div className="flex justify-between text-xs"><span className="text-[#5E6673]">Monthly</span><span className="text-[#EAECEF] font-medium">~{(t.dailyRate * 30 * 100).toFixed(0)}%</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-[#5E6673]">Total projected</span><span className="text-[#EAECEF] font-medium">~{(t.dailyRate * t.duration * 100).toFixed(0)}%</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-[#5E6673]">Min deposit</span><span className="text-[#EAECEF] font-medium">${t.minDeposit}</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-kt-text-tertiary">Monthly</span><span className="text-kt-text-primary font-medium">~{(t.dailyRate * 30 * 100).toFixed(0)}%</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-kt-text-tertiary">Total projected</span><span className="text-kt-text-primary font-medium">~{(t.dailyRate * t.duration * 100).toFixed(0)}%</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-kt-text-tertiary">Min deposit</span><span className="text-kt-text-primary font-medium">${t.minDeposit}</span></div>
                 </div>
                 <Link
                   href={t.featured ? '/register' : '/calculator'}
@@ -80,7 +80,7 @@ export default function TierComparison() {
         </div>
 
         <div className="text-center mt-8">
-          <Link href="/deposit" className="text-sm font-medium text-[#F0B90B] hover:underline no-underline">
+          <Link href="/deposit" className="text-sm font-medium text-kt-gold hover:underline no-underline">
             Deposit &amp; Lock Your Funds →
           </Link>
         </div>

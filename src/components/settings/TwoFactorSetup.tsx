@@ -135,8 +135,8 @@ export default function TwoFactorSetup() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-3">
-        <div className="h-6 w-40 bg-white/5 rounded" />
-        <div className="h-10 w-full bg-white/5 rounded" />
+        <div className="h-6 w-40 bg-kt-hover-bg rounded" />
+        <div className="h-10 w-full bg-kt-hover-bg rounded" />
       </div>
     );
   }
@@ -148,8 +148,8 @@ export default function TwoFactorSetup() {
     >
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-base font-bold text-white">Authenticator App (TOTP)</h3>
-          <p className="text-xs text-white/40 mt-0.5">Google Authenticator, Authy, or similar</p>
+          <h3 className="text-base font-bold text-kt-text-primary">Authenticator App (TOTP)</h3>
+          <p className="text-xs text-kt-text-tertiary mt-0.5">Google Authenticator, Authy, or similar</p>
         </div>
         {enabled ? (
           <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: 'rgba(76,175,80,0.12)', color: '#4CAF50' }}>
@@ -198,16 +198,16 @@ export default function TwoFactorSetup() {
                 className="block"
               />
             </div>
-            <p className="text-xs text-white/40 mb-1">Scan with your authenticator app</p>
-            <p className="text-xs text-white/30 font-mono select-all break-all px-4">
+            <p className="text-xs text-kt-text-tertiary mb-1">Scan with your authenticator app</p>
+            <p className="text-xs text-kt-text-tertiary font-mono select-all break-all px-4">
               {setup.secret}
             </p>
-            <p className="text-[10px] text-white/25 mt-1">Or enter this key manually</p>
+            <p className="text-[10px] text-kt-text-tertiary mt-1">Or enter this key manually</p>
           </div>
 
           {/* Verify code */}
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">Enter 6-digit code</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Enter 6-digit code</label>
             <input
               type="text"
               inputMode="numeric"
@@ -215,7 +215,7 @@ export default function TwoFactorSetup() {
               value={verifyCode}
               onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
               placeholder="000000"
-              className="w-full px-4 py-3 rounded-lg text-center text-xl tracking-widest text-white"
+              className="w-full px-4 py-3 rounded-lg text-center text-xl tracking-widest text-kt-text-primary"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -237,7 +237,7 @@ export default function TwoFactorSetup() {
           {setup.backupCodes && setup.backupCodes.length > 0 && (
             <div className="p-4 rounded-lg" style={{ background: 'rgba(255,193,7,0.06)', border: '1px solid rgba(255,193,7,0.15)' }}>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-bold text-[#FFC107]">Backup Codes</p>
+                <p className="text-xs font-bold text-kt-gold">Backup Codes</p>
                 <button
                   onClick={copyBackupCodes}
                   className="text-xs px-2 py-1 rounded font-medium transition"
@@ -249,10 +249,10 @@ export default function TwoFactorSetup() {
                   {backupCopied ? 'Copied!' : 'Copy All'}
                 </button>
               </div>
-              <p className="text-[10px] text-white/30 mb-2">Save these - each code can be used once if you lose access to your authenticator.</p>
+              <p className="text-[10px] text-kt-text-tertiary mb-2">Save these - each code can be used once if you lose access to your authenticator.</p>
               <div className="grid grid-cols-2 gap-1">
                 {setup.backupCodes.map((code, i) => (
-                  <code key={i} className="text-xs font-mono text-white/60 bg-white/5 px-2 py-1 rounded select-all">
+                  <code key={i} className="text-xs font-mono text-kt-text-secondary bg-kt-hover-bg px-2 py-1 rounded select-all">
                     {code}
                   </code>
                 ))}
@@ -281,7 +281,7 @@ export default function TwoFactorSetup() {
                 value={disableCode}
                 onChange={(e) => setDisableCode(e.target.value)}
                 placeholder="6-digit code or backup code"
-                className="w-full px-4 py-3 rounded-lg text-white"
+                className="w-full px-4 py-3 rounded-lg text-kt-text-primary"
                 style={{
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.08)',
@@ -291,7 +291,7 @@ export default function TwoFactorSetup() {
               <div className="flex gap-2">
                 <button
                   onClick={() => { setShowDisable(false); setDisableCode(''); }}
-                  className="flex-1 py-2.5 rounded-lg text-sm font-bold border border-white/10 text-white/50 transition"
+                  className="flex-1 py-2.5 rounded-lg text-sm font-bold border border-kt-border text-kt-text-tertiary transition"
                 >
                   Cancel
                 </button>

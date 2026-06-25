@@ -35,14 +35,14 @@ export default function LandingNavbar() {
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F0B90B" strokeWidth="2.5">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
-          <span className="text-lg font-bold text-[#EAECEF] hidden sm:inline">KingdomTradex</span>
+          <span className="text-lg font-bold text-kt-text-primary hidden sm:inline">KingdomTradex</span>
         </a>
 
         {/* Desktop nav links */}
         <div className="hidden lg:flex items-center gap-1">
           {links.map(l => (
             <a key={l.href} href={l.href}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#848E9C] hover:text-[#EAECEF] hover:bg-[#1E2329] transition no-underline">
+              className="px-4 py-2 rounded-lg text-sm font-medium text-kt-text-secondary hover:text-kt-text-primary hover:bg-kt-surface transition no-underline">
               {l.label}
             </a>
           ))}
@@ -50,7 +50,7 @@ export default function LandingNavbar() {
 
         {/* Desktop CTA buttons */}
         <div className="hidden lg:flex items-center gap-3">
-          <a href="/login" className="text-sm font-medium text-[#EAECEF] hover:text-[#F0B90B] transition no-underline">Log In</a>
+          <a href="/login" className="text-sm font-medium text-kt-text-primary hover:text-kt-gold transition no-underline">Log In</a>
           <a href="/register"
             className="px-5 py-2.5 rounded-lg text-sm font-semibold no-underline transition"
             style={{ background: '#F0B90B', color: '#0B0E11' }}>
@@ -78,12 +78,12 @@ export default function LandingNavbar() {
         <div className="lg:hidden border-t px-6 py-4 space-y-2" style={{ background: '#0B0E11', borderColor: '#2B3139' }}>
           {links.map(l => (
             <a key={l.href} href={l.href} onClick={() => setMobileOpen(false)}
-              className="block px-4 py-3 rounded-lg text-sm font-medium text-[#848E9C] hover:text-[#EAECEF] hover:bg-[#1E2329] no-underline">
+              className="block px-4 py-3 rounded-lg text-sm font-medium text-kt-text-secondary hover:text-kt-text-primary hover:bg-kt-surface no-underline">
               {l.label}
             </a>
           ))}
           <hr style={{ borderColor: '#2B3139' }} />
-          <a href="/login" className="block px-4 py-3 rounded-lg text-sm font-medium text-[#EAECEF] hover:bg-[#1E2329] no-underline">Log In</a>
+          <a href="/login" className="block px-4 py-3 rounded-lg text-sm font-medium text-kt-text-primary hover:bg-kt-surface no-underline">Log In</a>
           <a href="/register"
             className="block px-4 py-3 rounded-lg text-center text-sm font-semibold no-underline"
             style={{ background: '#F0B90B', color: '#0B0E11' }}>

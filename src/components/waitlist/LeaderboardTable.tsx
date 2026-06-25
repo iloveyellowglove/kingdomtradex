@@ -26,7 +26,7 @@ export default function LeaderboardTable() {
   if (loading) {
     return (
       <div className="card p-8 text-center">
-        <p className="text-text-muted">Loading leaderboard...</p>
+        <p className="text-kt-text-tertiary">Loading leaderboard...</p>
       </div>
     );
   }
@@ -34,8 +34,8 @@ export default function LeaderboardTable() {
   if (entries.length === 0) {
     return (
       <div className="card p-8 text-center">
-        <p className="text-text-muted">No referrers yet.</p>
-        <p className="text-text-muted text-xs mt-1">Be the first to share your referral link and climb the ranks.</p>
+        <p className="text-kt-text-tertiary">No referrers yet.</p>
+        <p className="text-kt-text-tertiary text-xs mt-1">Be the first to share your referral link and climb the ranks.</p>
       </div>
     );
   }
@@ -71,11 +71,11 @@ export default function LeaderboardTable() {
                         {entry.rank === 1 ? '\u{1F947}' : entry.rank === 2 ? '\u{1F948}' : '\u{1F949}'}
                       </span>
                     ) : (
-                      <span className="text-text-muted">#{entry.rank}</span>
+                      <span className="text-kt-text-tertiary">#{entry.rank}</span>
                     )}
                   </td>
                   <td className="p-4 font-medium">{entry.name}</td>
-                  <td className="p-4 text-temple-gold font-bold">{entry.referral_count}</td>
+                  <td className="p-4 text-kt-gold font-bold">{entry.referral_count}</td>
                   <td className="p-4">
                     <span className="badge text-xs capitalize" style={{ background: colors.bg, color: colors.text }}>
                       {entry.tier}

@@ -93,7 +93,7 @@ export default function CovenantPage() {
         >
           The Covenant
         </h1>
-        <p className="text-text-secondary text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">
+        <p className="text-kt-text-secondary text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed">
           A new financial covenant built on biblical principles of stewardship, multiplication, and community.
         </p>
         <div className="mx-auto" style={{ width: 80, height: 2, background: 'linear-gradient(90deg, transparent, #FFD700, transparent)' }} />
@@ -134,7 +134,7 @@ export default function CovenantPage() {
                   <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{ color: '#FFD700' }}>
                     {article.title}
                   </h2>
-                  <p className="text-text-secondary leading-relaxed text-base md:text-lg mb-4">
+                  <p className="text-kt-text-secondary leading-relaxed text-base md:text-lg mb-4">
                     {article.body}
                   </p>
 
@@ -160,7 +160,7 @@ export default function CovenantPage() {
                           >
                             {j + 1}
                           </span>
-                          <span className="flex-1 text-text-primary font-medium text-sm">{level.name}</span>
+                          <span className="flex-1 text-kt-text-primary font-medium text-sm">{level.name}</span>
                           <span
                             className="text-xl font-extrabold"
                             style={{ color: j === 0 ? '#FFD700' : 'rgba(255,255,255,0.3)' }}
@@ -170,7 +170,7 @@ export default function CovenantPage() {
                         </div>
                       ))}
                       {article.footer && (
-                        <p className="text-text-muted text-sm mt-3">{article.footer}</p>
+                        <p className="text-kt-text-tertiary text-sm mt-3">{article.footer}</p>
                       )}
                     </div>
                   )}
@@ -207,7 +207,7 @@ export default function CovenantPage() {
             >
               &quot;But thou shalt remember the LORD thy God: for it is he that giveth thee power to get wealth, that he may establish his covenant.&quot;
             </p>
-            <p className="text-temple-gold font-bold text-lg tracking-wide">Deuteronomy 8:18</p>
+            <p className="text-kt-gold font-bold text-lg tracking-wide">Deuteronomy 8:18</p>
           </div>
         </FadeIn>
       </section>
@@ -216,7 +216,7 @@ export default function CovenantPage() {
       <section className="text-center py-16 md:py-24 px-6">
         <FadeIn>
           <h2 className="text-3xl md:text-4xl font-bold mb-3">Enter the Covenant</h2>
-          <p className="text-text-muted text-lg mb-8">Join the waitlist and claim your free credits today.</p>
+          <p className="text-kt-text-tertiary text-lg mb-8">Join the waitlist and claim your free credits today.</p>
           <a
             href="/#signup"
             className="inline-block px-10 py-4 rounded-xl text-lg font-bold transition-all no-underline"
@@ -228,7 +228,7 @@ export default function CovenantPage() {
           >
             Claim My Free $50
           </a>
-          <p className="text-text-muted text-sm mt-4">Pastors receive $100 free</p>
+          <p className="text-kt-text-tertiary text-sm mt-4">Pastors receive $100 free</p>
         </FadeIn>
       </section>
     </div>

@@ -13,7 +13,7 @@ export default function ReferralProgram() {
     <section className="mb-12">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Earn More by Sharing</h2>
-        <p className="text-text-muted">When your friends deposit and earn, you earn too. Up to 5 levels deep.</p>
+        <p className="text-kt-text-tertiary">When your friends deposit and earn, you earn too. Up to 5 levels deep.</p>
       </div>
 
       <div className="card max-w-2xl mx-auto p-8">
@@ -49,12 +49,12 @@ export default function ReferralProgram() {
                 L{l.level}
               </span>
               <div className="flex-1">
-                <span className="text-text-primary font-medium">{l.desc}</span>
+                <span className="text-kt-text-primary font-medium">{l.desc}</span>
                 {l.level === 1 && (
-                  <span className="text-text-muted text-xs ml-2">- where most of your earnings come from</span>
+                  <span className="text-kt-text-tertiary text-xs ml-2">- where most of your earnings come from</span>
                 )}
               </div>
-              <span className="text-temple-gold text-xl font-extrabold">{l.pct}%</span>
+              <span className="text-kt-gold text-xl font-extrabold">{l.pct}%</span>
             </div>
             );
           })}

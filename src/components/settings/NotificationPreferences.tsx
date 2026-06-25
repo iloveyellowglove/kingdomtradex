@@ -52,8 +52,8 @@ export default function NotificationPreferences() {
     >
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-base font-bold text-white">Email Notifications</h3>
-          <p className="text-xs text-white/40 mt-0.5">Choose which events send you an email</p>
+          <h3 className="text-base font-bold text-kt-text-primary">Email Notifications</h3>
+          <p className="text-xs text-kt-text-tertiary mt-0.5">Choose which events send you an email</p>
         </div>
       </div>
 
@@ -70,7 +70,7 @@ export default function NotificationPreferences() {
             className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-white/[0.02] transition"
           >
             <div className="flex-1 min-w-0 mr-3">
-              <p className="text-sm text-white font-medium">{p.label}</p>
+              <p className="text-sm text-kt-text-primary font-medium">{p.label}</p>
               <p className="text-xs text-white/35 truncate">{p.description}</p>
             </div>
             <button

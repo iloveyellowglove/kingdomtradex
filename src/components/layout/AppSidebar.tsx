@@ -20,13 +20,12 @@ export default function AppSidebar() {
 
   return (
     <aside
-      className="hidden lg:flex flex-col w-56 h-screen sticky top-0 border-r border-white/5 flex-shrink-0 overflow-y-auto"
-      style={{ background: '#0c0a16' }}
+      className="hidden lg:flex flex-col w-56 h-screen sticky top-0 border-r border-kt-border flex-shrink-0 overflow-y-auto bg-kt-sidebar-bg"
     >
       {/* Logo */}
       <div className="px-5 py-5 border-b border-white/5">
         <Link href="/" className="no-underline">
-          <span className="text-lg font-bold text-[#FFD700]">KingdomTradex</span>
+          <span className="text-lg font-bold text-kt-gold">KingdomTradex</span>
         </Link>
       </div>
 
@@ -40,8 +39,8 @@ export default function AppSidebar() {
               href={item.href}
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition no-underline"
               style={{
-                background: active ? 'rgba(255,215,0,0.08)' : 'transparent',
-                color: active ? '#FFD700' : 'rgba(255,255,255,0.5)',
+                background: active ? 'var(--kt-active-bg)' : 'transparent',
+                color: active ? 'var(--kt-active-text)' : 'var(--kt-text-tertiary)',
               }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

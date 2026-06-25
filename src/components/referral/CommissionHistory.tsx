@@ -118,7 +118,7 @@ export default function CommissionHistory() {
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-medium text-kt-text-primary">
                       {c.sourceUsername}
                     </span>
                     <span className="px-1.5 py-0.5 rounded text-[10px] font-bold"
@@ -139,11 +139,11 @@ export default function CommissionHistory() {
                   <div className="text-xs text-white/40">
                     <span>{(c.commissionRate * 100).toFixed(2)}% of ${c.sourceAmount.toFixed(2)}</span>
                   </div>
-                  <span className="text-sm font-bold text-[#4CAF50]">
+                  <span className="text-sm font-bold text-kt-green">
                     +${c.amount.toFixed(2)}
                   </span>
                 </div>
-                <p className="text-[10px] text-white/20 mt-1">
+                <p className="text-[10px] text-kt-text-tertiary mt-1">
                   {new Date(c.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>

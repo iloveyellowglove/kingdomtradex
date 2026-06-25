@@ -19,7 +19,7 @@ export default function AdminTabBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-0 border-b border-white/10 mb-6 overflow-x-auto">
+    <nav className="flex gap-0 border-b border-kt-border mb-6 overflow-x-auto">
       {TABS.map((tab) => {
         const active = pathname === tab.href;
         return (
@@ -28,7 +28,7 @@ export default function AdminTabBar() {
             href={tab.href}
             className={`px-5 py-3 text-sm font-medium whitespace-nowrap transition no-underline ${
               active
-                ? 'text-white border-b-2 border-[#FFD700]'
+                ? 'text-kt-text-primary border-b-2 border-[#FFD700]'
                 : 'text-white/50 hover:text-white/70 border-b-2 border-transparent'
             }`}
           >

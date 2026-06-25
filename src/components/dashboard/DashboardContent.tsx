@@ -57,7 +57,7 @@ export default function DashboardContent({
   }
 
   return (
-    <div className="py-4 space-y-5 max-w-2xl mx-auto lg:max-w-none">
+    <div className="py-4 space-y-5 lg:max-w-none">
       {/* ---- HEADER: Avatar + Username + UID + KYC + Referral ---- */}
       <div
         className="flex flex-wrap items-center gap-3 p-4 rounded-xl"
@@ -71,11 +71,11 @@ export default function DashboardContent({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-sm font-bold text-white">{user.username}</span>
+            <span className="text-sm font-bold text-kt-text-primary">{user.username}</span>
             <KycStatusBadge level={user.kyc_level ?? 0} size="sm" />
           </div>
           <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-[10px] text-white/30 font-mono">UID: {user.id}</span>
+            <span className="text-[10px] text-kt-text-tertiary font-mono">UID: {user.id}</span>
             <button
               onClick={() => copyToClipboard(String(user.id), setUidCopied)}
               className="text-[10px] px-1.5 py-0.5 rounded transition"
@@ -89,8 +89,8 @@ export default function DashboardContent({
         {/* Referral code */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <div className="text-right">
-            <p className="text-[9px] text-white/30 uppercase">Referral</p>
-            <p className="text-xs font-bold text-[#FFD700] font-mono">{user.referral_code}</p>
+            <p className="text-[9px] text-kt-text-tertiary uppercase">Referral</p>
+            <p className="text-xs font-bold text-kt-gold font-mono">{user.referral_code}</p>
           </div>
           <button
             onClick={() => copyToClipboard(user.referral_code, setRefCopied)}
@@ -142,8 +142,8 @@ export default function DashboardContent({
           { label: 'Pending Rewards', value: `$${totalPendingComm.toLocaleString(undefined, { minimumFractionDigits: 2 })}` },
         ].map(s => (
           <div key={s.label} className="p-3 rounded-lg text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
-            <p className="text-[10px] text-white/30 mb-1">{s.label}</p>
-            <p className="text-sm font-bold text-white tabular-nums">{s.value}</p>
+            <p className="text-[10px] text-kt-text-tertiary mb-1">{s.label}</p>
+            <p className="text-sm font-bold text-kt-text-primary tabular-nums">{s.value}</p>
           </div>
         ))}
       </div>

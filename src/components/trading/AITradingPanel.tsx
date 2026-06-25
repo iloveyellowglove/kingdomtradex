@@ -6,10 +6,10 @@ export default function AITradingPanel({ profits }: { profits: AITradingProfit[]
   return (
     <div>
       <h2 className="mb-2">AI Trading History</h2>
-      <p className="text-text-muted mb-6">Daily harvest from AI-powered trading algorithms</p>
+      <p className="text-kt-text-tertiary mb-6">Daily harvest from AI-powered trading algorithms</p>
 
       {totalProfit > 0 && (
-        <p className="text-lg text-temple-gold mb-4">
+        <p className="text-lg text-kt-gold mb-4">
           Total earned: {totalProfit.toFixed(2)} USDT
         </p>
       )}
@@ -37,7 +37,7 @@ export default function AITradingPanel({ profits }: { profits: AITradingProfit[]
       ) : (
         <div className="card">
           <div className="card-body text-center py-8">
-            <p className="text-text-muted mb-0">No trading profits yet. Profits are applied daily to active balances.</p>
+            <p className="text-kt-text-tertiary mb-0">No trading profits yet. Profits are applied daily to active balances.</p>
           </div>
         </div>
       )}

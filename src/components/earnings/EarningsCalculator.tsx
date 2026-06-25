@@ -81,9 +81,9 @@ export default function EarningsCalculator() {
     <div className="max-w-lg mx-auto">
       {/* Amount input */}
       <div className="mb-6">
-        <label className="block text-sm text-white/60 font-medium mb-2">Deposit Amount (USD)</label>
+        <label className="block text-sm text-kt-text-secondary font-medium mb-2">Deposit Amount (USD)</label>
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-[#FFD700] font-bold text-lg">$</span>
+          <span className="text-kt-gold font-bold text-lg">$</span>
           <input
             type="number"
             value={amount}
@@ -91,7 +91,7 @@ export default function EarningsCalculator() {
               const v = parseInt(e.target.value, 10);
               if (!isNaN(v) && v >= 100) setAmount(v);
             }}
-            className="w-full px-4 py-3 rounded-lg text-white text-xl font-bold"
+            className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-xl font-bold"
             style={{
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,215,0,0.2)',
@@ -121,7 +121,7 @@ export default function EarningsCalculator() {
 
       {/* Tier selector */}
       <div className="mb-6">
-        <label className="block text-sm text-white/60 font-medium mb-2">Lock Duration</label>
+        <label className="block text-sm text-kt-text-secondary font-medium mb-2">Lock Duration</label>
         <div className="grid grid-cols-2 gap-2">
           {TIERS.map(t => (
             <button
@@ -149,23 +149,23 @@ export default function EarningsCalculator() {
         className="p-5 rounded-xl mb-6"
         style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,215,0,0.15)' }}
       >
-        <h3 className="text-sm font-bold text-[#FFD700] mb-4">Projected Earnings</h3>
+        <h3 className="text-sm font-bold text-kt-gold mb-4">Projected Earnings</h3>
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <p className="text-[11px] text-white/40">Daily</p>
-            <p className="text-lg font-bold text-[#4CAF50]">${stats.daily.toFixed(2)}</p>
+            <p className="text-lg font-bold text-kt-green">${stats.daily.toFixed(2)}</p>
           </div>
           <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <p className="text-[11px] text-white/40">Weekly</p>
-            <p className="text-lg font-bold text-[#4CAF50]">${stats.weekly.toFixed(2)}</p>
+            <p className="text-lg font-bold text-kt-green">${stats.weekly.toFixed(2)}</p>
           </div>
           <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <p className="text-[11px] text-white/40">Monthly</p>
-            <p className="text-lg font-bold text-[#4CAF50]">${stats.monthly.toFixed(2)}</p>
+            <p className="text-lg font-bold text-kt-green">${stats.monthly.toFixed(2)}</p>
           </div>
           <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
             <p className="text-[11px] text-white/40">Total ({tier.days}d)</p>
-            <p className="text-lg font-bold text-[#FFD700]">${stats.total.toFixed(2)}</p>
+            <p className="text-lg font-bold text-kt-gold">${stats.total.toFixed(2)}</p>
           </div>
         </div>
         <div className="mt-3 p-3 rounded-lg" style={{ background: 'rgba(255,215,0,0.06)' }}>
@@ -173,16 +173,16 @@ export default function EarningsCalculator() {
             <span>Deposit</span>
             <span>${amount.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-xs text-white/50 mt-1">
+          <div className="flex justify-between text-xs text-kt-text-tertiary mt-1">
             <span>Earnings</span>
             <span>+${stats.total.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm font-bold mt-1 pt-1 border-t border-white/10">
-            <span className="text-white">Total Return</span>
-            <span className="text-[#FFD700]">${stats.totalReturn.toFixed(2)}</span>
+            <span className="text-kt-text-primary">Total Return</span>
+            <span className="text-kt-gold">${stats.totalReturn.toFixed(2)}</span>
           </div>
         </div>
-        <p className="text-[10px] text-white/25 mt-2">
+        <p className="text-[10px] text-kt-text-tertiary mt-2">
           Annualized rate: ~{stats.annualizedRate.toFixed(0)}% · Rates are projected and not guaranteed.
         </p>
       </div>
@@ -192,7 +192,7 @@ export default function EarningsCalculator() {
         className="p-5 rounded-xl mb-6 overflow-x-auto"
         style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
       >
-        <h3 className="text-sm font-bold text-white mb-3">Growth Over Time</h3>
+        <h3 className="text-sm font-bold text-kt-text-primary mb-3">Growth Over Time</h3>
         <svg width={chartWidth} height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full" style={{ minWidth: 300 }}>
           {/* Grid lines */}
           {[0, 0.25, 0.5, 0.75, 1].map(f => (
@@ -240,7 +240,7 @@ export default function EarningsCalculator() {
               type="number"
               value={referralCount}
               onChange={(e) => setReferralCount(Math.max(0, parseInt(e.target.value, 10) || 0))}
-              className="w-full mt-1 px-3 py-2 rounded-lg text-sm text-white"
+              className="w-full mt-1 px-3 py-2 rounded-lg text-sm text-kt-text-primary"
               style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', minHeight: 40 }}
             />
           </div>
@@ -250,7 +250,7 @@ export default function EarningsCalculator() {
               type="number"
               value={referralAvgDeposit}
               onChange={(e) => setReferralAvgDeposit(Math.max(100, parseInt(e.target.value, 10) || 0))}
-              className="w-full mt-1 px-3 py-2 rounded-lg text-sm text-white"
+              className="w-full mt-1 px-3 py-2 rounded-lg text-sm text-kt-text-primary"
               style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', minHeight: 40 }}
             />
           </div>
@@ -267,7 +267,7 @@ export default function EarningsCalculator() {
             </p>
           </div>
         </div>
-        <p className="text-[10px] text-white/25 mt-2">
+        <p className="text-[10px] text-kt-text-tertiary mt-2">
           Estimated profit share commission (5% L1) from referred users&apos; daily profits.
         </p>
       </div>
@@ -280,7 +280,7 @@ export default function EarningsCalculator() {
       >
         Start Earning - Deposit Now
       </Link>
-      <p className="text-center text-[10px] text-white/25 mt-2">
+      <p className="text-center text-[10px] text-kt-text-tertiary mt-2">
         Projected earnings are estimates based on current rates. Actual returns may vary.
       </p>
     </div>

@@ -66,18 +66,18 @@ export default function WaitlistDashboardClient({ entry, nextMilestone, referral
         <h1 className="text-2xl md:text-3xl font-bold mb-2">
           {isWelcomeBack ? 'Welcome Back!' : 'You\'re In! 🎉'}
         </h1>
-        <p className="text-temple-gold text-lg font-semibold mb-2">
+        <p className="text-kt-gold text-lg font-semibold mb-2">
           Your {creditAmount} free credits are reserved.
         </p>
-        <p className="text-text-muted">
-          You&apos;re <span className="text-white font-bold">#{entry.waitlist_position ?? '-'}</span> on the waitlist
+        <p className="text-kt-text-tertiary">
+          You&apos;re <span className="text-kt-text-primary font-bold">#{entry.waitlist_position ?? '-'}</span> on the waitlist
         </p>
       </div>
 
       {/* Share Block */}
       <div className="card p-6 mb-8" style={{ border: '1px solid rgba(255,215,0,0.3)' }}>
         <h2 className="text-xl font-bold text-center mb-1">Share & Earn More</h2>
-        <p className="text-text-muted text-center text-sm mb-6">
+        <p className="text-kt-text-tertiary text-center text-sm mb-6">
           Every friend who joins through your link earns you rewards at launch
         </p>
 
@@ -177,14 +177,14 @@ export default function WaitlistDashboardClient({ entry, nextMilestone, referral
         <h3 className="text-lg font-bold mb-4 text-center">Your Referral Progress</h3>
 
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-text-muted">{entry.referral_count} referrals</span>
+          <span className="text-kt-text-tertiary">{entry.referral_count} referrals</span>
           {nextMilestone && nextMilestone.needed > 0 && (
-            <span className="text-temple-gold font-semibold">
+            <span className="text-kt-gold font-semibold">
               Next: {nextMilestone.nextTier} ({nextMilestone.needed} needed)
             </span>
           )}
           {(!nextMilestone || nextMilestone.needed <= 0) && (
-            <span className="text-temple-gold font-semibold">Max tier reached!</span>
+            <span className="text-kt-gold font-semibold">Max tier reached!</span>
           )}
         </div>
 
@@ -213,9 +213,9 @@ export default function WaitlistDashboardClient({ entry, nextMilestone, referral
                 <span className="text-xl">{m.badge}</span>
                 <div className="flex-1">
                   <p className="font-bold text-sm">{m.name}</p>
-                  <p className="text-text-muted text-xs">{m.desc}</p>
+                  <p className="text-kt-text-tertiary text-xs">{m.desc}</p>
                 </div>
-                <span className="text-temple-gold font-bold text-sm">
+                <span className="text-kt-gold font-bold text-sm">
                   {m.count === -1 ? 'Top 10' : isAchieved ? 'Achieved' : `${m.count} refs`}
                 </span>
               </div>
@@ -244,7 +244,7 @@ export default function WaitlistDashboardClient({ entry, nextMilestone, referral
                     <td className="p-3">
                       <span className="badge badge-info capitalize">{ref.tier}</span>
                     </td>
-                    <td className="p-3 text-text-muted text-xs">
+                    <td className="p-3 text-kt-text-tertiary text-xs">
                       {new Date(ref.joined_at).toLocaleDateString()}
                     </td>
                   </tr>
@@ -252,16 +252,16 @@ export default function WaitlistDashboardClient({ entry, nextMilestone, referral
               </tbody>
             </table>
           ) : (
-            <p className="p-4 text-text-muted mb-0">No referrals yet. Share your link to start climbing!</p>
+            <p className="p-4 text-kt-text-tertiary mb-0">No referrals yet. Share your link to start climbing!</p>
           )}
         </div>
       </div>
 
       {/* Bottom: What's next */}
       <div className="text-center">
-        <p className="text-text-muted text-sm">We&apos;ll email you before launch on June 7</p>
-        <p className="text-text-muted text-sm">In the meantime, share your link to climb the leaderboard</p>
-        <a href="/waitlist/leaderboard" className="text-temple-gold hover:underline text-sm mt-2 inline-block">
+        <p className="text-kt-text-tertiary text-sm">We&apos;ll email you before launch on June 7</p>
+        <p className="text-kt-text-tertiary text-sm">In the meantime, share your link to climb the leaderboard</p>
+        <a href="/waitlist/leaderboard" className="text-kt-gold hover:underline text-sm mt-2 inline-block">
           View Leaderboard
         </a>
       </div>

@@ -26,8 +26,8 @@ export default function AdminSidebar() {
               href={link.href}
               className={`px-4 py-3 rounded-lg transition ${
                 pathname === link.href
-                  ? 'text-temple-gold bg-white/5'
-                  : 'text-text-secondary hover:text-temple-gold hover:bg-white/5'
+                  ? 'text-kt-gold bg-white/5'
+                  : 'text-kt-text-secondary hover:text-kt-gold hover:bg-white/5'
               }`}
             >
               <span className="mr-2">{link.icon}</span>

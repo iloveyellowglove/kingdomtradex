@@ -33,9 +33,9 @@ export default function ForgotPasswordForm({ csrfToken }: { csrfToken: string })
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && <div className="alert alert-danger">{error}</div>}
       {message && <div className="alert alert-success">{message}</div>}
-      <p className="text-text-secondary text-sm">Enter your email address and we will send you a password reset link.</p>
+      <p className="text-kt-text-secondary text-sm">Enter your email address and we will send you a password reset link.</p>
       <div>
-        <label htmlFor="email" className="block text-text-secondary font-medium mb-1">Email</label>
+        <label htmlFor="email" className="block text-kt-text-secondary font-medium mb-1">Email</label>
         <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full" autoFocus />
       </div>
       <button type="submit" disabled={loading} className="btn-primary w-full py-3 rounded-lg">

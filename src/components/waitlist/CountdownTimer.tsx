@@ -33,14 +33,14 @@ export default function CountdownTimer() {
   if (!launchDate) {
     return (
       <div className="text-center mb-4">
-        <p className="text-temple-gold font-semibold">Launch Date Coming Soon</p>
+        <p className="text-kt-gold font-semibold">Launch Date Coming Soon</p>
       </div>
     );
   }
 
   return (
     <div className="text-center mb-4">
-      <p className="text-text-muted text-sm mb-3">Launch Countdown</p>
+      <p className="text-kt-text-tertiary text-sm mb-3">Launch Countdown</p>
       <div className="flex justify-center gap-3">
         {[
           { value: timeLeft.days, label: 'Days' },
@@ -49,13 +49,13 @@ export default function CountdownTimer() {
           { value: timeLeft.seconds, label: 'Seconds' },
         ].map((item) => (
           <div key={item.label} className="text-center min-w-[60px]">
-            <div className="text-2xl md:text-3xl font-extrabold text-temple-gold rounded-lg p-2" style={{
+            <div className="text-2xl md:text-3xl font-extrabold text-kt-gold rounded-lg p-2" style={{
               background: 'rgba(255,215,0,0.08)',
               border: '1px solid rgba(255,215,0,0.2)',
             }}>
               {String(item.value).padStart(2, '0')}
             </div>
-            <p className="text-text-muted text-xs mt-1">{item.label}</p>
+            <p className="text-kt-text-tertiary text-xs mt-1">{item.label}</p>
           </div>
         ))}
       </div>

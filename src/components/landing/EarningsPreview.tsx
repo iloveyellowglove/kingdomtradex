@@ -43,7 +43,7 @@ export default function EarningsPreview() {
     <section ref={sectionRef} className={`mb-12 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">See What Your Free Credits Can Become</h2>
-        <p className="text-text-muted">Your $50 starting credits, growing with AI-powered daily returns</p>
+        <p className="text-kt-text-tertiary">Your $50 starting credits, growing with AI-powered daily returns</p>
       </div>
 
       <div className="card max-w-2xl mx-auto p-8">
@@ -68,7 +68,7 @@ export default function EarningsPreview() {
                 >
                   {i + 1}
                 </span>
-                <span className="text-text-primary font-medium">{item.label}</span>
+                <span className="text-kt-text-primary font-medium">{item.label}</span>
               </div>
               <AnimatedCounter
                 target={item.value}
@@ -112,7 +112,7 @@ function AnimatedCounter({ target, visible, highlight }: { target: number; visib
   }, [target, visible]);
 
   return (
-    <span className={`text-xl font-extrabold ${highlight ? 'text-temple-gold' : 'text-text-primary'}`}>
+    <span className={`text-xl font-extrabold ${highlight ? 'text-kt-gold' : 'text-kt-text-primary'}`}>
       ${value.toFixed(2)}
     </span>
   );

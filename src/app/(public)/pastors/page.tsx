@@ -39,7 +39,7 @@ export default async function PastorsPage() {
 
   if (!pastors) {
     return (
-      <main className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <main className="min-h-screen bg-kt-bg flex items-center justify-center">
         <p className="text-slate-400">No pastors found.</p>
       </main>
     );
@@ -78,10 +78,10 @@ export default async function PastorsPage() {
   pastorEntries.sort((a, b) => b.flock_size - a.flock_size);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+    <main className="min-h-screen bg-gradient-to-b from-kt-bg via-kt-surface to-slate-900">
       <div className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">Pastors Directory</h1>
+          <h1 className="text-4xl font-bold text-kt-text-primary mb-4">Pastors Directory</h1>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
             Faith leaders who are building wealth with KingdomTrade and guiding their congregations toward financial freedom.
           </p>
@@ -99,19 +99,19 @@ export default async function PastorsPage() {
                 className="bg-slate-800/60 backdrop-blur-sm border border-slate-700 rounded-xl p-6 hover:border-emerald-600/50 transition-colors"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-white">{pastor.username}</h2>
-                  <span className="text-xs text-slate-500 bg-slate-700/50 px-2 py-1 rounded-full">
+                  <h2 className="text-xl font-semibold text-kt-text-primary">{pastor.username}</h2>
+                  <span className="text-xs text-kt-text-tertiary bg-slate-700/50 px-2 py-1 rounded-full">
                     Joined {formatDate(pastor.created_at)}
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-slate-700/30 rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-emerald-400">{pastor.flock_size}</p>
-                    <p className="text-xs text-slate-400 mt-1">Flock Size</p>
+                    <p className="text-xs text-kt-text-secondary mt-1">Flock Size</p>
                   </div>
                   <div className="bg-slate-700/30 rounded-lg p-3 text-center">
                     <p className="text-2xl font-bold text-amber-400">~${pastor.flock_earnings}</p>
-                    <p className="text-xs text-slate-400 mt-1">Flock Earnings</p>
+                    <p className="text-xs text-kt-text-secondary mt-1">Flock Earnings</p>
                   </div>
                 </div>
               </div>

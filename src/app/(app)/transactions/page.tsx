@@ -88,9 +88,9 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="py-4 max-w-2xl mx-auto px-4">
+    <div className="py-4 px-4 lg:px-6">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-xl font-bold text-white">Transactions</h2>
+        <h2 className="text-xl font-bold text-kt-text-primary">Transactions</h2>
         <button
           onClick={exportCsv}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition"
@@ -100,7 +100,7 @@ export default function TransactionsPage() {
           Export CSV
         </button>
       </div>
-      <p className="text-sm text-white/40 mb-4">Deposits, withdrawals, commissions, and profit credits</p>
+      <p className="text-sm text-kt-text-tertiary mb-4">Deposits, withdrawals, commissions, and profit credits</p>
 
       {/* Filters */}
       <div className="space-y-3 mb-6">
@@ -130,21 +130,21 @@ export default function TransactionsPage() {
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Search tx hash..."
-            className="flex-1 min-w-[120px] px-3 py-2 rounded-lg text-xs text-white"
+            className="flex-1 min-w-[120px] px-3 py-2 rounded-lg text-xs text-kt-text-primary"
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', minHeight: 40 }}
           />
           <input
             type="date"
             value={from}
             onChange={(e) => { setFrom(e.target.value); setPage(1); }}
-            className="px-3 py-2 rounded-lg text-xs text-white flex-shrink-0"
+            className="px-3 py-2 rounded-lg text-xs text-kt-text-primary flex-shrink-0"
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', minHeight: 40, colorScheme: 'dark', width: 130 }}
           />
           <input
             type="date"
             value={to}
             onChange={(e) => { setTo(e.target.value); setPage(1); }}
-            className="px-3 py-2 rounded-lg text-xs text-white flex-shrink-0"
+            className="px-3 py-2 rounded-lg text-xs text-kt-text-primary flex-shrink-0"
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', minHeight: 40, colorScheme: 'dark', width: 130 }}
           />
         </div>
@@ -188,19 +188,19 @@ export default function TransactionsPage() {
                     </span>
                   </div>
                   <span className={`text-sm font-bold ${
-                    t.type === 'withdrawal' ? 'text-red-400' : 'text-[#4CAF50]'
+                    t.type === 'withdrawal' ? 'text-red-400' : 'text-kt-green'
                   }`}>
                     {t.type === 'withdrawal' ? '-' : '+'}${t.amount.toFixed(2)}
                   </span>
                 </div>
-                <p className="text-xs text-white/50 mb-1">{t.description}</p>
+                <p className="text-xs text-kt-text-tertiary mb-1">{t.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-white/25">
                     {new Date(t.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </span>
                   {t.txHash && (
                     <span
-                      className="text-[10px] text-white/30 font-mono cursor-pointer hover:text-white/50"
+                      className="text-[10px] text-kt-text-tertiary font-mono cursor-pointer hover:text-white/50"
                       onClick={() => navigator.clipboard?.writeText(t.txHash!)}
                       title="Click to copy"
                     >

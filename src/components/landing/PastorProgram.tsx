@@ -3,7 +3,7 @@ export default function PastorProgram() {
     <section className="mb-12">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Pastors: Lead Your Congregation to Financial Growth</h2>
-        <p className="text-text-muted">Special benefits for ministry leaders</p>
+        <p className="text-kt-text-tertiary">Special benefits for ministry leaders</p>
       </div>
 
       <div className="card max-w-2xl mx-auto p-8" style={{ border: '1px solid rgba(255,215,0,0.3)' }}>
@@ -16,7 +16,7 @@ export default function PastorProgram() {
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-4">
               <span className="text-2xl flex-shrink-0">{item.icon}</span>
-              <p className="text-text-primary text-lg">{item.text}</p>
+              <p className="text-kt-text-primary text-lg">{item.text}</p>
             </div>
           ))}
         </div>

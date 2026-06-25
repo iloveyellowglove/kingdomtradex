@@ -41,13 +41,13 @@ export default function ResetPasswordForm({ token, email }: { token: string; ema
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && <div className="alert alert-danger">{error}</div>}
-      <p className="text-text-muted text-center">Enter your new password for <strong>{email}</strong>.</p>
+      <p className="text-kt-text-tertiary text-center">Enter your new password for <strong>{email}</strong>.</p>
       <div>
-        <label htmlFor="password" className="block text-text-secondary font-medium mb-1">New Password</label>
+        <label htmlFor="password" className="block text-kt-text-secondary font-medium mb-1">New Password</label>
         <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} className="w-full" autoFocus />
       </div>
       <div>
-        <label htmlFor="confirm" className="block text-text-secondary font-medium mb-1">Confirm Password</label>
+        <label htmlFor="confirm" className="block text-kt-text-secondary font-medium mb-1">Confirm Password</label>
         <input id="confirm" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required minLength={8} className="w-full" />
       </div>
       <button type="submit" disabled={loading} className="btn-primary w-full py-3 rounded-lg">

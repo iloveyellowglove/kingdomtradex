@@ -51,8 +51,8 @@ export default function LockTierSelector({ amount, selectedTier, onSelect }: Pro
 
   return (
     <div>
-      <label className="block text-text-secondary font-medium mb-1">Lock Tier</label>
-      <p className="text-xs text-text-muted mb-4">
+      <label className="block text-kt-text-secondary font-medium mb-1">Lock Tier</label>
+      <p className="text-xs text-kt-text-tertiary mb-4">
         Select a lock period for your deposit. Longer locks earn higher daily returns.
       </p>
 
@@ -171,7 +171,7 @@ export default function LockTierSelector({ amount, selectedTier, onSelect }: Pro
       </div>
 
       {!selectedTier && (
-        <p className="text-xs text-temple-gold mt-3">Please select a lock tier to continue.</p>
+        <p className="text-xs text-kt-gold mt-3">Please select a lock tier to continue.</p>
       )}
     </div>
   );

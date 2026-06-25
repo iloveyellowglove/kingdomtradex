@@ -46,7 +46,7 @@ export default function Navbar({ user }: NavbarProps) {
         </Link>
 
         {/* Mobile toggle */}
-        <button className="lg:hidden border border-border-light text-text-primary p-2 rounded-lg" onClick={() => document.getElementById('navbarNav')?.classList.toggle('hidden')}>
+        <button className="lg:hidden border border-kt-border text-kt-text-primary p-2 rounded-lg" onClick={() => document.getElementById('navbarNav')?.classList.toggle('hidden')}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
@@ -109,7 +109,7 @@ export default function Navbar({ user }: NavbarProps) {
           <div className="flex gap-2 ml-auto items-center">
             {user ? (
               <>
-                <Link href="/dashboard" className="flex items-center gap-2 text-temple-gold hover:text-temple-gold/80 px-3 py-2 rounded-lg hover:bg-white/5 transition no-underline">
+                <Link href="/dashboard" className="flex items-center gap-2 text-kt-gold hover:text-kt-gold/80 px-3 py-2 rounded-lg hover:bg-white/5 transition no-underline">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
                     <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
@@ -128,7 +128,7 @@ export default function Navbar({ user }: NavbarProps) {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="flex items-center gap-2 text-text-primary hover:text-temple-gold px-2 py-1.5 rounded-lg hover:bg-white/5 transition"
+                    className="flex items-center gap-2 text-kt-text-primary hover:text-kt-gold px-2 py-1.5 rounded-lg hover:bg-white/5 transition"
                   >
                     {/* Avatar circle */}
                     {user.avatar_url ? (
@@ -136,7 +136,7 @@ export default function Navbar({ user }: NavbarProps) {
                         src={user.avatar_url}
                         alt=""
                         className="rounded-full object-cover flex-shrink-0"
-                        style={{ width: 32, height: 32, border: '2px solid #FFD700' }}
+                        style={{ width: 32, height: 32, border: '2px solid var(--kt-gold)' }}
                       />
                     ) : (
                       <span
@@ -144,9 +144,9 @@ export default function Navbar({ user }: NavbarProps) {
                         style={{
                           width: 32,
                           height: 32,
-                          border: '2px solid #FFD700',
+                          border: '2px solid var(--kt-gold)',
                           background: 'rgba(255,215,0,0.12)',
-                          color: '#FFD700',
+                          color: 'var(--kt-gold)',
                         }}
                       >
                         {avatarLetter}
@@ -161,7 +161,7 @@ export default function Navbar({ user }: NavbarProps) {
                   {/* Dropdown panel */}
                   {dropdownOpen && (
                     <div
-                      className="absolute right-0 top-full mt-2 border border-white/10 rounded-lg shadow-2xl p-0 min-w-[240px]"
+                      className="absolute right-0 top-full mt-2 border border-kt-border rounded-lg shadow-2xl p-0 min-w-[240px]"
                       style={{
                         background: '#1a1a2e',
                         animation: 'dropdownIn 150ms ease-out',
@@ -173,7 +173,7 @@ export default function Navbar({ user }: NavbarProps) {
                             src={user.avatar_url}
                             alt=""
                             className="rounded-full object-cover flex-shrink-0"
-                            style={{ width: 48, height: 48, border: '2px solid #FFD700' }}
+                            style={{ width: 48, height: 48, border: '2px solid var(--kt-gold)' }}
                           />
                         ) : (
                           <span
@@ -181,20 +181,20 @@ export default function Navbar({ user }: NavbarProps) {
                             style={{
                               width: 48,
                               height: 48,
-                              border: '2px solid #FFD700',
+                              border: '2px solid var(--kt-gold)',
                               background: 'rgba(255,215,0,0.12)',
-                              color: '#FFD700',
+                              color: 'var(--kt-gold)',
                             }}
                           >
                             {avatarLetter}
                           </span>
                         )}
                         <div className="min-w-0">
-                          <p className="text-text-primary text-sm font-semibold truncate">{user.username}</p>
+                          <p className="text-kt-text-primary text-sm font-semibold truncate">{user.username}</p>
                           {user.email && (
                             <p className="text-white/40 text-xs truncate">{user.email}</p>
                           )}
-                          <p className="text-temple-gold text-xs mt-0.5">
+                          <p className="text-kt-gold text-xs mt-0.5">
                             {formatCurrency(user.display_balance)} USDT
                           </p>
                         </div>
@@ -204,7 +204,7 @@ export default function Navbar({ user }: NavbarProps) {
                         <Link
                           href="/profile"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white transition no-underline"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-white/5 hover:text-white transition no-underline"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -216,7 +216,7 @@ export default function Navbar({ user }: NavbarProps) {
                         <Link
                           href="/settings"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white transition no-underline"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-white/5 hover:text-white transition no-underline"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="3" />
@@ -229,7 +229,7 @@ export default function Navbar({ user }: NavbarProps) {
                           <Link
                             href="/admin"
                             onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white transition no-underline"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-white/5 hover:text-white transition no-underline"
                           >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -239,7 +239,7 @@ export default function Navbar({ user }: NavbarProps) {
                         )}
                       </div>
 
-                      <hr className="border-t border-white/5 my-1" />
+                      <hr className="border-t border-kt-border my-1" />
 
                       <form action="/api/auth/logout" method="POST">
                         <button
@@ -283,10 +283,10 @@ function NavLink({ href, children, active, highlight }: { href: string; children
       href={href}
       className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
         active
-          ? 'text-temple-gold bg-white/5'
+          ? 'text-kt-gold bg-white/5'
           : highlight
-            ? 'text-temple-gold hover:text-temple-gold hover:bg-white/5'
-            : 'text-text-primary hover:text-temple-gold hover:bg-white/5'
+            ? 'text-kt-gold hover:text-kt-gold hover:bg-white/5'
+            : 'text-kt-text-primary hover:text-kt-gold hover:bg-white/5'
       }`}
     >
       {children}

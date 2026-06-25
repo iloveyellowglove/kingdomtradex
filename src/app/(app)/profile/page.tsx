@@ -344,25 +344,25 @@ export default function ProfilePage() {
   }
 
   if (!profile) {
-    return <div className="py-20 text-center text-text-muted">Failed to load profile.</div>;
+    return <div className="py-20 text-center text-kt-text-tertiary">Failed to load profile.</div>;
   }
 
   const avatarLetter = profile.username?.charAt(0).toUpperCase() || '?';
 
   return (
     <div className="py-8">
-      <h1 className="text-2xl font-bold text-white mb-6">My Profile</h1>
+      <h1 className="text-2xl font-bold text-kt-text-primary mb-6">My Profile</h1>
 
       {/* Profile summary card */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Member Since</p>
-          <p className="text-sm font-bold text-white">
+          <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">Member Since</p>
+          <p className="text-sm font-bold text-kt-text-primary">
             {profile.created_at ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '-'}
           </p>
         </div>
         <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Role</p>
+          <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">Role</p>
           <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold capitalize ${
             profile.role === 'admin' ? 'text-red-400' : profile.role === 'pastor' ? 'text-[#B47CFF]' : 'text-[#2196F3]'
           }`} style={{
@@ -372,13 +372,13 @@ export default function ProfilePage() {
           </span>
         </div>
         <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">KYC Level</p>
-          <span className="text-sm font-bold text-white">
+          <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">KYC Level</p>
+          <span className="text-sm font-bold text-kt-text-primary">
             {(profile.kyc_level ?? 0) >= 2 ? '✓ Verified' : (profile.kyc_level ?? 0) === 1 ? 'Email OK' : 'Unverified'}
           </span>
         </div>
         <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">2FA</p>
+          <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">2FA</p>
           <span className="text-sm font-bold" style={{ color: profile.two_factor_enabled ? '#4CAF50' : 'rgba(255,255,255,0.4)' }}>
             {profile.two_factor_enabled ? '✓ Enabled' : 'Off'}
           </span>
@@ -390,8 +390,8 @@ export default function ProfilePage() {
         <div className="mb-8 p-5 rounded-xl" style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.2)' }}>
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
-              <p className="text-temple-gold text-sm font-semibold">Database Migration Required</p>
-              <p className="text-text-muted text-sm mt-1">Profile features require a database migration. Ask your admin to run it.</p>
+              <p className="text-kt-gold text-sm font-semibold">Database Migration Required</p>
+              <p className="text-kt-text-tertiary text-sm mt-1">Profile features require a database migration. Ask your admin to run it.</p>
             </div>
             {profile.role === 'admin' && !migrationSql && (
               <div className="flex items-center gap-3">
@@ -416,9 +416,9 @@ export default function ProfilePage() {
           {migrationSql && (
             <div className="mt-4 space-y-3">
               {migrationMsg && (
-                <p className="text-text-muted text-sm">{migrationMsg}</p>
+                <p className="text-kt-text-tertiary text-sm">{migrationMsg}</p>
               )}
-              <p className="text-text-muted text-xs">
+              <p className="text-kt-text-tertiary text-xs">
                 Go to <span className="text-white/70">Supabase Dashboard</span> &gt; <span className="text-white/70">SQL Editor</span> &gt; paste the query below &gt; click <span className="text-white/70">Run</span>.
                 Then refresh this page.
               </p>
@@ -447,7 +447,7 @@ export default function ProfilePage() {
         <div>
           {/* Avatar */}
           <div className="p-6 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h2 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">Avatar</h2>
+            <h2 className="text-sm font-semibold text-kt-text-primary uppercase tracking-wider mb-4">Avatar</h2>
             <div className="flex items-center gap-5">
               {profile.avatar_url ? (
                 <img
@@ -486,19 +486,19 @@ export default function ProfilePage() {
                   className="hidden"
                   onChange={handleAvatarUpload}
                 />
-                <p className="text-text-muted text-xs mt-2">JPG, PNG or WebP. Max 2MB.</p>
+                <p className="text-kt-text-tertiary text-xs mt-2">JPG, PNG or WebP. Max 2MB.</p>
               </div>
             </div>
           </div>
 
           {/* Profile Form */}
           <div className="p-6 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h2 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">Profile Details</h2>
+            <h2 className="text-sm font-semibold text-kt-text-primary uppercase tracking-wider mb-4">Profile Details</h2>
 
             <div className="space-y-4">
               {/* Username (read-only) */}
               <div>
-                <label className="block text-text-muted text-xs mb-1.5">Username</label>
+                <label className="block text-kt-text-tertiary text-xs mb-1.5">Username</label>
                 <input
                   type="text"
                   value={profile.username}
@@ -514,7 +514,7 @@ export default function ProfilePage() {
 
               {/* Email (read-only) */}
               <div>
-                <label className="block text-text-muted text-xs mb-1.5">Email</label>
+                <label className="block text-kt-text-tertiary text-xs mb-1.5">Email</label>
                 <input
                   type="text"
                   value={profile.email || ''}
@@ -530,7 +530,7 @@ export default function ProfilePage() {
 
               {/* Full Name */}
               <div>
-                <label className="block text-text-muted text-xs mb-1.5">Full Name</label>
+                <label className="block text-kt-text-tertiary text-xs mb-1.5">Full Name</label>
                 <input
                   type="text"
                   value={fullName}
@@ -547,7 +547,7 @@ export default function ProfilePage() {
 
               {/* Phone */}
               <div>
-                <label className="block text-text-muted text-xs mb-1.5">Phone</label>
+                <label className="block text-kt-text-tertiary text-xs mb-1.5">Phone</label>
                 <input
                   type="text"
                   value={phone}
@@ -564,7 +564,7 @@ export default function ProfilePage() {
 
               {/* Date of Birth */}
               <div>
-                <label className="block text-text-muted text-xs mb-1.5">Date of Birth</label>
+                <label className="block text-kt-text-tertiary text-xs mb-1.5">Date of Birth</label>
                 <input
                   type="date"
                   value={dateOfBirth}
@@ -581,7 +581,7 @@ export default function ProfilePage() {
 
               {/* Country */}
               <div>
-                <label className="block text-text-muted text-xs mb-1.5">Country</label>
+                <label className="block text-kt-text-tertiary text-xs mb-1.5">Country</label>
                 <select
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
@@ -601,7 +601,7 @@ export default function ProfilePage() {
 
               {/* City */}
               <div>
-                <label className="block text-text-muted text-xs mb-1.5">City</label>
+                <label className="block text-kt-text-tertiary text-xs mb-1.5">City</label>
                 <input
                   type="text"
                   value={city}
@@ -618,7 +618,7 @@ export default function ProfilePage() {
 
               {/* Address */}
               <div>
-                <label className="block text-text-muted text-xs mb-1.5">Address</label>
+                <label className="block text-kt-text-tertiary text-xs mb-1.5">Address</label>
                 <textarea
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
@@ -656,7 +656,7 @@ export default function ProfilePage() {
         {/* RIGHT COLUMN - KYC Verification */}
         <div>
           <div className="p-6 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h2 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">KYC Verification</h2>
+            <h2 className="text-sm font-semibold text-kt-text-primary uppercase tracking-wider mb-4">KYC Verification</h2>
 
             {/* Status badge */}
             {kycLoading ? (
@@ -697,14 +697,14 @@ export default function ProfilePage() {
                 {/* Feature gating info */}
                 <div className="p-4 rounded-lg mb-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                   {kyc.status === 'unverified' && (
-                    <div className="text-text-secondary text-sm space-y-1">
-                      <p><span className="text-temple-gold font-medium">$500/day</span> withdrawal limit (unverified)</p>
+                    <div className="text-kt-text-secondary text-sm space-y-1">
+                      <p><span className="text-kt-gold font-medium">$500/day</span> withdrawal limit (unverified)</p>
                       <p><span className="text-green-400 font-medium">Full access</span> after verification</p>
                     </div>
                   )}
                   {kyc.status === 'pending' && (
-                    <p className="text-text-secondary text-sm">
-                      Your documents are being reviewed. This typically takes <span className="text-temple-gold font-medium">24-48 hours</span>.
+                    <p className="text-kt-text-secondary text-sm">
+                      Your documents are being reviewed. This typically takes <span className="text-kt-gold font-medium">24-48 hours</span>.
                     </p>
                   )}
                   {kyc.status === 'verified' && (
@@ -712,7 +712,7 @@ export default function ProfilePage() {
                       <p>Your identity has been verified.</p>
                       <p>Full access to all platform features.</p>
                       {kyc.reviewedAt && (
-                        <p className="text-text-muted text-xs mt-1">Verified on {new Date(kyc.reviewedAt).toLocaleDateString()}</p>
+                        <p className="text-kt-text-tertiary text-xs mt-1">Verified on {new Date(kyc.reviewedAt).toLocaleDateString()}</p>
                       )}
                     </div>
                   )}
@@ -720,9 +720,9 @@ export default function ProfilePage() {
                     <div className="text-red-400 text-sm space-y-1">
                       <p className="font-medium">Verification rejected</p>
                       {kyc.rejectionReason && (
-                        <p className="text-text-muted text-xs">Reason: {kyc.rejectionReason}</p>
+                        <p className="text-kt-text-tertiary text-xs">Reason: {kyc.rejectionReason}</p>
                       )}
-                      <p className="text-text-secondary text-xs mt-2">You can resubmit below.</p>
+                      <p className="text-kt-text-secondary text-xs mt-2">You can resubmit below.</p>
                     </div>
                   )}
                 </div>
@@ -732,7 +732,7 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     {/* Document type */}
                     <div>
-                      <label className="block text-text-muted text-xs mb-1.5">Document Type</label>
+                      <label className="block text-kt-text-tertiary text-xs mb-1.5">Document Type</label>
                       <select
                         value={kycDocType}
                         onChange={(e) => setKycDocType(e.target.value)}
@@ -751,7 +751,7 @@ export default function ProfilePage() {
 
                     {/* Government ID upload */}
                     <div>
-                      <label className="block text-text-muted text-xs mb-1.5">Government ID</label>
+                      <label className="block text-kt-text-tertiary text-xs mb-1.5">Government ID</label>
                       <input
                         type="file"
                         accept="image/jpeg,image/png,image/webp,application/pdf"
@@ -763,7 +763,7 @@ export default function ProfilePage() {
                         style={{ color: '#fff' }}
                       />
                       {uploadingDoc === 'document' && (
-                        <p className="text-text-muted text-xs mt-1">Uploading...</p>
+                        <p className="text-kt-text-tertiary text-xs mt-1">Uploading...</p>
                       )}
                       {kycDocUrl && (
                         <p className="text-green-400 text-xs mt-1 truncate">Uploaded: {kycDocUrl.split('/').pop()}</p>
@@ -772,7 +772,7 @@ export default function ProfilePage() {
 
                     {/* Selfie upload */}
                     <div>
-                      <label className="block text-text-muted text-xs mb-1.5">Selfie with ID</label>
+                      <label className="block text-kt-text-tertiary text-xs mb-1.5">Selfie with ID</label>
                       <input
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
@@ -784,7 +784,7 @@ export default function ProfilePage() {
                         style={{ color: '#fff' }}
                       />
                       {uploadingDoc === 'selfie' && (
-                        <p className="text-text-muted text-xs mt-1">Uploading...</p>
+                        <p className="text-kt-text-tertiary text-xs mt-1">Uploading...</p>
                       )}
                       {kycSelfieUrl && (
                         <p className="text-green-400 text-xs mt-1 truncate">Uploaded: {kycSelfieUrl.split('/').pop()}</p>
@@ -807,19 +807,19 @@ export default function ProfilePage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-text-muted text-xs">Verification typically takes 24-48 hours.</p>
+                    <p className="text-kt-text-tertiary text-xs">Verification typically takes 24-48 hours.</p>
                   </div>
                 )}
               </>
             ) : (
-              <p className="text-text-muted text-sm">Failed to load KYC status.</p>
+              <p className="text-kt-text-tertiary text-sm">Failed to load KYC status.</p>
             )}
           </div>
 
           {/* Admin KYC Review */}
           {profile.role === 'admin' && (
             <div className="p-6 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,215,0,0.15)' }}>
-              <h2 className="text-sm font-semibold text-temple-gold uppercase tracking-wider mb-4">Admin: KYC Review</h2>
+              <h2 className="text-sm font-semibold text-kt-gold uppercase tracking-wider mb-4">Admin: KYC Review</h2>
 
               {adminMsg && (
                 <div className={`px-3 py-2 rounded-lg text-xs mb-4 ${adminMsg.includes('Failed') || adminMsg.includes('error') ? 'bg-red-400/10 text-red-400' : 'bg-green-400/10 text-green-400'}`}>
@@ -828,9 +828,9 @@ export default function ProfilePage() {
               )}
 
               {adminLoading ? (
-                <p className="text-text-muted text-sm">Loading...</p>
+                <p className="text-kt-text-tertiary text-sm">Loading...</p>
               ) : adminSubmissions.length === 0 ? (
-                <p className="text-text-muted text-sm">No pending KYC submissions.</p>
+                <p className="text-kt-text-tertiary text-sm">No pending KYC submissions.</p>
               ) : (
                 <div className="space-y-4">
                   {adminSubmissions.map((sub) => (
@@ -841,12 +841,12 @@ export default function ProfilePage() {
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <p className="text-text-primary text-sm font-semibold">
+                          <p className="text-kt-text-primary text-sm font-semibold">
                             {sub.full_name || sub.username}
-                            <span className="text-text-muted text-xs ml-2">#{sub.id}</span>
+                            <span className="text-kt-text-tertiary text-xs ml-2">#{sub.id}</span>
                           </p>
-                          {sub.email && <p className="text-text-muted text-xs">{sub.email}</p>}
-                          <p className="text-text-muted text-xs mt-1">
+                          {sub.email && <p className="text-kt-text-tertiary text-xs">{sub.email}</p>}
+                          <p className="text-kt-text-tertiary text-xs mt-1">
                             {sub.kyc_document_type} &middot; Submitted {sub.kyc_submitted_at ? new Date(sub.kyc_submitted_at).toLocaleString() : 'unknown'}
                           </p>
                         </div>
@@ -859,7 +859,7 @@ export default function ProfilePage() {
                             href={sub.kyc_document_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-temple-gold text-xs hover:underline"
+                            className="text-kt-gold text-xs hover:underline"
                           >
                             View ID Document
                           </a>
@@ -869,7 +869,7 @@ export default function ProfilePage() {
                             href={sub.kyc_selfie_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-temple-gold text-xs hover:underline"
+                            className="text-kt-gold text-xs hover:underline"
                           >
                             View Selfie
                           </a>
@@ -901,7 +901,7 @@ export default function ProfilePage() {
                             </button>
                             <button
                               onClick={() => { setRejectUserId(null); setRejectReason(''); }}
-                              className="px-3 py-1.5 rounded text-xs text-text-muted"
+                              className="px-3 py-1.5 rounded text-xs text-kt-text-tertiary"
                             >
                               Cancel
                             </button>

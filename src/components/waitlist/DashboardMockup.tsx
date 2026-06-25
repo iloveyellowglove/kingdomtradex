@@ -11,7 +11,7 @@ export default function DashboardMockup() {
           <div className="w-3 h-3 rounded-full" style={{ background: '#FFD700' }} />
           <div className="w-3 h-3 rounded-full" style={{ background: '#00c853' }} />
         </div>
-        <div className="flex-1 mx-4 rounded-lg px-3 py-1.5 text-xs text-text-muted" style={{ background: '#0e0b1a', border: '1px solid #261f3a' }}>
+        <div className="flex-1 mx-4 rounded-lg px-3 py-1.5 text-xs text-kt-text-tertiary" style={{ background: '#0e0b1a', border: '1px solid #261f3a' }}>
           app.kingdomtradex.com/dashboard
         </div>
       </div>

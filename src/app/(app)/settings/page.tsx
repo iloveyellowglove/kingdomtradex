@@ -69,16 +69,16 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="py-4 max-w-lg mx-auto px-4">
-      <h2 className="text-xl font-bold text-white mb-1">Settings</h2>
-      <p className="text-sm text-white/40 mb-6">Manage your account security and preferences</p>
+    <div className="py-4 px-4 lg:px-6">
+      <h2 className="text-xl font-bold text-kt-text-primary mb-1">Settings</h2>
+      <p className="text-sm text-kt-text-tertiary mb-6">Manage your account security and preferences</p>
 
       {/* Change Password */}
       <div
         className="p-5 rounded-xl mb-6"
         style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
       >
-        <h3 className="text-base font-bold text-white mb-4">Change Password</h3>
+        <h3 className="text-base font-bold text-kt-text-primary mb-4">Change Password</h3>
 
         {passwordMsg && (
           <div className={`mb-4 p-3 rounded-lg text-sm ${passwordError ? 'text-red-400' : 'text-green-400'}`}
@@ -92,13 +92,13 @@ export default function SettingsPage() {
 
         <form onSubmit={handlePasswordChange} className="space-y-4">
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">Current Password</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Current Password</label>
             <input
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg text-white"
+              className="w-full px-4 py-3 rounded-lg text-kt-text-primary"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -107,14 +107,14 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">New Password</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">New Password</label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
               minLength={8}
-              className="w-full px-4 py-3 rounded-lg text-white"
+              className="w-full px-4 py-3 rounded-lg text-kt-text-primary"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -123,13 +123,13 @@ export default function SettingsPage() {
             />
           </div>
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">Confirm New Password</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Confirm New Password</label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg text-white"
+              className="w-full px-4 py-3 rounded-lg text-kt-text-primary"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -169,8 +169,8 @@ export default function SettingsPage() {
           style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
         >
           <div>
-            <h3 className="text-base font-bold text-white">Auto-Withdrawal</h3>
-            <p className="text-xs text-white/40 mt-0.5">Configure automatic profit withdrawals</p>
+            <h3 className="text-base font-bold text-kt-text-primary">Auto-Withdrawal</h3>
+            <p className="text-xs text-kt-text-tertiary mt-0.5">Configure automatic profit withdrawals</p>
           </div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/30">
             <polyline points="9 18 15 12 9 6"/>
@@ -258,8 +258,8 @@ function EmailOtpCard() {
     >
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-base font-bold text-white">Email Verification (OTP)</h3>
-          <p className="text-xs text-white/40 mt-0.5">6-digit code sent to your email</p>
+          <h3 className="text-base font-bold text-kt-text-primary">Email Verification (OTP)</h3>
+          <p className="text-xs text-kt-text-tertiary mt-0.5">6-digit code sent to your email</p>
         </div>
       </div>
 
@@ -292,7 +292,7 @@ function EmailOtpCard() {
             value={otpCode}
             onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
             placeholder="000000"
-            className="flex-1 px-4 py-3 rounded-lg text-center text-lg tracking-widest text-white"
+            className="flex-1 px-4 py-3 rounded-lg text-center text-lg tracking-widest text-kt-text-primary"
             style={{
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.08)',

@@ -60,7 +60,7 @@ export default function DepositPage() {
   }
 
   return (
-    <div className="min-h-screen pb-20 lg:pb-0" style={{ background: '#0B0E11' }}>
+    <div className="min-h-screen pb-20 lg:pb-0 bg-kt-bg">
       <div className="px-3 sm:px-4 py-4 space-y-4">
         <div className="flex items-center gap-2">
           {[1, 2, 3].map((s, i) => (
@@ -82,8 +82,8 @@ export default function DepositPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-4">
             <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-              <h2 className="text-lg font-semibold text-[#EAECEF] mb-1">Select Your Lock Tier</h2>
-              <p className="text-sm text-[#848E9C] mb-4">Longer locks earn higher daily returns</p>
+              <h2 className="text-lg font-semibold text-kt-text-primary mb-1">Select Your Lock Tier</h2>
+              <p className="text-sm text-kt-text-secondary mb-4">Longer locks earn higher daily returns</p>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                 {TIER_LIST.map(t => (
@@ -95,27 +95,27 @@ export default function DepositPage() {
                         style={{ background: t.featured ? '#F0B90B' : t.color, color: '#0B0E11' }}>{t.badge}</span>
                     )}
                     <p className="text-sm font-bold mb-1" style={{ color: t.color }}>{t.name}</p>
-                    <p className="text-xs text-[#5E6673] mb-2">{t.duration} days</p>
-                    <p className="text-xl font-extrabold text-[#0ECB81] tabular-nums">{(t.dailyRate * 100).toFixed(1)}%</p>
-                    <p className="text-[10px] text-[#5E6673]">/day</p>
-                    <p className="text-[11px] text-[#5E6673] mt-1">${t.minDeposit} - {t.maxDeposit === Infinity ? 'Unlimited' : '$' + t.maxDeposit}</p>
+                    <p className="text-xs text-kt-text-tertiary mb-2">{t.duration} days</p>
+                    <p className="text-xl font-extrabold text-kt-green tabular-nums">{(t.dailyRate * 100).toFixed(1)}%</p>
+                    <p className="text-[10px] text-kt-text-tertiary">/day</p>
+                    <p className="text-[11px] text-kt-text-tertiary mt-1">${t.minDeposit} - {t.maxDeposit === Infinity ? 'Unlimited' : '$' + t.maxDeposit}</p>
                   </button>
                 ))}
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-[#EAECEF] mb-2 block">Deposit Amount (USD)</label>
+                  <label className="text-sm font-medium text-kt-text-primary mb-2 block">Deposit Amount (USD)</label>
                   <div className="flex items-center gap-2">
                     <input type="number" value={amount} onChange={e => setAmount(e.target.value)}
                       placeholder="0.00" min={tier.minDeposit}
-                      className="flex-1 px-4 py-3 rounded-lg text-lg font-bold text-[#EAECEF]"
+                      className="flex-1 px-4 py-3 rounded-lg text-lg font-bold text-kt-text-primary"
                       style={{ background: '#0B0E11', border: '1px solid #2B3139', minHeight: 48 }} />
-                    <span className="text-sm font-medium text-[#5E6673]">USD</span>
+                    <span className="text-sm font-medium text-kt-text-tertiary">USD</span>
                   </div>
-                  <p className="text-xs text-[#5E6673] mt-1">Min: ${tier.minDeposit} / Max: {tier.maxDeposit === Infinity ? 'Unlimited' : '$' + tier.maxDeposit} ({tier.name})</p>
+                  <p className="text-xs text-kt-text-tertiary mt-1">Min: ${tier.minDeposit} / Max: {tier.maxDeposit === Infinity ? 'Unlimited' : '$' + tier.maxDeposit} ({tier.name})</p>
                   {amountNum > 0 && (amountNum < tier.minDeposit || (tier.maxDeposit !== Infinity && amountNum > tier.maxDeposit)) && (
-                    <p className="text-xs text-[#F6465D] mt-1">Amount outside {tier.name} tier range. Try a different tier.</p>
+                    <p className="text-xs text-kt-red mt-1">Amount outside {tier.name} tier range. Try a different tier.</p>
                   )}
                   <div className="flex flex-wrap gap-2 mt-2">
                     {QUICK_AMOUNTS.map(a => (
@@ -129,7 +129,7 @@ export default function DepositPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-[#EAECEF] mb-2 block">Funding Source</label>
+                  <label className="text-sm font-medium text-kt-text-primary mb-2 block">Funding Source</label>
                   <div className="flex gap-2">
                     {(['crypto', 'balance'] as const).map(f => (
                       <button key={f} onClick={() => setFundSource(f)}
@@ -143,9 +143,9 @@ export default function DepositPage() {
 
                 {fundSource === 'crypto' && (
                   <div>
-                    <label className="text-sm font-medium text-[#EAECEF] mb-2 block">Currency</label>
+                    <label className="text-sm font-medium text-kt-text-primary mb-2 block">Currency</label>
                     <select value={currency} onChange={e => setCurrency(e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg text-sm text-[#EAECEF]"
+                      className="w-full px-4 py-3 rounded-lg text-sm text-kt-text-primary"
                       style={{ background: '#0B0E11', border: '1px solid #2B3139', minHeight: 48 }}>
                       {CURRENCIES.map(c => <option key={c}>{c}</option>)}
                     </select>
@@ -162,19 +162,19 @@ export default function DepositPage() {
 
             {step >= 2 && address && (
               <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-                <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Your Deposit Address</h3>
+                <h3 className="text-sm font-bold text-kt-text-primary mb-3">Your Deposit Address</h3>
                 <div className="p-4 rounded-lg text-center" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
-                  <p className="text-xs text-[#5E6673] mb-2">Send only {currency} to this address</p>
-                  <code className="text-sm font-bold text-[#0ECB81] break-all select-all">{address}</code>
+                  <p className="text-xs text-kt-text-tertiary mb-2">Send only {currency} to this address</p>
+                  <code className="text-sm font-bold text-kt-green break-all select-all">{address}</code>
                 </div>
-                <p className="text-xs text-[#5E6673] mt-3">Once your deposit is confirmed on the blockchain, funds will appear in your locked balance.</p>
+                <p className="text-xs text-kt-text-tertiary mt-3">Once your deposit is confirmed on the blockchain, funds will appear in your locked balance.</p>
               </div>
             )}
           </div>
 
           <div className="space-y-4">
             <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-              <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Your Projected Earnings</h3>
+              <h3 className="text-sm font-bold text-kt-text-primary mb-3">Your Projected Earnings</h3>
               {amountNum > 0 ? (
                 <>
                   <div className="grid grid-cols-2 gap-2 mb-3">
@@ -184,8 +184,8 @@ export default function DepositPage() {
                       { l: 'Monthly', v: monthly, c: '#F0B90B' },
                       { l: 'Total (' + tier.duration + 'd)', v: total, c: '#EAECEF' },
                     ].map(r => (
-                      <div key={r.l} className="p-2.5 rounded-lg text-center" style={{ background: '#0B0E11' }}>
-                        <p className="text-[10px] text-[#5E6673]">{r.l}</p>
+                      <div key={r.l} className="p-2.5 rounded-lg text-center bg-kt-bg">
+                        <p className="text-[10px] text-kt-text-tertiary">{r.l}</p>
                         <p className="text-sm font-bold" style={{ color: r.c }}>${r.v.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                       </div>
                     ))}
@@ -202,38 +202,38 @@ export default function DepositPage() {
                   </div>
                 </>
               ) : (
-                <p className="text-sm text-[#5E6673] text-center py-8">Enter amount to see projections</p>
+                <p className="text-sm text-kt-text-tertiary text-center py-8">Enter amount to see projections</p>
               )}
             </div>
 
             <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-              <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Your Active Deposits</h3>
+              <h3 className="text-sm font-bold text-kt-text-primary mb-3">Your Active Deposits</h3>
               {activeDeposits.length > 0 ? (
                 <div className="space-y-2">
                   {activeDeposits.slice(0, 5).map(d => (
-                    <div key={d.id} className="flex items-center gap-2 p-2.5 rounded-lg text-xs" style={{ background: '#0B0E11' }}>
+                    <div key={d.id} className="flex items-center gap-2 p-2.5 rounded-lg text-xs bg-kt-bg">
                       <span className="px-1.5 py-0.5 rounded font-bold" style={{ background: '#F0B90B20', color: '#F0B90B' }}>{d.tier}</span>
-                      <span className="text-[#EAECEF] font-bold">${d.amount.toFixed(0)}</span>
-                      <span className="text-[#5E6673] ml-auto">{(d.dailyRate * 100).toFixed(1)}%/day</span>
+                      <span className="text-kt-text-primary font-bold">${d.amount.toFixed(0)}</span>
+                      <span className="text-kt-text-tertiary ml-auto">{(d.dailyRate * 100).toFixed(1)}%/day</span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-[#5E6673] text-center py-6">No active deposits yet.</p>
+                <p className="text-sm text-kt-text-tertiary text-center py-6">No active deposits yet.</p>
               )}
             </div>
 
             <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-              <h3 className="text-sm font-bold text-[#EAECEF] mb-3">Important Information</h3>
-              <ul className="space-y-2 text-xs text-[#848E9C]">
-                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> Deposits are locked for the selected tier duration</li>
-                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> Early withdrawal incurs a 25% forfeit fee</li>
-                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> Daily returns are projected, not guaranteed</li>
-                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> Minimum deposit: $50 (Silver tier)</li>
-                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> $50 signup credit is non-withdrawable</li>
-                <li className="flex gap-2"><span className="text-[#F0B90B]">•</span> AI Trading Engine manages all trades automatically</li>
+              <h3 className="text-sm font-bold text-kt-text-primary mb-3">Important Information</h3>
+              <ul className="space-y-2 text-xs text-kt-text-secondary">
+                <li className="flex gap-2"><span className="text-kt-gold">•</span> Deposits are locked for the selected tier duration</li>
+                <li className="flex gap-2"><span className="text-kt-gold">•</span> Early withdrawal incurs a 25% forfeit fee</li>
+                <li className="flex gap-2"><span className="text-kt-gold">•</span> Daily returns are projected, not guaranteed</li>
+                <li className="flex gap-2"><span className="text-kt-gold">•</span> Minimum deposit: $50 (Silver tier)</li>
+                <li className="flex gap-2"><span className="text-kt-gold">•</span> $50 signup credit is non-withdrawable</li>
+                <li className="flex gap-2"><span className="text-kt-gold">•</span> AI Trading Engine manages all trades automatically</li>
               </ul>
-              <p className="text-[10px] text-[#5E6673] mt-3">Projected returns are estimates and not guaranteed.</p>
+              <p className="text-[10px] text-kt-text-tertiary mt-3">Projected returns are estimates and not guaranteed.</p>
             </div>
           </div>
         </div>

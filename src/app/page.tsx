@@ -15,7 +15,7 @@ const StickyBottomCTA = dynamic(() => import('@/components/landing/StickyBottomC
 
 export default function LandingPage() {
   return (
-    <div style={{ background: '#0B0E11', minHeight: '100vh' }}>
+    <div className="bg-kt-bg min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{
         __html: JSON.stringify({
           '@context': 'https://schema.org',

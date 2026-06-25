@@ -16,7 +16,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-white/5 safe-area-bottom"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-kt-border safe-area-bottom"
       style={{ background: '#0c0a16' }}
     >
       <div className="flex justify-around items-center h-16 px-1">

@@ -32,17 +32,17 @@ export default function EarningsSection() {
   }, [amount, tier]);
 
   return (
-    <section className="py-16 lg:py-20" style={{ background: '#1E2329' }}>
+    <section className="py-16 lg:py-20 bg-kt-surface">
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-10">
-          <h2 className="text-[22px] sm:text-[28px] font-semibold text-[#EAECEF] mb-2">Calculate Your Earnings</h2>
-          <p className="text-sm text-[#848E9C] max-w-[500px] mx-auto">See your projected returns based on deposit amount and lock duration.</p>
+          <h2 className="text-[22px] sm:text-[28px] font-semibold text-kt-text-primary mb-2">Calculate Your Earnings</h2>
+          <p className="text-sm text-kt-text-secondary max-w-[500px] mx-auto">See your projected returns based on deposit amount and lock duration.</p>
         </div>
 
         <div className="max-w-[700px] mx-auto">
           {/* Amount input */}
           <div className="mb-6">
-            <label className="block text-sm text-[#848E9C] mb-2">Deposit Amount (USD)</label>
+            <label className="block text-sm text-kt-text-secondary mb-2">Deposit Amount (USD)</label>
             <div className="flex gap-2 flex-wrap">
               {PRESETS.map(p => (
                 <button key={p} onClick={() => setAmount(p)}
@@ -57,14 +57,14 @@ export default function EarningsSection() {
               ))}
               <input type="number" value={amount}
                 onChange={e => setAmount(Math.max(100, parseInt(e.target.value, 10) || 0))}
-                className="w-28 px-3 py-2 rounded-lg text-sm font-bold text-[#EAECEF]"
+                className="w-28 px-3 py-2 rounded-lg text-sm font-bold text-kt-text-primary"
                 style={{ background: '#0B0E11', border: '1px solid #2B3139' }} />
             </div>
           </div>
 
           {/* Tier selector */}
           <div className="mb-8">
-            <label className="block text-sm text-[#848E9C] mb-2">Lock Duration</label>
+            <label className="block text-sm text-kt-text-secondary mb-2">Lock Duration</label>
             <div className="flex gap-2">
               {TIERS.map((t, i) => (
                 <button key={t.label} onClick={() => setTierIdx(i)}
@@ -89,7 +89,7 @@ export default function EarningsSection() {
               { l: `${tier.days}d Total`, v: total, c: '#EAECEF' },
             ].map(r => (
               <div key={r.l} className="p-4 rounded-lg text-center" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
-                <p className="text-xs text-[#5E6673] mb-1">{r.l}</p>
+                <p className="text-xs text-kt-text-tertiary mb-1">{r.l}</p>
                 <p className="text-lg sm:text-xl font-bold" style={{ color: r.c }}>
                   <AnimatedNumber value={r.v} prefix="$" decimals={2} duration={0.6} triggerOnce={false} />
                 </p>

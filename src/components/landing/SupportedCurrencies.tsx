@@ -14,7 +14,7 @@ export default function SupportedCurrencies() {
     <section className="mb-12">
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Deposit in 21+ Cryptocurrencies</h2>
-        <p className="text-text-muted">Fund your account with any of these supported cryptocurrencies</p>
+        <p className="text-kt-text-tertiary">Fund your account with any of these supported cryptocurrencies</p>
       </div>
 
       <div className="card max-w-3xl mx-auto p-8">
@@ -35,15 +35,15 @@ export default function SupportedCurrencies() {
                   if (next) next.style.display = 'flex';
                 }}
               />
-              <div className="hidden w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white">
+              <div className="hidden w-10 h-10 rounded-full bg-kt-hover-bg flex items-center justify-center text-xs font-bold text-kt-text-primary">
                 {coin.symbol}
               </div>
-              <span className="text-xs text-text-muted text-center">{coin.symbol}</span>
+              <span className="text-xs text-kt-text-tertiary text-center">{coin.symbol}</span>
             </div>
           ))}
         </div>
 
-        <p className="text-text-muted text-xs text-center mt-6">
+        <p className="text-kt-text-tertiary text-xs text-center mt-6">
           Deposit in any supported currency. Minimum $100 for members. Pastors: deposit $200 to unlock your $100 bonus (50% instant return).
         </p>
       </div>

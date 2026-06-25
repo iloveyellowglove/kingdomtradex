@@ -47,10 +47,10 @@ function FaqItem({ faq, isOpen, onToggle }: { faq: typeof FAQS[0]; isOpen: boole
     <div className="border-b" style={{ borderColor: '#261f3a' }}>
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between py-4 text-left transition-colors hover:text-temple-gold"
+        className="w-full flex items-center justify-between py-4 text-left transition-colors hover:text-kt-gold"
       >
         <span className="font-semibold pr-4">{faq.q}</span>
-        <span className={`flex-shrink-0 transition-transform duration-300 text-temple-gold ${isOpen ? 'rotate-45' : ''}`} style={{ fontSize: '1.5rem', lineHeight: 1 }}>
+        <span className={`flex-shrink-0 transition-transform duration-300 text-kt-gold ${isOpen ? 'rotate-45' : ''}`} style={{ fontSize: '1.5rem', lineHeight: 1 }}>
           +
         </span>
       </button>
@@ -58,7 +58,7 @@ function FaqItem({ faq, isOpen, onToggle }: { faq: typeof FAQS[0]; isOpen: boole
         className="overflow-hidden transition-all duration-300"
         style={{ maxHeight: `${height}px` }}
       >
-        <div ref={contentRef} className="pb-4 text-text-secondary leading-relaxed">
+        <div ref={contentRef} className="pb-4 text-kt-text-secondary leading-relaxed">
           {faq.a}
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function FaqAccordion() {
     <section ref={sectionRef} className={`mb-12 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
       <div className="text-center mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Questions? We&apos;ve Got Answers</h2>
-        <p className="text-text-muted">Everything you need to know about KingdomTrade</p>
+        <p className="text-kt-text-tertiary">Everything you need to know about KingdomTrade</p>
       </div>
 
       <div className="card max-w-3xl mx-auto">

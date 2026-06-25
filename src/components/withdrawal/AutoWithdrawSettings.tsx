@@ -82,9 +82,9 @@ export default function AutoWithdrawSettings() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-3" style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: 16 }}>
-        <div className="h-5 w-40 bg-white/5 rounded" />
-        <div className="h-10 w-full bg-white/5 rounded" />
-        <div className="h-10 w-full bg-white/5 rounded" />
+        <div className="h-5 w-40 bg-kt-hover-bg rounded" />
+        <div className="h-10 w-full bg-kt-hover-bg rounded" />
+        <div className="h-10 w-full bg-kt-hover-bg rounded" />
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function AutoWithdrawSettings() {
       className="p-4 rounded-xl"
       style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
     >
-      <h3 className="text-base font-bold text-white mb-4">Auto-Withdrawal Settings</h3>
+      <h3 className="text-base font-bold text-kt-text-primary mb-4">Auto-Withdrawal Settings</h3>
 
       {error && (
         <div className="mb-4 p-3 rounded-lg text-sm text-red-400" style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)' }}>
@@ -110,7 +110,7 @@ export default function AutoWithdrawSettings() {
       {/* Enable toggle */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-sm text-white font-medium">Enable Auto-Withdrawal</p>
+          <p className="text-sm text-kt-text-primary font-medium">Enable Auto-Withdrawal</p>
           <p className="text-xs text-white/40">Automatically withdraw profits on schedule</p>
         </div>
         <button
@@ -137,7 +137,7 @@ export default function AutoWithdrawSettings() {
         <div className="space-y-4 pt-2">
           {/* Frequency */}
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">Frequency</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Frequency</label>
             <div className="flex gap-2">
               {(['daily', 'weekly'] as const).map(f => (
                 <button
@@ -160,12 +160,12 @@ export default function AutoWithdrawSettings() {
 
           {/* Coin selector */}
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">Preferred Coin</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Preferred Coin</label>
             <div className="relative" ref={coinDropdownRef}>
               <button
                 type="button"
                 onClick={() => setCoinDropdownOpen(!coinDropdownOpen)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-white/10 text-left hover:border-[#FFD700]/50 transition"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-kt-border text-left hover:border-[#FFD700]/50 transition"
                 style={{ background: 'rgba(255,255,255,0.04)', minHeight: 48 }}
               >
                 {selectedCoinConfig ? (
@@ -173,9 +173,9 @@ export default function AutoWithdrawSettings() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={coinIconUrl(selectedCoinConfig.iconSlug)} alt="" width={24} height={24} className="rounded-full flex-shrink-0"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                    <span className="text-white font-medium">{selectedCoinConfig.symbol}</span>
+                    <span className="text-kt-text-primary font-medium">{selectedCoinConfig.symbol}</span>
                     <span className="text-white/40 text-sm">{selectedCoinConfig.name}</span>
-                    <span className="ml-auto px-2 py-0.5 rounded text-xs bg-white/5 text-white/40">{selectedCoinConfig.network}</span>
+                    <span className="ml-auto px-2 py-0.5 rounded text-xs bg-kt-hover-bg text-white/40">{selectedCoinConfig.network}</span>
                   </>
                 ) : (
                   <span className="text-white/40">Select a coin</span>
@@ -184,7 +184,7 @@ export default function AutoWithdrawSettings() {
               </button>
 
               {coinDropdownOpen && (
-                <div className="absolute left-0 right-0 top-full mt-1 border border-white/10 rounded-lg shadow-2xl z-50 max-h-64 overflow-y-auto"
+                <div className="absolute left-0 right-0 top-full mt-1 border border-kt-border rounded-lg shadow-2xl z-50 max-h-64 overflow-y-auto"
                   style={{ background: '#1a1a2e' }}>
                   {DEPOSIT_CURRENCIES.map(c => (
                     <button
@@ -196,7 +196,7 @@ export default function AutoWithdrawSettings() {
                     >
                       <img src={coinIconUrl(c.iconSlug)} alt="" width={22} height={22} className="rounded-full flex-shrink-0"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                      <span className="flex-1 text-sm text-white">{c.symbol}</span>
+                      <span className="flex-1 text-sm text-kt-text-primary">{c.symbol}</span>
                       <span className="text-xs text-white/40">{c.network}</span>
                     </button>
                   ))}
@@ -207,13 +207,13 @@ export default function AutoWithdrawSettings() {
 
           {/* Wallet address */}
           <div>
-            <label className="block text-sm text-white/60 font-medium mb-1.5">Wallet Address</label>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">Wallet Address</label>
             <input
               type="text"
               value={wallet}
               onChange={(e) => setWallet(e.target.value)}
               placeholder="Your permanent wallet address"
-              className="w-full px-4 py-3 rounded-lg text-white text-base"
+              className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.08)',

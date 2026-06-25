@@ -116,24 +116,24 @@ export default function EarningsDashboard({
         <div className="card-body p-6 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div>
-              <h2 className="text-temple-gold mb-1" style={{ fontSize: '1.5rem' }}>Kingdom Yield Vault</h2>
-              <p className="text-text-muted text-sm">
+              <h2 className="text-kt-gold mb-1" style={{ fontSize: '1.5rem' }}>Kingdom Yield Vault</h2>
+              <p className="text-kt-text-tertiary text-sm">
                 Earning from {activeLockCount} active lock{activeLockCount !== 1 ? 's' : ''}
               </p>
             </div>
-            <p className="text-temple-gold text-3xl font-extrabold">Up to {dailyRate}% <span className="text-text-muted text-sm font-normal">Daily</span></p>
+            <p className="text-kt-gold text-3xl font-extrabold">Up to {dailyRate}% <span className="text-kt-text-tertiary text-sm font-normal">Daily</span></p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Available Profit" value={`${fmt(profitBalance)} USDT`} gold />
 
-            <div className={`bg-dark-indigo rounded-lg p-4 text-center col-span-2 transition-transform ${pulse ? 'scale-[1.01]' : ''}`}
+            <div className={`bg-kt-bg rounded-lg p-4 text-center col-span-2 transition-transform ${pulse ? 'scale-[1.01]' : ''}`}
               style={{
                 border: '1px solid rgba(255,215,0,0.2)',
                 boxShadow: pulse ? '0 0 20px rgba(255,215,0,0.15)' : 'none',
               }}>
-              <p className="text-text-muted text-xs mb-1">Daily Earnings (Live)</p>
-              <p className="text-temple-gold font-bold break-all" style={{ fontSize: '1.75rem', lineHeight: 1.2 }}>
+              <p className="text-kt-text-tertiary text-xs mb-1">Daily Earnings (Live)</p>
+              <p className="text-kt-gold font-bold break-all" style={{ fontSize: '1.75rem', lineHeight: 1.2 }}>
                 {liveEarnings} USDT
               </p>
               <div className="mt-2 rounded-full overflow-hidden" style={{ height: 4, background: 'rgba(255,255,255,0.06)' }}>
@@ -143,10 +143,10 @@ export default function EarningsDashboard({
                   transition: 'width 0.3s linear',
                 }} />
               </div>
-              <p className="text-text-muted mt-1" style={{ fontSize: '10px' }}>
+              <p className="text-kt-text-tertiary mt-1" style={{ fontSize: '10px' }}>
                 ${liveEarnings.slice(0, -2)} of ${dailyProjection.toFixed(2)} earned today
               </p>
-              <p className="text-text-muted mt-1" style={{ fontSize: '10px' }}>
+              <p className="text-kt-text-tertiary mt-1" style={{ fontSize: '10px' }}>
                 Next payout in {countdown.h}:{countdown.m}:{countdown.s}
               </p>
             </div>
@@ -166,10 +166,10 @@ export default function EarningsDashboard({
         <div className="card-body p-6">
           <h3 className="text-lg font-bold mb-3">Your Yield Position</h3>
           <p className="mb-3">
-            You have <span className="text-temple-gold font-semibold">{activeLockCount} active deposit lock{activeLockCount !== 1 ? 's' : ''}</span> generating
-            {' '}<span className="text-temple-gold font-semibold">${dailyProjection.toFixed(2)} USDT/day</span> in yield.
+            You have <span className="text-kt-gold font-semibold">{activeLockCount} active deposit lock{activeLockCount !== 1 ? 's' : ''}</span> generating
+            {' '}<span className="text-kt-gold font-semibold">${dailyProjection.toFixed(2)} USDT/day</span> in yield.
           </p>
-          <p className="text-text-muted text-sm mb-4">
+          <p className="text-kt-text-tertiary text-sm mb-4">
             Available profit balance: <span className="text-green-400 font-semibold">${profitBalance.toFixed(2)} USDT</span>
             {commissionBalance > 0 && (
               <> &middot; Commission balance: <span className="text-purple-400 font-semibold">${commissionBalance.toFixed(2)} USDT</span></>
@@ -192,12 +192,12 @@ export default function EarningsDashboard({
       <div className="card">
         <div className="card-body p-6">
           <h3 className="text-lg font-bold mb-4">Yield Calculator</h3>
-          <p className="text-text-muted text-sm mb-4">See how your assets can grow at up to {dailyRate}% daily</p>
+          <p className="text-kt-text-tertiary text-sm mb-4">See how your assets can grow at up to {dailyRate}% daily</p>
 
           <div className="mb-6">
             <div className="flex justify-between items-center mb-3">
-              <span className="text-text-muted text-sm">Simulated Stake Amount</span>
-              <span className="text-temple-gold text-2xl font-bold">${calcAmount.toLocaleString()}</span>
+              <span className="text-kt-text-tertiary text-sm">Simulated Stake Amount</span>
+              <span className="text-kt-gold text-2xl font-bold">${calcAmount.toLocaleString()}</span>
             </div>
             <input
               type="range"
@@ -230,7 +230,7 @@ export default function EarningsDashboard({
                 box-shadow: 0 0 12px rgba(255,215,0,0.4); cursor: pointer;
               }
             `}</style>
-            <div className="flex justify-between text-text-muted text-xs mt-1">
+            <div className="flex justify-between text-kt-text-tertiary text-xs mt-1">
               <span>$50</span>
               <span>$50,000</span>
               <span>$100,000</span>
@@ -273,18 +273,18 @@ export default function EarningsDashboard({
                           {tierFromPercentage(p.percentage)}
                         </span>
                       ) : (
-                        <span className="text-text-muted">-</span>
+                        <span className="text-kt-text-tertiary">-</span>
                       )}
                     </td>
-                    <td className="p-3 text-temple-gold font-semibold">{Number(p.amount).toFixed(2)} USDT</td>
+                    <td className="p-3 text-kt-gold font-semibold">{Number(p.amount).toFixed(2)} USDT</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
             <div className="p-8 text-center">
-              <p className="text-text-muted mb-0">No earnings history yet.</p>
-              <p className="text-text-muted text-xs mt-1">Profits are credited daily to your Available Profit balance. Check back after the next daily distribution.</p>
+              <p className="text-kt-text-tertiary mb-0">No earnings history yet.</p>
+              <p className="text-kt-text-tertiary text-xs mt-1">Profits are credited daily to your Available Profit balance. Check back after the next daily distribution.</p>
             </div>
           )}
         </div>
@@ -307,9 +307,9 @@ export default function EarningsDashboard({
 
 function StatCard({ label, value, gold }: { label: string; value: string; gold?: boolean }) {
   return (
-    <div className="bg-dark-indigo rounded-lg p-4 text-center">
-      <p className="text-text-muted text-xs mb-1">{label}</p>
-      <p className={`text-lg md:text-xl font-bold break-all ${gold ? 'text-temple-gold' : 'text-white'}`}>
+    <div className="bg-kt-bg rounded-lg p-4 text-center">
+      <p className="text-kt-text-tertiary text-xs mb-1">{label}</p>
+      <p className={`text-lg md:text-xl font-bold break-all ${gold ? 'text-kt-gold' : 'text-white'}`}>
         {value}
       </p>
     </div>
@@ -318,9 +318,9 @@ function StatCard({ label, value, gold }: { label: string; value: string; gold?:
 
 function CalcResultCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-dark-indigo rounded-lg p-3 text-center">
-      <p className="text-text-muted text-xs mb-1">{label}</p>
-      <p className="text-temple-gold text-lg font-bold">{value} USDT</p>
+    <div className="bg-kt-bg rounded-lg p-3 text-center">
+      <p className="text-kt-text-tertiary text-xs mb-1">{label}</p>
+      <p className="text-kt-gold text-lg font-bold">{value} USDT</p>
     </div>
   );
 }
