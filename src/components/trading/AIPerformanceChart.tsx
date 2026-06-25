@@ -66,9 +66,9 @@ export default function AIPerformanceChart({ dailyRate, lockedBalance }: Props) 
 
       {/* Chart */}
       {loading ? (
-        <ChartSkeleton height={300} />
+        <ChartSkeleton height={250} />
       ) : (
-        <div style={{ width: '100%', height: 300 }}>
+        <div style={{ width: '100%', height: 250 }}>
           <ResponsiveContainer>
             <ComposedChart data={chartData} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
               <defs>

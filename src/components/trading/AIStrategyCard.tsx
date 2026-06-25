@@ -25,11 +25,11 @@ export default function AIStrategyCard({ dailyRate, lockedBalance, activeLockCou
   }, []);
 
   return (
-    <div className="rounded-xl p-5" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-      <h3 className="text-base font-bold text-[#EAECEF] mb-1">Active Strategy</h3>
-      <p className="text-sm text-[#848E9C] mb-4">Multi-Exchange Arbitrage &amp; Momentum</p>
+    <div className="rounded-xl p-4" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+      <h3 className="text-sm font-bold text-[#EAECEF] mb-1">Active Strategy</h3>
+      <p className="text-xs text-[#848E9C] mb-3">Multi-Exchange Arbitrage &amp; Momentum</p>
 
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-2 mb-3">
         {[
           { l: 'Daily Yield Rate', v: `Up to ${dailyRate}%`, c: '#0ECB81' },
           { l: 'Locked Balance', v: `$${lockedBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })} USDT`, c: '#EAECEF' },
