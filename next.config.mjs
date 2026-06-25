@@ -20,7 +20,6 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
   },
   experimental: {
-    optimizeCss: true,
     optimizePackageImports: ['recharts', 'gsap'],
   },
   async headers() {
