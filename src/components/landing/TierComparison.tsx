@@ -2,129 +2,98 @@
 
 import Link from 'next/link';
 
-interface Tier {
-  key: string;
-  label: string;
-  days: number;
-  months: string;
-  dailyRate: number;
-  color: string;
-  recommended?: boolean;
-}
-
-const TIERS: Tier[] = [
-  { key: 'silver', label: 'Silver', days: 180, months: '6', dailyRate: 0.012, color: '#C0C0C0' },
-  { key: 'gold', label: 'Gold', days: 270, months: '9', dailyRate: 0.015, color: '#FFD700', recommended: true },
-  { key: 'platinum', label: 'Platinum', days: 360, months: '12', dailyRate: 0.02, color: '#E5E4E2' },
-  { key: 'diamond', label: 'Diamond', days: 540, months: '18', dailyRate: 0.03, color: '#B9F2FF' },
+const TIERS = [
+  {
+    key: 'silver', name: 'Silver', dur: '6 Months', daily: '1.2%', monthly: '~36%', total: '~216%', min: '$100',
+    color: '#C0C0C0', gradient: 'linear-gradient(180deg, #C0C0C0, #8a8a8a)',
+    featured: false,
+  },
+  {
+    key: 'gold', name: 'Gold', dur: '9 Months', daily: '1.5%', monthly: '~45%', total: '~486%', min: '$500',
+    color: '#F0B90B', gradient: 'linear-gradient(180deg, #F0B90B, #c99400)',
+    featured: true,
+  },
+  {
+    key: 'platinum', name: 'Platinum', dur: '12 Months', daily: '2.0%', monthly: '~60%', total: '~864%', min: '$1,000',
+    color: '#E5E4E2', gradient: 'linear-gradient(180deg, #E5E4E2, #b0b0b0)',
+    featured: false,
+  },
+  {
+    key: 'diamond', name: 'Diamond', dur: '18 Months', daily: '3.0%', monthly: '~90%', total: '~1,620%', min: '$5,000',
+    color: '#B9F2FF', gradient: 'linear-gradient(180deg, #B9F2FF, #7bc8d4)',
+    featured: false,
+  },
 ];
 
 export default function TierComparison() {
-  function monthlyReturn(dailyRate: number): string {
-    return (dailyRate * 30 * 100).toFixed(0) + '%';
-  }
-
-  function annualizedReturn(dailyRate: number): string {
-    return (dailyRate * 365 * 100).toFixed(0) + '%';
-  }
-
   return (
-    <section className="mb-16">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">Lock Tiers & Rates</h2>
-        <p className="text-white/40 max-w-lg mx-auto text-sm">
-          Choose a lock duration. Longer locks earn higher daily rates. All earnings are credited daily.
-        </p>
-      </div>
+    <section id="tiers" className="py-16 lg:py-20" style={{ background: '#0B0E11' }}>
+      <div className="max-w-[1200px] mx-auto px-6">
+        <div className="text-center mb-10">
+          <h2 className="text-[22px] sm:text-[28px] font-semibold text-[#EAECEF] mb-2">Lock Tiers &amp; Rates</h2>
+          <p className="text-sm text-[#848E9C] max-w-[500px] mx-auto">
+            Choose a lock duration to begin earning daily projected returns. Longer locks earn higher rates.
+          </p>
+        </div>
 
-      {/* Mobile: horizontal scroll; Desktop: grid */}
-      <div className="flex md:grid md:grid-cols-4 gap-4 overflow-x-auto pb-4 md:pb-0 snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0">
-        {TIERS.map((tier) => (
-          <div
-            key={tier.key}
-            className="flex-shrink-0 w-[260px] md:w-auto snap-center rounded-2xl p-5 relative transition hover:scale-[1.02]"
-            style={{
-              background: tier.recommended
-                ? `linear-gradient(180deg, ${tier.color}10 0%, rgba(255,255,255,0.03) 100%)`
-                : 'rgba(255,255,255,0.03)',
-              border: tier.recommended
-                ? `2px solid ${tier.color}40`
-                : '1px solid rgba(255,255,255,0.06)',
-            }}
-          >
-            {tier.recommended && (
-              <span
-                className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold"
-                style={{ background: tier.color, color: '#000' }}
-              >
-                Most Popular
-              </span>
-            )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1100px] mx-auto">
+          {TIERS.map(t => (
+            <div key={t.key} className="relative rounded-xl overflow-hidden transition hover:scale-[1.02]" style={{
+              background: '#1E2329',
+              border: t.featured ? '2px solid #F0B90B' : '1px solid #2B3139',
+              ...(t.featured ? { transform: 'scale(1.03)' } : {}),
+            }}>
+              {/* Top colored bar */}
+              <div style={{ height: 3, background: t.gradient }} />
 
-            <div className="text-center mb-4">
-              <div
-                className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center"
-                style={{ background: `${tier.color}15` }}
-              >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={tier.color} strokeWidth="2">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
+              {t.featured && (
+                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold" style={{ background: '#F0B90B', color: '#0B0E11' }}>
+                  Popular
+                </div>
+              )}
+
+              <div className="p-5 text-center">
+                {/* Icon */}
+                <div className="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: `${t.color}15` }}>
+                  {t.key === 'silver' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={t.color} strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>}
+                  {t.key === 'gold' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={t.color} strokeWidth="2"><circle cx="12" cy="8" r="5"/><path d="M3 21l3-7h12l3 7"/></svg>}
+                  {t.key === 'platinum' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={t.color} strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>}
+                  {t.key === 'diamond' && <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={t.color} strokeWidth="2"><path d="M6 2L3 8l9 14L21 8l-3-6z"/><line x1="3" y1="8" x2="21" y2="8"/><line x1="12" y1="22" x2="12" y2="8"/></svg>}
+                </div>
+
+                <h3 className="font-semibold text-[#EAECEF] mb-0.5">{t.name}</h3>
+                <p className="text-xs text-[#5E6673] mb-3">{t.dur}</p>
+
+                <p className="text-[28px] font-extrabold text-[#0ECB81] tabular-nums mb-1">{t.daily}</p>
+                <p className="text-xs text-[#5E6673] mb-4">daily rate</p>
+
+                <div className="space-y-1.5 mb-4 text-left">
+                  <div className="flex justify-between text-xs"><span className="text-[#5E6673]">Monthly</span><span className="text-[#EAECEF] font-medium">{t.monthly}</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-[#5E6673]">Total projected</span><span className="text-[#EAECEF] font-medium">{t.total}</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-[#5E6673]">Min deposit</span><span className="text-[#EAECEF] font-medium">{t.min}</span></div>
+                </div>
+
+                <Link
+                  href={t.featured ? '/register' : '/calculator'}
+                  className="block w-full py-2.5 rounded-lg text-sm font-semibold text-center no-underline transition"
+                  style={{
+                    background: t.featured ? '#F0B90B' : 'transparent',
+                    color: t.featured ? '#0B0E11' : '#F0B90B',
+                    border: t.featured ? 'none' : '1px solid #F0B90B',
+                  }}
+                >
+                  {t.featured ? 'Start Earning' : 'Calculate'}
+                </Link>
               </div>
-              <h3 className="text-lg font-bold" style={{ color: tier.color }}>{tier.label}</h3>
-              <p className="text-xs text-white/40">{tier.months} months · {tier.days} days</p>
             </div>
+          ))}
+        </div>
 
-            <div className="space-y-2 mb-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-white/50">Daily Rate</span>
-                <span className="text-white font-bold">{(tier.dailyRate * 100).toFixed(1)}%</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-white/50">Monthly</span>
-                <span className="text-[#4CAF50] font-bold">~{monthlyReturn(tier.dailyRate)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-white/50">Annualized</span>
-                <span className="text-[#FFD700] font-bold">~{annualizedReturn(tier.dailyRate)}</span>
-              </div>
-            </div>
-
-            {/* Example return */}
-            <div
-              className="p-3 rounded-lg text-center mb-4"
-              style={{ background: `${tier.color}08` }}
-            >
-              <p className="text-[10px] text-white/30 mb-1">$1,000 deposit earns</p>
-              <p className="text-xl font-bold" style={{ color: tier.color }}>
-                ${(1000 * tier.dailyRate * tier.days).toFixed(0)}
-              </p>
-              <p className="text-[10px] text-white/30">over {tier.days} days</p>
-            </div>
-
-            <Link
-              href="/calculator"
-              className="block w-full py-2.5 rounded-lg text-center text-xs font-bold transition no-underline"
-              style={{
-                background: tier.recommended ? tier.color : 'transparent',
-                color: tier.recommended ? '#000' : tier.color,
-                border: tier.recommended ? 'none' : `1px solid ${tier.color}30`,
-                minHeight: 40,
-              }}
-            >
-              {tier.recommended ? 'Start Earning →' : 'Calculate →'}
-            </Link>
-          </div>
-        ))}
-      </div>
-
-      <div className="text-center mt-6">
-        <Link
-          href="/deposit"
-          className="inline-block px-8 py-3 rounded-xl font-bold no-underline text-sm"
-          style={{ background: '#FFD700', color: '#000' }}
-        >
-          Deposit & Lock Your Funds
-        </Link>
+        <div className="text-center mt-8">
+          <Link href="/deposit" className="text-sm font-medium text-[#F0B90B] hover:underline no-underline">
+            Deposit &amp; Lock Your Funds →
+          </Link>
+        </div>
       </div>
     </section>
   );
