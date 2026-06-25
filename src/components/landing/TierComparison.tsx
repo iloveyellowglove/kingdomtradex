@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
+import AnimatedNumber from '@/components/landing/AnimatedNumber';
 
 const TIERS = [
   {
@@ -38,16 +40,33 @@ export default function TierComparison() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1100px] mx-auto">
           {TIERS.map(t => (
-            <div key={t.key} className="relative rounded-xl overflow-hidden transition hover:scale-[1.02]" style={{
-              background: '#1E2329',
-              border: t.featured ? '2px solid #F0B90B' : '1px solid #2B3139',
-              ...(t.featured ? { transform: 'scale(1.03)' } : {}),
-            }}>
+            <div key={t.key} className="group relative rounded-xl overflow-hidden transition-all duration-200"
+              style={{
+                background: '#1E2329',
+                border: t.featured ? '2px solid #F0B90B' : '1px solid #2B3139',
+                ...(t.featured ? { transform: 'scale(1.03)' } : {}),
+              }}
+              onMouseEnter={(e) => {
+                if (window.matchMedia('(hover: hover)').matches) {
+                  const el = e.currentTarget;
+                  el.style.borderColor = t.color;
+                  el.style.transform = t.featured ? 'scale(1.04)' : 'scale(1.02)';
+                  el.style.boxShadow = `0 0 20px ${t.color}15`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget;
+                el.style.borderColor = t.featured ? '#F0B90B' : '#2B3139';
+                el.style.transform = t.featured ? 'scale(1.03)' : 'scale(1)';
+                el.style.boxShadow = 'none';
+              }}
+            >
               {/* Top colored bar */}
               <div style={{ height: 3, background: t.gradient }} />
 
               {t.featured && (
-                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold" style={{ background: '#F0B90B', color: '#0B0E11' }}>
+                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold animate-pulse-badge"
+                  style={{ background: '#F0B90B', color: '#0B0E11' }}>
                   Popular
                 </div>
               )}
@@ -64,7 +83,9 @@ export default function TierComparison() {
                 <h3 className="font-semibold text-[#EAECEF] mb-0.5">{t.name}</h3>
                 <p className="text-xs text-[#5E6673] mb-3">{t.dur}</p>
 
-                <p className="text-[28px] font-extrabold text-[#0ECB81] tabular-nums mb-1">{t.daily}</p>
+                <p className="text-[28px] font-extrabold text-[#0ECB81] mb-1">
+                  <AnimatedNumber value={parseFloat(t.daily)} suffix="%" decimals={1} duration={1.2} />
+                </p>
                 <p className="text-xs text-[#5E6673] mb-4">daily rate</p>
 
                 <div className="space-y-1.5 mb-4 text-left">

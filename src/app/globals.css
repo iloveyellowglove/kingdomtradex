@@ -470,3 +470,18 @@ html {
   border-color: rgba(255,215,0,0.2);
   box-shadow: 0 8px 32px rgba(255,215,0,0.08);
 }
+
+/* Pulse animation for Gold tier badge */
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.animate-pulse-badge {
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-badge { animation: none; }
+}
+@media (hover: none) {
+  .animate-pulse-badge { animation: none; }
+}

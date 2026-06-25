@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import AnimatedNumber from '@/components/landing/AnimatedNumber';
+import EarningsLineChart from '@/components/charts/EarningsLineChart';
 
 const PRESETS = [100, 500, 1000, 5000];
 const TIERS = [
@@ -21,18 +23,15 @@ export default function EarningsSection() {
   const monthly = daily * 30;
   const total = daily * tier.days;
 
-  // SVG chart
+  // Chart data for Recharts
   const chartData = useMemo(() => {
-    const pts: { x: number; y: number }[] = [];
+    const pts: { label: string; value: number }[] = [];
     const steps = 10;
     for (let i = 0; i <= steps; i++) {
       const day = Math.round((tier.days / steps) * i);
-      pts.push({ x: (i / steps) * 100, y: (amount * tier.rate * day) });
+      pts.push({ label: i === 0 ? 'Start' : i === steps ? `Day ${day}` : `Day ${day}`, value: Math.round((daily * day) * 100) / 100 });
     }
-    const maxY = pts[pts.length - 1].y || 1;
-    const points = pts.map(p => `${p.x},${100 - (p.y / maxY) * 80}`).join(' ');
-    const area = `0,100 ${points} 100,100`;
-    return { points, area };
+    return pts;
   }, [amount, tier]);
 
   return (
@@ -87,24 +86,23 @@ export default function EarningsSection() {
           {/* Results */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
             {[
-              { l: 'Daily', v: `$${daily.toFixed(2)}`, c: '#0ECB81' },
-              { l: 'Weekly', v: `$${weekly.toFixed(2)}`, c: '#0ECB81' },
-              { l: 'Monthly', v: `$${monthly.toFixed(2)}`, c: '#F0B90B' },
-              { l: `${tier.days}d Total`, v: `$${total.toFixed(2)}`, c: '#EAECEF' },
+              { l: 'Daily', v: daily, c: '#0ECB81' },
+              { l: 'Weekly', v: weekly, c: '#0ECB81' },
+              { l: 'Monthly', v: monthly, c: '#F0B90B' },
+              { l: `${tier.days}d Total`, v: total, c: '#EAECEF' },
             ].map(r => (
               <div key={r.l} className="p-4 rounded-lg text-center" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
                 <p className="text-xs text-[#5E6673] mb-1">{r.l}</p>
-                <p className="text-lg sm:text-xl font-bold tabular-nums" style={{ color: r.c }}>{r.v}</p>
+                <p className="text-lg sm:text-xl font-bold" style={{ color: r.c }}>
+                  <AnimatedNumber value={r.v} prefix="$" decimals={2} duration={0.6} triggerOnce={false} />
+                </p>
               </div>
             ))}
           </div>
 
-          {/* Chart */}
+          {/* Recharts Chart */}
           <div className="mb-8 p-4 rounded-xl" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
-            <svg viewBox="0 0 100 100" className="w-full h-40" preserveAspectRatio="none">
-              <polygon points={chartData.area} fill="rgba(14,203,129,0.08)" />
-              <polyline points={chartData.points} fill="none" stroke="#0ECB81" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <EarningsLineChart data={chartData} height={280} showGrid showAxis />
           </div>
 
           <Link href="/register"

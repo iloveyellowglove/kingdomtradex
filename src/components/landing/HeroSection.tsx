@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import AnimatedNumber from '@/components/landing/AnimatedNumber';
 
 export default function HeroSection() {
   const router = useRouter();
@@ -69,12 +70,14 @@ export default function HeroSection() {
             {/* Mini stat cards */}
             <div className="grid grid-cols-3 gap-3 mb-8 max-w-[420px]">
               {[
-                { v: '$50', l: 'Free Credit' },
-                { v: '$500/mo', l: 'Potential at $1k' },
-                { v: '$7,200/yr', l: 'Projected Annual' },
+                { v: 50, l: 'Free Credit', p: '$' },
+                { v: 500, l: 'Potential at $1k', p: '$', s: '/mo' },
+                { v: 7200, l: 'Projected Annual', p: '$', s: '/yr' },
               ].map(s => (
                 <div key={s.l} className="p-3 rounded-lg text-center" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
-                  <p className="text-base sm:text-lg font-bold text-[#EAECEF] tabular-nums" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{s.v}</p>
+                  <p className="text-base sm:text-lg font-bold text-[#EAECEF]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+                    <AnimatedNumber value={s.v} prefix={s.p || ''} suffix={s.s || ''} decimals={0} duration={1.2} />
+                  </p>
                   <p className="text-[10px] sm:text-xs text-[#5E6673]">{s.l}</p>
                 </div>
               ))}

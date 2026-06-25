@@ -1,10 +1,12 @@
 'use client';
 
+import AnimatedNumber from '@/components/landing/AnimatedNumber';
+
 const STEPS = [
-  { label: 'Starting Balance', val: '$50.00', color: '#EAECEF', size: 'text-xl' },
-  { label: 'After 7 Days', val: '$56.30', color: '#848E9C', size: 'text-xl' },
-  { label: 'After 30 Days', val: '$77.00', color: '#F0B90B', size: 'text-2xl' },
-  { label: 'After 90 Days', val: '$131.00', color: '#0ECB81', size: 'text-3xl' },
+  { label: 'Starting Balance', val: 50.00, color: '#EAECEF', size: 'text-xl' },
+  { label: 'After 7 Days', val: 56.30, color: '#848E9C', size: 'text-xl' },
+  { label: 'After 30 Days', val: 77.00, color: '#F0B90B', size: 'text-2xl' },
+  { label: 'After 90 Days', val: 131.00, color: '#0ECB81', size: 'text-3xl' },
 ];
 
 export default function SignupCreditBanner() {
@@ -26,7 +28,9 @@ export default function SignupCreditBanner() {
                 <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 text-[#2B3139] text-xl">→</div>
               )}
               <p className="text-xs text-[#5E6673] mb-2">{s.label}</p>
-              <p className={`${s.size} font-bold tabular-nums`} style={{ color: s.color }}>{s.val}</p>
+              <p className={`${s.size} font-bold`} style={{ color: s.color }}>
+                <AnimatedNumber value={s.val} prefix="$" decimals={2} duration={1.2} />
+              </p>
             </div>
           ))}
         </div>
