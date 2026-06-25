@@ -41,9 +41,6 @@ export default async function TradingPageServer() {
     0,
   );
 
-  const tiers = (activeLocks ?? []).map((l: Record<string, unknown>) => String(l.tier));
-  const uniqueTiers = tiers.filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
-
   const dailyRate = parseFloat(await getSetting('daily_profit_percentage', '1.8'));
 
   return (
