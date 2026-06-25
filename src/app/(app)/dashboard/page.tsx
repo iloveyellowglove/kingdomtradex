@@ -35,6 +35,9 @@ export default async function DashboardPage() {
         depositAddressError={null}
         dailyRate={1.5}
         totalEarned={128.40}
+        todayPnL={12.50}
+        todayPnLPercent={2.3}
+        recentEarnings={[8,10,12,9,15,11,13,10,14,16,12,9,11,12.5]}
       />
     );
   }
@@ -150,13 +153,31 @@ export default async function DashboardPage() {
   // Total earned from AI trading profits
   const { data: profitRows } = await supabase
     .from('ai_trading_profits')
-    .select('amount')
-    .eq('user_id', userId);
-  const totalEarned = ((profitRows ?? []) as unknown as { amount: number }[]).reduce((s, r) => s + Number(r.amount), 0);
+    .select('amount, date')
+    .eq('user_id', userId)
+    .order('date', { ascending: false });
+  const totalEarned = ((profitRows ?? []) as unknown as { amount: number; date: string }[]).reduce((s, r) => s + Number(r.amount), 0);
+
+  // Today's PnL
+  const today = new Date().toISOString().split('T')[0];
+  const todayProfit = ((profitRows ?? []) as unknown as { amount: number; date: string }[]).filter(r => r.date === today).reduce((s, r) => s + Number(r.amount), 0);
+
+  // Recent earnings (last 14 days for sparkline)
+  const recentEarnings = ((profitRows ?? []) as unknown as { amount: number; date: string }[])
+    .slice(0, 14)
+    .reverse()
+    .map(r => Number(r.amount));
+
+  // PnL percentage
+  const yesterdayProfit = totalEarned - todayProfit > 0 ? totalEarned - todayProfit : totalEarned;
+  const todayPnLPercent = yesterdayProfit > 0 ? (todayProfit / yesterdayProfit) * 100 : 0;
+
+  // KYC data
+  const kycLevel = Number((user as Record<string, unknown>).kyc_level ?? 0);
 
   return (
     <DashboardContent
-      user={user}
+      user={{ ...user, kyc_level: kycLevel, kyc_status: kycLevel >= 2 ? 'verified' : kycLevel >= 1 ? 'pending' : 'unverified' }}
       downlineCounts={downlineCounts}
       deposits={deposits ?? []}
       commissions={commissions ?? []}
@@ -167,6 +188,9 @@ export default async function DashboardPage() {
       depositAddressError={depositAddressError}
       dailyRate={dailyRate}
       totalEarned={totalEarned}
+      todayPnL={todayProfit}
+      todayPnLPercent={todayPnLPercent}
+      recentEarnings={recentEarnings}
     />
   );
 }
