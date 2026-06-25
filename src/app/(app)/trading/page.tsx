@@ -22,12 +22,17 @@ export default async function TradingPageServer() {
 
   const { data: users } = await supabase
     .from('users')
-    .select('locked_balance, profit_balance, commission_balance')
+    .select('locked_balance, profit_balance, commission_balance, total_deposited_real')
     .eq('id', userId)
     .limit(1);
 
   const u = users?.[0] as Record<string, unknown> | undefined;
   const lockedBalance = Number(u?.locked_balance ?? 0);
+  const profitBalance = Number(u?.profit_balance ?? 0);
+  const commissionBalance = Number(u?.commission_balance ?? 0);
+  const totalDeposited = Number(u?.total_deposited_real ?? 0);
+  const totalEarned = profitBalance + commissionBalance;
+  const hasDeposits = totalDeposited > 0;
 
   const { data: activeLocks } = await supabase
     .from('deposit_locks')
@@ -41,6 +46,10 @@ export default async function TradingPageServer() {
     0,
   );
 
+  // Find highest tier rate for personalized display
+  const tierRates = (activeLocks ?? []).map((l: Record<string, unknown>) => Number(l.daily_rate));
+  const highestTierRate = tierRates.length > 0 ? Math.max(...tierRates) : 0.03; // default Diamond rate if no deposits
+
   const dailyRate = parseFloat(await getSetting('daily_profit_percentage', '1.8'));
 
   return (
@@ -50,6 +59,9 @@ export default async function TradingPageServer() {
       activeLockCount={activeLockCount}
       dailyProjection={dailyProjection}
       userId={userId}
+      hasDeposits={hasDeposits}
+      highestTierRate={highestTierRate}
+      totalEarned={totalEarned}
     />
   );
 }

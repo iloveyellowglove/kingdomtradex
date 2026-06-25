@@ -13,20 +13,20 @@ export default function AITradeFeed() {
   const topRef = useRef<HTMLDivElement>(null);
 
   const handleTrade = useCallback((trade: SimulatedTrade) => {
-    setTrades(getRecentTrades().slice(0, 50));
+    setTrades(getRecentTrades().slice(0, 60));
     setFlashId(trade.id);
-    setTimeout(() => setFlashId(0), 500);
+    setTimeout(() => setFlashId(0), 600);
   }, []);
 
   const handleBurst = useCallback((count: number) => {
     setBurstMsg(`Executing arbitrage sequence... (${count} trades)`);
-    setTrades(getRecentTrades().slice(0, 50));
+    setTrades(getRecentTrades().slice(0, 60));
     setTimeout(() => setBurstMsg(''), 2000);
   }, []);
 
   useEffect(() => {
     seedTrades(30);
-    setTrades(getRecentTrades().slice(0, 50));
+    setTrades(getRecentTrades().slice(0, 60));
     startSimulator(handleTrade, handleBurst);
     return () => stopSimulator();
   }, [handleTrade, handleBurst]);
