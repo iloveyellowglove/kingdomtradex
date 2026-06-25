@@ -97,6 +97,11 @@ export async function POST(request: NextRequest) {
       bonus_balance: tier.bonusAmount,
       bonus_locked: tier.bonusAmount > 0,
       minimum_deposit_to_unlock: tier.unlockThreshold,
+      kyc_level: 0,
+      signup_credit: 50.00,
+      referral_level: 0,
+      two_factor_enabled: false,
+      auto_withdrawal_enabled: false,
       status: 'active',
       created_at: now,
     })

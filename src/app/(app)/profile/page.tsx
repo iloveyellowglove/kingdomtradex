@@ -27,6 +27,10 @@ interface ProfileData {
   address: string | null;
   role: string;
   migrationNeeded?: boolean;
+  kyc_level?: number;
+  two_factor_enabled?: boolean;
+  created_at?: string;
+  total_deposited_real?: number;
 }
 
 interface KycData {
@@ -347,7 +351,39 @@ export default function ProfilePage() {
 
   return (
     <div className="py-8">
-      <h1 className="text-2xl font-bold text-white mb-8">My Profile</h1>
+      <h1 className="text-2xl font-bold text-white mb-6">My Profile</h1>
+
+      {/* Profile summary card */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Member Since</p>
+          <p className="text-sm font-bold text-white">
+            {profile.created_at ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '—'}
+          </p>
+        </div>
+        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Role</p>
+          <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold capitalize ${
+            profile.role === 'admin' ? 'text-red-400' : profile.role === 'pastor' ? 'text-[#B47CFF]' : 'text-[#2196F3]'
+          }`} style={{
+            background: profile.role === 'admin' ? 'rgba(244,67,54,0.12)' : profile.role === 'pastor' ? 'rgba(180,124,255,0.12)' : 'rgba(33,150,243,0.12)',
+          }}>
+            {profile.role}
+          </span>
+        </div>
+        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">KYC Level</p>
+          <span className="text-sm font-bold text-white">
+            {(profile.kyc_level ?? 0) >= 2 ? '✓ Verified' : (profile.kyc_level ?? 0) === 1 ? 'Email OK' : 'Unverified'}
+          </span>
+        </div>
+        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">2FA</p>
+          <span className="text-sm font-bold" style={{ color: profile.two_factor_enabled ? '#4CAF50' : 'rgba(255,255,255,0.4)' }}>
+            {profile.two_factor_enabled ? '✓ Enabled' : 'Off'}
+          </span>
+        </div>
+      </div>
 
       {/* Migration banner */}
       {migrationNeeded && (

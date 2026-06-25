@@ -22,6 +22,9 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/about') ||
     pathname.startsWith('/covenant') ||
     pathname.startsWith('/waitlist') ||
+    pathname.startsWith('/r/') ||
+    pathname.startsWith('/calculator') ||
+    pathname.startsWith('/offline') ||
     pathname.startsWith('/pastors') ||
     pathname.startsWith('/testimony') ||
     pathname.startsWith('/dashboard') ||
@@ -31,12 +34,26 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/manual-trading') ||
     pathname.startsWith('/earnings') ||
     pathname.startsWith('/referral-tree') ||
+    pathname.startsWith('/withdraw') ||
+    pathname.startsWith('/withdrawals') ||
+    pathname.startsWith('/support') ||
+    pathname.startsWith('/deposit') ||
+    pathname.startsWith('/kyc') ||
+    pathname.startsWith('/settings') ||
+    pathname.startsWith('/notifications') ||
+    pathname.startsWith('/transactions') ||
+    pathname.startsWith('/api/transactions') ||
+    pathname.startsWith('/api/leaderboard') ||
+    pathname.startsWith('/api/referrals') ||
+    pathname.startsWith('/api/notifications') ||
     pathname === '/' ||
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/waitlist') ||
     pathname.startsWith('/api/plisio-webhook') ||
     pathname.startsWith('/api/webhooks/nowpayments') ||
     pathname.startsWith('/api/admin/seed-demo') ||
+    pathname.startsWith('/api/admin/stats') ||
+    pathname.startsWith('/api/admin/broadcast') ||
     pathname.startsWith('/api/cron') ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/assets') ||

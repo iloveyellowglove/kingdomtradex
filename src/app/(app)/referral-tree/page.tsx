@@ -1,76 +1,90 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { createServiceClient } from '@/lib/supabase/service';
-import ReferralTreeView from '@/components/referral/ReferralTreeView';
-import type { ReferralTreeNode } from '@/lib/types';
+'use client';
 
-type UserRow = { id: number; username: string; email: string; display_balance: number; created_at: string };
+import { useState, useEffect } from 'react';
+import ReferralStats from '@/components/referral/ReferralStats';
+import CommissionHistory from '@/components/referral/CommissionHistory';
 
-async function fetchDownline(parentId: number, currentLevel: number, maxDepth: number, supabase: ReturnType<typeof createServiceClient>): Promise<ReferralTreeNode[]> {
-  if (currentLevel > maxDepth) return [];
+export default function ReferralTreePage() {
+  const [tab, setTab] = useState<'stats' | 'commissions'>('stats');
+  const [referralCode, setReferralCode] = useState('');
+  const [referralLink, setReferralLink] = useState('');
+  const [copied, setCopied] = useState(false);
 
-  const { data } = await supabase
-    .from('users')
-    .select('id,username,email,display_balance,created_at')
-    .eq('referred_by', parentId)
-    .eq('status', 'active');
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch('/api/referrals/stats');
+        const data = await res.json();
+        if (data.success) {
+          setReferralCode(data.referralCode || '');
+          setReferralLink(data.referralLink || '');
+        }
+      } catch { /* ignore */ }
+    }
+    load();
+  }, []);
 
-  const children: ReferralTreeNode[] = [];
-  for (const row of (data ?? []) as unknown as UserRow[]) {
-    children.push({
-      ...row,
-      level: currentLevel,
-      children: await fetchDownline(row.id, currentLevel + 1, maxDepth, supabase),
-    });
+  async function copyLink() {
+    if (!referralLink) return;
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = referralLink; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      setCopied(true); setTimeout(() => setCopied(false), 2000);
+    }
   }
-  return children;
-}
-
-export default async function ReferralTreePage() {
-  const cookieStore = cookies();
-  const token = cookieStore.get('__Host-kingdom_session')?.value;
-  if (!token) redirect('/login');
-
-  const supabase = createServiceClient();
-  const { data: sessions } = await supabase
-    .from('sessions')
-    .select('user_id')
-    .eq('session_token', token)
-    .limit(1);
-
-  const s = (sessions ?? []) as unknown as { user_id: number }[];
-  if (s.length === 0) redirect('/login');
-  const userId = s[0].user_id;
-
-  const tree = await fetchDownline(userId, 1, 5, supabase);
-
-  const { data: user } = await supabase
-    .from('users')
-    .select('referral_code')
-    .eq('id', userId)
-    .limit(1);
-
-  const userData = (user ?? []) as unknown as { referral_code: string }[];
-
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://kingdomtradex.vercel.app';
 
   return (
-    <div className="py-4">
-      <div className="flex flex-col md:flex-row justify-between mb-6">
-        <div>
-          <h2>Disciples Tree</h2>
-          <p className="text-text-muted">Your covenant network across 5 levels</p>
-        </div>
-        <div className="mt-2 md:mt-0">
-          <small className="text-text-muted">Your Referral Code:</small>
-          <br />
-          <strong className="text-temple-gold">{userData[0]?.referral_code || ''}</strong>
-          <br />
-          <small className="text-text-muted">Link: <code>{appUrl}/register?ref={userData[0]?.referral_code || ''}</code></small>
-        </div>
+    <div className="py-4 max-w-2xl mx-auto px-4">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-xl font-bold text-white">Referrals</h2>
+        <button
+          onClick={copyLink}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition"
+          style={{
+            background: copied ? 'rgba(76,175,80,0.15)' : 'rgba(255,215,0,0.1)',
+            color: copied ? '#4CAF50' : '#FFD700',
+            border: `1px solid ${copied ? 'rgba(76,175,80,0.25)' : 'rgba(255,215,0,0.2)'}`,
+            minHeight: 36,
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          {copied ? 'Copied!' : referralCode || 'Copy Link'}
+        </button>
+      </div>
+      <p className="text-sm text-white/40 mb-6">Grow your network and earn commissions across 5 levels</p>
+
+      {/* Tab bar */}
+      <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
+        {[
+          { key: 'stats' as const, label: 'Stats' },
+          { key: 'commissions' as const, label: 'Commissions' },
+        ].map(t => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className="flex-1 py-2.5 rounded-lg text-xs font-bold transition"
+            style={{
+              background: tab === t.key ? 'rgba(255,215,0,0.12)' : 'transparent',
+              color: tab === t.key ? '#FFD700' : 'rgba(255,255,255,0.45)',
+              minHeight: 44,
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      <ReferralTreeView tree={tree} />
+      {/* Tab content */}
+      {tab === 'stats' && <ReferralStats />}
+      {tab === 'commissions' && <CommissionHistory />}
     </div>
   );
 }

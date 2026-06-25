@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import Logo from '@/components/brand/Logo';
 import { fmt, formatCurrency } from '@/lib/utils/formatting';
 import { ENABLE_MANUAL_TRADING } from '@/lib/flags';
+import NotificationBell from '@/components/layout/NotificationBell';
 
 interface NavbarProps {
   user?: {
@@ -71,8 +72,8 @@ export default function Navbar({ user }: NavbarProps) {
                 <NavLink href="/earnings" active={pathname === '/earnings'}>
                   Earnings
                 </NavLink>
-                <NavLink href="/withdrawals" active={pathname === '/withdrawals'}>
-                  Withdrawals
+                <NavLink href="/withdraw" active={pathname === '/withdraw' || pathname === '/withdrawals'}>
+                  Withdraw
                 </NavLink>
                 <NavLink href="/referral-tree" active={pathname === '/referral-tree'}>
                   Disciples
@@ -115,6 +116,9 @@ export default function Navbar({ user }: NavbarProps) {
                   </svg>
                   <span className="font-bold text-sm">{fmt(user.display_balance)} USDT</span>
                 </Link>
+
+                {/* Notification bell */}
+                <NotificationBell />
 
                 {/* Click-based dropdown */}
                 <div className="relative" ref={dropdownRef}>
@@ -206,7 +210,7 @@ export default function Navbar({ user }: NavbarProps) {
                         </Link>
 
                         <Link
-                          href="/profile"
+                          href="/settings"
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:bg-white/5 hover:text-white transition no-underline"
                         >

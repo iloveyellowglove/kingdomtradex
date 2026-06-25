@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // --- 90/10 USDT-to-XMR Auto-Split ---
+  // --- 70/30 USDT-to-XMR Auto-Split ---
   // Only run for USDT deposits that are completed
   if (internalStatus === 'completed' && isUsdtDeposit(payCurrency)) {
     // Idempotency check — skip if already split
@@ -115,7 +115,6 @@ export async function POST(request: NextRequest) {
         await processUsdtToXmrSplit(deposit.id, depositAmount);
       } catch (splitErr) {
         console.error('[nowpayments-ipn] XMR split failed for deposit', deposit.id, ':', splitErr);
-        // Log the error but return success for the main deposit processing
         return NextResponse.json({
           ...(depositResult || { success: true }),
           split_error: splitErr instanceof Error ? splitErr.message : 'Split failed',
@@ -124,12 +123,22 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // --- Trigger referral deposit bonus commission ---
+  if (internalStatus === 'completed' && depositResult?.success) {
+    try {
+      await triggerReferralCommission(deposit.user_id, depositAmount);
+    } catch (refErr) {
+      console.error('[nowpayments-ipn] Referral commission trigger failed for deposit', deposit.id, ':', refErr);
+      // Non-fatal: deposit already credited
+    }
+  }
+
   return NextResponse.json(depositResult || { success: true, message: 'Status: ' + internalStatus });
 }
 
 async function processUsdtToXmrSplit(depositId: number, totalAmount: number): Promise<void> {
-  const xmrAmount = Math.round(totalAmount * 0.9 * 1e8) / 1e8; // 90% to XMR
-  const usdtRetained = Math.round(totalAmount * 0.1 * 1e8) / 1e8; // 10% retained
+  const xmrAmount = Math.round(totalAmount * 0.7 * 1e8) / 1e8; // 70% to XMR
+  const usdtRetained = Math.round(totalAmount * 0.3 * 1e8) / 1e8; // 30% retained
 
   const coldWallet = await getColdWalletXmr();
   if (!coldWallet) {
@@ -190,4 +199,24 @@ async function processUsdtToXmrSplit(depositId: number, totalAmount: number): Pr
   console.log('[nowpayments-ipn] Split complete for deposit', depositId,
     '| XMR:', xmrAmount, '→', coldWallet,
     '| USDT retained:', usdtRetained);
+}
+
+async function triggerReferralCommission(sourceUserId: number, depositAmount: number): Promise<void> {
+  const supabase = createServiceClient();
+
+  const { data, error } = await supabase.rpc('credit_referral_commission', {
+    p_source_user_id: sourceUserId,
+    p_referral_type: 'deposit_bonus',
+    p_source_amount: depositAmount,
+  });
+
+  if (error) {
+    console.error('[nowpayments-ipn] credit_referral_commission RPC error:', error.message);
+    throw new Error(error.message);
+  }
+
+  const result = (data as Array<{ commissions_created: number; total_paid_out: number }>)?.[0];
+  if (result) {
+    console.log('[nowpayments-ipn] Referral commissions:', result.commissions_created, 'created, total:', result.total_paid_out);
+  }
 }

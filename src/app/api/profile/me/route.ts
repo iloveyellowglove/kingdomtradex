@@ -6,6 +6,7 @@ export const dynamic = 'force-dynamic';
 const PROFILE_COLUMNS = [
   'username', 'email', 'role', 'display_balance',
   'avatar_url', 'full_name', 'phone', 'date_of_birth', 'country', 'city', 'address',
+  'kyc_level', 'two_factor_enabled', 'created_at', 'total_deposited_real',
 ];
 
 const BASE_COLUMNS = ['username', 'email', 'role', 'display_balance'];

@@ -5,6 +5,7 @@ import EarningsPreview from '@/components/landing/EarningsPreview';
 import PastorProgram from '@/components/landing/PastorProgram';
 import SupportedCurrencies from '@/components/landing/SupportedCurrencies';
 import ReferralProgram from '@/components/landing/ReferralProgram';
+import TierComparison from '@/components/landing/TierComparison';
 import Testimonials from '@/components/landing/Testimonials';
 import FaqAccordion from '@/components/landing/FaqAccordion';
 
@@ -81,6 +82,9 @@ export default async function LandingPage() {
 
       {/* Section 6: Referral Program */}
       <ReferralProgram />
+
+      {/* Tier Comparison */}
+      <TierComparison />
 
       {/* Section 7: Testimonials */}
       <Testimonials />

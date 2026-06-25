@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import OracleChat from '@/components/chatbot/OracleChat';
 import SocialProofToast from '@/components/SocialProofToast';
 import TawkToWidget from '@/components/layout/TawkToWidget';
+import InstallBanner from '@/components/layout/InstallBanner';
 
 export const metadata: Metadata = {
   title: 'KingdomTradex - Free Crypto Credits + AI-Powered Daily Returns',
@@ -74,6 +75,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en">
+      <head>
+        <meta name="theme-color" content="#FFD700" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="KingdomTradex" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+      </head>
       <body>
         <Navbar user={user ? { username: user.username, role: user.role, display_balance: user.display_balance, email: (user as unknown as { email?: string }).email ?? null, avatar_url: (user as unknown as { avatar_url?: string }).avatar_url ?? null } : null} />
         <main className="max-w-[1280px] mx-auto px-6">
@@ -83,8 +96,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <OracleChat />
         <SocialProofToast />
         <TawkToWidget />
+        <InstallBanner />
         <script dangerouslySetInnerHTML={{
           __html: `(function(){var n=document.getElementById('mainNav');if(n){window.addEventListener('scroll',function(){n.classList.toggle('scrolled',window.scrollY>20)});}})();`
+        }} />
+        <script dangerouslySetInnerHTML={{
+          __html: `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').then(function(r){console.log('[SW] Registered:',r.scope)}).catch(function(e){console.log('[SW] Failed:',e)})});}`
         }} />
       </body>
     </html>

@@ -24,6 +24,30 @@ export interface User {
   created_at: string;
   last_login: string | null;
   status: 'active' | 'suspended' | 'banned';
+  // Phase 1: KYC fields
+  kyc_level: number;
+  kyc_selfie_url: string | null;
+  kyc_id_url: string | null;
+  kyc_submitted_at: string | null;
+  kyc_reviewed_at: string | null;
+  kyc_reviewed_by: number | null;
+  kyc_rejection_reason: string | null;
+  // Phase 1: Signup credit
+  signup_credit: number;
+  // Phase 1: 2FA
+  two_factor_enabled: boolean;
+  two_factor_secret: string | null;
+  // Phase 1: Auto-withdrawal
+  auto_withdrawal_enabled: boolean;
+  auto_withdrawal_frequency: 'daily' | 'weekly' | null;
+  auto_withdrawal_coin: string | null;
+  auto_withdrawal_wallet: string | null;
+  // Phase 1: Referral
+  referral_level: number;
+  // Balance columns (added in prior migrations)
+  locked_balance?: number;
+  profit_balance?: number;
+  commission_balance?: number;
 }
 
 export interface Deposit {
@@ -54,6 +78,18 @@ export interface Withdrawal {
   status: 'pending' | 'processing' | 'completed' | 'rejected' | 'cancelled';
   block_reason: string | null;
   admin_override: number;
+  // Phase 1 additions
+  coin?: string | null;
+  tx_hash?: string | null;
+  forfeit_amount?: number;
+  failure_reason?: string | null;
+  completed_at?: string | null;
+  withdrawal_type?: 'profit' | 'commission' | 'principal';
+  wallet_address?: string | null;
+  network?: string | null;
+  admin_notes?: string | null;
+  reviewed_by?: number | null;
+  reviewed_at?: string | null;
 }
 
 export interface ReferralCommission {
@@ -65,9 +101,12 @@ export interface ReferralCommission {
   amount: number;
   source_deposit_id: number;
   source_amount: number;
-  status: 'pending' | 'paid' | 'cancelled';
+  status: 'pending' | 'paid' | 'cancelled' | 'credited';
   created_at: string;
   paid_at: string | null;
+  // Phase 1 additions
+  referral_type?: 'deposit_bonus' | 'profit_share';
+  commission_rate?: number;
 }
 
 export interface AITradingProfit {
@@ -248,4 +287,67 @@ export interface DepositLock {
   unlocks_at: string;
   status: 'locked' | 'matured' | 'withdrawn';
   created_at: string;
+}
+
+// Phase 1: Notifications
+export interface Notification {
+  id: string;
+  user_id: number;
+  type: 'deposit_confirmed' | 'withdrawal_processed' | 'withdrawal_failed'
+      | 'kyc_approved' | 'kyc_rejected' | 'commission_earned'
+      | 'referral_joined' | 'system';
+  title: string;
+  message: string;
+  read: boolean;
+  created_at: string;
+}
+
+// Phase 1: KYC Submissions
+export interface KycSubmission {
+  id: string;
+  user_id: number;
+  id_document_url: string;
+  selfie_url: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submitted_at: string;
+  reviewed_at: string | null;
+  reviewed_by: number | null;
+  rejection_reason: string | null;
+}
+
+// Phase 1: Leaderboard Entry
+export interface LeaderboardEntry {
+  id: string;
+  user_id: number;
+  display_name: string;
+  total_earned: number;
+  total_referrals: number;
+  rank_earnings: number;
+  rank_referrals: number;
+  updated_at: string;
+}
+
+// Phase 1: RPC response types
+export interface ProfitWithdrawalResult {
+  withdrawal_id: number | null;
+  error_msg: string | null;
+}
+
+export interface PrincipalWithdrawalResult {
+  withdrawal_id: number | null;
+  forfeit_amount: number | null;
+  net_amount: number | null;
+  error_msg: string | null;
+}
+
+export interface ReferralCommissionResult {
+  commissions_created: number;
+  total_paid_out: number;
+  error_msg: string | null;
+}
+
+export interface DepositSplitResult {
+  xmr_share: number;
+  usdt_retained: number;
+  error_msg: string | null;
 }
