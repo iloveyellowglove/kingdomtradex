@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { TIER_LIST, getTierForAmount } from '@/lib/tiers';
 import { Area, XAxis, CartesianGrid, ResponsiveContainer, ComposedChart } from 'recharts';
-import { defaultGridProps, formatYAxis } from '@/lib/chartTheme';
+import { defaultGridProps } from '@/lib/chartTheme';
 
 const QUICK_AMOUNTS = [50, 100, 500, 1000, 5000];
 const CURRENCIES = ['USDT (TRC-20)', 'USDC (ERC-20)', 'BTC', 'ETH'];
