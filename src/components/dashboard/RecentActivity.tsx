@@ -71,7 +71,7 @@ export default function RecentActivity({ deposits, commissions }: RecentActivity
               </div>
               <div className="flex-1 min-w-0">
                 <p className="mb-0 text-sm" style={{ color: '#ffffff' }}>{item.description}</p>
-                <p className="mb-0" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>{formatDate(item.date)}</p>
+                <p className="mb-0" style={{ fontSize: '12px', color: 'var(--kt-text-tertiary)' }}>{formatDate(item.date)}</p>
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="mb-0 text-sm font-medium" style={{
@@ -83,7 +83,7 @@ export default function RecentActivity({ deposits, commissions }: RecentActivity
             </div>
           ))
         ) : (
-          <p className="p-6 text-center mb-0" style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)' }}>
+          <p className="p-6 text-center mb-0" style={{ fontSize: '14px', color: 'var(--kt-text-tertiary)' }}>
             No recent activity yet.
           </p>
         )}

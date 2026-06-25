@@ -209,13 +209,13 @@ export default function AITradeLog({ activeLockCount }: AITradeLogProps) {
         <table className="w-full" style={{ fontSize: '12px', minWidth: 340 }}>
           <thead>
             <tr>
-              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Time</th>
-              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Pair</th>
-              <th className="text-left px-1 py-1.5 font-normal hidden md:table-cell" style={{ color: 'rgba(255,255,255,0.4)' }}>Tier</th>
-              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Side</th>
-              <th className="text-right px-1 py-1.5 font-normal hidden xl:table-cell" style={{ color: 'rgba(255,255,255,0.4)' }}>Amt</th>
-              <th className="text-right px-1 py-1.5 font-normal hidden xl:table-cell" style={{ color: 'rgba(255,255,255,0.4)' }}>Price</th>
-              <th className="text-right px-1 py-1.5 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>P/L</th>
+              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Time</th>
+              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Pair</th>
+              <th className="text-left px-1 py-1.5 font-normal hidden md:table-cell" style={{ color: 'var(--kt-text-tertiary)' }}>Tier</th>
+              <th className="text-left px-1 py-1.5 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Side</th>
+              <th className="text-right px-1 py-1.5 font-normal hidden xl:table-cell" style={{ color: 'var(--kt-text-tertiary)' }}>Amt</th>
+              <th className="text-right px-1 py-1.5 font-normal hidden xl:table-cell" style={{ color: 'var(--kt-text-tertiary)' }}>Price</th>
+              <th className="text-right px-1 py-1.5 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>P/L</th>
             </tr>
           </thead>
           <tbody>
@@ -269,7 +269,7 @@ export default function AITradeLog({ activeLockCount }: AITradeLogProps) {
             Win rate: <span style={{ color: '#FFD700' }}>{winRate}%</span> ({winCount}/{trades.length})
           </span>
           {activeLockCount > 0 && (
-            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginLeft: 8 }}>
+            <span style={{ fontSize: '11px', color: 'var(--kt-text-tertiary)', marginLeft: 8 }}>
               &middot; {activeLockCount} active lock{activeLockCount !== 1 ? 's' : ''}
             </span>
           )}

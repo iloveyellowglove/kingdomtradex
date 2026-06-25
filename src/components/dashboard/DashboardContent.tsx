@@ -78,7 +78,7 @@ export default function DashboardContent({
             <button
               onClick={() => copyToClipboard(String(user.id), setUidCopied)}
               className="text-[10px] px-1.5 py-0.5 rounded transition"
-              style={{ background: uidCopied ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.05)', color: uidCopied ? '#4CAF50' : 'rgba(255,255,255,0.4)' }}
+              style={{ background: uidCopied ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.05)', color: uidCopied ? '#4CAF50' : 'var(--kt-text-tertiary)' }}
             >
               {uidCopied ? 'Copied' : 'Copy'}
             </button>

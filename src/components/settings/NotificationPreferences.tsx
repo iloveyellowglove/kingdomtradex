@@ -70,7 +70,7 @@ export default function NotificationPreferences() {
           >
             <div className="flex-1 min-w-0 mr-3">
               <p className="text-sm text-kt-text-primary font-medium">{p.label}</p>
-              <p className="text-xs text-white/35 truncate">{p.description}</p>
+              <p className="text-xs text-kt-text-tertiary truncate">{p.description}</p>
             </div>
             <button
               type="button"

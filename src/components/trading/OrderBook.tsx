@@ -41,9 +41,9 @@ export default function OrderBook({ asks, bids, spread, spreadPct, loading, symb
         <div className="overflow-y-auto flex-1" style={{ fontSize: '12px' }}>
           {/* Column headers */}
           <div className="flex px-3 py-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-            <span className="flex-1 text-left" style={{ color: 'rgba(255,255,255,0.4)' }}>Price ({pair.quote})</span>
-            <span className="text-right" style={{ width: 80, color: 'rgba(255,255,255,0.4)' }}>Amount ({pair.coin})</span>
-            <span className="text-right" style={{ width: 80, color: 'rgba(255,255,255,0.4)' }}>Total</span>
+            <span className="flex-1 text-left" style={{ color: 'var(--kt-text-tertiary)' }}>Price ({pair.quote})</span>
+            <span className="text-right" style={{ width: 80, color: 'var(--kt-text-tertiary)' }}>Amount ({pair.coin})</span>
+            <span className="text-right" style={{ width: 80, color: 'var(--kt-text-tertiary)' }}>Total</span>
           </div>
 
           {/* Asks */}

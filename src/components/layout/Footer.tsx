@@ -18,7 +18,7 @@ export default function Footer() {
             <div className="flex items-center gap-3 mb-3">
               <Logo size="sm" />
             </div>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)', lineHeight: 1.7 }}>
+            <p className="text-sm" style={{ color: 'var(--kt-text-tertiary)', lineHeight: 1.7 }}>
               AI-powered crypto trading for everyone.
             </p>
           </div>
@@ -41,9 +41,9 @@ export default function Footer() {
                   key={link.label}
                   href={link.href}
                   className="block text-sm no-underline transition-colors"
-                  style={{ color: 'rgba(255,255,255,0.4)' }}
+                  style={{ color: 'var(--kt-text-tertiary)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.4)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--kt-text-tertiary)'; }}
                 >
                   {link.label}
                 </a>
@@ -56,7 +56,7 @@ export default function Footer() {
             <h5 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: 'rgba(255,255,255,0.25)' }}>
               Launch Info
             </h5>
-            <div className="space-y-2 text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
+            <div className="space-y-2 text-sm" style={{ color: 'var(--kt-text-tertiary)' }}>
               <p className="mb-0">Launch Date: June 7, 2026</p>
               <p className="mb-0">
                 Contact:{' '}

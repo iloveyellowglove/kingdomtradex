@@ -67,7 +67,7 @@ export default function TransactionsPage() {
       case 'withdrawal': return { bg: 'rgba(244,67,54,0.12)', color: '#F44336' };
       case 'commission': return { bg: 'rgba(180,124,255,0.12)', color: '#B47CFF' };
       case 'profit': return { bg: 'rgba(33,150,243,0.12)', color: '#2196F3' };
-      default: return { bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)' };
+      default: return { bg: 'rgba(255,255,255,0.06)', color: 'var(--kt-text-tertiary)' };
     }
   }
 
@@ -77,7 +77,7 @@ export default function TransactionsPage() {
       case 'pending': return { bg: 'rgba(255,193,7,0.12)', color: '#FFC107' };
       case 'processing': return { bg: 'rgba(33,150,243,0.12)', color: '#2196F3' };
       case 'failed': case 'rejected': case 'cancelled': return { bg: 'rgba(244,67,54,0.12)', color: '#F44336' };
-      default: return { bg: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)' };
+      default: return { bg: 'rgba(255,255,255,0.06)', color: 'var(--kt-text-tertiary)' };
     }
   }
 

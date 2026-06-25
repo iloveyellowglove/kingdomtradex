@@ -32,7 +32,7 @@ export default function AIEngineStatus({ dailyRate, lockedBalance, activeLockCou
 
         <div className="flex flex-wrap items-center gap-6">
           <div>
-            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)' }}>
+            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--kt-text-tertiary)' }}>
               Daily Yield Rate
             </p>
             <p className="mb-0" style={{ fontSize: '18px', fontWeight: 600, color: '#FFD700' }}>
@@ -40,7 +40,7 @@ export default function AIEngineStatus({ dailyRate, lockedBalance, activeLockCou
             </p>
           </div>
           <div>
-            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)' }}>
+            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--kt-text-tertiary)' }}>
               Locked Balance
             </p>
             <p className="mb-0" style={{ fontSize: '18px', fontWeight: 600, color: '#ffffff' }}>
@@ -48,7 +48,7 @@ export default function AIEngineStatus({ dailyRate, lockedBalance, activeLockCou
             </p>
           </div>
           <div>
-            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)' }}>
+            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--kt-text-tertiary)' }}>
               Active Locks
             </p>
             <p className="mb-0" style={{ fontSize: '18px', fontWeight: 600, color: '#FFD700' }}>
@@ -56,7 +56,7 @@ export default function AIEngineStatus({ dailyRate, lockedBalance, activeLockCou
             </p>
           </div>
           <div>
-            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)' }}>
+            <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--kt-text-tertiary)' }}>
               Next Distribution
             </p>
             <p className="mb-0" style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>
@@ -78,7 +78,7 @@ export default function AIEngineStatus({ dailyRate, lockedBalance, activeLockCou
       </div>
 
       <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <p className="mb-0" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+        <p className="mb-0" style={{ fontSize: '12px', color: 'var(--kt-text-tertiary)' }}>
           Strategy: Multi-exchange arbitrage and momentum. Your locked deposits earn up to {dailyRate}% daily yield automatically across {activeLockCount} active lock{activeLockCount !== 1 ? 's' : ''}. The AI engine manages all trading on your behalf.
         </p>
       </div>

@@ -27,10 +27,10 @@ export default function StatsCard({ label, value, accent, subline }: StatsCardPr
         color: accent === 'gold' ? '#FFD700' : '#ffffff',
       }}>
         {formatCurrency(value)}
-        <span style={{ fontSize: '14px', fontWeight: 400, color: 'rgba(255,255,255,0.4)', marginLeft: '6px' }}>USDT</span>
+        <span style={{ fontSize: '14px', fontWeight: 400, color: 'var(--kt-text-tertiary)', marginLeft: '6px' }}>USDT</span>
       </p>
       {subline && (
-        <p className="mt-2 mb-0" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+        <p className="mt-2 mb-0" style={{ fontSize: '12px', color: 'var(--kt-text-tertiary)' }}>
           {subline}
         </p>
       )}

@@ -93,9 +93,9 @@ export default function WithdrawalHistory() {
             onClick={() => setFilter(f.key)}
             className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition"
             style={{
-              background: filter === f.key ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.04)',
-              color: filter === f.key ? '#FFD700' : 'rgba(255,255,255,0.5)',
-              border: filter === f.key ? '1px solid rgba(255,215,0,0.3)' : '1px solid rgba(255,255,255,0.06)',
+              background: filter === f.key ? 'var(--kt-active-bg)' : 'var(--kt-hover-bg)',
+              color: filter === f.key ? 'var(--kt-gold)' : 'rgba(255,255,255,0.5)',
+              border: filter === f.key ? '1px solid rgba(255,215,0,0.3)' : '1px solid var(--kt-hover-bg)',
               minHeight: 32,
             }}
           >
@@ -116,7 +116,7 @@ export default function WithdrawalHistory() {
               <div
                 key={w.id}
                 className="rounded-lg p-4 transition"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.04)' }}
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--kt-hover-bg)' }}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">

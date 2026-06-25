@@ -109,7 +109,7 @@ export default function Navbar({ user }: NavbarProps) {
           <div className="flex gap-2 ml-auto items-center">
             {user ? (
               <>
-                <Link href="/dashboard" className="flex items-center gap-2 text-kt-gold hover:text-kt-gold/80 px-3 py-2 rounded-lg hover:bg-white/5 transition no-underline">
+                <Link href="/dashboard" className="flex items-center gap-2 text-kt-gold hover:text-kt-gold/80 px-3 py-2 rounded-lg hover:bg-kt-hover-bg transition no-underline">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
                     <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
@@ -128,7 +128,7 @@ export default function Navbar({ user }: NavbarProps) {
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="flex items-center gap-2 text-kt-text-primary hover:text-kt-gold px-2 py-1.5 rounded-lg hover:bg-white/5 transition"
+                    className="flex items-center gap-2 text-kt-text-primary hover:text-kt-gold px-2 py-1.5 rounded-lg hover:bg-kt-hover-bg transition"
                   >
                     {/* Avatar circle */}
                     {user.avatar_url ? (
@@ -204,7 +204,7 @@ export default function Navbar({ user }: NavbarProps) {
                         <Link
                           href="/profile"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-white/5 hover:text-white transition no-underline"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-kt-hover-bg hover:text-white transition no-underline"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -216,7 +216,7 @@ export default function Navbar({ user }: NavbarProps) {
                         <Link
                           href="/settings"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-white/5 hover:text-white transition no-underline"
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-kt-hover-bg hover:text-white transition no-underline"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="3" />
@@ -229,7 +229,7 @@ export default function Navbar({ user }: NavbarProps) {
                           <Link
                             href="/admin"
                             onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-white/5 hover:text-white transition no-underline"
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-kt-text-secondary hover:bg-kt-hover-bg hover:text-white transition no-underline"
                           >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -244,7 +244,7 @@ export default function Navbar({ user }: NavbarProps) {
                       <form action="/api/auth/logout" method="POST">
                         <button
                           type="submit"
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-white/5 transition"
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-kt-hover-bg transition"
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -285,8 +285,8 @@ function NavLink({ href, children, active, highlight }: { href: string; children
         active
           ? 'text-kt-gold bg-white/5'
           : highlight
-            ? 'text-kt-gold hover:text-kt-gold hover:bg-white/5'
-            : 'text-kt-text-primary hover:text-kt-gold hover:bg-white/5'
+            ? 'text-kt-gold hover:text-kt-gold hover:bg-kt-hover-bg'
+            : 'text-kt-text-primary hover:text-kt-gold hover:bg-kt-hover-bg'
       }`}
     >
       {children}

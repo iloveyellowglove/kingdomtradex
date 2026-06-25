@@ -217,7 +217,7 @@ export default function OracleChat() {
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                color: 'rgba(255,255,255,0.4)',
+                color: 'var(--kt-text-tertiary)',
               }}
               aria-label="Minimize Oracle chat"
             >
@@ -235,7 +235,7 @@ export default function OracleChat() {
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                color: 'rgba(255,255,255,0.4)',
+                color: 'var(--kt-text-tertiary)',
               }}
               aria-label="Close Oracle chat"
             >

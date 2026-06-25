@@ -70,7 +70,7 @@ export default function TradingViewChart({ symbol }: TradingViewChartProps) {
               borderRadius: '50%',
               animation: 'spin 0.8s linear infinite',
             }} />
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>Loading chart...</p>
+            <p className="text-sm" style={{ color: 'var(--kt-text-tertiary)' }}>Loading chart...</p>
           </div>
           <style jsx>{`
             @keyframes spin {

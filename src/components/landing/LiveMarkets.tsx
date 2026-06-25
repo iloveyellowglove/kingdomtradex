@@ -54,7 +54,7 @@ function PriceCard({ coin }: { coin: Coin }) {
         ) : (
           <div
             className="flex items-center justify-center rounded-full"
-            style={{ width: 28, height: 28, background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: 600 }}
+            style={{ width: 28, height: 28, background: 'rgba(255,255,255,0.05)', color: 'var(--kt-text-tertiary)', fontSize: 12, fontWeight: 600 }}
           >
             {coin.symbol.charAt(0).toUpperCase()}
           </div>

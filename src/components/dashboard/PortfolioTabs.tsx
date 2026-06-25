@@ -89,8 +89,8 @@ export default function PortfolioTabs({ userId }: Props) {
             onClick={() => setTab(t.key)}
             className="flex-1 py-2 rounded-md text-xs font-medium transition"
             style={{
-              background: tab === t.key ? 'rgba(255,215,0,0.1)' : 'transparent',
-              color: tab === t.key ? '#FFD700' : 'rgba(255,255,255,0.4)',
+              background: tab === t.key ? 'var(--kt-active-bg)' : 'transparent',
+              color: tab === t.key ? 'var(--kt-active-text)' : 'var(--kt-text-tertiary)',
             }}
           >
             {t.label}

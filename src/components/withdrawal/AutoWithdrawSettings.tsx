@@ -146,8 +146,8 @@ export default function AutoWithdrawSettings() {
                   className="flex-1 py-2.5 rounded-lg text-sm font-medium capitalize transition"
                   style={{
                     background: frequency === f ? 'rgba(255,215,0,0.12)' : 'rgba(255,255,255,0.03)',
-                    border: frequency === f ? '2px solid #FFD700' : '1px solid rgba(255,255,255,0.08)',
-                    color: frequency === f ? '#FFD700' : 'rgba(255,255,255,0.5)',
+                    border: frequency === f ? '2px solid #FFD700' : '1px solid var(--kt-hover-bg)',
+                    color: frequency === f ? 'var(--kt-gold)' : 'rgba(255,255,255,0.5)',
                     minHeight: 44,
                   }}
                 >
@@ -165,7 +165,7 @@ export default function AutoWithdrawSettings() {
                 type="button"
                 onClick={() => setCoinDropdownOpen(!coinDropdownOpen)}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-kt-border text-left hover:border-[#FFD700]/50 transition"
-                style={{ background: 'rgba(255,255,255,0.04)', minHeight: 48 }}
+                style={{ background: 'var(--kt-hover-bg)', minHeight: 48 }}
               >
                 {selectedCoinConfig ? (
                   <>
@@ -214,8 +214,8 @@ export default function AutoWithdrawSettings() {
               placeholder="Your permanent wallet address"
               className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
               style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--kt-hover-bg)',
+                border: '1px solid var(--kt-hover-bg)',
                 minHeight: 48,
               }}
             />

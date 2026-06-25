@@ -97,7 +97,7 @@ export default function MarketHeader({
 function Stat({ label, children, color }: { label: string; children: React.ReactNode; color?: string }) {
   return (
     <div>
-      <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.4)' }}>
+      <p className="mb-1" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--kt-text-tertiary)' }}>
         {label}
       </p>
       <p className="mb-0" style={{ fontSize: '14px', fontWeight: 600, color: color || '#ffffff' }}>

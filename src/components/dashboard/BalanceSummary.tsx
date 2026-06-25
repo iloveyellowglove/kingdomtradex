@@ -103,15 +103,13 @@ export default function BalanceSummary({
         </Link>
         <Link
           href="/withdraw"
-          className="flex-1 py-2.5 rounded-full text-center text-xs font-bold no-underline"
-          style={{ background: 'rgba(255,255,255,0.06)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)' }}
+          className="flex-1 py-2.5 rounded-full text-center text-xs font-bold no-underline border border-kt-border text-kt-text-primary bg-kt-hover-bg"
         >
           Withdraw
         </Link>
         <Link
           href="/withdraw?tab=auto"
-          className="flex-1 py-2.5 rounded-full text-center text-xs font-bold no-underline"
-          style={{ background: 'rgba(33,150,243,0.1)', color: '#2196F3', border: '1px solid rgba(33,150,243,0.15)' }}
+          className="flex-1 py-2.5 rounded-full text-center text-xs font-bold no-underline border border-blue-500/20 text-blue-500 bg-blue-500/10"
         >
           Auto
         </Link>

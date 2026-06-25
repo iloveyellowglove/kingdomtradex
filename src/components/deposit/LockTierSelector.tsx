@@ -143,7 +143,7 @@ export default function LockTierSelector({ amount, selectedTier, onSelect }: Pro
                 >
                   {(tier.daily_rate * 100).toFixed(2)}%
                 </span>
-                <span className="text-sm font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <span className="text-sm font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>
                   / day
                 </span>
               </div>

@@ -93,7 +93,7 @@ export default function KycStatusBadge({
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full font-semibold ${d.badge}`}
-      style={{ background: 'rgba(158,158,158,0.12)', color: 'rgba(255,255,255,0.4)' }}
+      style={{ background: 'rgba(158,158,158,0.12)', color: 'var(--kt-text-tertiary)' }}
     >
       <svg width={d.icon} height={d.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>

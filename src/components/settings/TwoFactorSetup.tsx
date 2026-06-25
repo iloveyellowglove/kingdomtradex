@@ -155,7 +155,7 @@ export default function TwoFactorSetup() {
             Enabled
           </span>
         ) : (
-          <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.4)' }}>
+          <span className="px-3 py-1 rounded-full text-xs font-bold" style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--kt-text-tertiary)' }}>
             Disabled
           </span>
         )}

@@ -230,8 +230,8 @@ export default function ProfitTab() {
               placeholder="25.00"
               className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
               style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--kt-hover-bg)',
+                border: '1px solid var(--kt-hover-bg)',
                 minHeight: 48,
               }}
             />
@@ -239,7 +239,7 @@ export default function ProfitTab() {
               type="button"
               onClick={() => setAmount(availableProfit.toFixed(2))}
               className="absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded text-xs font-bold"
-              style={{ background: 'rgba(255,215,0,0.15)', color: '#FFD700', minHeight: 32, minWidth: 44 }}
+              style={{ background: 'var(--kt-active-bg)', color: 'var(--kt-gold)', minHeight: 32, minWidth: 44 }}
             >
               MAX
             </button>
@@ -255,7 +255,7 @@ export default function ProfitTab() {
               type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-kt-border text-left hover:border-[#FFD700]/50 transition"
-              style={{ background: 'rgba(255,255,255,0.04)', minHeight: 48 }}
+              style={{ background: 'var(--kt-hover-bg)', minHeight: 48 }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={coinIconUrl(selectedCurrency.iconSlug)} alt="" width={24} height={24} className="rounded-full flex-shrink-0"
@@ -313,8 +313,8 @@ export default function ProfitTab() {
             placeholder={`Your ${selectedCurrency.network} address`}
             className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
             style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'var(--kt-hover-bg)',
+              border: '1px solid var(--kt-hover-bg)',
               minHeight: 48,
             }}
           />
@@ -327,7 +327,7 @@ export default function ProfitTab() {
           disabled={loading || !eligibility?.eligible || !amount || parseFloat(amount) < 25 || !walletAddress.trim()}
           className="w-full py-3.5 rounded-lg text-sm font-bold transition disabled:opacity-40"
           style={{
-            background: '#FFD700',
+            background: 'var(--kt-gold)',
             color: '#000',
             minHeight: 48,
           }}

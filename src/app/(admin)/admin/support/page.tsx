@@ -45,7 +45,7 @@ const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
   open: { bg: 'rgba(255,215,0,0.12)', text: '#FFD700' },
   in_progress: { bg: 'rgba(59,130,246,0.12)', text: '#3b82f6' },
   resolved: { bg: 'rgba(34,197,94,0.12)', text: '#22c55e' },
-  closed: { bg: 'rgba(255,255,255,0.06)', text: 'rgba(255,255,255,0.4)' },
+  closed: { bg: 'rgba(255,255,255,0.06)', text: 'var(--kt-text-tertiary)' },
 };
 
 function categoryLabel(cat: string): string {

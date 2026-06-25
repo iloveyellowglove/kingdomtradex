@@ -69,7 +69,7 @@ export default function DisciplesSummary({ downlineCounts, totalPaidComm, totalP
           <p className="mb-1" style={{ fontSize: '18px', fontWeight: 600, color: '#ffffff' }}>
             {formatCurrency(totalPaidComm + totalPendingComm)} USDT
           </p>
-          <p className="mb-0" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+          <p className="mb-0" style={{ fontSize: '12px', color: 'var(--kt-text-tertiary)' }}>
             {formatCurrency(totalPaidComm)} paid, {formatCurrency(totalPendingComm)} pending
           </p>
         </div>

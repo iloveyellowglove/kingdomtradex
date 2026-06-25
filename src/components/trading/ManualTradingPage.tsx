@@ -186,7 +186,7 @@ export default function ManualTradingPage({
           ${fmt(realBalance)} USDT
         </p>
         {realBalance === 0 && (
-          <p className="mt-2" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+          <p className="mt-2" style={{ fontSize: '12px', color: 'var(--kt-text-tertiary)' }}>
             Deposit funds to increase your real balance. Manual trading is still available using a practice environment.
           </p>
         )}
@@ -298,13 +298,13 @@ export default function ManualTradingPage({
 
             {/* Fee Estimate */}
             <div className="flex justify-between mb-2" style={{ fontSize: '12px' }}>
-              <span style={{ color: 'rgba(255,255,255,0.4)' }}>Fee (0.1%)</span>
+              <span style={{ color: 'var(--kt-text-tertiary)' }}>Fee (0.1%)</span>
               <span style={{ color: 'rgba(255,255,255,0.6)' }}>${fee.toFixed(2)}</span>
             </div>
 
             {/* Preview */}
             <div className="flex justify-between mb-4" style={{ fontSize: '12px' }}>
-              <span style={{ color: 'rgba(255,255,255,0.4)' }}>You will receive</span>
+              <span style={{ color: 'var(--kt-text-tertiary)' }}>You will receive</span>
               <span style={{ color: '#8b5cf6', fontWeight: 600 }}>
                 {estimatedReceive > 0 ? `${estimatedReceive.toFixed(6)} ${pairCoin}` : `0 ${pairCoin}`}
               </span>
@@ -351,12 +351,12 @@ export default function ManualTradingPage({
             <table className="w-full" style={{ fontSize: '13px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <th className="text-left p-3 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Pair</th>
-                  <th className="text-right p-3 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Amount</th>
-                  <th className="text-right p-3 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Entry Price</th>
-                  <th className="text-right p-3 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Current Price</th>
-                  <th className="text-right p-3 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Unrealized P/L</th>
-                  <th className="text-right p-3 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Action</th>
+                  <th className="text-left p-3 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Pair</th>
+                  <th className="text-right p-3 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Amount</th>
+                  <th className="text-right p-3 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Entry Price</th>
+                  <th className="text-right p-3 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Current Price</th>
+                  <th className="text-right p-3 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Unrealized P/L</th>
+                  <th className="text-right p-3 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -417,13 +417,13 @@ export default function ManualTradingPage({
             <table className="w-full" style={{ fontSize: '12px' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <th className="text-left p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Time</th>
-                  <th className="text-left p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Pair</th>
-                  <th className="text-left p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Side</th>
-                  <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Amount</th>
-                  <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Entry</th>
-                  <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Exit</th>
-                  <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>P/L</th>
+                  <th className="text-left p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Time</th>
+                  <th className="text-left p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Pair</th>
+                  <th className="text-left p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Side</th>
+                  <th className="text-right p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Amount</th>
+                  <th className="text-right p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Entry</th>
+                  <th className="text-right p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Exit</th>
+                  <th className="text-right p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>P/L</th>
                 </tr>
               </thead>
               <tbody>

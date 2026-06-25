@@ -42,7 +42,7 @@ export default function ConfirmationModal({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-kt-text-tertiary hover:text-white hover:bg-white/10 transition"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-kt-text-tertiary hover:text-white hover:bg-kt-hover-bg transition"
           aria-label="Close"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -58,7 +58,7 @@ export default function ConfirmationModal({
           <button
             onClick={onClose}
             disabled={loading}
-            className="flex-1 py-3 rounded-lg text-sm font-bold border border-kt-border text-kt-text-secondary hover:text-white hover:bg-white/5 transition disabled:opacity-40"
+            className="flex-1 py-3 rounded-lg text-sm font-bold border border-kt-border text-kt-text-secondary hover:text-white hover:bg-kt-hover-bg transition disabled:opacity-40"
             style={{ minHeight: 44 }}
           >
             Cancel
@@ -68,7 +68,7 @@ export default function ConfirmationModal({
             disabled={loading}
             className="flex-1 py-3 rounded-lg text-sm font-bold transition disabled:opacity-50"
             style={{
-              background: '#FFD700',
+              background: 'var(--kt-gold)',
               color: '#000',
               minHeight: 44,
             }}

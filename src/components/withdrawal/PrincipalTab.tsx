@@ -112,11 +112,11 @@ export default function PrincipalTab() {
   function tierColor(tier: string): string {
     const colors: Record<string, string> = {
       silver: '#C0C0C0',
-      gold: '#FFD700',
+      gold: 'var(--kt-gold)',
       platinum: '#E5E4E2',
       diamond: '#B9F2FF',
     };
-    return colors[tier] ?? '#FFD700';
+    return colors[tier] ?? 'var(--kt-gold)';
   }
 
   const selectedCurrency = DEPOSIT_CURRENCIES.find(c => c.id === currencyId) || DEPOSIT_CURRENCIES[0];
@@ -129,7 +129,7 @@ export default function PrincipalTab() {
       {/* Signup credit notice */}
       <div
         className="flex items-center gap-3 p-4 rounded-lg mb-4"
-        style={{ background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.15)' }}
+        style={{ background: 'rgba(255,215,0,0.05)', border: '1px solid var(--kt-active-bg)' }}
       >
         <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-kt-active-bg">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2">
@@ -179,7 +179,7 @@ export default function PrincipalTab() {
                 className="w-full text-left p-4 rounded-lg transition"
                 style={{
                   background: selectedDeposit?.id === d.id ? 'rgba(255,215,0,0.08)' : 'rgba(255,255,255,0.03)',
-                  border: selectedDeposit?.id === d.id ? '2px solid #FFD700' : '1px solid rgba(255,255,255,0.06)',
+                  border: selectedDeposit?.id === d.id ? '2px solid #FFD700' : '1px solid var(--kt-hover-bg)',
                   minHeight: 44,
                 }}
               >
@@ -253,7 +253,7 @@ export default function PrincipalTab() {
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-kt-border text-left hover:border-[#FFD700]/50 transition"
-                style={{ background: 'rgba(255,255,255,0.04)', minHeight: 48 }}
+                style={{ background: 'var(--kt-hover-bg)', minHeight: 48 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={coinIconUrl(selectedCurrency.iconSlug)} alt="" width={24} height={24} className="rounded-full flex-shrink-0"
@@ -311,8 +311,8 @@ export default function PrincipalTab() {
               placeholder={`Your ${selectedCurrency.network} address`}
               className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
               style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'var(--kt-hover-bg)',
+                border: '1px solid var(--kt-hover-bg)',
                 minHeight: 48,
               }}
             />
@@ -324,7 +324,7 @@ export default function PrincipalTab() {
             disabled={loading || !walletAddress.trim()}
             className="w-full py-3.5 rounded-lg text-sm font-bold transition disabled:opacity-40"
             style={{
-              background: '#FFD700',
+              background: 'var(--kt-gold)',
               color: '#000',
               minHeight: 48,
             }}

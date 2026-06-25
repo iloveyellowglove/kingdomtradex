@@ -379,7 +379,7 @@ export default function ProfilePage() {
         </div>
         <div className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
           <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">2FA</p>
-          <span className="text-sm font-bold" style={{ color: profile.two_factor_enabled ? '#4CAF50' : 'rgba(255,255,255,0.4)' }}>
+          <span className="text-sm font-bold" style={{ color: profile.two_factor_enabled ? '#4CAF50' : 'var(--kt-text-tertiary)' }}>
             {profile.two_factor_enabled ? '✓ Enabled' : 'Off'}
           </span>
         </div>
@@ -505,7 +505,7 @@ export default function ProfilePage() {
                   style={{
                     background: 'rgba(255,255,255,0.03)',
                     border: '1px solid rgba(255,255,255,0.08)',
-                    color: 'rgba(255,255,255,0.4)',
+                    color: 'var(--kt-text-tertiary)',
                   }}
                 />
               </div>
@@ -521,7 +521,7 @@ export default function ProfilePage() {
                   style={{
                     background: 'rgba(255,255,255,0.03)',
                     border: '1px solid rgba(255,255,255,0.08)',
-                    color: 'rgba(255,255,255,0.4)',
+                    color: 'var(--kt-text-tertiary)',
                   }}
                 />
               </div>

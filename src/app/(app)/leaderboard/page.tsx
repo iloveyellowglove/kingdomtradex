@@ -77,7 +77,7 @@ export default function LeaderboardPage() {
             className="flex-1 py-2.5 rounded-lg text-xs font-bold transition"
             style={{
               background: tab === t.key ? 'rgba(255,215,0,0.12)' : 'transparent',
-              color: tab === t.key ? '#FFD700' : 'rgba(255,255,255,0.45)',
+              color: tab === t.key ? 'var(--kt-active-text)' : 'var(--kt-text-secondary)',
               minHeight: 44,
             }}
           >

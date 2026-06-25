@@ -69,8 +69,8 @@ export default function WithdrawPage() {
             onClick={() => setTab(t.key)}
             className="flex-1 py-2.5 rounded-lg text-xs font-bold transition"
             style={{
-              background: tab === t.key ? 'rgba(255,215,0,0.12)' : 'transparent',
-              color: tab === t.key ? '#FFD700' : 'rgba(255,255,255,0.45)',
+              background: tab === t.key ? 'var(--kt-active-bg)' : 'transparent',
+              color: tab === t.key ? 'var(--kt-active-text)' : 'var(--kt-text-tertiary)',
               minHeight: 44,
             }}
           >

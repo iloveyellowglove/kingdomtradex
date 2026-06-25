@@ -58,9 +58,9 @@ export default function MarketTrades({ trades, loading, symbol }: MarketTradesPr
           <table className="w-full" style={{ fontSize: '12px' }}>
             <thead>
               <tr>
-                <th className="text-left p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Price ({pair.quote})</th>
-                <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Amount ({pair.coin})</th>
-                <th className="text-right p-2 font-normal" style={{ color: 'rgba(255,255,255,0.4)' }}>Time</th>
+                <th className="text-left p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Price ({pair.quote})</th>
+                <th className="text-right p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Amount ({pair.coin})</th>
+                <th className="text-right p-2 font-normal" style={{ color: 'var(--kt-text-tertiary)' }}>Time</th>
               </tr>
             </thead>
             <tbody>
@@ -72,7 +72,7 @@ export default function MarketTrades({ trades, loading, symbol }: MarketTradesPr
                   <td className="text-right p-2" style={{ color: 'rgba(255,255,255,0.7)' }}>
                     {parseFloat(t.qty).toFixed(6)}
                   </td>
-                  <td className="text-right p-2" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  <td className="text-right p-2" style={{ color: 'var(--kt-text-tertiary)' }}>
                     {new Date(t.time).toLocaleTimeString('en-US', { hour12: false })}
                   </td>
                 </tr>
