@@ -1,0 +1,72 @@
+# KingdomTradex - Complete Platform Documentation
+
+## Overview
+
+KingdomTradex is a faith-grounded cryptocurrency earnings platform that uses an AI-powered trading engine to generate projected daily returns for depositors. Users deposit cryptocurrency, select a lock tier, and earn daily returns without manual trading.
+
+## Tier System
+
+| Tier | Daily Rate | Duration | Min Deposit | Total Return |
+|------|-----------|----------|-------------|-------------|
+| Silver | 1.0% | 180 days | $50 | 180% |
+| Gold | 1.2% | 270 days | $100 | 324% |
+| Platinum | 1.4% | 360 days | $500 | 504% |
+| Diamond | 1.6% | 540 days | $1000 | 864% |
+
+## KYC Levels
+
+- Level 0: Unverified (signup only, no withdrawals)
+- Level 1: Email Verified (up to $100/week profit withdrawal)
+- Level 2: Authenticator Enabled (up to $1000/week profit withdrawal)
+- Level 3: ID Verified (up to $10000/week profit withdrawal)
+- Level 4: Fully Verified (unlimited profit withdrawal)
+
+## Referral Program
+
+5-level MLM commission structure:
+
+Deposit Bonus: L1 3%, L2 1.5%, L3 0.75%, L4 0.5%, L5 0.25%
+Profit Share: L1 5%, L2 2.5%, L3 1.25%, L4 0.75%, L5 0.5%
+
+## Principal Withdrawal
+
+Early withdrawal (before lock maturity): 25% forfeit + 48-hour cooling period
+Matured withdrawal (after lock completes): No penalty, instant
+
+## Deposit Split
+
+60% auto-converts to XMR and sends to cold storage wallet
+40% retained in USDT for withdrawal payouts, referral commissions, and operations
+
+## Technology Stack
+
+- Frontend: Next.js 14.2, React 18, TypeScript, Tailwind CSS
+- Charts: Recharts (AreaChart, BarChart)
+- Animations: GSAP (ScrollTrigger, power2 easing)
+- Database: Supabase (PostgreSQL with Row Level Security)
+- Authentication: Session-based with CSRF protection
+- Payments: NOWPayments API (invoices, payouts, IPN webhooks)
+- AI Support: DeepSeek V4 Flash (chat agent)
+
+## API Structure
+
+Public: /api/auth/*, /api/waitlist/*
+Authenticated: /api/user/*, /api/deposit/*, /api/withdraw/*, /api/withdrawals/*
+Admin: /api/admin/kyc, /api/admin/settings, /api/admin/withdrawals/*
+Cron: /api/cron/daily-profit, /api/cron/mature-locks, /api/cron/process-withdrawals
+Webhooks: /api/webhooks/nowpayments, /api/webhooks/nowpayments-ipn
+
+## Database Tables
+
+Core: users, deposits, withdrawals, sessions, deposit_locks, lock_tiers
+Referrals: referral_commissions
+KYC: kyc_submissions
+Notifications: notifications
+Trading: ai_trading_profits
+Admin: settings, admin_logs
+Support: support_tickets, ticket_attachments
+Social: social_shares, share_verifications, testimonies
+
+## Compliance
+
+All returns are projected and estimated. Cryptocurrency investments carry risk. This platform is not a registered securities exchange or investment advisor.

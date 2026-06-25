@@ -1,0 +1,31 @@
+# KingdomTradex
+
+Faith-grounded crypto earnings platform
+
+> KingdomTradex is an AI-powered cryptocurrency trading platform that generates projected daily returns for depositors. Users deposit crypto, select a lock tier, and earn daily returns managed by an autonomous AI trading engine.
+
+## Key Features
+
+- **AI Trading Engine**: Autonomous multi-exchange arbitrage and momentum trading
+- **Lock Tiers**: Silver (1.0%/day, 180 days, min $50), Gold (1.2%/day, 270 days, min $100), Platinum (1.4%/day, 360 days, min $500), Diamond (1.6%/day, 540 days, min $1000)
+- **Referral Program**: 5-level commission structure (deposit bonus: 3%/1.5%/0.75%/0.5%/0.25%, profit share: 5%/2.5%/1.25%/0.75%/0.5%)
+- **KYC Verification**: 4-tier system (Email, Authenticator, ID, Proof of Address)
+- **Automated Withdrawals**: Low-fee crypto payouts to external wallets
+- **Deposit Split**: 60% cold storage (XMR), 40% retained for operations
+- **Earnings**: Daily projected returns, lock tiers 180-540 days
+
+## Technology
+
+- Frontend: Next.js 14.2, React 18, TypeScript, Tailwind CSS
+- Charts: Recharts
+- Animations: GSAP
+- Database: Supabase (PostgreSQL)
+- Payments: NOWPayments
+- AI: DeepSeek (support agent)
+
+## Links
+
+- Website: https://kingdomtradex.vercel.app
+- Login: https://kingdomtradex.vercel.app/login
+- Register: https://kingdomtradex.vercel.app/register
+- Calculator: https://kingdomtradex.vercel.app/calculator
