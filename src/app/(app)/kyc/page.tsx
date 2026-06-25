@@ -1,368 +1,158 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import KycStatusBadge from '@/components/kyc/KycStatusBadge';
+import { useState, useEffect } from 'react';
+const LEVELS = [
+  { level: 0, name: 'Sign Up', desc: 'Create your account', unlocks: 'No withdrawals', icon: '👤', action: 'Complete' },
+  { level: 1, name: 'Email Verified', desc: 'Verify your email address', unlocks: 'Withdraw up to $100/week', icon: '📧', action: 'Verify Email' },
+  { level: 2, name: 'Authenticator', desc: 'Setup 2FA authenticator app', unlocks: 'Withdraw up to $1,000/week', icon: '🔐', action: 'Setup 2FA' },
+  { level: 3, name: 'ID Verified', desc: 'Upload government ID + selfie', unlocks: 'Withdraw up to $10,000/week', icon: '🪪', action: 'Upload ID' },
+  { level: 4, name: 'Fully Verified', desc: 'Upload proof of address', unlocks: 'Unlimited withdrawals', icon: '📄', action: 'Upload Proof' },
+];
 
 export default function KycPage() {
-  const [kycLevel, setKycLevel] = useState(0);
-  const [kycStatus, setKycStatus] = useState<string>('unverified');
-  const [rejectionReason, setRejectionReason] = useState<string | null>(null);
-  const [reviewedAt, setReviewedAt] = useState<string | null>(null);
-  const [submittedAt, setSubmittedAt] = useState<string | null>(null);
+  const [currentLevel, setCurrentLevel] = useState(0);
   const [loading, setLoading] = useState(true);
-
-  // Upload state
-  const [idDocFile, setIdDocFile] = useState<File | null>(null);
-  const [selfieFile, setSelfieFile] = useState<File | null>(null);
-  const [idDocPreview, setIdDocPreview] = useState<string | null>(null);
-  const [selfiePreview, setSelfiePreview] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const csrfTokenRef = useRef('');
+  const [idDocFile, setIdDocFile] = useState<File | null>(null);
+  const [selfieFile, setSelfieFile] = useState<File | null>(null);
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetch('/api/csrf')
-      .then(r => r.json())
-      .then(d => { csrfTokenRef.current = d.csrfToken || ''; })
-      .catch(() => {});
-
     async function load() {
       try {
-        const res = await fetch('/api/profile/kyc');
+        const res = await fetch('/api/user/balance');
         const data = await res.json();
-        if (!data.error) {
-          // Map status to level
-          const status = data.status || 'unverified';
-          setKycStatus(status);
-          setRejectionReason(data.rejectionReason || null);
-          setReviewedAt(data.reviewedAt || null);
-          setSubmittedAt(data.submittedAt || null);
-
-          if (status === 'verified') setKycLevel(2);
-          else if (status === 'pending') setKycLevel(1); // at least email verified to submit
-          else if (status === 'unverified') {
-            // Check actual kyc_level from balance endpoint
-            try {
-              const bRes = await fetch('/api/user/balance');
-              const bData = await bRes.json();
-              if (bData.success) setKycLevel(bData.kycLevel ?? 0);
-            } catch { /* ignore */ }
-          }
-        }
+        if (data.success) setCurrentLevel(data.kycLevel ?? 0);
       } catch { /* ignore */ }
       setLoading(false);
     }
     load();
   }, []);
 
-  function handleFileSelect(type: 'id' | 'selfie', file: File | null) {
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setError('File must be under 5MB.');
-      return;
-    }
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-      setError('Only JPG, PNG, and WebP images are accepted.');
-      return;
-    }
-
-    const url = URL.createObjectURL(file);
-    if (type === 'id') {
-      setIdDocFile(file);
-      setIdDocPreview(url);
-    } else {
-      setSelfieFile(file);
-      setSelfiePreview(url);
-    }
-    setError('');
+  function handleFile(setter: (f: File | null) => void) {
+    return (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) { setError('File must be under 5MB.'); return; }
+      setter(file);
+      setError('');
+    };
   }
 
-  async function handleSubmit() {
-    if (!idDocFile || !selfieFile) {
-      setError('Please upload both your ID document and a selfie.');
-      return;
+  async function handleAction(level: number) {
+    setError(''); setSuccess('');
+    if (level === 1) {
+      setSubmitting(true);
+      try {
+        const res = await fetch('/api/auth/2fa/send-otp', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) setSuccess('Verification email sent. Check your inbox.');
+        else setError(data.error || 'Failed to send email.');
+      } catch { setError('Network error.'); }
+      setSubmitting(false);
+    } else if (level === 2) {
+      window.location.href = '/settings';
+    } else if (level === 3 && idDocFile && selfieFile) {
+      setSubmitting(true);
+      try {
+        const fd1 = new FormData(); fd1.append('file', idDocFile); fd1.append('type', 'document');
+        const r1 = await fetch('/api/profile/kyc/upload', { method: 'POST', body: fd1 });
+        const d1 = await r1.json();
+        if (!d1.success) { setError(d1.error || 'Upload failed'); setSubmitting(false); return; }
+        const fd2 = new FormData(); fd2.append('file', selfieFile); fd2.append('type', 'selfie');
+        const r2 = await fetch('/api/profile/kyc/upload', { method: 'POST', body: fd2 });
+        const d2 = await r2.json();
+        if (!d2.success) { setError(d2.error || 'Upload failed'); setSubmitting(false); return; }
+        const r3 = await fetch('/api/profile/kyc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_type: 'national_id', document_url: d1.url, selfie_url: d2.url }) });
+        const d3 = await r3.json();
+        if (d3.success) { setSuccess('ID submitted for review. Check back in 24-48 hours.'); setCurrentLevel(2.5 as number); }
+        else setError(d3.error || 'Submission failed.');
+      } catch { setError('Network error.'); }
+      setSubmitting(false);
+    } else if (level === 4 && proofFile) {
+      setSubmitting(true);
+      try {
+        const fd = new FormData(); fd.append('file', proofFile); fd.append('type', 'proof_of_address');
+        const r = await fetch('/api/profile/kyc/upload', { method: 'POST', body: fd });
+        const d = await r.json();
+        if (d.success) { setSuccess('Proof of address submitted. Review takes 24-48 hours.'); }
+        else setError(d.error || 'Upload failed.');
+      } catch { setError('Network error.'); }
+      setSubmitting(false);
     }
-    setSubmitting(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      // Upload ID document
-      const idForm = new FormData();
-      idForm.append('file', idDocFile);
-      idForm.append('type', 'document');
-      const idRes = await fetch('/api/profile/kyc/upload', {
-        method: 'POST',
-        headers: { 'x-csrf-token': csrfTokenRef.current },
-        body: idForm,
-      });
-      const idData = await idRes.json();
-      if (!idData.success) {
-        setError(idData.error || 'Failed to upload ID document.');
-        setSubmitting(false);
-        return;
-      }
-
-      // Upload selfie
-      const selfieForm = new FormData();
-      selfieForm.append('file', selfieFile);
-      selfieForm.append('type', 'selfie');
-      const selfieRes = await fetch('/api/profile/kyc/upload', {
-        method: 'POST',
-        headers: { 'x-csrf-token': csrfTokenRef.current },
-        body: selfieForm,
-      });
-      const selfieData = await selfieRes.json();
-      if (!selfieData.success) {
-        setError(selfieData.error || 'Failed to upload selfie.');
-        setSubmitting(false);
-        return;
-      }
-
-      // Submit KYC
-      const kycRes = await fetch('/api/profile/kyc', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-csrf-token': csrfTokenRef.current,
-        },
-        body: JSON.stringify({
-          document_type: 'national_id',
-          document_url: idData.url,
-          selfie_url: selfieData.url,
-        }),
-      });
-      const kycData = await kycRes.json();
-      if (kycData.success || kycData.status === 'pending') {
-        setKycStatus('pending');
-        setKycLevel(1);
-        setSuccess('Your documents have been submitted for review. This typically takes 24-48 hours.');
-        setIdDocFile(null);
-        setSelfieFile(null);
-        setIdDocPreview(null);
-        setSelfiePreview(null);
-      } else {
-        setError(kycData.error || 'Failed to submit KYC.');
-      }
-    } catch {
-      setError('Network error. Please try again.');
-    }
-    setSubmitting(false);
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#FFD700] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-[#F0B90B] border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
-    <div className="py-4 max-w-lg mx-auto px-4">
-      <h2 className="text-xl font-bold text-white mb-1">Identity Verification</h2>
-      <p className="text-sm text-white/40 mb-6">Verify your identity to unlock full platform features</p>
+    <div className="py-4 max-w-lg mx-auto px-4" style={{ background: '#0B0E11', minHeight: '100vh' }}>
+      <h2 className="text-xl font-bold text-[#EAECEF] mb-1">KYC Verification</h2>
+      <p className="text-sm text-[#848E9C] mb-6">Complete all levels to unlock full platform access</p>
 
-      {/* Status card */}
-      <div
-        className="p-5 rounded-xl mb-6"
-        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
-      >
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-white">Verification Status</h3>
-          <KycStatusBadge
-            level={kycLevel}
-            status={kycStatus}
-            rejectionReason={rejectionReason}
-            reviewedAt={reviewedAt}
-            size="md"
-          />
+      {error && <div className="mb-4 p-3 rounded-lg text-sm text-[#F6465D]" style={{ background: 'rgba(246,70,93,0.1)', border: '1px solid rgba(246,70,93,0.2)' }}>{error}</div>}
+      {success && <div className="mb-4 p-3 rounded-lg text-sm text-[#0ECB81]" style={{ background: 'rgba(14,203,129,0.1)', border: '1px solid rgba(14,203,129,0.2)' }}>{success}</div>}
+
+      {/* Progress bar */}
+      <div className="mb-6">
+        <div className="flex justify-between text-xs text-[#5E6673] mb-2">
+          {LEVELS.map(l => <span key={l.level} style={{ color: currentLevel >= l.level ? '#0ECB81' : '#5E6673' }}>L{l.level}</span>)}
         </div>
-
-        {/* KYC level explanation */}
-        <div className="space-y-2 mt-4">
-          <div className="flex items-center gap-3 text-sm">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-              kycLevel >= 1 ? 'text-[#4CAF50]' : 'text-white/30'
-            }`} style={{ background: kycLevel >= 1 ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.05)' }}>
-              {kycLevel >= 1 ? '✓' : '1'}
-            </div>
-            <div>
-              <span className={kycLevel >= 1 ? 'text-[#4CAF50]' : 'text-white/50'}>Level 1 - Email Verification</span>
-              <p className="text-xs text-white/30">Weekly profit withdrawals up to $5,000</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-              kycLevel >= 2 ? 'text-[#4CAF50]' : 'text-white/30'
-            }`} style={{ background: kycLevel >= 2 ? 'rgba(76,175,80,0.15)' : 'rgba(255,255,255,0.05)' }}>
-              {kycLevel >= 2 ? '✓' : '2'}
-            </div>
-            <div>
-              <span className={kycLevel >= 2 ? 'text-[#4CAF50]' : 'text-white/50'}>Level 2 - ID + Selfie Verification</span>
-              <p className="text-xs text-white/30">Daily profit withdrawals, no limits</p>
-            </div>
-          </div>
+        <div className="h-2 rounded-full" style={{ background: '#2B3139' }}>
+          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${(currentLevel / 4) * 100}%`, background: '#0ECB81' }} />
         </div>
-
-        {/* Timestamps */}
-        {submittedAt && (
-          <p className="text-xs text-white/30 mt-3 pt-3 border-t border-white/5">
-            Submitted: {new Date(submittedAt).toLocaleString()}
-          </p>
-        )}
       </div>
 
-      {/* Error/Success messages */}
-      {error && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-red-400" style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)' }}>
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-green-400" style={{ background: 'rgba(76,175,80,0.1)', border: '1px solid rgba(76,175,80,0.2)' }}>
-          {success}
-        </div>
-      )}
-
-      {/* Upload form - show if unverified or rejected */}
-      {(kycStatus === 'unverified' || kycStatus === 'rejected') && (
-        <div
-          className="p-5 rounded-xl"
-          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
-        >
-          <h3 className="text-sm font-semibold text-white mb-4">
-            {kycStatus === 'rejected' ? 'Resubmit Verification' : 'Submit Identity Verification'}
-          </h3>
-
-          {kycStatus === 'rejected' && rejectionReason && (
-            <div className="mb-4 p-3 rounded-lg text-xs text-red-400" style={{ background: 'rgba(244,67,54,0.08)', border: '1px solid rgba(244,67,54,0.15)' }}>
-              <span className="font-semibold">Previous rejection reason:</span> {rejectionReason}
-            </div>
-          )}
-
-          {/* ID upload */}
-          <div className="mb-4">
-            <label className="block text-sm text-white/60 font-medium mb-2">Government ID (Front)</label>
-            <div
-              className="relative rounded-lg border-2 border-dashed p-4 text-center cursor-pointer transition hover:border-[#FFD700]/50"
-              style={{
-                borderColor: idDocPreview ? '#4CAF50' : 'rgba(255,255,255,0.12)',
-                background: idDocPreview ? 'rgba(76,175,80,0.04)' : 'rgba(255,255,255,0.02)',
-                minHeight: 120,
-              }}
-              onClick={() => document.getElementById('kyc-id-input')?.click()}
-            >
-              {idDocPreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={idDocPreview} alt="ID preview" className="max-h-48 mx-auto rounded-lg object-contain" />
-              ) : (
-                <div className="py-6">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto mb-2 text-white/20">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                  </svg>
-                  <p className="text-sm text-white/40">Tap to upload ID document</p>
-                  <p className="text-xs text-white/25 mt-1">JPG, PNG, or WebP · Max 5MB</p>
+      {/* Level cards */}
+      <div className="space-y-3">
+        {LEVELS.filter(l => l.level > 0).map(l => {
+          const isComplete = currentLevel >= l.level;
+          const isNext = currentLevel + 1 === l.level;
+          return (
+            <div key={l.level} className="p-4 rounded-xl" style={{
+              background: isComplete ? 'rgba(14,203,129,0.04)' : isNext ? 'rgba(240,185,11,0.04)' : '#1E2329',
+              border: isComplete ? '1px solid rgba(14,203,129,0.2)' : isNext ? '1px solid rgba(240,185,11,0.2)' : '1px solid #2B3139',
+            }}>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-xl">{l.icon}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-[#EAECEF]">{l.name}</span>
+                    {isComplete && <span className="text-xs text-[#0ECB81] font-bold">✓ Complete</span>}
+                    {isNext && <span className="text-xs text-[#F0B90B] font-bold">Next Step</span>}
+                  </div>
+                  <p className="text-xs text-[#848E9C]">{l.desc}</p>
+                </div>
+              </div>
+              <p className="text-xs text-[#5E6673] mb-2">{l.unlocks}</p>
+              {isNext && (
+                <div>
+                  {(l.level === 3) && (
+                    <div className="space-y-2 mb-3">
+                      <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile(setIdDocFile)} className="w-full text-xs text-[#EAECEF]" />
+                      {idDocFile && <p className="text-[10px] text-[#0ECB81]">ID: {idDocFile.name}</p>}
+                      <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFile(setSelfieFile)} className="w-full text-xs text-[#EAECEF]" />
+                      {selfieFile && <p className="text-[10px] text-[#0ECB81]">Selfie: {selfieFile.name}</p>}
+                    </div>
+                  )}
+                  {(l.level === 4) && (
+                    <div className="mb-3">
+                      <input type="file" accept="image/jpeg,image/png,image/webp,.pdf" onChange={handleFile(setProofFile)} className="w-full text-xs text-[#EAECEF]" />
+                      {proofFile && <p className="text-[10px] text-[#0ECB81]">{proofFile.name}</p>}
+                    </div>
+                  )}
+                  <button onClick={() => handleAction(l.level)} disabled={submitting}
+                    className="w-full py-2.5 rounded-lg text-sm font-bold transition disabled:opacity-40"
+                    style={{ background: '#F0B90B', color: '#0B0E11', minHeight: 44 }}>
+                    {submitting ? 'Submitting...' : l.action}
+                  </button>
                 </div>
               )}
-              <input
-                id="kyc-id-input"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={e => handleFileSelect('id', e.target.files?.[0] || null)}
-              />
             </div>
-          </div>
-
-          {/* Selfie upload */}
-          <div className="mb-4">
-            <label className="block text-sm text-white/60 font-medium mb-2">Selfie with ID</label>
-            <div
-              className="relative rounded-lg border-2 border-dashed p-4 text-center cursor-pointer transition hover:border-[#FFD700]/50"
-              style={{
-                borderColor: selfiePreview ? '#4CAF50' : 'rgba(255,255,255,0.12)',
-                background: selfiePreview ? 'rgba(76,175,80,0.04)' : 'rgba(255,255,255,0.02)',
-                minHeight: 120,
-              }}
-              onClick={() => document.getElementById('kyc-selfie-input')?.click()}
-            >
-              {selfiePreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={selfiePreview} alt="Selfie preview" className="max-h-48 mx-auto rounded-lg object-contain" />
-              ) : (
-                <div className="py-6">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto mb-2 text-white/20">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                  </svg>
-                  <p className="text-sm text-white/40">Tap to upload selfie</p>
-                  <p className="text-xs text-white/25 mt-1">Hold your ID next to your face</p>
-                </div>
-              )}
-              <input
-                id="kyc-selfie-input"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={e => handleFileSelect('selfie', e.target.files?.[0] || null)}
-              />
-            </div>
-          </div>
-
-          {/* Submit */}
-          <button
-            onClick={handleSubmit}
-            disabled={submitting || !idDocFile || !selfieFile}
-            className="w-full py-3.5 rounded-lg text-sm font-bold transition disabled:opacity-40"
-            style={{ background: '#FFD700', color: '#000', minHeight: 48 }}
-          >
-            {submitting ? 'Uploading & Submitting...' : 'Submit for Verification'}
-          </button>
-          <p className="text-xs text-white/30 mt-2 text-center">Review takes 24-48 hours. You&apos;ll be notified when complete.</p>
-        </div>
-      )}
-
-      {/* Pending state */}
-      {kycStatus === 'pending' && (
-        <div
-          className="p-5 rounded-xl text-center"
-          style={{ background: 'rgba(255,193,7,0.06)', border: '1px solid rgba(255,193,7,0.15)' }}
-        >
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(255,193,7,0.1)' }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFC107" strokeWidth="2">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </div>
-          <h3 className="text-lg font-bold text-[#FFC107] mb-2">Under Review</h3>
-          <p className="text-sm text-white/40">Your identity documents are being reviewed by our team.</p>
-          <p className="text-xs text-white/25 mt-1">This typically takes 24-48 hours.</p>
-          {submittedAt && (
-            <p className="text-xs text-white/30 mt-3">Submitted: {new Date(submittedAt).toLocaleString()}</p>
-          )}
-        </div>
-      )}
-
-      {/* Verified state */}
-      {kycStatus === 'verified' && (
-        <div
-          className="p-5 rounded-xl text-center"
-          style={{ background: 'rgba(76,175,80,0.06)', border: '1px solid rgba(76,175,80,0.15)' }}
-        >
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(76,175,80,0.1)' }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" strokeWidth="2.5">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-          </div>
-          <h3 className="text-lg font-bold text-[#4CAF50] mb-2">Identity Verified</h3>
-          <p className="text-sm text-white/40">You have full access to all platform features.</p>
-          {reviewedAt && (
-            <p className="text-xs text-white/30 mt-2">Verified: {new Date(reviewedAt).toLocaleString()}</p>
-          )}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }
