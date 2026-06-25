@@ -156,7 +156,7 @@ export async function processCompletedDeposit(params: {
       Number(dailyRate),
     );
   } else {
-    // Fallback: deposit without tier — use a default 180-day silver lock
+    // Fallback: deposit without tier - use a default 180-day silver lock
     const { data: tierRow } = await supabase
       .from('lock_tiers')
       .select('daily_rate, lock_days')

@@ -110,7 +110,7 @@ export async function distributeCommissions(
       break;
     }
 
-    // Commission is created as 'pending' — it will be confirmed when the deposit matures
+    // Commission is created as 'pending' - it will be confirmed when the deposit matures
     currentUserId = uplineUser.id;
   }
 }

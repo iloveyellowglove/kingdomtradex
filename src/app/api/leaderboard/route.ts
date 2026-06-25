@@ -6,7 +6,7 @@ export async function GET() {
   // Leaderboard is semi-public: authenticated users see their own rank; unauthenticated see top list
   const supabase = createServiceClient();
 
-  // Try to refresh the cache (non-blocking — cache write happens via cron)
+  // Try to refresh the cache (non-blocking - cache write happens via cron)
   // Fetch from leaderboard_cache, fallback to live query
   const { data: cached } = await supabase
     .from('leaderboard_cache')
@@ -74,7 +74,7 @@ export async function GET() {
       .map((e, i) => ({ ...e, rank: i + 1 }));
   }
 
-  // Check if current user is logged in — find their rank
+  // Check if current user is logged in - find their rank
   let currentUserRank: { earnings: number | null; referrals: number | null } = { earnings: null, referrals: null };
   const token = cookies().get('__Host-kingdom_session')?.value;
   if (token && token.length === 64) {

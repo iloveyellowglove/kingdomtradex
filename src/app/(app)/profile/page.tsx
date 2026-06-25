@@ -358,7 +358,7 @@ export default function ProfilePage() {
         <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
           <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Member Since</p>
           <p className="text-sm font-bold text-white">
-            {profile.created_at ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '—'}
+            {profile.created_at ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '-'}
           </p>
         </div>
         <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -443,7 +443,7 @@ export default function ProfilePage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* LEFT COLUMN — Avatar + Profile Fields */}
+        {/* LEFT COLUMN - Avatar + Profile Fields */}
         <div>
           {/* Avatar */}
           <div className="p-6 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -653,7 +653,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN — KYC Verification */}
+        {/* RIGHT COLUMN - KYC Verification */}
         <div>
           <div className="p-6 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
             <h2 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">KYC Verification</h2>

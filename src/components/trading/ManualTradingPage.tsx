@@ -173,7 +173,7 @@ export default function ManualTradingPage({
         border: '2px solid #8b5cf6',
       }}>
         <p className="mb-0" style={{ fontSize: '14px', color: '#c4b5fd', fontWeight: 500 }}>
-          MANUAL TRADING MODE — Trade with real market prices. Your deposited balance is shown below. Profits or losses here do not affect your balance.
+          MANUAL TRADING MODE - Trade with real market prices. Your deposited balance is shown below. Profits or losses here do not affect your balance.
         </p>
       </div>
 

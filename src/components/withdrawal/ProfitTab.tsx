@@ -174,7 +174,7 @@ export default function ProfitTab() {
         </div>
         <div>
           <p className="text-sm font-semibold text-white">
-            {kycLevel >= 2 ? 'KYC Level 2 — ID Verified' : kycLevel >= 1 ? 'KYC Level 1 — Email Verified' : 'KYC Level 0 — Unverified'}
+            {kycLevel >= 2 ? 'KYC Level 2 - ID Verified' : kycLevel >= 1 ? 'KYC Level 1 - Email Verified' : 'KYC Level 0 - Unverified'}
           </p>
           <p className="text-xs text-white/50">
             {kycLevel >= 2

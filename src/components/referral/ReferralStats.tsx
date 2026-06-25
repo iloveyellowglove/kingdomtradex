@@ -152,7 +152,7 @@ export default function ReferralStats() {
           </div>
         ))}
         <div className="mt-3 pt-3 border-t border-white/5 text-[10px] text-white/30">
-          <span>Rates — Deposit: 3%/1.5%/0.75%/0.5%/0.25% · Profit: 5%/2.5%/1.25%/0.75%/0.5%</span>
+          <span>Rates - Deposit: 3%/1.5%/0.75%/0.5%/0.25% · Profit: 5%/2.5%/1.25%/0.75%/0.5%</span>
         </div>
       </div>
     </div>

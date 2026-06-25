@@ -19,7 +19,7 @@ export default function CryptoMarquee() {
         background: 'linear-gradient(to left, #0e0b1a 0%, transparent 100%)',
       }} />
 
-      {/* Top row — scroll left */}
+      {/* Top row - scroll left */}
       <div className="absolute left-0 top-[18%] w-full overflow-hidden" style={{ height: 80 }}>
         <div className="flex gap-6 absolute" style={{ animation: 'scrollLeft 30s linear infinite', width: 'max-content' }}>
           {[...COINS, ...COINS, ...COINS, ...COINS, ...COINS, ...COINS].map((coin, i) => (
@@ -40,7 +40,7 @@ export default function CryptoMarquee() {
         </div>
       </div>
 
-      {/* Bottom row — scroll right */}
+      {/* Bottom row - scroll right */}
       <div className="absolute left-0 bottom-[18%] w-full overflow-hidden" style={{ height: 80 }}>
         <div className="flex gap-6 absolute" style={{ animation: 'scrollRight 35s linear infinite', width: 'max-content' }}>
           {[...COINS, ...COINS, ...COINS, ...COINS, ...COINS, ...COINS].map((coin, i) => (

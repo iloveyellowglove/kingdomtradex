@@ -22,10 +22,10 @@ export default async function ReferralLandingPage({ params }: Props) {
     .limit(1);
 
   if (!data || data.length === 0) {
-    // Invalid code — redirect to register without ref
+    // Invalid code - redirect to register without ref
     redirect('/register');
   }
 
-  // Valid code — redirect to register with ref param
+  // Valid code - redirect to register with ref param
   redirect(`/register?ref=${code}`);
 }

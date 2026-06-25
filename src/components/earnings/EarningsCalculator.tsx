@@ -35,7 +35,7 @@ export default function EarningsCalculator() {
     const total = daily * tier.days;
     const totalReturn = amount + total;
 
-    // Referral estimate (profit share only — 5% of referred users' profits at L1)
+    // Referral estimate (profit share only - 5% of referred users' profits at L1)
     const refProfitPerUser = referralAvgDeposit * 0.015 * 30; // monthly profit per referral
     const refMonthlyCommission = refProfitPerUser * referralCount * 0.05; // 5% of their profit
 
@@ -278,7 +278,7 @@ export default function EarningsCalculator() {
         className="block w-full py-4 rounded-xl text-center text-sm font-bold transition no-underline"
         style={{ background: '#FFD700', color: '#000', minHeight: 48 }}
       >
-        Start Earning — Deposit Now
+        Start Earning - Deposit Now
       </Link>
       <p className="text-center text-[10px] text-white/25 mt-2">
         Projected earnings are estimates based on current rates. Actual returns may vary.

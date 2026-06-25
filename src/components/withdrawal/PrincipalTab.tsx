@@ -138,7 +138,7 @@ export default function PrincipalTab() {
           </svg>
         </div>
         <div>
-          <p className="text-sm font-semibold text-[#FFD700]">Platform Credit — Non-withdrawable</p>
+          <p className="text-sm font-semibold text-[#FFD700]">Platform Credit - Non-withdrawable</p>
           <p className="text-xs text-white/50">
             Your ${signupCredit.toFixed(2)} signup credit is provided by the platform and cannot be withdrawn.
             Only deposited funds can be withdrawn as principal.
@@ -221,7 +221,7 @@ export default function PrincipalTab() {
 
                     {!isMatured && (
                       <div className="mt-3 p-3 rounded-lg text-xs" style={{ background: 'rgba(244,67,54,0.08)', border: '1px solid rgba(244,67,54,0.2)' }}>
-                        <p className="text-red-400 font-semibold mb-1">⚠️ Early Withdrawal — 25% Forfeit</p>
+                        <p className="text-red-400 font-semibold mb-1">⚠️ Early Withdrawal - 25% Forfeit</p>
                         <div className="flex justify-between text-red-300/70">
                           <span>Original deposit:</span>
                           <span>${d.amount.toFixed(2)}</span>

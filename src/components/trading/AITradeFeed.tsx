@@ -114,7 +114,7 @@ export default function AITradeFeed() {
             onClick={jumpToLive}
             className="sticky top-2 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full text-xs font-bold shadow-lg"
             style={{ background: '#F0B90B', color: '#0B0E11' }}>
-            ↓ New trades — jump to live
+            ↓ New trades - jump to live
           </button>
         )}
 

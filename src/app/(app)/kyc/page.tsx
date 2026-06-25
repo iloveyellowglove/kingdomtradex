@@ -189,7 +189,7 @@ export default function KycPage() {
               {kycLevel >= 1 ? '✓' : '1'}
             </div>
             <div>
-              <span className={kycLevel >= 1 ? 'text-[#4CAF50]' : 'text-white/50'}>Level 1 — Email Verification</span>
+              <span className={kycLevel >= 1 ? 'text-[#4CAF50]' : 'text-white/50'}>Level 1 - Email Verification</span>
               <p className="text-xs text-white/30">Weekly profit withdrawals up to $5,000</p>
             </div>
           </div>
@@ -200,7 +200,7 @@ export default function KycPage() {
               {kycLevel >= 2 ? '✓' : '2'}
             </div>
             <div>
-              <span className={kycLevel >= 2 ? 'text-[#4CAF50]' : 'text-white/50'}>Level 2 — ID + Selfie Verification</span>
+              <span className={kycLevel >= 2 ? 'text-[#4CAF50]' : 'text-white/50'}>Level 2 - ID + Selfie Verification</span>
               <p className="text-xs text-white/30">Daily profit withdrawals, no limits</p>
             </div>
           </div>
@@ -226,7 +226,7 @@ export default function KycPage() {
         </div>
       )}
 
-      {/* Upload form — show if unverified or rejected */}
+      {/* Upload form - show if unverified or rejected */}
       {(kycStatus === 'unverified' || kycStatus === 'rejected') && (
         <div
           className="p-5 rounded-xl"

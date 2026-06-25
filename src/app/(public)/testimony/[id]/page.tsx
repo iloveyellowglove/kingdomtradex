@@ -71,7 +71,7 @@ export default async function TestimonyPage({ params, searchParams }: Props) {
           <span className="text-emerald-400">${amountDisplay}</span>
         </h1>
         <p className="text-slate-300 text-lg">
-          from KingdomTrade — a faith-driven investment platform for pastors and
+          from KingdomTrade - a faith-driven investment platform for pastors and
           congregations.
         </p>
         <Link

@@ -1,5 +1,5 @@
 // ============================================================================
-// Withdrawal Service — business logic for profit/principal withdrawals,
+// Withdrawal Service - business logic for profit/principal withdrawals,
 // fee estimation via NOWPayments, auto-withdrawal scheduling.
 // ============================================================================
 
@@ -77,7 +77,7 @@ export async function checkWithdrawalEligibility(userId: number): Promise<Eligib
     };
   }
 
-  // Frequency gate — check last withdrawal
+  // Frequency gate - check last withdrawal
   const { data: lastWd } = await supabase
     .from('withdrawals')
     .select('request_time, status')

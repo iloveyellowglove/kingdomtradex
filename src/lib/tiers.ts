@@ -1,5 +1,5 @@
 // ============================================================================
-// Single Source of Truth — Lock Tier Configuration
+// Single Source of Truth - Lock Tier Configuration
 // Import from here in ALL components. No hardcoded tier values anywhere else.
 // ============================================================================
 

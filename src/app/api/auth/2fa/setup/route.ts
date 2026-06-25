@@ -43,7 +43,7 @@ export async function POST() {
   const setup = generateTOTPSetup(user.email);
   const hashedBackups = hashBackupCodes(setup.backupCodes);
 
-  // Store secret + hashed backup codes (but don't enable yet — wait for verify step)
+  // Store secret + hashed backup codes (but don't enable yet - wait for verify step)
   await supabase
     .from('users')
     .update({
@@ -65,6 +65,6 @@ export async function POST() {
     success: true,
     secret: setup.secret,
     otpauthUri: setup.otpauthUri,
-    backupCodes: setup.backupCodes,   // plaintext — show once
+    backupCodes: setup.backupCodes,   // plaintext - show once
   });
 }

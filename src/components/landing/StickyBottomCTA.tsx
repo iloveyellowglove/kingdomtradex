@@ -32,7 +32,7 @@ export default function StickyBottomCTA() {
         className="block w-full py-3 rounded-xl text-center text-sm font-bold no-underline"
         style={{ background: '#FFD700', color: '#000' }}
       >
-        Start Earning — Get Free Credits
+        Start Earning - Get Free Credits
       </a>
       <style jsx>{`
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }

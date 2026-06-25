@@ -135,7 +135,7 @@ export default function LockTierSelector({ amount, selectedTier, onSelect }: Pro
                 {tier.lock_days} days
               </div>
 
-              {/* Daily rate — hero number */}
+              {/* Daily rate - hero number */}
               <div className="flex items-baseline gap-1 mt-4">
                 <span
                   className="text-3xl font-bold"

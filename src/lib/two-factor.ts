@@ -1,5 +1,5 @@
 // ============================================================================
-// 2FA Service — TOTP authenticator + Email OTP
+// 2FA Service - TOTP authenticator + Email OTP
 // Uses Node.js crypto (no external deps). RFC 6238 / RFC 4226 compliant.
 // ============================================================================
 

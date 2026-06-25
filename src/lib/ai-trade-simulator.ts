@@ -1,5 +1,5 @@
 // ============================================================================
-// AI Trade Simulator v2 — High-speed realistic trade feed
+// AI Trade Simulator v2 - High-speed realistic trade feed
 // 0.5-1.5s intervals, burst mode, weighted distributions
 // ============================================================================
 

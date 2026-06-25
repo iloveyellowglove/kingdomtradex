@@ -1,5 +1,5 @@
 // ============================================================================
-// Shared Chart Theme — all charts across the platform use these constants
+// Shared Chart Theme - all charts across the platform use these constants
 // ============================================================================
 
 import React from 'react';

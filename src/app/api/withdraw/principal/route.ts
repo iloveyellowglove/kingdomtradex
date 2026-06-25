@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     }, { status: 400 });
   }
 
-  // Check for existing lock — warn about forfeit
+  // Check for existing lock - warn about forfeit
   const { data: lock } = await supabase
     .from('deposit_locks')
     .select('id, amount, tier, lock_days, unlocks_at, status')

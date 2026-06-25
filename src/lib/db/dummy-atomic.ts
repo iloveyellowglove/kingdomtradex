@@ -1,4 +1,4 @@
-// INTERNAL DUMMY BALANCE – DO NOT USE FOR REAL FUNDS OR EXPOSE TO FRONTEND
+// INTERNAL DUMMY BALANCE - DO NOT USE FOR REAL FUNDS OR EXPOSE TO FRONTEND
 // These helpers operate on users.dummy_balance, which is never shown to the user.
 // Manual trading actions (buy/close/reset) affect only the dummy balance.
 // The user's real balance (display_balance) is never touched by these functions.

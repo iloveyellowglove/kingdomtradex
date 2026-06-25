@@ -24,7 +24,7 @@ function getClientIp(request: NextRequest): string {
 }
 
 function isIpAllowed(ip: string, allowedIps: string[]): boolean {
-  if (allowedIps.length === 0) return true; // not configured — allow all (backwards compatible)
+  if (allowedIps.length === 0) return true; // not configured - allow all (backwards compatible)
   return allowedIps.some((allowed) => {
     if (allowed.includes('/')) {
       // Basic CIDR check

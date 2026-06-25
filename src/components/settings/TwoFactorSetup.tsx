@@ -249,7 +249,7 @@ export default function TwoFactorSetup() {
                   {backupCopied ? 'Copied!' : 'Copy All'}
                 </button>
               </div>
-              <p className="text-[10px] text-white/30 mb-2">Save these — each code can be used once if you lose access to your authenticator.</p>
+              <p className="text-[10px] text-white/30 mb-2">Save these - each code can be used once if you lose access to your authenticator.</p>
               <div className="grid grid-cols-2 gap-1">
                 {setup.backupCodes.map((code, i) => (
                   <code key={i} className="text-xs font-mono text-white/60 bg-white/5 px-2 py-1 rounded select-all">

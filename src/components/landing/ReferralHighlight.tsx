@@ -14,7 +14,7 @@ export default function ReferralHighlight() {
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="text-center mb-10">
           <h2 className="text-[22px] sm:text-[28px] font-semibold text-[#EAECEF] mb-2">Earn More by Sharing</h2>
-          <p className="text-sm text-[#848E9C] max-w-[500px] mx-auto">Earn commissions from 5 levels of referrals — every time they deposit and earn.</p>
+          <p className="text-sm text-[#848E9C] max-w-[500px] mx-auto">Earn commissions from 5 levels of referrals - every time they deposit and earn.</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10 max-w-[900px] mx-auto items-start">

@@ -2,7 +2,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Pastors Directory — KingdomTrade',
+  title: 'Pastors Directory - KingdomTrade',
   description: 'Meet the faith leaders building wealth with KingdomTrade.',
 };
 
@@ -49,7 +49,7 @@ export default async function PastorsPage() {
   const pastorEntries: PastorEntry[] = [];
 
   for (const pastor of pastors) {
-    // Count referred users who have deposited (level 1 only — direct referrals)
+    // Count referred users who have deposited (level 1 only - direct referrals)
     const { count: flockSize } = await supabase
       .from('users')
       .select('id', { count: 'exact', head: true })

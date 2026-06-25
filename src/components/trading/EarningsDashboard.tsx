@@ -273,7 +273,7 @@ export default function EarningsDashboard({
                           {tierFromPercentage(p.percentage)}
                         </span>
                       ) : (
-                        <span className="text-text-muted">—</span>
+                        <span className="text-text-muted">-</span>
                       )}
                     </td>
                     <td className="p-3 text-temple-gold font-semibold">{Number(p.amount).toFixed(2)} USDT</td>

@@ -36,7 +36,7 @@ export default function NotificationPreferences() {
     setSaving(key);
     setMsg('');
 
-    // Persist — could POST to /api/profile/notification-prefs
+    // Persist - could POST to /api/profile/notification-prefs
     // For now, just simulate save
     setTimeout(() => {
       setSaving(null);

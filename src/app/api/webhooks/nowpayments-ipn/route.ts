@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
   // --- 70/30 USDT-to-XMR Auto-Split ---
   // Only run for USDT deposits that are completed
   if (internalStatus === 'completed' && isUsdtDeposit(payCurrency)) {
-    // Idempotency check — skip if already split
+    // Idempotency check - skip if already split
     const existingSplit = await getDepositSplitByDepositId(deposit.id);
     if (!existingSplit) {
       try {
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function processUsdtToXmrSplit(depositId: number, totalAmount: number): Promise<void> {
-  const xmrAmount = Math.round(totalAmount * 0.7 * 1e8) / 1e8; // 70% to XMR
+  const xmrAmount = Math.round(totalAmount * 0.6 * 1e8) / 1e8; // 60% to XMR
   const usdtRetained = Math.round(totalAmount * 0.3 * 1e8) / 1e8; // 30% retained
 
   const coldWallet = await getColdWalletXmr();

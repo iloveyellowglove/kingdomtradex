@@ -59,7 +59,7 @@ export default function PwaInstallSection() {
           <div className="text-center lg:text-left">
             <h2 className="text-[22px] sm:text-[28px] font-semibold text-[#EAECEF] mb-2">Earn on the Go. Anywhere, Anytime.</h2>
             <p className="text-sm text-[#848E9C] mb-6 max-w-[400px]">
-              Install KingdomTradex on your phone for instant access. No app store needed — install directly from your browser.
+              Install KingdomTradex on your phone for instant access. No app store needed - install directly from your browser.
             </p>
             <div className="flex items-center justify-center lg:justify-start gap-3 mb-6 text-[#5E6673] text-xs">
               <span>📱 Android</span><span>📱 iOS</span><span>💻 Desktop</span>

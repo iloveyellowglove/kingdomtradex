@@ -1,7 +1,7 @@
 import EarningsCalculator from '@/components/earnings/EarningsCalculator';
 
 export const metadata = {
-  title: 'Earnings Calculator — KingdomTradex',
+  title: 'Earnings Calculator - KingdomTradex',
   description: 'Estimate your daily, weekly, and monthly earnings with our interactive crypto investment calculator.',
 };
 

@@ -145,7 +145,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, verified: true });
   }
 
-  // No withdrawal_id — register generic share (first withdrawal pre-requisite)
+  // No withdrawal_id - register generic share (first withdrawal pre-requisite)
   const { data: existingShare } = await supabase
     .from('social_shares')
     .select('id, click_count')

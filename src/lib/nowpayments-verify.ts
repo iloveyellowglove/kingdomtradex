@@ -21,7 +21,7 @@ export function verifyNowPaymentsIPN(
   );
 }
 
-/** Verify IPN against raw body bytes (preferred — avoids JSON re-serialization skew). */
+/** Verify IPN against raw body bytes (preferred - avoids JSON re-serialization skew). */
 export function verifyNowPaymentsIPNRaw(
   rawBody: string,
   signature: string
