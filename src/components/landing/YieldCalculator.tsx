@@ -89,7 +89,7 @@ export default function YieldCalculator() {
           <div className="bg-dark-indigo rounded-xl p-5 text-center">
             <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Daily Earnings</p>
             <p className="text-temple-gold text-2xl font-extrabold">${daily.toFixed(2)}</p>
-            <p className="text-text-muted text-xs mt-1">at 1.8% daily rate</p>
+            <p className="text-text-muted text-xs mt-1">at 1.2% daily rate</p>
           </div>
           <div className="bg-dark-indigo rounded-xl p-5 text-center">
             <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Monthly Earnings</p>

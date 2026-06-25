@@ -7,7 +7,7 @@ const VALID_TIERS: Record<string, { lock_days: number; daily_rate: number }> = {
   growth: { lock_days: 60, daily_rate: 0.010000 },
   builder: { lock_days: 90, daily_rate: 0.012000 },
   kingdom: { lock_days: 120, daily_rate: 0.014000 },
-  legacy: { lock_days: 180, daily_rate: 0.018000 },
+  legacy: { lock_days: 180, daily_rate: 0.012000 },
 };
 
 export async function POST(request: NextRequest) {

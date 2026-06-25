@@ -29,7 +29,7 @@ export default function AIStrategyCard({ lockedBalance, activeLockCount, highest
     return () => clearInterval(id);
   }, []);
 
-  const rateDisplay = activeLockCount > 0 ? `${(highestTierRate * 100).toFixed(1)}%` : `Up to 3.0%`;
+  const rateDisplay = activeLockCount > 0 ? `${(highestTierRate * 100).toFixed(1)}%` : `Up to 1.6%`;
 
   return (
     <div className="rounded-xl p-4" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>

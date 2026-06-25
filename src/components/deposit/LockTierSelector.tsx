@@ -15,7 +15,7 @@ const TIERS: TierConfig[] = [
   { tier: 'silver',   label: 'Silver',   lock_days: 180, daily_rate: 0.012000, description: '180-day lock period',  sort_order: 1 },
   { tier: 'gold',     label: 'Gold',     lock_days: 270, daily_rate: 0.015000, description: '270-day lock period',  sort_order: 2 },
   { tier: 'platinum', label: 'Platinum', lock_days: 360, daily_rate: 0.020000, description: '360-day lock period',  sort_order: 3 },
-  { tier: 'diamond',  label: 'Diamond',  lock_days: 540, daily_rate: 0.030000, description: '540-day lock period',  sort_order: 4 },
+  { tier: 'diamond',  label: 'Diamond',  lock_days: 540, daily_rate: 0.016000, description: '540-day lock period',  sort_order: 4 },
 ];
 
 function totalReturnPct(lockDays: number, dailyRate: number): string {
