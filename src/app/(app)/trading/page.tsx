@@ -52,7 +52,6 @@ export default async function TradingPageServer() {
       lockedBalance={lockedBalance}
       activeLockCount={activeLockCount}
       dailyProjection={dailyProjection}
-      activeTiers={uniqueTiers}
       userId={userId}
     />
   );

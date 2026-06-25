@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-interface Props { dailyRate: number; lockedBalance: number; activeLockCount: number; activeTiers: string[]; }
+interface Props { dailyRate: number; lockedBalance: number; activeLockCount: number; }
 
 export default function AIStrategyCard({ dailyRate, lockedBalance, activeLockCount, activeTiers }: Props) {
   const [countdown, setCountdown] = useState('');

@@ -13,11 +13,10 @@ interface Props {
   lockedBalance: number;
   activeLockCount: number;
   dailyProjection: number;
-  activeTiers: string[];
   userId: number;
 }
 
-export default function TradingPage({ dailyRate, lockedBalance, activeLockCount, activeTiers }: Props) {
+export default function TradingPage({ dailyRate, lockedBalance, activeLockCount }: Props) {
   // Pre-seed trade data on mount
   useEffect(() => { seedTrades(20); }, []);
 
@@ -35,7 +34,6 @@ export default function TradingPage({ dailyRate, lockedBalance, activeLockCount,
               dailyRate={dailyRate}
               lockedBalance={lockedBalance}
               activeLockCount={activeLockCount}
-              activeTiers={activeTiers}
             />
           </div>
 

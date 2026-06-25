@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
-import { chartColors, defaultAxisProps, defaultGridProps, ChartTooltip, ChartSkeleton, formatYAxis } from '@/lib/chartTheme';
+import { defaultAxisProps, defaultGridProps, ChartTooltip, ChartSkeleton, formatYAxis } from '@/lib/chartTheme';
 import { generateChartData, getWinRate } from '@/lib/ai-trade-simulator';
 
 interface Props { dailyRate: number; lockedBalance: number; }
