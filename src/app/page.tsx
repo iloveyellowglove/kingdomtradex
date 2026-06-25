@@ -1,4 +1,3 @@
-import { createServiceClient } from '@/lib/supabase/service';
 import LandingNavbar from '@/components/landing/LandingNavbar';
 import HeroSection from '@/components/landing/HeroSection';
 import SignupCreditBanner from '@/components/landing/SignupCreditBanner';
@@ -9,45 +8,22 @@ import ReferralHighlight from '@/components/landing/ReferralHighlight';
 import PwaInstallSection from '@/components/landing/PwaInstallSection';
 import FaqAccordion from '@/components/landing/FaqAccordion';
 import Testimonials from '@/components/landing/Testimonials';
-import PlatformStats from '@/components/landing/PlatformStats';
 import LandingFooter from '@/components/landing/LandingFooter';
 import StickyBottomCTA from '@/components/landing/StickyBottomCTA';
 
-export default async function LandingPage() {
-  const supabase = createServiceClient();
-
-  // Check if real data exists for platform stats
-  const { count: userCount } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true });
-  const hasRealData = (userCount ?? 0) > 0;
-
+export default function LandingPage() {
   return (
     <div style={{ background: '#0B0E11', minHeight: '100vh' }}>
       <LandingNavbar />
-
-      {/* Hero */}
       <HeroSection />
-
-      {/* Signup Credit Banner */}
       <SignupCreditBanner />
-
-      {/* Main content + sidebar layout */}
-      <div className="flex gap-0">
-        <div className="flex-1 min-w-0">
-          <HowItWorks />
-          <TierComparison />
-          <EarningsSection />
-          <ReferralHighlight />
-
-          {hasRealData && <PlatformStats />}
-
-          <PwaInstallSection />
-          <FaqAccordion />
-          <Testimonials />
-        </div>
-      </div>
-
+      <HowItWorks />
+      <TierComparison />
+      <EarningsSection />
+      <ReferralHighlight />
+      <PwaInstallSection />
+      <FaqAccordion />
+      <Testimonials />
       <LandingFooter />
       <StickyBottomCTA />
     </div>

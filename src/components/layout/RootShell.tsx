@@ -12,7 +12,13 @@ export default function RootShell({ user, children }: { user: unknown; children:
   return (
     <>
       {!isLanding && <Navbar user={user as { username: string; role: string; display_balance: number; email?: string | null; avatar_url?: string | null } | null} />}
-      {children}
+      {isLanding ? (
+        children
+      ) : (
+        <main className="max-w-[1280px] mx-auto px-6">
+          {children}
+        </main>
+      )}
       {!isLanding && <Footer />}
       {!isLanding && <InstallBanner />}
     </>

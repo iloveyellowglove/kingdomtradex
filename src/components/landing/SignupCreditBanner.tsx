@@ -2,9 +2,9 @@
 
 const STEPS = [
   { label: 'Starting Balance', val: '$50.00', color: '#EAECEF', size: 'text-xl' },
-  { label: 'After 7 Days', val: '$55.81', color: '#848E9C', size: 'text-xl' },
-  { label: 'After 30 Days', val: '$97.39', color: '#F0B90B', size: 'text-2xl' },
-  { label: 'After 90 Days', val: '$122.43', color: '#0ECB81', size: 'text-3xl' },
+  { label: 'After 7 Days', val: '$56.30', color: '#848E9C', size: 'text-xl' },
+  { label: 'After 30 Days', val: '$77.00', color: '#F0B90B', size: 'text-2xl' },
+  { label: 'After 90 Days', val: '$131.00', color: '#0ECB81', size: 'text-3xl' },
 ];
 
 export default function SignupCreditBanner() {
@@ -15,7 +15,7 @@ export default function SignupCreditBanner() {
           See What Your <span style={{ color: '#F0B90B' }}>$50 Free Credits</span> Can Become
         </h2>
         <p className="text-sm text-[#848E9C] mb-10 max-w-[500px] mx-auto">
-          Your $50 starting credit, growing with projected daily returns at 1.5% daily rate.
+          Your $50 starting credit, growing with projected daily returns at our current Gold tier rate.
         </p>
 
         {/* Timeline */}

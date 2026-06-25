@@ -87,9 +87,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <RootShell user={user ? { username: user.username, role: user.role, display_balance: user.display_balance, email: (user as unknown as { email?: string }).email ?? null, avatar_url: (user as unknown as { avatar_url?: string }).avatar_url ?? null } : null}>
-          <main className="max-w-[1280px] mx-auto px-6">
-            {children}
-          </main>
+          {children}
         </RootShell>
         <OracleChat />
         <SocialProofToast />

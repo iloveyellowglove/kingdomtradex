@@ -18,8 +18,8 @@ export default function HeroSection() {
 
   const tiers = [
     { name: 'Silver', dur: '6 Months', rate: '1.2%', monthly: '~36%', color: '#C0C0C0' },
-    { name: 'Gold', dur: '9 Months', rate: '1.5%', monthly: '~45%', color: '#F0B90B' },
-    { name: 'Platinum', dur: '12 Months', rate: '2.0%', monthly: '~60%', color: '#E5E4E2' },
+    { name: 'Gold', dur: '9 Months', rate: '1.8%', monthly: '~54%', color: '#F0B90B' },
+    { name: 'Platinum', dur: '12 Months', rate: '2.4%', monthly: '~72%', color: '#E5E4E2' },
     { name: 'Diamond', dur: '18 Months', rate: '3.0%', monthly: '~90%', color: '#B9F2FF' },
   ];
 

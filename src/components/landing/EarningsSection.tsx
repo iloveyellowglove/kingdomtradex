@@ -6,8 +6,8 @@ import Link from 'next/link';
 const PRESETS = [100, 500, 1000, 5000];
 const TIERS = [
   { label: '6M', days: 180, rate: 0.012 },
-  { label: '9M', days: 270, rate: 0.015 },
-  { label: '12M', days: 360, rate: 0.02 },
+  { label: '9M', days: 270, rate: 0.018 },
+  { label: '12M', days: 360, rate: 0.024 },
   { label: '18M', days: 540, rate: 0.03 },
 ];
 

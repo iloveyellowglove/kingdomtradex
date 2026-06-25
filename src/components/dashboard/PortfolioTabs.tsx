@@ -139,8 +139,8 @@ export default function PortfolioTabs({ userId }: Props) {
             <div className="space-y-2">
               {[
                 { tier: 'silver', label: 'Silver', days: 180, rate: 0.012, color: '#C0C0C0' },
-                { tier: 'gold', label: 'Gold', days: 270, rate: 0.015, color: '#FFD700' },
-                { tier: 'platinum', label: 'Platinum', days: 360, rate: 0.02, color: '#E5E4E2' },
+                { tier: 'gold', label: 'Gold', days: 270, rate: 0.018, color: '#F0B90B' },
+                { tier: 'platinum', label: 'Platinum', days: 360, rate: 0.024, color: '#E5E4E2' },
                 { tier: 'diamond', label: 'Diamond', days: 540, rate: 0.03, color: '#B9F2FF' },
               ].map(t => {
                 const holds = holdings.filter(h => h.tier === t.tier);

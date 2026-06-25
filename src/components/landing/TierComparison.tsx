@@ -9,12 +9,12 @@ const TIERS = [
     featured: false,
   },
   {
-    key: 'gold', name: 'Gold', dur: '9 Months', daily: '1.5%', monthly: '~45%', total: '~486%', min: '$500',
+    key: 'gold', name: 'Gold', dur: '9 Months', daily: '1.8%', monthly: '~54%', total: '~486%', min: '$500',
     color: '#F0B90B', gradient: 'linear-gradient(180deg, #F0B90B, #c99400)',
     featured: true,
   },
   {
-    key: 'platinum', name: 'Platinum', dur: '12 Months', daily: '2.0%', monthly: '~60%', total: '~864%', min: '$1,000',
+    key: 'platinum', name: 'Platinum', dur: '12 Months', daily: '2.4%', monthly: '~72%', total: '~864%', min: '$1,000',
     color: '#E5E4E2', gradient: 'linear-gradient(180deg, #E5E4E2, #b0b0b0)',
     featured: false,
   },
