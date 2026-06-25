@@ -7,6 +7,7 @@ import Logo from '@/components/brand/Logo';
 import { fmt, formatCurrency } from '@/lib/utils/formatting';
 import { ENABLE_MANUAL_TRADING } from '@/lib/flags';
 import NotificationBell from '@/components/layout/NotificationBell';
+import ThemeToggle from '@/components/layout/ThemeToggle';
 
 interface NavbarProps {
   user?: {
@@ -119,6 +120,9 @@ export default function Navbar({ user }: NavbarProps) {
 
                 {/* Notification bell */}
                 <NotificationBell />
+
+                {/* Theme toggle */}
+                <ThemeToggle />
 
                 {/* Click-based dropdown */}
                 <div className="relative" ref={dropdownRef}>

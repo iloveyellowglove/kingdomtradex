@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
+import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import RootShell from '@/components/layout/RootShell';
 import OracleChat from '@/components/chatbot/OracleChat';
 import SocialProofToast from '@/components/SocialProofToast';
@@ -90,9 +91,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="dns-prefetch" href="https://assets.coingecko.com" />
       </head>
       <body>
-        <RootShell user={user ? { username: user.username, role: user.role, display_balance: user.display_balance, email: (user as unknown as { email?: string }).email ?? null, avatar_url: (user as unknown as { avatar_url?: string }).avatar_url ?? null } : null}>
-          {children}
-        </RootShell>
+        <ThemeProvider>
+          <RootShell user={user ? { username: user.username, role: user.role, display_balance: user.display_balance, email: (user as unknown as { email?: string }).email ?? null, avatar_url: (user as unknown as { avatar_url?: string }).avatar_url ?? null } : null}>
+            {children}
+          </RootShell>
+        </ThemeProvider>
         <OracleChat />
         <SocialProofToast />
         <TawkToWidget />
