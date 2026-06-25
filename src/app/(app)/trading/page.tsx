@@ -22,11 +22,11 @@ export default async function TradingPageServer() {
 
   const { data: users } = await supabase
     .from('users')
-    .select('locked_balance')
+    .select('locked_balance, profit_balance, commission_balance')
     .eq('id', userId)
     .limit(1);
 
-  const u = users?.[0] as { locked_balance?: number } | undefined;
+  const u = users?.[0] as Record<string, unknown> | undefined;
   const lockedBalance = Number(u?.locked_balance ?? 0);
 
   const { data: activeLocks } = await supabase
@@ -41,7 +41,8 @@ export default async function TradingPageServer() {
     0,
   );
 
-  const uniqueTiers = (activeLocks ?? []).map((l: Record<string, unknown>) => l.tier).filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
+  const tiers = (activeLocks ?? []).map((l: Record<string, unknown>) => String(l.tier));
+  const uniqueTiers = tiers.filter((v: string, i: number, a: string[]) => a.indexOf(v) === i);
 
   const dailyRate = parseFloat(await getSetting('daily_profit_percentage', '1.8'));
 
