@@ -20,7 +20,7 @@ export default function AppSidebar() {
 
   return (
     <aside
-      className="hidden lg:flex flex-col w-56 h-screen sticky top-0 border-r border-kt-border flex-shrink-0 overflow-y-auto bg-kt-sidebar-bg"
+      className="hidden lg:flex flex-col w-56 h-screen sticky top-0 border-r border-kt-border flex-shrink-0 overflow-y-auto bg-kt-sidebar-bg shadow-sm"
     >
       {/* Logo */}
       <div className="px-5 py-5 border-b border-white/5">

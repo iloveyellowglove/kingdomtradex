@@ -88,8 +88,7 @@ export default function DepositPage() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
                 {TIER_LIST.map(t => (
                   <button key={t.key} onClick={() => { setSelectedTier(t.key); }}
-                    className="relative p-4 rounded-lg text-center transition"
-                    style={{ background: '#0B0E11', border: selectedTier === t.key ? '2px solid #F0B90B' : '1px solid #2B3139', boxShadow: selectedTier === t.key ? '0 0 12px rgba(240,185,11,0.15)' : 'none' }}>
+                    className={`relative p-4 rounded-lg text-center transition cursor-pointer bg-kt-surface border-2 ${selectedTier === t.key ? 'border-kt-gold shadow-[0_0_12px_rgba(240,185,11,0.15)]' : 'border-kt-border'}`}>
                     {t.badge && (
                       <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-bold"
                         style={{ background: t.featured ? '#F0B90B' : t.color, color: '#0B0E11' }}>{t.badge}</span>
@@ -109,8 +108,8 @@ export default function DepositPage() {
                   <div className="flex items-center gap-2">
                     <input type="number" value={amount} onChange={e => setAmount(e.target.value)}
                       placeholder="0.00" min={tier.minDeposit}
-                      className="flex-1 px-4 py-3 rounded-lg text-lg font-bold text-kt-text-primary"
-                      style={{ background: '#0B0E11', border: '1px solid #2B3139', minHeight: 48 }} />
+                      className="flex-1 px-4 py-3 rounded-lg text-lg font-bold bg-kt-input-bg border border-kt-input-border text-kt-text-primary"
+                      style={{ minHeight: 48 }} />
                     <span className="text-sm font-medium text-kt-text-tertiary">USD</span>
                   </div>
                   <p className="text-xs text-kt-text-tertiary mt-1">Min: ${tier.minDeposit} / Max: {tier.maxDeposit === Infinity ? 'Unlimited' : '$' + tier.maxDeposit} ({tier.name})</p>
@@ -120,8 +119,7 @@ export default function DepositPage() {
                   <div className="flex flex-wrap gap-2 mt-2">
                     {QUICK_AMOUNTS.map(a => (
                       <button key={a} onClick={() => selectAmount(a)}
-                        className="px-3 py-1.5 rounded-full text-xs font-medium"
-                        style={{ background: amountNum === a ? '#F0B90B' : '#2B3139', color: amountNum === a ? '#0B0E11' : '#848E9C' }}>
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium ${amountNum === a ? 'bg-kt-gold text-black' : 'bg-kt-badge-bg text-kt-text-secondary'}`}>
                         ${a >= 1000 ? a / 1000 + 'k' : a}
                       </button>
                     ))}
@@ -145,8 +143,8 @@ export default function DepositPage() {
                   <div>
                     <label className="text-sm font-medium text-kt-text-primary mb-2 block">Currency</label>
                     <select value={currency} onChange={e => setCurrency(e.target.value)}
-                      className="w-full px-4 py-3 rounded-lg text-sm text-kt-text-primary"
-                      style={{ background: '#0B0E11', border: '1px solid #2B3139', minHeight: 48 }}>
+                      className="w-full px-4 py-3 rounded-lg text-sm bg-kt-input-bg border border-kt-input-border text-kt-text-primary"
+                      style={{ minHeight: 48 }}>
                       {CURRENCIES.map(c => <option key={c}>{c}</option>)}
                     </select>
                   </div>
