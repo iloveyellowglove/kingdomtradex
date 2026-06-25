@@ -74,7 +74,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#FFD700" />
+        <meta name="theme-color" content="#0B0E11" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="KingdomTradex" />
@@ -84,6 +84,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+        <link rel="preconnect" href="https://api.nowpayments.io" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://assets.coingecko.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://api.nowpayments.io" />
+        <link rel="dns-prefetch" href="https://assets.coingecko.com" />
       </head>
       <body>
         <RootShell user={user ? { username: user.username, role: user.role, display_balance: user.display_balance, email: (user as unknown as { email?: string }).email ?? null, avatar_url: (user as unknown as { avatar_url?: string }).avatar_url ?? null } : null}>

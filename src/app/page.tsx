@@ -1,15 +1,18 @@
+import { lazy } from 'react';
 import LandingNavbar from '@/components/landing/LandingNavbar';
 import HeroSection from '@/components/landing/HeroSection';
 import SignupCreditBanner from '@/components/landing/SignupCreditBanner';
-import HowItWorks from '@/components/landing/HowItWorks';
-import TierComparison from '@/components/landing/TierComparison';
-import EarningsSection from '@/components/landing/EarningsSection';
-import ReferralHighlight from '@/components/landing/ReferralHighlight';
-import PwaInstallSection from '@/components/landing/PwaInstallSection';
-import FaqAccordion from '@/components/landing/FaqAccordion';
-import Testimonials from '@/components/landing/Testimonials';
-import LandingFooter from '@/components/landing/LandingFooter';
-import StickyBottomCTA from '@/components/landing/StickyBottomCTA';
+import dynamic from 'next/dynamic';
+
+const HowItWorks = dynamic(() => import('@/components/landing/HowItWorks'));
+const TierComparison = dynamic(() => import('@/components/landing/TierComparison'));
+const EarningsSection = dynamic(() => import('@/components/landing/EarningsSection'));
+const ReferralHighlight = dynamic(() => import('@/components/landing/ReferralHighlight'));
+const PwaInstallSection = dynamic(() => import('@/components/landing/PwaInstallSection'));
+const FaqAccordion = dynamic(() => import('@/components/landing/FaqAccordion'));
+const Testimonials = dynamic(() => import('@/components/landing/Testimonials'));
+const LandingFooter = dynamic(() => import('@/components/landing/LandingFooter'));
+const StickyBottomCTA = dynamic(() => import('@/components/landing/StickyBottomCTA'));
 
 export default function LandingPage() {
   return (

@@ -5,7 +5,7 @@ const cspHeader = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self'",
-  "connect-src 'self' https://api.nowpayments.io https://plisio.net https://api.coingecko.com",
+  "connect-src 'self' https://api.nowpayments.io https://plisio.net https://api.coingecko.com https://api.resend.com",
   "frame-src https://embed.tawk.to",
   "object-src 'none'",
   "base-uri 'self'",
@@ -17,6 +17,11 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'assets.coingecko.com' },
     ],
+    formats: ['image/webp', 'image/avif'],
+  },
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['recharts', 'gsap'],
   },
   async headers() {
     return [
@@ -28,6 +33,14 @@ const nextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
+      {
+        source: '/api/(.*)',
+        headers: [{ key: 'Cache-Control', value: 'no-store' }],
       },
     ];
   },
