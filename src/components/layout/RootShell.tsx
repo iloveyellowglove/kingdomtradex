@@ -15,7 +15,7 @@ export default function RootShell({ user, children }: { user: unknown; children:
       {isLanding ? (
         children
       ) : (
-        <main className="max-w-[1280px] mx-auto px-6">
+        <main className="px-6">
           {children}
         </main>
       )}

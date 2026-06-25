@@ -78,7 +78,7 @@ export default function EarningsCalculator() {
   const areaD = `${pathD} L ${x(chartPoints[chartPoints.length - 1].day)} ${chartHeight - padY} L ${x(0)} ${chartHeight - padY} Z`;
 
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="px-4 lg:px-6">
       {/* Amount input */}
       <div className="mb-6">
         <label className="block text-sm text-kt-text-secondary font-medium mb-2">Deposit Amount (USD)</label>

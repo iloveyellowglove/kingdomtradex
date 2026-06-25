@@ -57,7 +57,7 @@ export default function DashboardContent({
   }
 
   return (
-    <div className="py-4 space-y-5 lg:max-w-none">
+    <div className="py-4 px-4 lg:px-6 space-y-5">
       {/* ---- HEADER: Avatar + Username + UID + KYC + Referral ---- */}
       <div
         className="flex flex-wrap items-center gap-3 p-4 rounded-xl bg-kt-hover-bg border border-kt-border"

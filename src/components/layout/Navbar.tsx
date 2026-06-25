@@ -40,7 +40,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <nav className="navbar" id="mainNav">
-      <div className="flex items-center justify-between max-w-[1280px] mx-auto px-6 w-full min-h-[64px]">
+      <div className="flex items-center justify-between max-w-[1600px] mx-auto px-6 w-full min-h-[64px]">
         <Link href="/" className="no-underline">
           <Logo size="md" />
         </Link>

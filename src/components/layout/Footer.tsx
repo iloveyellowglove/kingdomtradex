@@ -10,7 +10,7 @@ export default function Footer() {
         borderTop: '1px solid rgba(255,255,255,0.06)',
       }}
     >
-      <div className="max-w-[1280px] mx-auto px-6 py-12">
+      <div className="max-w-[1600px] mx-auto px-6 py-12">
         {/* 3-column layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mb-10">
           {/* LEFT: Brand */}

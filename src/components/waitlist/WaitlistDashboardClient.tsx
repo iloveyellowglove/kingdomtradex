@@ -45,7 +45,7 @@ export default function WaitlistDashboardClient({ entry, nextMilestone, referral
   ];
 
   return (
-    <div className="py-8 max-w-2xl mx-auto">
+    <div className="py-8 px-4 lg:px-6">
       {/* Welcome-back toast for returning users */}
       {showWelcomeBack && (
         <div className="alert alert-success mb-6 flex items-center justify-between">

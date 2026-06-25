@@ -163,7 +163,7 @@ export default function SupportPage() {
   };
 
   return (
-    <div className="py-4 max-w-4xl mx-auto">
+    <div className="py-4 px-4 lg:px-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="mb-1">Support</h2>
