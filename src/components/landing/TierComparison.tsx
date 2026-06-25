@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
 import AnimatedNumber from '@/components/landing/AnimatedNumber';
 
 const TIERS = [

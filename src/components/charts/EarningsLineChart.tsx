@@ -1,7 +1,7 @@
 'use client';
 
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, Line } from 'recharts';
-import { chartColors, defaultAxisProps, defaultGridProps, animationConfig, ChartTooltip, ChartSkeleton, ChartEmpty, ChartGradients, formatYAxis } from '@/lib/chartTheme';
+import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
+import { chartColors, defaultAxisProps, defaultGridProps, animationConfig, ChartTooltip, ChartSkeleton, ChartEmpty, formatYAxis } from '@/lib/chartTheme';
 
 interface DataPoint { label: string; value: number; date?: string; }
 
