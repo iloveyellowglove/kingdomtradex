@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { User, DownlineCounts, WithdrawalLock, Deposit, ReferralCommission } from '@/lib/types';
 import BalanceSummary from '@/components/dashboard/BalanceSummary';
 import PortfolioTabs from '@/components/dashboard/PortfolioTabs';

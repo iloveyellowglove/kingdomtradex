@@ -35,9 +35,8 @@ export default function PortfolioTabs({ userId }: Props) {
   useEffect(() => {
     async function load() {
       try {
-        const [balRes, profRes] = await Promise.all([
+        const [balRes] = await Promise.all([
           fetch('/api/user/balance'),
-          fetch('/api/user/balance'), // reuse for now
         ]);
         const balData = await balRes.json();
         if (balData.success) {
