@@ -27,7 +27,7 @@ export default function HowItWorks() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[900px] mx-auto">
           {steps.map((s, i) => (
-            <div key={s.num} className="relative text-center p-8 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+            <div key={s.num} className="relative text-center p-8 rounded-xl bg-kt-surface border border-kt-border">
               {/* Dotted connector between cards */}
               {i < steps.length - 1 && (
                 <div className="hidden md:block absolute top-1/2 -right-4 w-8 border-t border-dashed border-kt-border" />

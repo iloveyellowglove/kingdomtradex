@@ -23,7 +23,7 @@ export default function SignupCreditBanner() {
         {/* Timeline */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {STEPS.map((s, i) => (
-            <div key={s.label} className="relative p-5 rounded-xl" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
+            <div key={s.label} className="relative p-5 rounded-xl bg-kt-bg border border-kt-border">
               {i < STEPS.length - 1 && (
                 <div className="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 text-[#2B3139] text-xl">→</div>
               )}
@@ -36,8 +36,7 @@ export default function SignupCreditBanner() {
         </div>
 
         <a href="#signup"
-          className="inline-block px-10 py-4 rounded-lg text-base font-semibold no-underline transition"
-          style={{ background: '#F0B90B', color: '#0B0E11' }}>
+          className="inline-block px-10 py-4 rounded-lg text-base font-semibold no-underline transition bg-kt-gold text-black">
           Claim My Free $50
         </a>
         <p className="mt-3 text-xs text-kt-text-tertiary max-w-[500px] mx-auto">

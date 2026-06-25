@@ -36,7 +36,7 @@ export default function AIPerformanceChart({ dailyRate, lockedBalance }: Props) 
   }, [range, dailyRate, lockedBalance]);
 
   return (
-    <div className="rounded-xl p-5" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+    <div className="rounded-xl p-5 bg-kt-surface border border-kt-border">
       {/* Header with overlays */}
       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <div>

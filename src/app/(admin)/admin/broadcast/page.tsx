@@ -88,7 +88,7 @@ export default function AdminBroadcastPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Compose */}
-        <div className="rounded-xl p-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="rounded-xl p-6 bg-kt-hover-bg border border-kt-border">
           <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Compose Broadcast</h3>
 
           <form onSubmit={handleSend} className="space-y-4">
@@ -156,8 +156,7 @@ export default function AdminBroadcastPage() {
             <button
               type="submit"
               disabled={sending || !title.trim() || !message.trim()}
-              className="w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40"
-              style={{ background: '#FFD700', color: '#000', minHeight: 44 }}
+              className="w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40 bg-kt-gold text-black" style={{ minHeight: 44 }}
             >
               {sending ? 'Sending...' : 'Send Broadcast'}
             </button>
@@ -165,21 +164,21 @@ export default function AdminBroadcastPage() {
         </div>
 
         {/* History */}
-        <div className="rounded-xl p-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="rounded-xl p-6 bg-kt-hover-bg border border-kt-border">
           <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Broadcast History</h3>
 
           {historyLoading ? (
             <div className="space-y-2">
               {[1,2,3].map(i => (
-                <div key={i} className="h-14 rounded-lg animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />
+                <div key={i} className="h-14 rounded-lg animate-pulse bg-kt-hover-bg" />
               ))}
             </div>
           ) : history.length === 0 ? (
-            <p className="text-sm text-white/30">No broadcasts sent yet.</p>
+            <p className="text-sm text-kt-text-tertiary">No broadcasts sent yet.</p>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {history.map(b => (
-                <div key={b.id} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <div key={b.id} className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-sm font-medium text-kt-text-primary truncate">{b.title}</p>
                     <span className="text-[10px] text-kt-text-tertiary flex-shrink-0 ml-2">

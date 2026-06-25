@@ -29,8 +29,7 @@ export default function StickyBottomCTA() {
     >
       <a
         href="#signup"
-        className="block w-full py-3 rounded-xl text-center text-sm font-bold no-underline"
-        style={{ background: '#FFD700', color: '#000' }}
+        className="block w-full py-3 rounded-xl text-center text-sm font-bold no-underline bg-kt-gold text-black" style={{ minHeight: 44 }}
       >
         Start Earning - Get Free Credits
       </a>

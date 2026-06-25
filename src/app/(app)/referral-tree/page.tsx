@@ -62,7 +62,7 @@ export default function ReferralTreePage() {
       <p className="text-sm text-kt-text-tertiary mb-6">Grow your network and earn commissions across 5 levels</p>
 
       {/* Tab bar */}
-      <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="flex gap-1 mb-6 p-1 rounded-xl bg-kt-hover-bg">
         {[
           { key: 'stats' as const, label: 'Stats' },
           { key: 'commissions' as const, label: 'Commissions' },

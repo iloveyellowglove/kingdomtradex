@@ -69,7 +69,7 @@ export default function HeroSection() {
                 { v: 500, l: 'Potential at $1k', p: '$', s: '/mo' },
                 { v: 7200, l: 'Projected Annual', p: '$', s: '/yr' },
               ].map(s => (
-                <div key={s.l} className="p-3 rounded-lg text-center" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+                <div key={s.l} className="p-3 rounded-lg text-center bg-kt-surface border border-kt-border">
                   <p className="text-base sm:text-lg font-bold text-kt-text-primary" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
                     <AnimatedNumber value={s.v} prefix={s.p || ''} suffix={s.s || ''} decimals={0} duration={1.2} />
                   </p>
@@ -116,7 +116,7 @@ export default function HeroSection() {
 
           {/* RIGHT COLUMN - Tier Widget (Desktop) */}
           <div className="hidden lg:block w-[380px] flex-shrink-0">
-            <div className="p-5 rounded-2xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+            <div className="p-5 rounded-2xl bg-kt-surface border border-kt-border">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-kt-text-primary">Top Performing Tiers</h3>
                 <div className="flex gap-1 p-0.5 rounded-lg bg-kt-bg">
@@ -157,7 +157,7 @@ export default function HeroSection() {
 
         {/* Mobile: tiers shown below hero */}
         <div className="lg:hidden mt-8">
-          <div className="p-4 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+          <div className="p-4 rounded-xl bg-kt-surface border border-kt-border">
             <h3 className="text-sm font-bold text-kt-text-primary mb-3">Top Performing Tiers</h3>
             <div className="grid grid-cols-2 gap-2">
               {tiers.map(t => (

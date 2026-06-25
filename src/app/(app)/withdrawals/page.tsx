@@ -159,7 +159,7 @@ export default function WithdrawalsPage() {
       </div>
 
       {/* Withdrawal Request Form */}
-      <div className="card mb-8" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="card mb-8 bg-kt-hover-bg border border-kt-border">
         <div className="card-header"><h5 className="mb-0">Request Withdrawal</h5></div>
         <div className="card-body">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -250,7 +250,7 @@ export default function WithdrawalsPage() {
                             />
                             <span className="flex-1 text-sm">{currency.symbol}</span>
                             <span className="text-xs text-kt-text-tertiary">{currency.name}</span>
-                            <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-white/40">
+                            <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-kt-text-tertiary">
                               {currency.network}
                             </span>
                           </button>

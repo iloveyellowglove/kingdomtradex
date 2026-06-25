@@ -91,18 +91,17 @@ export default function AutoWithdrawSettings() {
 
   return (
     <div
-      className="p-4 rounded-xl"
-      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+      className="p-4 rounded-xl bg-kt-hover-bg border border-kt-border"
     >
       <h3 className="text-base font-bold text-kt-text-primary mb-4">Auto-Withdrawal Settings</h3>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-red-400" style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-red-400 bg-red-500/10 border border-red-500/20">
           {error}
         </div>
       )}
       {success && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-green-400" style={{ background: 'rgba(76,175,80,0.1)', border: '1px solid rgba(76,175,80,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-green-400 bg-green-500/10 border border-green-500/20">
           {success}
         </div>
       )}
@@ -111,7 +110,7 @@ export default function AutoWithdrawSettings() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-sm text-kt-text-primary font-medium">Enable Auto-Withdrawal</p>
-          <p className="text-xs text-white/40">Automatically withdraw profits on schedule</p>
+          <p className="text-xs text-kt-text-tertiary">Automatically withdraw profits on schedule</p>
         </div>
         <button
           type="button"
@@ -174,11 +173,11 @@ export default function AutoWithdrawSettings() {
                     <img src={coinIconUrl(selectedCoinConfig.iconSlug)} alt="" width={24} height={24} className="rounded-full flex-shrink-0"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                     <span className="text-kt-text-primary font-medium">{selectedCoinConfig.symbol}</span>
-                    <span className="text-white/40 text-sm">{selectedCoinConfig.name}</span>
-                    <span className="ml-auto px-2 py-0.5 rounded text-xs bg-kt-hover-bg text-white/40">{selectedCoinConfig.network}</span>
+                    <span className="text-kt-text-tertiary text-sm">{selectedCoinConfig.name}</span>
+                    <span className="ml-auto px-2 py-0.5 rounded text-xs bg-kt-hover-bg text-kt-text-tertiary">{selectedCoinConfig.network}</span>
                   </>
                 ) : (
-                  <span className="text-white/40">Select a coin</span>
+                  <span className="text-kt-text-tertiary">Select a coin</span>
                 )}
                 <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 1l4 4 4-4"/></svg>
               </button>
@@ -197,7 +196,7 @@ export default function AutoWithdrawSettings() {
                       <img src={coinIconUrl(c.iconSlug)} alt="" width={22} height={22} className="rounded-full flex-shrink-0"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                       <span className="flex-1 text-sm text-kt-text-primary">{c.symbol}</span>
-                      <span className="text-xs text-white/40">{c.network}</span>
+                      <span className="text-xs text-kt-text-tertiary">{c.network}</span>
                     </button>
                   ))}
                 </div>
@@ -227,8 +226,7 @@ export default function AutoWithdrawSettings() {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40"
-            style={{ background: '#FFD700', color: '#000', minHeight: 44 }}
+            className="w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40 bg-kt-gold text-black" style={{ minHeight: 44 }}
           >
             {saving ? 'Saving...' : 'Save Settings'}
           </button>

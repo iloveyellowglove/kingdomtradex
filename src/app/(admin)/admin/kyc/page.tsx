@@ -73,7 +73,7 @@ export default function AdminKycPage() {
       )}
 
       {submissions.length === 0 ? (
-        <div className="rounded-xl p-8 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="rounded-xl p-8 text-center bg-kt-hover-bg border border-kt-border">
           <p className="text-kt-text-tertiary text-sm">No pending KYC submissions.</p>
         </div>
       ) : (
@@ -81,8 +81,7 @@ export default function AdminKycPage() {
           {submissions.map((sub) => (
             <div
               key={sub.id}
-              className="rounded-xl p-5"
-              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+              className="rounded-xl p-5 bg-kt-hover-bg border border-kt-border"
             >
               <div className="flex items-start justify-between mb-3">
                 <div>

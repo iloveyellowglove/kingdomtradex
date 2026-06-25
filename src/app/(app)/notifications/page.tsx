@@ -134,17 +134,17 @@ export default function NotificationsPage() {
       {loading ? (
         <div className="space-y-2">
           {[1,2,3,4,5].map(i => (
-            <div key={i} className="h-16 rounded-lg animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />
+            <div key={i} className="h-16 rounded-lg animate-pulse bg-kt-hover-bg" />
           ))}
         </div>
       ) : notifications.length === 0 ? (
         <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.04)' }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/20">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-kt-hover-bg">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-kt-muted-text">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
           </div>
-          <p className="text-white/30 text-sm">No notifications yet.</p>
+          <p className="text-kt-text-tertiary text-sm">No notifications yet.</p>
         </div>
       ) : (
         <div className="space-y-1">
@@ -162,13 +162,13 @@ export default function NotificationsPage() {
                 style={{ background: n.read ? 'transparent' : '#FFD700' }} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-xs font-medium text-white/30">{TYPE_LABELS[n.type] || n.type}</span>
+                  <span className="text-xs font-medium text-kt-text-tertiary">{TYPE_LABELS[n.type] || n.type}</span>
                   {!n.read && (
                     <span className="text-[10px] text-kt-gold font-medium">New</span>
                   )}
                 </div>
-                <p className={`text-sm ${n.read ? 'text-white/50' : 'text-white'}`}>{n.title}</p>
-                <p className="text-xs text-white/35 mt-0.5">{n.message}</p>
+                <p className={`text-sm ${n.read ? 'text-kt-text-tertiary' : 'text-kt-text-primary'}`}>{n.title}</p>
+                <p className="text-xs text-kt-muted-text mt-0.5">{n.message}</p>
                 <p className="text-[10px] text-kt-text-tertiary mt-1.5">{timeAgo(n.createdAt)}</p>
               </div>
             </button>
@@ -187,7 +187,7 @@ export default function NotificationsPage() {
           >
             Prev
           </button>
-          <span className="text-xs text-white/40">{page} / {totalPages}</span>
+          <span className="text-xs text-kt-text-tertiary">{page} / {totalPages}</span>
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}

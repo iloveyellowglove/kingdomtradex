@@ -55,7 +55,7 @@ export default function AITradeFeed() {
   const todayPnL = getTodayPnL();
 
   return (
-    <div className="rounded-xl flex flex-col overflow-hidden" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+    <div className="rounded-xl flex flex-col overflow-hidden bg-kt-surface border border-kt-border">
       {/* Header */}
       <div className="p-4 border-b flex-shrink-0" style={{ borderColor: '#2B3139' }}>
         <div className="flex items-center gap-2 mb-2">
@@ -112,8 +112,7 @@ export default function AITradeFeed() {
         {userScrolled && (
           <button
             onClick={jumpToLive}
-            className="sticky top-2 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full text-xs font-bold shadow-lg"
-            style={{ background: '#F0B90B', color: '#0B0E11' }}>
+            className="sticky top-2 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full text-xs font-bold shadow-lg bg-kt-gold text-black">
             ↓ New trades - jump to live
           </button>
         )}

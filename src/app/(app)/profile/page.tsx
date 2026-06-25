@@ -355,13 +355,13 @@ export default function ProfilePage() {
 
       {/* Profile summary card */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
           <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">Member Since</p>
           <p className="text-sm font-bold text-kt-text-primary">
             {profile.created_at ? new Date(profile.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '-'}
           </p>
         </div>
-        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
           <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">Role</p>
           <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold capitalize ${
             profile.role === 'admin' ? 'text-red-400' : profile.role === 'pastor' ? 'text-[#B47CFF]' : 'text-[#2196F3]'
@@ -371,13 +371,13 @@ export default function ProfilePage() {
             {profile.role}
           </span>
         </div>
-        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
           <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">KYC Level</p>
           <span className="text-sm font-bold text-kt-text-primary">
             {(profile.kyc_level ?? 0) >= 2 ? '✓ Verified' : (profile.kyc_level ?? 0) === 1 ? 'Email OK' : 'Unverified'}
           </span>
         </div>
-        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
           <p className="text-[10px] text-kt-text-tertiary uppercase tracking-wider mb-1">2FA</p>
           <span className="text-sm font-bold" style={{ color: profile.two_factor_enabled ? '#4CAF50' : 'rgba(255,255,255,0.4)' }}>
             {profile.two_factor_enabled ? '✓ Enabled' : 'Off'}
@@ -403,8 +403,7 @@ export default function ProfilePage() {
                 <button
                   onClick={handleRunMigration}
                   disabled={migrationRunning}
-                  className="px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 flex-shrink-0"
-                  style={{ background: '#FFD700', color: '#0e0b1a' }}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 flex-shrink-0 bg-kt-gold text-black"
                 >
                   {migrationRunning ? 'Running...' : 'Run Migration'}
                 </button>
@@ -419,7 +418,7 @@ export default function ProfilePage() {
                 <p className="text-kt-text-tertiary text-sm">{migrationMsg}</p>
               )}
               <p className="text-kt-text-tertiary text-xs">
-                Go to <span className="text-white/70">Supabase Dashboard</span> &gt; <span className="text-white/70">SQL Editor</span> &gt; paste the query below &gt; click <span className="text-white/70">Run</span>.
+                Go to <span className="text-kt-text-secondary">Supabase Dashboard</span> &gt; <span className="text-kt-text-secondary">SQL Editor</span> &gt; paste the query below &gt; click <span className="text-kt-text-secondary">Run</span>.
                 Then refresh this page.
               </p>
               <div className="relative">
@@ -446,7 +445,7 @@ export default function ProfilePage() {
         {/* LEFT COLUMN - Avatar + Profile Fields */}
         <div>
           {/* Avatar */}
-          <div className="p-6 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="p-6 rounded-xl mb-6 bg-kt-hover-bg border border-kt-border">
             <h2 className="text-sm font-semibold text-kt-text-primary uppercase tracking-wider mb-4">Avatar</h2>
             <div className="flex items-center gap-5">
               {profile.avatar_url ? (
@@ -474,8 +473,7 @@ export default function ProfilePage() {
                 <button
                   onClick={() => avatarInputRef.current?.click()}
                   disabled={avatarUploading}
-                  className="px-4 py-2 rounded-lg text-sm font-semibold transition"
-                  style={{ background: '#FFD700', color: '#0e0b1a' }}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold transition bg-kt-gold text-black"
                 >
                   {avatarUploading ? 'Uploading...' : 'Upload Photo'}
                 </button>
@@ -492,7 +490,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Profile Form */}
-          <div className="p-6 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="p-6 rounded-xl bg-kt-hover-bg border border-kt-border">
             <h2 className="text-sm font-semibold text-kt-text-primary uppercase tracking-wider mb-4">Profile Details</h2>
 
             <div className="space-y-4">
@@ -639,8 +637,7 @@ export default function ProfilePage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-6 py-2.5 rounded-lg text-sm font-semibold transition"
-                style={{ background: '#FFD700', color: '#0e0b1a' }}
+                className="px-6 py-2.5 rounded-lg text-sm font-semibold transition bg-kt-gold text-black"
               >
                 {saving ? 'Saving...' : 'Save Profile'}
               </button>
@@ -655,7 +652,7 @@ export default function ProfilePage() {
 
         {/* RIGHT COLUMN - KYC Verification */}
         <div>
-          <div className="p-6 rounded-xl mb-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="p-6 rounded-xl mb-6 bg-kt-hover-bg border border-kt-border">
             <h2 className="text-sm font-semibold text-kt-text-primary uppercase tracking-wider mb-4">KYC Verification</h2>
 
             {/* Status badge */}
@@ -695,7 +692,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Feature gating info */}
-                <div className="p-4 rounded-lg mb-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <div className="p-4 rounded-lg mb-4 bg-kt-hover-bg border border-kt-border">
                   {kyc.status === 'unverified' && (
                     <div className="text-kt-text-secondary text-sm space-y-1">
                       <p><span className="text-kt-gold font-medium">$500/day</span> withdrawal limit (unverified)</p>
@@ -796,8 +793,7 @@ export default function ProfilePage() {
                       <button
                         onClick={handleKycSubmit}
                         disabled={kycSubmitting || !kycDocUrl || !kycSelfieUrl}
-                        className="px-6 py-2.5 rounded-lg text-sm font-semibold transition disabled:opacity-40"
-                        style={{ background: '#FFD700', color: '#0e0b1a' }}
+                        className="px-6 py-2.5 rounded-lg text-sm font-semibold transition disabled:opacity-40 bg-kt-gold text-black"
                       >
                         {kycSubmitting ? 'Submitting...' : 'Submit for Verification'}
                       </button>
@@ -836,8 +832,7 @@ export default function ProfilePage() {
                   {adminSubmissions.map((sub) => (
                     <div
                       key={sub.id}
-                      className="p-4 rounded-lg"
-                      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                      className="p-4 rounded-lg bg-kt-hover-bg border border-kt-border"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>

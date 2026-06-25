@@ -57,8 +57,7 @@ export default function EarningsSection() {
               ))}
               <input type="number" value={amount}
                 onChange={e => setAmount(Math.max(100, parseInt(e.target.value, 10) || 0))}
-                className="w-28 px-3 py-2 rounded-lg text-sm font-bold text-kt-text-primary"
-                style={{ background: '#0B0E11', border: '1px solid #2B3139' }} />
+                className="w-28 px-3 py-2 rounded-lg text-sm font-bold text-kt-text-primary bg-kt-bg border border-kt-border" />
             </div>
           </div>
 
@@ -88,7 +87,7 @@ export default function EarningsSection() {
               { l: 'Monthly', v: monthly, c: '#F0B90B' },
               { l: `${tier.days}d Total`, v: total, c: '#EAECEF' },
             ].map(r => (
-              <div key={r.l} className="p-4 rounded-lg text-center" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
+              <div key={r.l} className="p-4 rounded-lg text-center bg-kt-bg border border-kt-border">
                 <p className="text-xs text-kt-text-tertiary mb-1">{r.l}</p>
                 <p className="text-lg sm:text-xl font-bold" style={{ color: r.c }}>
                   <AnimatedNumber value={r.v} prefix="$" decimals={2} duration={0.6} triggerOnce={false} />
@@ -98,13 +97,12 @@ export default function EarningsSection() {
           </div>
 
           {/* Recharts Chart */}
-          <div className="mb-8 p-4 rounded-xl" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
+          <div className="mb-8 p-4 rounded-xl bg-kt-bg border border-kt-border">
             <EarningsLineChart data={chartData} height={280} showGrid showAxis />
           </div>
 
           <Link href="/register"
-            className="block w-full sm:w-auto sm:inline-block px-10 py-4 rounded-lg text-center text-base font-semibold no-underline"
-            style={{ background: '#F0B90B', color: '#0B0E11' }}>
+            className="block w-full sm:w-auto sm:inline-block px-10 py-4 rounded-lg text-center text-base font-semibold no-underline bg-kt-gold text-black">
             Start Earning
           </Link>
         </div>

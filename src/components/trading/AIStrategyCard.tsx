@@ -32,7 +32,7 @@ export default function AIStrategyCard({ lockedBalance, activeLockCount, highest
   const rateDisplay = activeLockCount > 0 ? `${(highestTierRate * 100).toFixed(1)}%` : `Up to 1.6%`;
 
   return (
-    <div className="rounded-xl p-4" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+    <div className="rounded-xl p-4 bg-kt-surface border border-kt-border">
       <h3 className="text-sm font-bold text-kt-text-primary mb-1">Your Active Strategy</h3>
       <p className="text-xs text-kt-text-secondary mb-3">Multi-Exchange Arbitrage &amp; Momentum</p>
 
@@ -43,7 +43,7 @@ export default function AIStrategyCard({ lockedBalance, activeLockCount, highest
           { l: 'Active Locks', v: `${activeLockCount}`, c: '#F0B90B' },
           { l: 'Next Distribution', v: countdown, c: '#848E9C' },
         ].map(s => (
-          <div key={s.l} className="p-2.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
+          <div key={s.l} className="p-2.5 rounded-lg bg-kt-hover-bg">
             <p className="text-[10px] text-kt-text-tertiary mb-0.5">{s.l}</p>
             <p className="text-sm font-bold tabular-nums" style={{ color: s.c }}>{s.v}</p>
           </div>
@@ -65,8 +65,7 @@ export default function AIStrategyCard({ lockedBalance, activeLockCount, highest
       </p>
 
       <Link href="/earnings"
-        className="inline-block px-5 py-2.5 rounded-lg text-sm font-semibold no-underline transition"
-        style={{ background: '#F0B90B', color: '#0B0E11' }}>
+        className="inline-block px-5 py-2.5 rounded-lg text-sm font-semibold no-underline transition bg-kt-gold text-black">
         View Your Earnings
       </Link>
     </div>

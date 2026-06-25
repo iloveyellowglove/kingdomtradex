@@ -228,7 +228,7 @@ export default function AdminSupportPage() {
             </div>
           </div>
 
-          <p className="text-kt-text-secondary text-sm mb-6 p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <p className="text-kt-text-secondary text-sm mb-6 p-4 rounded-lg bg-kt-hover-bg">
             {selectedTicket.description}
           </p>
 

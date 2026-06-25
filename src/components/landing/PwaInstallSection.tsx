@@ -67,8 +67,7 @@ export default function PwaInstallSection() {
             <button
               onClick={handleInstall}
               disabled={!deferredPrompt}
-              className="px-8 py-3.5 rounded-lg text-base font-semibold transition disabled:opacity-40"
-              style={{ background: '#F0B90B', color: '#0B0E11' }}
+              className="px-8 py-3.5 rounded-lg text-base font-semibold transition disabled:opacity-40 bg-kt-gold text-black"
             >
               {deferredPrompt ? 'Install App' : 'Already Installed'}
             </button>

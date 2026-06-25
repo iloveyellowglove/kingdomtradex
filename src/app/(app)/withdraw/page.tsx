@@ -62,7 +62,7 @@ export default function WithdrawPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="flex gap-1 mb-6 p-1 rounded-xl bg-kt-hover-bg">
         {tabs.map(t => (
           <button
             key={t.key}

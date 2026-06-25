@@ -131,15 +131,14 @@ export default function PrincipalTab() {
         className="flex items-center gap-3 p-4 rounded-lg mb-4"
         style={{ background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.15)' }}
       >
-        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: 'rgba(255,215,0,0.12)' }}>
+        <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-kt-active-bg">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
         </div>
         <div>
           <p className="text-sm font-semibold text-kt-gold">Platform Credit - Non-withdrawable</p>
-          <p className="text-xs text-white/50">
+          <p className="text-xs text-kt-text-tertiary">
             Your ${signupCredit.toFixed(2)} signup credit is provided by the platform and cannot be withdrawn.
             Only deposited funds can be withdrawn as principal.
           </p>
@@ -147,12 +146,12 @@ export default function PrincipalTab() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-red-400" style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-red-400 bg-red-500/10 border border-red-500/20">
           {error}
         </div>
       )}
       {success && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-green-400" style={{ background: 'rgba(76,175,80,0.1)', border: '1px solid rgba(76,175,80,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-green-400 bg-green-500/10 border border-green-500/20">
           {success}
         </div>
       )}
@@ -160,14 +159,13 @@ export default function PrincipalTab() {
       {/* Locked deposits list */}
       {deposits.length === 0 ? (
         <div className="text-center py-8">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(255,255,255,0.04)' }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/20">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-kt-hover-bg">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-kt-muted-text">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
           </div>
-          <p className="text-white/40 text-sm">No locked deposits found.</p>
-          <p className="text-white/25 text-xs mt-1">Deposits must be locked in a tier before principal withdrawal.</p>
+          <p className="text-kt-text-tertiary text-sm">No locked deposits found.</p>
+          <p className="text-kt-muted-text text-xs mt-1">Deposits must be locked in a tier before principal withdrawal.</p>
         </div>
       ) : (
         <div className="space-y-3 mb-4">
@@ -202,19 +200,19 @@ export default function PrincipalTab() {
                   <div className="mt-3 pt-3 border-t border-white/5">
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div>
-                        <span className="text-white/40">Tier:</span>
+                        <span className="text-kt-text-tertiary">Tier:</span>
                         <span className="ml-1 text-kt-text-primary capitalize">{d.tier}</span>
                       </div>
                       <div>
-                        <span className="text-white/40">Lock:</span>
+                        <span className="text-kt-text-tertiary">Lock:</span>
                         <span className="ml-1 text-kt-text-primary">{d.lockDays} days</span>
                       </div>
                       <div>
-                        <span className="text-white/40">Daily Rate:</span>
+                        <span className="text-kt-text-tertiary">Daily Rate:</span>
                         <span className="ml-1 text-kt-green">{(d.dailyRate * 100).toFixed(2)}%</span>
                       </div>
                       <div>
-                        <span className="text-white/40">Matures:</span>
+                        <span className="text-kt-text-tertiary">Matures:</span>
                         <span className="ml-1 text-kt-text-primary">{new Date(d.unlocksAt).toLocaleDateString()}</span>
                       </div>
                     </div>
@@ -262,9 +260,9 @@ export default function PrincipalTab() {
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                 <div className="flex-1">
                   <span className="text-kt-text-primary font-medium">{selectedCurrency.symbol}</span>
-                  <span className="text-white/40 text-sm ml-2">{selectedCurrency.name}</span>
+                  <span className="text-kt-text-tertiary text-sm ml-2">{selectedCurrency.name}</span>
                 </div>
-                <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-kt-hover-bg text-white/40">{selectedCurrency.network}</span>
+                <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-kt-hover-bg text-kt-text-tertiary">{selectedCurrency.network}</span>
                 <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 1l4 4 4-4"/></svg>
               </button>
 
@@ -290,8 +288,8 @@ export default function PrincipalTab() {
                           <img src={coinIconUrl(currency.iconSlug)} alt="" width={22} height={22} className="rounded-full flex-shrink-0"
                             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                           <span className="flex-1 text-sm text-kt-text-primary">{currency.symbol}</span>
-                          <span className="text-xs text-white/40">{currency.name}</span>
-                          <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-white/40">{currency.network}</span>
+                          <span className="text-xs text-kt-text-tertiary">{currency.name}</span>
+                          <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-kt-text-tertiary">{currency.network}</span>
                         </button>
                       ))}
                     </div>
@@ -346,7 +344,7 @@ export default function PrincipalTab() {
       >
         <div className="space-y-3">
           <div className="flex justify-between">
-            <span className="text-white/50">Deposit:</span>
+            <span className="text-kt-text-tertiary">Deposit:</span>
             <span className="text-kt-text-primary font-bold">${selectedDeposit?.amount.toFixed(2)}</span>
           </div>
           {selectedDeposit && selectedDeposit.timeRemaining > 0 && (
@@ -362,7 +360,7 @@ export default function PrincipalTab() {
             </>
           )}
           <hr className="border-t border-white/5" />
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-kt-text-tertiary">
             By withdrawing principal, you forfeit any future earnings on this deposit.
             {selectedDeposit && selectedDeposit.timeRemaining > 0 && ' Early withdrawal incurs a 25% penalty.'}
           </p>

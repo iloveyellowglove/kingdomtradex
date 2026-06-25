@@ -82,7 +82,7 @@ export default function PortfolioTabs({ userId }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex gap-1 mb-4 p-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="flex gap-1 mb-4 p-1 rounded-lg bg-kt-hover-bg">
         {tabs.map(t => (
           <button
             key={t.key}
@@ -100,7 +100,7 @@ export default function PortfolioTabs({ userId }: Props) {
 
       {loading ? (
         <div className="space-y-2">
-          {[1,2,3].map(i => <div key={i} className="h-14 rounded-lg animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />)}
+          {[1,2,3].map(i => <div key={i} className="h-14 rounded-lg animate-pulse bg-kt-hover-bg" />)}
         </div>
       ) : (
         <>
@@ -114,17 +114,17 @@ export default function PortfolioTabs({ userId }: Props) {
                   const earned = h.amount * h.dailyRate * Math.floor((Date.now() - new Date(h.lockedAt).getTime()) / 86400000);
                   const color = tierColor(h.tier);
                   return (
-                    <div key={h.id} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div key={h.id} className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-bold px-2 py-0.5 rounded" style={{ background: `${color}20`, color }}>{h.tier.toUpperCase()}</span>
                           <span className="text-sm font-bold text-kt-text-primary">${h.amount.toFixed(2)}</span>
                         </div>
-                        <span className="text-xs text-white/30">{timeLeft(h.timeRemaining)}</span>
+                        <span className="text-xs text-kt-text-tertiary">{timeLeft(h.timeRemaining)}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-white/40">{(h.dailyRate * 100).toFixed(1)}% daily · Earned ${earned.toFixed(2)}</span>
-                        <div className="w-20 h-1 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                        <span className="text-kt-text-tertiary">{(h.dailyRate * 100).toFixed(1)}% daily · Earned ${earned.toFixed(2)}</span>
+                        <div className="w-20 h-1 rounded-full bg-kt-hover-bg">
                           <div className="h-full rounded-full" style={{ width: `${Math.min(100, ((Date.now() - new Date(h.lockedAt).getTime()) / (h.lockDays * 86400000)) * 100)}%`, background: color }} />
                         </div>
                       </div>
@@ -144,16 +144,16 @@ export default function PortfolioTabs({ userId }: Props) {
                 const maxPerTier = 100000;
                 const pct = Math.min(100, (totalLocked / maxPerTier) * 100);
                 return (
-                  <div key={t.key} className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                  <div key={t.key} className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
                     <div className="flex items-center justify-between mb-2">
                       <div>
                         <span className="text-xs font-bold" style={{ color: t.color }}>{t.name}</span>
                         <span className="text-xs text-kt-text-tertiary ml-2">{t.duration} days · {(t.dailyRate * 100).toFixed(1)}% daily</span>
                       </div>
-                      <span className="text-xs text-white/50">{holds.length} deposit{holds.length !== 1 ? 's' : ''}</span>
+                      <span className="text-xs text-kt-text-tertiary">{holds.length} deposit{holds.length !== 1 ? 's' : ''}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 h-2 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                      <div className="flex-1 h-2 rounded-full bg-kt-hover-bg">
                         <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: t.color }} />
                       </div>
                       <span className="text-[10px] text-kt-text-tertiary w-20 text-right tabular-nums">
@@ -173,8 +173,8 @@ export default function PortfolioTabs({ userId }: Props) {
             ) : (
               <div className="space-y-1">
                 {earnings.map((e, i) => (
-                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                    <span className="text-xs text-white/50">{new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                  <div key={i} className="flex items-center justify-between p-2.5 rounded-lg bg-kt-hover-bg">
+                    <span className="text-xs text-kt-text-tertiary">{new Date(e.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                     <span className="text-sm font-bold text-kt-green tabular-nums">+${e.amount.toFixed(2)}</span>
                   </div>
                 ))}

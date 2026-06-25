@@ -281,7 +281,7 @@ export default function SupportPage() {
             {categoryLabel(selectedTicket.category)} &middot; Created {timeAgo(selectedTicket.created_at)}
           </p>
 
-          <p className="text-kt-text-secondary text-sm mb-6 p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <p className="text-kt-text-secondary text-sm mb-6 p-4 rounded-lg bg-kt-hover-bg">
             {selectedTicket.description}
           </p>
 

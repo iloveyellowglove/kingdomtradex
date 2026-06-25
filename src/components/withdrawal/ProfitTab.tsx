@@ -176,7 +176,7 @@ export default function ProfitTab() {
           <p className="text-sm font-semibold text-kt-text-primary">
             {kycLevel >= 2 ? 'KYC Level 2 - ID Verified' : kycLevel >= 1 ? 'KYC Level 1 - Email Verified' : 'KYC Level 0 - Unverified'}
           </p>
-          <p className="text-xs text-white/50">
+          <p className="text-xs text-kt-text-tertiary">
             {kycLevel >= 2
               ? 'You can withdraw daily.'
               : kycLevel >= 1
@@ -204,12 +204,12 @@ export default function ProfitTab() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-red-400" style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-red-400 bg-red-500/10 border border-red-500/20">
           {error}
         </div>
       )}
       {success && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-green-400" style={{ background: 'rgba(76,175,80,0.1)', border: '1px solid rgba(76,175,80,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-green-400 bg-green-500/10 border border-green-500/20">
           {success}
         </div>
       )}
@@ -262,9 +262,9 @@ export default function ProfitTab() {
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               <div className="flex-1">
                 <span className="text-kt-text-primary font-medium">{selectedCurrency.symbol}</span>
-                <span className="text-white/40 text-sm ml-2">{selectedCurrency.name}</span>
+                <span className="text-kt-text-tertiary text-sm ml-2">{selectedCurrency.name}</span>
               </div>
-              <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-kt-hover-bg text-white/40">{selectedCurrency.network}</span>
+              <span className="px-2 py-0.5 rounded-md text-xs font-medium bg-kt-hover-bg text-kt-text-tertiary">{selectedCurrency.network}</span>
               <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 1l4 4 4-4"/></svg>
             </button>
 
@@ -290,8 +290,8 @@ export default function ProfitTab() {
                         <img src={coinIconUrl(currency.iconSlug)} alt="" width={22} height={22} className="rounded-full flex-shrink-0"
                           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                         <span className="flex-1 text-sm text-kt-text-primary">{currency.symbol}</span>
-                        <span className="text-xs text-white/40">{currency.name}</span>
-                        <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-white/40">{currency.network}</span>
+                        <span className="text-xs text-kt-text-tertiary">{currency.name}</span>
+                        <span className="px-1.5 py-0.5 rounded text-xs bg-kt-hover-bg text-kt-text-tertiary">{currency.network}</span>
                       </button>
                     ))}
                   </div>
@@ -346,23 +346,23 @@ export default function ProfitTab() {
       >
         <div className="space-y-3">
           <div className="flex justify-between">
-            <span className="text-white/50">Amount:</span>
+            <span className="text-kt-text-tertiary">Amount:</span>
             <span className="text-kt-text-primary font-bold">${parseFloat(amount || '0').toFixed(2)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-white/50">Currency:</span>
+            <span className="text-kt-text-tertiary">Currency:</span>
             <span className="text-kt-text-primary">{selectedCurrency.symbol} ({selectedCurrency.network})</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-white/50">Wallet:</span>
+            <span className="text-kt-text-tertiary">Wallet:</span>
             <span className="text-kt-text-primary text-xs font-mono max-w-[180px] truncate">{walletAddress.trim()}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-white/50">Network Fee:</span>
-            <span className="text-white/50 text-xs">Calculated at processing</span>
+            <span className="text-kt-text-tertiary">Network Fee:</span>
+            <span className="text-kt-text-tertiary text-xs">Calculated at processing</span>
           </div>
           <hr className="border-t border-white/5" />
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-kt-text-tertiary">
             Withdrawals are typically processed within 24-48 hours. Network fees vary by blockchain.
           </p>
         </div>

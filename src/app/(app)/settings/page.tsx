@@ -75,8 +75,7 @@ export default function SettingsPage() {
 
       {/* Change Password */}
       <div
-        className="p-5 rounded-xl mb-6"
-        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+        className="p-5 rounded-xl mb-6 bg-kt-hover-bg border border-kt-border"
       >
         <h3 className="text-base font-bold text-kt-text-primary mb-4">Change Password</h3>
 
@@ -140,8 +139,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={passwordLoading}
-            className="w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40"
-            style={{ background: '#FFD700', color: '#000', minHeight: 44 }}
+            className="w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40 bg-kt-gold text-black" style={{ minHeight: 44 }}
           >
             {passwordLoading ? 'Changing...' : 'Change Password'}
           </button>
@@ -165,14 +163,13 @@ export default function SettingsPage() {
       <div className="mt-6">
         <Link
           href="/withdraw?tab=auto"
-          className="flex items-center justify-between p-5 rounded-xl transition hover:bg-white/[0.02] no-underline"
-          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+          className="flex items-center justify-between p-5 rounded-xl transition hover:bg-white/[0.02] no-underline bg-kt-hover-bg border border-kt-border"
         >
           <div>
             <h3 className="text-base font-bold text-kt-text-primary">Auto-Withdrawal</h3>
             <p className="text-xs text-kt-text-tertiary mt-0.5">Configure automatic profit withdrawals</p>
           </div>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/30">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-kt-text-tertiary">
             <polyline points="9 18 15 12 9 6"/>
           </svg>
         </Link>
@@ -253,8 +250,7 @@ function EmailOtpCard() {
 
   return (
     <div
-      className="p-5 rounded-xl"
-      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+      className="p-5 rounded-xl bg-kt-hover-bg border border-kt-border"
     >
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -264,12 +260,12 @@ function EmailOtpCard() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-red-400" style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-red-400 bg-red-500/10 border border-red-500/20">
           {error}
         </div>
       )}
       {success && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-green-400" style={{ background: 'rgba(76,175,80,0.1)', border: '1px solid rgba(76,175,80,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-green-400 bg-green-500/10 border border-green-500/20">
           {success}
         </div>
       )}
@@ -302,8 +298,7 @@ function EmailOtpCard() {
           <button
             onClick={handleVerifyOTP}
             disabled={verifying || otpCode.length !== 6}
-            className="px-6 py-3 rounded-lg text-sm font-bold transition disabled:opacity-40"
-            style={{ background: '#FFD700', color: '#000', minHeight: 48 }}
+            className="px-6 py-3 rounded-lg text-sm font-bold transition disabled:opacity-40 bg-kt-gold text-black" style={{ minHeight: 48 }}
           >
             {verifying ? 'Verifying...' : 'Verify'}
           </button>

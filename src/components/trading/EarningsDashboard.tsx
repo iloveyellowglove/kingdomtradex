@@ -309,7 +309,7 @@ function StatCard({ label, value, gold }: { label: string; value: string; gold?:
   return (
     <div className="bg-kt-bg rounded-lg p-4 text-center">
       <p className="text-kt-text-tertiary text-xs mb-1">{label}</p>
-      <p className={`text-lg md:text-xl font-bold break-all ${gold ? 'text-kt-gold' : 'text-white'}`}>
+      <p className={`text-lg md:text-xl font-bold break-all ${gold ? 'text-kt-gold' : 'text-kt-text-primary'}`}>
         {value}
       </p>
     </div>

@@ -52,7 +52,7 @@ export default function BalanceSummary({
             className="p-1.5 rounded-md hover:bg-white/5 transition"
             aria-label={hidden ? 'Show balance' : 'Hide balance'}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white/40">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-kt-text-tertiary">
               {hidden ? (
                 <><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></>
               ) : (
@@ -66,7 +66,7 @@ export default function BalanceSummary({
       {/* Today's PnL + sparkline */}
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-xs text-white/40">Today&apos;s PnL </span>
+          <span className="text-xs text-kt-text-tertiary">Today&apos;s PnL </span>
           <span className={`text-sm font-bold tabular-nums ${todayPnL >= 0 ? 'text-kt-green' : 'text-[#F44336]'}`}>
             {todayPnL >= 0 ? '+' : ''}{fmt(todayPnL)} ({todayPnLPercent >= 0 ? '+' : ''}{todayPnLPercent.toFixed(2)}%)
           </span>
@@ -79,16 +79,16 @@ export default function BalanceSummary({
 
       {/* Sub-balances */}
       <div className="grid grid-cols-3 gap-2 text-center">
-        <div className="p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
-          <p className="text-[10px] text-white/30">Profit</p>
+        <div className="p-2 rounded-lg bg-kt-hover-bg">
+          <p className="text-[10px] text-kt-text-tertiary">Profit</p>
           <p className="text-sm font-bold text-kt-green tabular-nums">{hidden ? '•••' : `$${fmt(profitBalance)}`}</p>
         </div>
-        <div className="p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
-          <p className="text-[10px] text-white/30">Locked</p>
+        <div className="p-2 rounded-lg bg-kt-hover-bg">
+          <p className="text-[10px] text-kt-text-tertiary">Locked</p>
           <p className="text-sm font-bold text-kt-gold tabular-nums">{hidden ? '•••' : `$${fmt(lockedBalance)}`}</p>
         </div>
-        <div className="p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
-          <p className="text-[10px] text-white/30">Commissions</p>
+        <div className="p-2 rounded-lg bg-kt-hover-bg">
+          <p className="text-[10px] text-kt-text-tertiary">Commissions</p>
           <p className="text-sm font-bold text-[#B47CFF] tabular-nums">{hidden ? '•••' : `$${fmt(profitBalance > 0 ? 0 : 0)}`}</p>
         </div>
       </div>
@@ -97,8 +97,7 @@ export default function BalanceSummary({
       <div className="flex gap-2">
         <Link
           href="/deposit"
-          className="flex-1 py-2.5 rounded-full text-center text-xs font-bold no-underline"
-          style={{ background: '#FFD700', color: '#000' }}
+          className="flex-1 py-2.5 rounded-full text-center text-xs font-bold no-underline bg-kt-gold text-black" style={{ minHeight: 44 }}
         >
           Deposit
         </Link>

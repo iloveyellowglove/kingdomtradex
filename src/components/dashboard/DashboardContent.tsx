@@ -60,8 +60,7 @@ export default function DashboardContent({
     <div className="py-4 space-y-5 lg:max-w-none">
       {/* ---- HEADER: Avatar + Username + UID + KYC + Referral ---- */}
       <div
-        className="flex flex-wrap items-center gap-3 p-4 rounded-xl"
-        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
+        className="flex flex-wrap items-center gap-3 p-4 rounded-xl bg-kt-hover-bg border border-kt-border"
       >
         {/* Avatar */}
         <div className="w-11 h-11 rounded-full flex items-center justify-center text-lg font-bold flex-shrink-0"
@@ -104,8 +103,7 @@ export default function DashboardContent({
 
       {/* ---- BALANCE SECTION ---- */}
       <div
-        className="p-4 rounded-xl"
-        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
+        className="p-4 rounded-xl bg-kt-hover-bg border border-kt-border"
       >
         <BalanceSummary
           totalValue={totalPortfolio}
@@ -120,8 +118,7 @@ export default function DashboardContent({
 
       {/* ---- PORTFOLIO / HOLDINGS SECTION ---- */}
       <div
-        className="p-4 rounded-xl"
-        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
+        className="p-4 rounded-xl bg-kt-hover-bg border border-kt-border"
       >
         <PortfolioTabs userId={user.id} />
       </div>
@@ -141,7 +138,7 @@ export default function DashboardContent({
           { label: 'Total Withdrawn', value: `$${Number(user.total_withdrawn_real).toLocaleString(undefined, { minimumFractionDigits: 2 })}` },
           { label: 'Pending Rewards', value: `$${totalPendingComm.toLocaleString(undefined, { minimumFractionDigits: 2 })}` },
         ].map(s => (
-          <div key={s.label} className="p-3 rounded-lg text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
+          <div key={s.label} className="p-3 rounded-lg text-center bg-kt-hover-bg border border-kt-border">
             <p className="text-[10px] text-kt-text-tertiary mb-1">{s.label}</p>
             <p className="text-sm font-bold text-kt-text-primary tabular-nums">{s.value}</p>
           </div>

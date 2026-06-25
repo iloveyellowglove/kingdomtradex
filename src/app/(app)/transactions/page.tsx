@@ -154,12 +154,12 @@ export default function TransactionsPage() {
       {loading ? (
         <div className="space-y-2">
           {[1,2,3,4,5].map(i => (
-            <div key={i} className="h-16 rounded-lg animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />
+            <div key={i} className="h-16 rounded-lg animate-pulse bg-kt-hover-bg" />
           ))}
         </div>
       ) : txns.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-white/30 text-sm">No transactions found.</p>
+          <p className="text-kt-text-tertiary text-sm">No transactions found.</p>
         </div>
       ) : (
         <div className="space-y-1.5">
@@ -169,8 +169,7 @@ export default function TransactionsPage() {
             return (
               <div
                 key={t.id}
-                className="p-4 rounded-lg transition"
-                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}
+                className="p-4 rounded-lg transition bg-kt-hover-bg border border-kt-border"
               >
                 <div className="flex items-start justify-between mb-1.5">
                   <div className="flex items-center gap-2">
@@ -195,12 +194,12 @@ export default function TransactionsPage() {
                 </div>
                 <p className="text-xs text-kt-text-tertiary mb-1">{t.description}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-white/25">
+                  <span className="text-[10px] text-kt-muted-text">
                     {new Date(t.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </span>
                   {t.txHash && (
                     <span
-                      className="text-[10px] text-kt-text-tertiary font-mono cursor-pointer hover:text-white/50"
+                      className="text-[10px] text-kt-text-tertiary font-mono cursor-pointer hover:text-kt-text-tertiary"
                       onClick={() => navigator.clipboard?.writeText(t.txHash!)}
                       title="Click to copy"
                     >
@@ -222,7 +221,7 @@ export default function TransactionsPage() {
             style={{ background: 'rgba(255,255,255,0.04)', color: '#fff', minHeight: 32 }}>
             Prev
           </button>
-          <span className="text-xs text-white/40">{page} / {totalPages}</span>
+          <span className="text-xs text-kt-text-tertiary">{page} / {totalPages}</span>
           <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
             className="px-3 py-1.5 rounded text-xs font-bold transition disabled:opacity-30"
             style={{ background: 'rgba(255,255,255,0.04)', color: '#fff', minHeight: 32 }}>

@@ -98,13 +98,13 @@ export default function CommissionHistory() {
       {loading ? (
         <div className="space-y-2">
           {[1,2,3].map(i => (
-            <div key={i} className="h-16 rounded-lg animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />
+            <div key={i} className="h-16 rounded-lg animate-pulse bg-kt-hover-bg" />
           ))}
         </div>
       ) : commissions.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-white/30 text-sm">No commissions yet.</p>
-          <p className="text-white/20 text-xs mt-1">Share your referral link to start earning.</p>
+          <p className="text-kt-text-tertiary text-sm">No commissions yet.</p>
+          <p className="text-kt-muted-text text-xs mt-1">Share your referral link to start earning.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -128,7 +128,7 @@ export default function CommissionHistory() {
                       }}>
                       {c.type === 'profit_share' ? 'Profit' : 'Deposit'}
                     </span>
-                    <span className="text-[10px] text-white/30">L{c.level}</span>
+                    <span className="text-[10px] text-kt-text-tertiary">L{c.level}</span>
                   </div>
                   <span className="px-2 py-0.5 rounded text-[10px] font-medium"
                     style={{ background: s.bg, color: s.color }}>
@@ -136,7 +136,7 @@ export default function CommissionHistory() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="text-xs text-white/40">
+                  <div className="text-xs text-kt-text-tertiary">
                     <span>{(c.commissionRate * 100).toFixed(2)}% of ${c.sourceAmount.toFixed(2)}</span>
                   </div>
                   <span className="text-sm font-bold text-kt-green">
@@ -163,7 +163,7 @@ export default function CommissionHistory() {
           >
             Prev
           </button>
-          <span className="text-xs text-white/40">{page} / {totalPages}</span>
+          <span className="text-xs text-kt-text-tertiary">{page} / {totalPages}</span>
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}

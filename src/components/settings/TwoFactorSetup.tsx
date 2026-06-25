@@ -143,8 +143,7 @@ export default function TwoFactorSetup() {
 
   return (
     <div
-      className="p-5 rounded-xl"
-      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+      className="p-5 rounded-xl bg-kt-hover-bg border border-kt-border"
     >
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -163,12 +162,12 @@ export default function TwoFactorSetup() {
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-red-400" style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-red-400 bg-red-500/10 border border-red-500/20">
           {error}
         </div>
       )}
       {success && (
-        <div className="mb-4 p-3 rounded-lg text-sm text-green-400" style={{ background: 'rgba(76,175,80,0.1)', border: '1px solid rgba(76,175,80,0.2)' }}>
+        <div className="mb-4 p-3 rounded-lg text-sm text-green-400 bg-green-500/10 border border-green-500/20">
           {success}
         </div>
       )}
@@ -176,8 +175,7 @@ export default function TwoFactorSetup() {
       {!enabled && !setup && (
         <button
           onClick={handleSetup}
-          className="w-full py-3 rounded-lg text-sm font-bold transition"
-          style={{ background: '#FFD700', color: '#000', minHeight: 44 }}
+          className="w-full py-3 rounded-lg text-sm font-bold transition bg-kt-gold text-black" style={{ minHeight: 44 }}
         >
           Set Up Authenticator App
         </button>
@@ -227,8 +225,7 @@ export default function TwoFactorSetup() {
           <button
             onClick={handleVerify}
             disabled={verifying || verifyCode.length !== 6}
-            className="w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40"
-            style={{ background: '#FFD700', color: '#000', minHeight: 44 }}
+            className="w-full py-3 rounded-lg text-sm font-bold transition disabled:opacity-40 bg-kt-gold text-black" style={{ minHeight: 44 }}
           >
             {verifying ? 'Verifying...' : 'Verify & Enable'}
           </button>
@@ -275,7 +272,7 @@ export default function TwoFactorSetup() {
             </button>
           ) : (
             <div className="space-y-3">
-              <p className="text-xs text-white/40">Enter your authenticator code or a backup code to disable.</p>
+              <p className="text-xs text-kt-text-tertiary">Enter your authenticator code or a backup code to disable.</p>
               <input
                 type="text"
                 value={disableCode}

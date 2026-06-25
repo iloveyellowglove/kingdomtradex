@@ -42,13 +42,13 @@ export default function PlatformStats() {
       >
         <h3 className="text-xs font-semibold text-kt-text-secondary uppercase tracking-wider mb-3">Platform Stats</h3>
         <div className="grid grid-cols-2 gap-3">
-          <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="text-center p-2 rounded-lg bg-kt-hover-bg">
             <p className="text-lg font-bold text-kt-text-primary tabular-nums">{stats.users.toLocaleString()}</p>
-            <p className="text-[10px] text-white/40">Total Users</p>
+            <p className="text-[10px] text-kt-text-tertiary">Total Users</p>
           </div>
-          <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div className="text-center p-2 rounded-lg bg-kt-hover-bg">
             <p className="text-lg font-bold text-kt-green tabular-nums">${stats.deposited >= 1000 ? `${(stats.deposited / 1000).toFixed(0)}k` : stats.deposited.toFixed(0)}</p>
-            <p className="text-[10px] text-white/40">Total Deposited</p>
+            <p className="text-[10px] text-kt-text-tertiary">Total Deposited</p>
           </div>
         </div>
       </div>
@@ -61,11 +61,11 @@ export default function PlatformStats() {
         <h3 className="text-xs font-semibold text-kt-text-secondary uppercase tracking-wider mb-3">Active Tier Rates</h3>
         <div className="space-y-1.5">
           {stats.rates.map(r => (
-            <div key={r.tier} className="flex items-center justify-between py-1.5 px-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <div key={r.tier} className="flex items-center justify-between py-1.5 px-2 rounded-lg bg-kt-hover-bg">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full" style={{ background: r.color }} />
-                <span className="text-xs text-white/70">{r.label}</span>
-                <span className="text-[10px] text-white/30">{r.days}d</span>
+                <span className="text-xs text-kt-text-secondary">{r.label}</span>
+                <span className="text-[10px] text-kt-text-tertiary">{r.days}d</span>
               </div>
               <span className="text-xs font-bold tabular-nums" style={{ color: r.color }}>{(r.dailyRate * 100).toFixed(1)}%</span>
             </div>
@@ -76,8 +76,7 @@ export default function PlatformStats() {
       {/* CTA */}
       <a
         href="#signup"
-        className="block w-full py-3 rounded-xl text-center text-xs font-bold no-underline transition hover:opacity-90"
-        style={{ background: '#FFD700', color: '#000' }}
+        className="block w-full py-3 rounded-xl text-center text-xs font-bold no-underline transition hover:opacity-90 bg-kt-gold text-black" style={{ minHeight: 44 }}
       >
         Start Earning →
       </a>

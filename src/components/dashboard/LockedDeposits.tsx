@@ -69,7 +69,7 @@ export default function LockedDeposits({ userId }: { userId: number }) {
 
   if (loading) {
     return (
-      <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="rounded-xl p-6 text-center bg-kt-hover-bg border border-kt-border">
         <p className="text-kt-text-tertiary text-sm mb-0">Loading locked deposits...</p>
       </div>
     );
@@ -77,7 +77,7 @@ export default function LockedDeposits({ userId }: { userId: number }) {
 
   if (activeLocks.length === 0 && maturedLocks.length === 0) {
     return (
-      <div className="rounded-xl p-6 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="rounded-xl p-6 text-center bg-kt-hover-bg border border-kt-border">
         <p className="text-kt-text-tertiary mb-0">No active locks. Make a deposit to start earning.</p>
       </div>
     );
@@ -88,8 +88,7 @@ export default function LockedDeposits({ userId }: { userId: number }) {
       {/* Collapsible header */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between p-4 rounded-xl transition-colors"
-        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+        className="w-full flex items-center justify-between p-4 rounded-xl transition-colors bg-kt-hover-bg border border-kt-border"
       >
         <div className="flex items-center gap-3">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinecap="round">

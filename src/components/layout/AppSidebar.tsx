@@ -54,7 +54,7 @@ export default function AppSidebar() {
 
       {/* Footer */}
       <div className="px-5 py-4 border-t border-white/5">
-        <p className="text-[10px] text-white/20">© 2026 KingdomTradex</p>
+        <p className="text-[10px] text-kt-muted-text">© 2026 KingdomTradex</p>
       </div>
     </aside>
   );

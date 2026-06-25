@@ -67,7 +67,7 @@ export default function WithdrawalHistory() {
     return (
       <div className="space-y-3">
         {[1, 2, 3].map(i => (
-          <div key={i} className="rounded-lg p-4 animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }}>
+          <div key={i} className="rounded-lg p-4 animate-pulse bg-kt-hover-bg">
             <div className="h-4 w-24 bg-kt-hover-bg rounded mb-2" />
             <div className="h-3 w-32 bg-kt-hover-bg rounded" />
           </div>
@@ -106,7 +106,7 @@ export default function WithdrawalHistory() {
 
       {filtered.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-white/30 text-sm">No withdrawal history yet.</p>
+          <p className="text-kt-text-tertiary text-sm">No withdrawal history yet.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -144,7 +144,7 @@ export default function WithdrawalHistory() {
                       {badge.label}
                     </span>
                   </div>
-                  <span className="text-xs text-white/40">
+                  <span className="text-xs text-kt-text-tertiary">
                     {new Date(w.request_time).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </span>
                 </div>
@@ -156,7 +156,7 @@ export default function WithdrawalHistory() {
                       <span className="text-red-400 text-xs ml-1">(-${Number(w.forfeit_amount).toFixed(2)} fee)</span>
                     )}
                   </span>
-                  <span className="text-white/40 text-xs">
+                  <span className="text-kt-text-tertiary text-xs">
                     {w.coin || w.currency || 'USDT'} · {truncateAddress(w.wallet_address || w.address || '')}
                   </span>
                 </div>

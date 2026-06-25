@@ -52,8 +52,7 @@ export default function LandingNavbar() {
         <div className="hidden lg:flex items-center gap-3">
           <a href="/login" className="text-sm font-medium text-kt-text-primary hover:text-kt-gold transition no-underline">Log In</a>
           <a href="/register"
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold no-underline transition"
-            style={{ background: '#F0B90B', color: '#0B0E11' }}>
+            className="px-5 py-2.5 rounded-lg text-sm font-semibold no-underline transition bg-kt-gold text-black">
             Register
           </a>
         </div>
@@ -85,8 +84,7 @@ export default function LandingNavbar() {
           <hr style={{ borderColor: '#2B3139' }} />
           <a href="/login" className="block px-4 py-3 rounded-lg text-sm font-medium text-kt-text-primary hover:bg-kt-surface no-underline">Log In</a>
           <a href="/register"
-            className="block px-4 py-3 rounded-lg text-center text-sm font-semibold no-underline"
-            style={{ background: '#F0B90B', color: '#0B0E11' }}>
+            className="block px-4 py-3 rounded-lg text-center text-sm font-semibold no-underline bg-kt-gold text-black">
             Register
           </a>
         </div>

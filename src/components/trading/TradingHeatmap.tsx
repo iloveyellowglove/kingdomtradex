@@ -21,7 +21,7 @@ export default function TradingHeatmap() {
   }
 
   return (
-    <div className="rounded-xl p-4" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+    <div className="rounded-xl p-4 bg-kt-surface border border-kt-border">
       <h4 className="text-sm font-bold text-kt-text-primary mb-3">Trading Pairs Activity</h4>
       <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
         {pairs.map(p => (

@@ -137,7 +137,7 @@ export default async function AdminDashboardPage() {
         <div className="rounded-xl p-6" style={cardStyle}>
           <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Pending Actions</h3>
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <div className="flex items-center justify-between p-4 rounded-lg bg-kt-hover-bg">
               <div>
                 <p className="text-kt-text-primary text-sm font-medium">Pending Withdrawals</p>
                 <p className="text-kt-text-tertiary text-xs">Awaiting processing</p>
@@ -155,7 +155,7 @@ export default async function AdminDashboardPage() {
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)' }}>
+            <div className="flex items-center justify-between p-4 rounded-lg bg-kt-hover-bg">
               <div>
                 <p className="text-kt-text-primary text-sm font-medium">Pending KYC Reviews</p>
                 <p className="text-kt-text-tertiary text-xs">Identity verification needed</p>

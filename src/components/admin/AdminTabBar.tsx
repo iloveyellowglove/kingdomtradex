@@ -29,7 +29,7 @@ export default function AdminTabBar() {
             className={`px-5 py-3 text-sm font-medium whitespace-nowrap transition no-underline ${
               active
                 ? 'text-kt-text-primary border-b-2 border-[#FFD700]'
-                : 'text-white/50 hover:text-white/70 border-b-2 border-transparent'
+                : 'text-kt-text-tertiary hover:text-kt-text-secondary border-b-2 border-transparent'
             }`}
           >
             {tab.label}

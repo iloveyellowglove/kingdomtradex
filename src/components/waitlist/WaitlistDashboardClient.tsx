@@ -52,7 +52,7 @@ export default function WaitlistDashboardClient({ entry, nextMilestone, referral
           <span>Welcome back! Here&apos;s your referral dashboard.</span>
           <button
             onClick={() => setShowWelcomeBack(false)}
-            className="text-white/60 hover:text-white ml-4 flex-shrink-0"
+            className="text-kt-text-secondary hover:text-white ml-4 flex-shrink-0"
             style={{ fontSize: '1.25rem', lineHeight: 1 }}
           >
             &times;

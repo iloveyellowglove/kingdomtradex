@@ -20,7 +20,7 @@ export default function ReferralHighlight() {
         <div className="flex flex-col lg:flex-row gap-10 max-w-[900px] mx-auto items-start">
           {/* LEFT: Rate table */}
           <div className="flex-1 w-full">
-            <div className="rounded-xl overflow-hidden" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+            <div className="rounded-xl overflow-hidden bg-kt-surface border border-kt-border">
               <div className="grid grid-cols-4 gap-2 px-5 py-3 text-xs font-semibold text-kt-text-tertiary border-b" style={{ borderColor: '#2B3139' }}>
                 <span>Level</span><span>Deposit Bonus</span><span>Profit Share</span><span>Type</span>
               </div>
@@ -56,8 +56,7 @@ export default function ReferralHighlight() {
               </div>
               <p className="text-xs text-kt-text-tertiary mt-4">Your referral link is generated automatically on signup.</p>
               <Link href="/register"
-                className="block w-full mt-4 py-3 rounded-lg text-center text-sm font-semibold no-underline"
-                style={{ background: '#F0B90B', color: '#0B0E11' }}>
+                className="block w-full mt-4 py-3 rounded-lg text-center text-sm font-semibold no-underline bg-kt-gold text-black">
                 Start Earning from Referrals
               </Link>
             </div>

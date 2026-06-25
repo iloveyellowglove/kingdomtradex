@@ -192,7 +192,7 @@ export default function Navbar({ user }: NavbarProps) {
                         <div className="min-w-0">
                           <p className="text-kt-text-primary text-sm font-semibold truncate">{user.username}</p>
                           {user.email && (
-                            <p className="text-white/40 text-xs truncate">{user.email}</p>
+                            <p className="text-kt-text-tertiary text-xs truncate">{user.email}</p>
                           )}
                           <p className="text-kt-gold text-xs mt-0.5">
                             {formatCurrency(user.display_balance)} USDT

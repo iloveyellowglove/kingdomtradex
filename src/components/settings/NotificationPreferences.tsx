@@ -47,8 +47,7 @@ export default function NotificationPreferences() {
 
   return (
     <div
-      className="p-5 rounded-xl"
-      style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+      className="p-5 rounded-xl bg-kt-hover-bg border border-kt-border"
     >
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -58,7 +57,7 @@ export default function NotificationPreferences() {
       </div>
 
       {msg && (
-        <div className="mb-4 p-2 rounded-lg text-xs text-green-400" style={{ background: 'rgba(76,175,80,0.1)', border: '1px solid rgba(76,175,80,0.2)' }}>
+        <div className="mb-4 p-2 rounded-lg text-xs text-green-400 bg-green-500/10 border border-green-500/20">
           {msg}
         </div>
       )}

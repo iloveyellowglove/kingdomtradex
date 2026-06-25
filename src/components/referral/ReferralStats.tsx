@@ -101,7 +101,7 @@ export default function ReferralStats() {
         <div className="p-4 rounded-xl" style={{ background: 'rgba(33,150,243,0.06)', border: '1px solid rgba(33,150,243,0.12)' }}>
           <p className="text-xs text-kt-text-tertiary mb-1">Total Referrals</p>
           <p className="text-2xl font-bold text-[#2196F3]">{stats?.totalReferrals ?? 0}</p>
-          <p className="text-[10px] text-white/25">{stats?.activeReferrals ?? 0} active</p>
+          <p className="text-[10px] text-kt-muted-text">{stats?.activeReferrals ?? 0} active</p>
         </div>
         <div className="p-4 rounded-xl" style={{ background: 'rgba(76,175,80,0.06)', border: '1px solid rgba(76,175,80,0.12)' }}>
           <p className="text-xs text-kt-text-tertiary mb-1">Total Earned</p>
@@ -114,31 +114,30 @@ export default function ReferralStats() {
 
       {/* By type */}
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
-          <p className="text-[11px] text-white/40">Deposit Bonus</p>
+        <div className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
+          <p className="text-[11px] text-kt-text-tertiary">Deposit Bonus</p>
           <p className="text-lg font-bold text-kt-gold">${(stats?.depositBonusTotal ?? 0).toFixed(2)}</p>
         </div>
-        <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
-          <p className="text-[11px] text-white/40">Profit Share</p>
+        <div className="p-3 rounded-lg bg-kt-hover-bg border border-kt-border">
+          <p className="text-[11px] text-kt-text-tertiary">Profit Share</p>
           <p className="text-lg font-bold text-[#B47CFF]">${(stats?.profitShareTotal ?? 0).toFixed(2)}</p>
         </div>
       </div>
 
       {/* Level breakdown */}
       <div
-        className="p-4 rounded-xl"
-        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+        className="p-4 rounded-xl bg-kt-hover-bg border border-kt-border"
       >
         <h4 className="text-sm font-bold text-kt-text-primary mb-3">Per-Level Breakdown</h4>
         {stats?.levelBreakdown.map(l => (
           <div key={l.level} className="mb-2 last:mb-0">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-white/50">Level {l.level}</span>
-              <span className="text-xs text-white/70">
+              <span className="text-xs text-kt-text-tertiary">Level {l.level}</span>
+              <span className="text-xs text-kt-text-secondary">
                 {l.count} refs · ${l.earned.toFixed(2)}
               </span>
             </div>
-            <div className="h-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <div className="h-1.5 rounded-full bg-kt-hover-bg">
               <div
                 className="h-full rounded-full transition-all"
                 style={{
@@ -151,7 +150,7 @@ export default function ReferralStats() {
             </div>
           </div>
         ))}
-        <div className="mt-3 pt-3 border-t border-kt-border text-[10px] text-white/30">
+        <div className="mt-3 pt-3 border-t border-kt-border text-[10px] text-kt-text-tertiary">
           <span>Rates - Deposit: 3%/1.5%/0.75%/0.5%/0.25% · Profit: 5%/2.5%/1.25%/0.75%/0.5%</span>
         </div>
       </div>

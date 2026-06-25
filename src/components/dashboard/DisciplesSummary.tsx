@@ -54,7 +54,7 @@ export default function DisciplesSummary({ downlineCounts, totalPaidComm, totalP
         </div>
 
         {rank && (
-          <div className="rounded-lg p-3" style={{ background: 'rgba(255,215,0,0.06)' }}>
+          <div className="rounded-lg p-3 bg-kt-active-bg">
             <p className="mb-1" style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.5)' }}>
               Covenant Rank
             </p>

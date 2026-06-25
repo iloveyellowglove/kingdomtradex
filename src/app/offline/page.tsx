@@ -9,8 +9,7 @@ export default function OfflinePage() {
       <div className="text-center max-w-sm">
         {/* Offline icon */}
         <div
-          className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
-          style={{ background: 'rgba(255,215,0,0.08)' }}
+          className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center bg-kt-active-bg"
         >
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="1" y1="1" x2="23" y2="23"/>
@@ -31,12 +30,11 @@ export default function OfflinePage() {
         <div className="space-y-3">
           <button
             onClick={() => window.location.reload()}
-            className="w-full py-3 rounded-lg text-sm font-bold transition"
-            style={{ background: '#FFD700', color: '#000', minHeight: 48 }}
+            className="w-full py-3 rounded-lg text-sm font-bold transition bg-kt-gold text-black" style={{ minHeight: 48 }}
           >
             Try Again
           </button>
-          <p className="text-xs text-white/25">
+          <p className="text-xs text-kt-muted-text">
             Some features may work offline. Your data will sync when you&apos;re back online.
           </p>
         </div>

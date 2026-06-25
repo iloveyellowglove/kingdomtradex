@@ -136,9 +136,9 @@ export default function EarningsCalculator() {
             >
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold" style={{ color: t.color }}>{t.label}</span>
-                <span className="text-xs text-white/40">{t.days} days</span>
+                <span className="text-xs text-kt-text-tertiary">{t.days} days</span>
               </div>
-              <span className="text-xs text-white/50">{(t.dailyRate * 100).toFixed(1)}% daily</span>
+              <span className="text-xs text-kt-text-tertiary">{(t.dailyRate * 100).toFixed(1)}% daily</span>
             </button>
           ))}
         </div>
@@ -151,25 +151,25 @@ export default function EarningsCalculator() {
       >
         <h3 className="text-sm font-bold text-kt-gold mb-4">Projected Earnings</h3>
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-[11px] text-white/40">Daily</p>
+          <div className="p-3 rounded-lg bg-kt-hover-bg">
+            <p className="text-[11px] text-kt-text-tertiary">Daily</p>
             <p className="text-lg font-bold text-kt-green">${stats.daily.toFixed(2)}</p>
           </div>
-          <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-[11px] text-white/40">Weekly</p>
+          <div className="p-3 rounded-lg bg-kt-hover-bg">
+            <p className="text-[11px] text-kt-text-tertiary">Weekly</p>
             <p className="text-lg font-bold text-kt-green">${stats.weekly.toFixed(2)}</p>
           </div>
-          <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-[11px] text-white/40">Monthly</p>
+          <div className="p-3 rounded-lg bg-kt-hover-bg">
+            <p className="text-[11px] text-kt-text-tertiary">Monthly</p>
             <p className="text-lg font-bold text-kt-green">${stats.monthly.toFixed(2)}</p>
           </div>
-          <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-[11px] text-white/40">Total ({tier.days}d)</p>
+          <div className="p-3 rounded-lg bg-kt-hover-bg">
+            <p className="text-[11px] text-kt-text-tertiary">Total ({tier.days}d)</p>
             <p className="text-lg font-bold text-kt-gold">${stats.total.toFixed(2)}</p>
           </div>
         </div>
-        <div className="mt-3 p-3 rounded-lg" style={{ background: 'rgba(255,215,0,0.06)' }}>
-          <div className="flex justify-between text-xs text-white/50">
+        <div className="mt-3 p-3 rounded-lg bg-kt-active-bg">
+          <div className="flex justify-between text-xs text-kt-text-tertiary">
             <span>Deposit</span>
             <span>${amount.toFixed(2)}</span>
           </div>
@@ -189,8 +189,7 @@ export default function EarningsCalculator() {
 
       {/* Growth chart */}
       <div
-        className="p-5 rounded-xl mb-6 overflow-x-auto"
-        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+        className="p-5 rounded-xl mb-6 overflow-x-auto bg-kt-hover-bg border border-kt-border"
       >
         <h3 className="text-sm font-bold text-kt-text-primary mb-3">Growth Over Time</h3>
         <svg width={chartWidth} height={chartHeight} viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full" style={{ minWidth: 300 }}>
@@ -235,7 +234,7 @@ export default function EarningsCalculator() {
         <h3 className="text-sm font-bold text-[#B47CFF] mb-3">Referral Earnings Estimate</h3>
         <div className="flex items-center gap-4 mb-3">
           <div className="flex-1">
-            <label className="text-[10px] text-white/40">Number of referrals</label>
+            <label className="text-[10px] text-kt-text-tertiary">Number of referrals</label>
             <input
               type="number"
               value={referralCount}
@@ -245,7 +244,7 @@ export default function EarningsCalculator() {
             />
           </div>
           <div className="flex-1">
-            <label className="text-[10px] text-white/40">Avg deposit per referral</label>
+            <label className="text-[10px] text-kt-text-tertiary">Avg deposit per referral</label>
             <input
               type="number"
               value={referralAvgDeposit}
@@ -256,13 +255,13 @@ export default function EarningsCalculator() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-[11px] text-white/40">Est. Monthly Commission</p>
+          <div className="p-3 rounded-lg bg-kt-hover-bg">
+            <p className="text-[11px] text-kt-text-tertiary">Est. Monthly Commission</p>
             <p className="text-lg font-bold text-[#B47CFF]">${stats.refMonthlyCommission.toFixed(2)}</p>
           </div>
-          <div className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-            <p className="text-[11px] text-white/40">If they also refer...</p>
-            <p className="text-lg font-bold text-white/60">
+          <div className="p-3 rounded-lg bg-kt-hover-bg">
+            <p className="text-[11px] text-kt-text-tertiary">If they also refer...</p>
+            <p className="text-lg font-bold text-kt-text-secondary">
               ${(stats.refMonthlyCommission + stats.refMonthlyCommission * 0.5).toFixed(2)}
             </p>
           </div>
@@ -275,8 +274,7 @@ export default function EarningsCalculator() {
       {/* CTA */}
       <Link
         href="/deposit"
-        className="block w-full py-4 rounded-xl text-center text-sm font-bold transition no-underline"
-        style={{ background: '#FFD700', color: '#000', minHeight: 48 }}
+        className="block w-full py-4 rounded-xl text-center text-sm font-bold transition no-underline bg-kt-gold text-black" style={{ minHeight: 48 }}
       >
         Start Earning - Deposit Now
       </Link>

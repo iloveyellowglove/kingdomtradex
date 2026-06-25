@@ -81,7 +81,7 @@ export default function DepositPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-4">
-            <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+            <div className="p-5 rounded-xl bg-kt-surface border border-kt-border">
               <h2 className="text-lg font-semibold text-kt-text-primary mb-1">Select Your Lock Tier</h2>
               <p className="text-sm text-kt-text-secondary mb-4">Longer locks earn higher daily returns</p>
 
@@ -161,9 +161,9 @@ export default function DepositPage() {
             </div>
 
             {step >= 2 && address && (
-              <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+              <div className="p-5 rounded-xl bg-kt-surface border border-kt-border">
                 <h3 className="text-sm font-bold text-kt-text-primary mb-3">Your Deposit Address</h3>
-                <div className="p-4 rounded-lg text-center" style={{ background: '#0B0E11', border: '1px solid #2B3139' }}>
+                <div className="p-4 rounded-lg text-center bg-kt-bg border border-kt-border">
                   <p className="text-xs text-kt-text-tertiary mb-2">Send only {currency} to this address</p>
                   <code className="text-sm font-bold text-kt-green break-all select-all">{address}</code>
                 </div>
@@ -173,7 +173,7 @@ export default function DepositPage() {
           </div>
 
           <div className="space-y-4">
-            <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+            <div className="p-5 rounded-xl bg-kt-surface border border-kt-border">
               <h3 className="text-sm font-bold text-kt-text-primary mb-3">Your Projected Earnings</h3>
               {amountNum > 0 ? (
                 <>
@@ -206,7 +206,7 @@ export default function DepositPage() {
               )}
             </div>
 
-            <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+            <div className="p-5 rounded-xl bg-kt-surface border border-kt-border">
               <h3 className="text-sm font-bold text-kt-text-primary mb-3">Your Active Deposits</h3>
               {activeDeposits.length > 0 ? (
                 <div className="space-y-2">
@@ -223,7 +223,7 @@ export default function DepositPage() {
               )}
             </div>
 
-            <div className="p-5 rounded-xl" style={{ background: '#1E2329', border: '1px solid #2B3139' }}>
+            <div className="p-5 rounded-xl bg-kt-surface border border-kt-border">
               <h3 className="text-sm font-bold text-kt-text-primary mb-3">Important Information</h3>
               <ul className="space-y-2 text-xs text-kt-text-secondary">
                 <li className="flex gap-2"><span className="text-kt-gold">•</span> Deposits are locked for the selected tier duration</li>

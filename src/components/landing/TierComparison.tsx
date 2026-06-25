@@ -42,8 +42,7 @@ export default function TierComparison() {
             >
               <div style={{ height: 3, background: gradient }} />
               {t.featured && (
-                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold animate-pulse-badge"
-                  style={{ background: '#F0B90B', color: '#0B0E11' }}>Popular</div>
+                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold animate-pulse-badge bg-kt-gold text-black">Popular</div>
               )}
               {t.badge && !t.featured && (
                 <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold"

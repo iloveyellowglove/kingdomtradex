@@ -60,13 +60,13 @@ export default function LeaderboardPage() {
           </div>
           <div>
             <p className="text-sm font-bold text-kt-gold">Your {tab === 'earnings' ? 'Earnings' : 'Referral'} Rank</p>
-            <p className="text-xs text-white/40">You&apos;re on the board! Keep growing.</p>
+            <p className="text-xs text-kt-text-tertiary">You&apos;re on the board! Keep growing.</p>
           </div>
         </div>
       )}
 
       {/* Tab bar */}
-      <div className="flex gap-1 mb-6 p-1 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)' }}>
+      <div className="flex gap-1 mb-6 p-1 rounded-xl bg-kt-hover-bg">
         {[
           { key: 'earnings' as const, label: 'Top Earners' },
           { key: 'referrals' as const, label: 'Top Referrers' },
@@ -90,12 +90,12 @@ export default function LeaderboardPage() {
       {loading ? (
         <div className="space-y-2">
           {[1,2,3,4,5].map(i => (
-            <div key={i} className="h-14 rounded-lg animate-pulse" style={{ background: 'rgba(255,255,255,0.03)' }} />
+            <div key={i} className="h-14 rounded-lg animate-pulse bg-kt-hover-bg" />
           ))}
         </div>
       ) : data.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-white/30 text-sm">No data yet. Start earning to appear on the leaderboard.</p>
+          <p className="text-kt-text-tertiary text-sm">No data yet. Start earning to appear on the leaderboard.</p>
         </div>
       ) : (
         <div className="space-y-1">
@@ -130,11 +130,11 @@ export default function LeaderboardPage() {
 
                 {/* Name + stats */}
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium truncate ${isMe ? 'text-kt-gold' : 'text-white'}`}>
+                  <p className={`text-sm font-medium truncate ${isMe ? 'text-kt-gold' : 'text-kt-text-primary'}`}>
                     {row.displayName}
                     {isMe && <span className="text-[10px] ml-1 text-kt-gold/50">(you)</span>}
                   </p>
-                  <div className="flex gap-3 text-[10px] text-white/30">
+                  <div className="flex gap-3 text-[10px] text-kt-text-tertiary">
                     {tab === 'earnings' ? (
                       <span>${row.totalEarned.toFixed(0)} earned</span>
                     ) : (
@@ -151,7 +151,7 @@ export default function LeaderboardPage() {
                       : row.totalReferrals}
                   </p>
                   {tab === 'earnings' && row.totalReferrals > 0 && (
-                    <p className="text-[10px] text-white/25">{row.totalReferrals} refs</p>
+                    <p className="text-[10px] text-kt-muted-text">{row.totalReferrals} refs</p>
                   )}
                 </div>
               </div>
