@@ -35,7 +35,7 @@ export default async function LandingPage() {
               { step: '01', title: 'Sign Up', desc: 'Create your account and claim $50 or $100 in free trading credits instantly.' },
               { step: '02', title: 'Deposit & Lock', desc: 'Choose a tier (6/9/12/18 months). Longer locks earn higher daily rates.' },
               { step: '03', title: 'Earn Daily', desc: 'Earnings are credited to your account every day. Withdraw or compound.' },
-            ].map((item, i) => (
+            ].map((item) => (
               <div key={item.step} className="p-6 rounded-xl text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
                 <div className="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3 text-lg font-bold" style={{ background: 'rgba(255,215,0,0.1)', color: '#FFD700' }}>{item.step}</div>
                 <h4 className="font-bold mb-1">{item.title}</h4>
