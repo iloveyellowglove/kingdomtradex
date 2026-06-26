@@ -66,19 +66,19 @@ export default async function AdminDashboardPage() {
 
       {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="rounded-xl p-6" className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
+        <div className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
           <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-2">Total Users</p>
           <p className="text-2xl font-bold text-kt-text-primary">{(userCount ?? 0).toLocaleString()}</p>
         </div>
-        <div className="rounded-xl p-6" className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
+        <div className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
           <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-2">Total Deposited</p>
           <p className="text-2xl font-bold text-kt-text-primary">{fmtDollar(sumTotalDeposited)}</p>
         </div>
-        <div className="rounded-xl p-6" className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
+        <div className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
           <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-2">Completed Deposits</p>
           <p className="text-2xl font-bold text-kt-text-primary">{(completedDeposits ?? 0).toLocaleString()}</p>
         </div>
-        <div className="rounded-xl p-6" className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
+        <div className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
           <p className="text-xs text-kt-text-tertiary uppercase tracking-wider mb-2">Pending Withdrawals</p>
           <p className="text-2xl font-bold text-kt-text-primary">{(pendingWds ?? 0).toLocaleString()}</p>
         </div>
@@ -87,7 +87,7 @@ export default async function AdminDashboardPage() {
       {/* Two-column grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Signups */}
-        <div className="rounded-xl p-6" className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
+        <div className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
           <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Recent Signups</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -121,7 +121,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Pending Actions */}
-        <div className="rounded-xl p-6" className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
+        <div className="bg-kt-card-bg border border-kt-card-border rounded-xl shadow-sm">
           <h3 className="text-sm font-semibold text-kt-text-primary mb-4">Pending Actions</h3>
           <div className="space-y-3">
             <div className="flex items-center justify-between p-4 rounded-lg bg-kt-hover-bg">
