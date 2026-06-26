@@ -49,7 +49,6 @@ export default async function AdminDashboardPage() {
     // kyc_status column may not exist yet; continue with defaults
   }
 
-  const cardStyle = {};
 
   function kycBadge(status: string | null) {
     const s = status || 'unverified';
