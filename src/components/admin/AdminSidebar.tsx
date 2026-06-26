@@ -16,18 +16,18 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <div className="admin-sidebar card">
-      <div className="card-header"><h5 className="mb-0">Admin Menu</h5></div>
-      <div className="card-body p-0">
-        <nav className="flex flex-col p-2">
+    <div className="bg-kt-surface border border-kt-border rounded-2xl shadow-sm">
+      <div className="px-4 py-3 border-b border-kt-border"><h5 className="mb-0 text-kt-text-primary text-sm font-semibold">Admin Menu</h5></div>
+      <div className="p-2">
+        <nav className="flex flex-col">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`px-4 py-3 rounded-lg transition ${
+              className={`px-4 py-3 rounded-lg transition no-underline ${
                 pathname === link.href
-                  ? 'text-kt-gold bg-white/5'
-                  : 'text-kt-text-secondary hover:text-kt-gold hover:bg-white/5'
+                  ? 'text-kt-gold bg-kt-active-bg'
+                  : 'text-kt-text-secondary hover:text-kt-gold hover:bg-kt-hover-bg'
               }`}
             >
               <span className="mr-2">{link.icon}</span>

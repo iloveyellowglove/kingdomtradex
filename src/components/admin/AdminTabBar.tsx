@@ -28,8 +28,8 @@ export default function AdminTabBar() {
             href={tab.href}
             className={`px-5 py-3 text-sm font-medium whitespace-nowrap transition no-underline ${
               active
-                ? 'text-kt-text-primary border-b-2 border-[#FFD700]'
-                : 'text-kt-text-tertiary hover:text-kt-text-secondary border-b-2 border-transparent'
+                ? 'text-kt-gold border-b-2 border-kt-gold'
+                : 'text-kt-text-secondary hover:text-kt-text-primary border-b-2 border-transparent'
             }`}
           >
             {tab.label}
