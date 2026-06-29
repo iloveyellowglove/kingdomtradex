@@ -28,16 +28,21 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     return NextResponse.json({ success: false, error: pwCheck.error! }, { status: 400 });
   }
 
-  // Rate limit: 1 registration per IP per 24 hours
+  // Rate limit: 15 registrations per IP per hour
   const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
   const g = globalThis as Record<string, unknown>;
-  const registerMap = (g.__registerRateLimitMap as Map<string, number>)
-    ?? (g.__registerRateLimitMap = new Map<string, number>());
-  const lastRegister = registerMap.get(ip);
-  if (lastRegister && (Date.now() - lastRegister) < 86400000) {
-    return NextResponse.json({ success: false, error: 'Please wait 24 hours before creating another account.' }, { status: 429 });
+  const registerCountMap = (g.__registerCountMap as Map<string, { count: number; resetAt: number }>)
+    ?? (g.__registerCountMap = new Map<string, { count: number; resetAt: number }>());
+  const nowMs = Date.now();
+  const entry = registerCountMap.get(ip);
+  if (entry && nowMs < entry.resetAt && entry.count >= 15) {
+    return NextResponse.json({ success: false, error: 'Too many registrations from this IP. Please try again later.' }, { status: 429 });
   }
-  registerMap.set(ip, Date.now());
+  if (!entry || nowMs >= entry.resetAt) {
+    registerCountMap.set(ip, { count: 1, resetAt: nowMs + 3600000 });
+  } else {
+    entry.count++;
+  }
 
   // Anti-abuse: track IP registrations to flag suspicious referrals
   const ipRegMap = (g.__ipRegistrations as Map<string, number[]>)
