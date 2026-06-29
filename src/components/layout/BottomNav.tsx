@@ -16,8 +16,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-kt-border safe-area-bottom"
-      style={{ background: '#0c0a16' }}
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-kt-border safe-area-bottom bg-kt-surface"
     >
       <div className="flex justify-around items-center h-16 px-1">
         {ITEMS.map(item => {
@@ -26,8 +25,7 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full no-underline transition"
-              style={{ color: active ? '#FFD700' : 'rgba(255,255,255,0.35)' }}
+              className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full no-underline transition ${active ? 'text-kt-gold' : 'text-kt-text-tertiary'}`}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
                 <path d={item.icon} />

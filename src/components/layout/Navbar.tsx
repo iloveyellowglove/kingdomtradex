@@ -39,7 +39,7 @@ export default function Navbar({ user }: NavbarProps) {
   const avatarLetter = user?.username?.charAt(0).toUpperCase() || '?';
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-kt-border shadow-sm" id="mainNav" style={{ background: 'var(--kt-navbar-bg)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', minHeight: 64 }}>
+    <nav className="sticky top-0 z-50 border-b border-kt-border shadow-sm safe-area-top" id="mainNav" style={{ background: 'var(--kt-navbar-bg)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', minHeight: 64 }}>
       <div className="flex items-center justify-between max-w-[1600px] mx-auto px-6 w-full min-h-[64px]">
         <Link href="/" className="no-underline">
           <Logo size="md" />
