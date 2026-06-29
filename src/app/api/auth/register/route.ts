@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { hashPassword } from '@/lib/auth/password';
+import { randomBytes } from 'crypto';
+import { hashPassword, validatePasswordStrength } from '@/lib/auth/password';
 import { createSession } from '@/lib/auth/session';
 import { createServiceClient } from '@/lib/supabase/service';
 import { generateReferralCode, generatePlisioUid } from '@/lib/utils/referral';
 import { getBonusTier } from '@/lib/bonus-tiers';
+import { sendEmail } from '@/lib/services/email';
 
 export async function POST(request: NextRequest) {
   const { username, email, password, referral_code, role: rawRole } = await request.json();
@@ -14,14 +16,15 @@ export async function POST(request: NextRequest) {
   const usernameClean = (username || '').trim();
   const emailClean = (email || '').toLowerCase().trim();
 
-  if (usernameClean.length < 3 || usernameClean.length > 50) {
-    return NextResponse.json({ success: false, error: 'Username must be 3-50 characters.' }, { status: 400 });
+  if (!/^[a-zA-Z0-9._-]{3,30}$/.test(usernameClean)) {
+    return NextResponse.json({ success: false, error: 'Username must be 3-30 characters: letters, numbers, dots, hyphens, underscores only.' }, { status: 400 });
   }
   if (!emailClean || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailClean)) {
     return NextResponse.json({ success: false, error: 'Invalid email address.' }, { status: 400 });
   }
-  if (!password || password.length < 8) {
-    return NextResponse.json({ success: false, error: 'Password must be at least 8 characters.' }, { status: 400 });
+  const pwCheck = validatePasswordStrength(password);
+  if (!pwCheck.valid) {
+    return NextResponse.json({ success: false, error: pwCheck.error! }, { status: 400 });
   }
 
   // Rate limit: 1 registration per IP per 24 hours
@@ -34,6 +37,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Please wait 24 hours before creating another account.' }, { status: 429 });
   }
   registerMap.set(ip, Date.now());
+
+  // Anti-abuse: track IP registrations to flag suspicious referrals
+  const ipRegMap = (g.__ipRegistrations as Map<string, number[]>)
+    ?? (g.__ipRegistrations = new Map<string, number[]>());
+  const recentUserIds = ipRegMap.get(ip) ?? [];
+  const sameIpRecent = recentUserIds.length > 0; // same IP registered another account recently
 
   const supabase = createServiceClient();
 
@@ -99,6 +108,7 @@ export async function POST(request: NextRequest) {
       minimum_deposit_to_unlock: tier.unlockThreshold,
       kyc_level: 0,
       signup_credit: 50.00,
+      referral_suspicious: (referredBy && sameIpRecent) ? true : false,
       referral_level: 0,
       two_factor_enabled: false,
       auto_withdrawal_enabled: false,
@@ -111,12 +121,53 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Registration failed. Please try again.' }, { status: 500 });
   }
 
+  // Track this user's ID for the IP-based anti-abuse map
+  if (ip !== 'unknown') {
+    recentUserIds.push(newUser[0].id);
+    ipRegMap.set(ip, recentUserIds.slice(-5)); // keep last 5
+  }
+
+  // Generate email verification token and send verification email
+  const verifyToken = randomBytes(32).toString('hex');
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const verifyLink = `${appUrl}/api/auth/verify-email?token=${verifyToken}`;
+
+  // Insert verification token into password_resets with type='email_verification'
+  await supabase.from('password_resets').insert({
+    email: emailClean,
+    token: verifyToken,
+    type: 'email_verification',
+    created_at: now,
+    used: false,
+  });
+
+  // Send verification email (non-blocking — don't fail registration if email fails)
+  try {
+    await sendEmail(emailClean, 'Verify your email - KingdomTradex', `
+      <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+        <h2 style="color: #F0B90B;">KingdomTradex</h2>
+        <p>Welcome! Please verify your email address to activate your account and unlock withdrawals.</p>
+        <p style="margin: 24px 0;">
+          <a href="${verifyLink}" style="background: #F0B90B; color: #000; padding: 12px 32px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            Verify Email
+          </a>
+        </p>
+        <p style="color: #848E9C; font-size: 13px;">This link expires in 24 hours.</p>
+        <p style="color: #848E9C; font-size: 13px;">If you did not create this account, please ignore this email.</p>
+      </div>
+    `);
+  } catch (emailErr) {
+    console.error('[register] verification email send failed:', emailErr);
+    // Non-fatal: user can request a resend later
+  }
+
   const { token } = await createSession(newUser[0].id, role);
 
   const response = NextResponse.json({
     success: true,
     user_id: newUser[0].id,
     referral_code: newReferralCode,
+    message: 'Account created. Please check your email to verify your account.',
   });
   response.cookies.set('__Host-kingdom_session', token, {
     httpOnly: true,

@@ -26,7 +26,6 @@ interface ProfileData {
   city: string | null;
   address: string | null;
   role: string;
-  migrationNeeded?: boolean;
   kyc_level?: number;
   two_factor_enabled?: boolean;
   created_at?: string;
@@ -57,11 +56,6 @@ export default function ProfilePage() {
   // Profile state
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
-  const [migrationNeeded, setMigrationNeeded] = useState(false);
-  const [migrationRunning, setMigrationRunning] = useState(false);
-  const [migrationMsg, setMigrationMsg] = useState('');
-  const [migrationSql, setMigrationSql] = useState<string | null>(null);
-  const [copiedSql, setCopiedSql] = useState(false);
 
   // Edit state
   const [fullName, setFullName] = useState('');
@@ -102,7 +96,6 @@ export default function ProfilePage() {
         if (res.ok) {
           const data = await res.json();
           setProfile(data);
-          setMigrationNeeded(data.migrationNeeded || false);
           setFullName(data.full_name || '');
           setPhone(data.phone || '');
           setDateOfBirth(data.date_of_birth || '');
@@ -277,63 +270,6 @@ export default function ProfilePage() {
     }
   }, []);
 
-  // Run migration (admin only)
-  const handleRunMigration = useCallback(async () => {
-    setMigrationRunning(true);
-    setMigrationMsg('');
-    setMigrationSql(null);
-    try {
-      const res = await fetch('/api/profile/migrate', { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        setMigrationMsg('Migration complete. Profile features are now available.');
-        setMigrationNeeded(false);
-        // Re-fetch profile
-        const profileRes = await fetch('/api/profile/me');
-        if (profileRes.ok) {
-          const fresh = await profileRes.json();
-          setProfile(fresh);
-          setFullName(fresh.full_name || '');
-          setPhone(fresh.phone || '');
-          setDateOfBirth(fresh.date_of_birth || '');
-          setCountry(fresh.country || '');
-          setCity(fresh.city || '');
-          setAddress(fresh.address || '');
-        }
-      } else if (data.sql) {
-        setMigrationSql(data.sql);
-        setMigrationMsg(data.message || 'Automatic migration not available. Run the SQL manually.');
-      } else {
-        setMigrationMsg(data.message || 'Migration failed.');
-      }
-    } catch {
-      setMigrationMsg('Network error.');
-    } finally {
-      setMigrationRunning(false);
-      setTimeout(() => setMigrationMsg(''), 6000);
-    }
-  }, []);
-
-  const handleCopySql = useCallback(async () => {
-    if (!migrationSql) return;
-    try {
-      await navigator.clipboard.writeText(migrationSql);
-      setCopiedSql(true);
-      setTimeout(() => setCopiedSql(false), 2000);
-    } catch {
-      // Fallback for environments without clipboard API
-      const ta = document.createElement('textarea');
-      ta.value = migrationSql;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      setCopiedSql(true);
-      setTimeout(() => setCopiedSql(false), 2000);
-    }
-  }, [migrationSql]);
 
   if (profileLoading) {
     return (
@@ -384,62 +320,6 @@ export default function ProfilePage() {
           </span>
         </div>
       </div>
-
-      {/* Migration banner */}
-      {migrationNeeded && (
-        <div className="mb-8 p-5 rounded-xl" style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.2)' }}>
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <p className="text-kt-gold text-sm font-semibold">Database Migration Required</p>
-              <p className="text-kt-text-tertiary text-sm mt-1">Profile features require a database migration. Ask your admin to run it.</p>
-            </div>
-            {profile.role === 'admin' && !migrationSql && (
-              <div className="flex items-center gap-3">
-                {migrationMsg && (
-                  <span className={`text-sm ${migrationMsg.includes('complete') ? 'text-green-400' : 'text-red-400'}`}>
-                    {migrationMsg}
-                  </span>
-                )}
-                <button
-                  onClick={handleRunMigration}
-                  disabled={migrationRunning}
-                  className="px-4 py-2 rounded-lg text-sm font-semibold transition disabled:opacity-50 flex-shrink-0 bg-kt-gold text-black"
-                >
-                  {migrationRunning ? 'Running...' : 'Run Migration'}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Manual SQL fallback */}
-          {migrationSql && (
-            <div className="mt-4 space-y-3">
-              {migrationMsg && (
-                <p className="text-kt-text-tertiary text-sm">{migrationMsg}</p>
-              )}
-              <p className="text-kt-text-tertiary text-xs">
-                Go to <span className="text-kt-text-secondary">Supabase Dashboard</span> &gt; <span className="text-kt-text-secondary">SQL Editor</span> &gt; paste the query below &gt; click <span className="text-kt-text-secondary">Run</span>.
-                Then refresh this page.
-              </p>
-              <div className="relative">
-                <pre
-                  className="p-4 rounded-lg text-xs font-mono overflow-x-auto"
-                  style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.8)' }}
-                >
-                  {migrationSql}
-                </pre>
-                <button
-                  onClick={handleCopySql}
-                  className="absolute top-2 right-2 px-3 py-1.5 rounded text-xs font-semibold transition"
-                  style={{ background: copiedSql ? '#22c55e' : 'rgba(255,255,255,0.1)', color: copiedSql ? '#fff' : 'rgba(255,255,255,0.7)' }}
-                >
-                  {copiedSql ? 'Copied' : 'Copy SQL'}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* LEFT COLUMN - Avatar + Profile Fields */}

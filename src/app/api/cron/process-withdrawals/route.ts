@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { processEligibleWithdrawals } from '@/lib/services/plisio-withdrawal';
+import { processPendingWithdrawals } from '@/lib/withdrawal-service';
 import { completeProcessingWithdrawals } from '@/lib/db/withdrawals';
 
 import { timingSafeEqual } from '@/lib/auth/csrf';
@@ -10,12 +10,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 
-  const processed = await processEligibleWithdrawals();
+  // Process pending withdrawals via NOWPayments (authoritative payout provider)
+  const result = await processPendingWithdrawals();
+
+  // Mark long-processing withdrawals as completed
   const completed = await completeProcessingWithdrawals();
 
   return NextResponse.json({
     success: true,
-    processed,
+    processed: result.processed,
+    failed: result.failed,
     completed,
   });
 }

@@ -22,6 +22,21 @@ export async function createSession(userId: number, role: string): Promise<{ tok
   const now = new Date();
   const expiresAt = new Date(now.getTime() + SESSION_TTL * 1000);
 
+  // Enforce max 5 concurrent sessions per user (sliding window — oldest evicted)
+  const { data: existingSessions } = await supabase
+    .from('sessions')
+    .select('session_token, created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true });
+
+  if (existingSessions && existingSessions.length >= 5) {
+    // Delete oldest sessions to make room
+    const toDelete = existingSessions.slice(0, existingSessions.length - 4);
+    for (const s of toDelete) {
+      await supabase.from('sessions').delete().eq('session_token', s.session_token);
+    }
+  }
+
   // Check if sessions table is accessible
   const { error: tableError } = await supabase
     .from('sessions')

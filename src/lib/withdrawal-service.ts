@@ -247,6 +247,102 @@ export async function getLockedDeposits(userId: number) {
   }));
 }
 
+// ── Batch Withdrawal Processing (NOWPayments) ────────────────────────────────
+
+export interface BatchProcessResult {
+  processed: number;
+  failed: number;
+  details: Array<{ withdrawalId: number; status: string; error?: string }>;
+}
+
+/**
+ * Process all eligible withdrawals via NOWPayments payout API.
+ * Handles both pending profit/commission withdrawals and cooling withdrawals
+ * whose 48-hour period has elapsed.
+ */
+export async function processPendingWithdrawals(): Promise<BatchProcessResult> {
+  const supabase = createServiceClient();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const result: BatchProcessResult = { processed: 0, failed: 0, details: [] };
+  const now = new Date().toISOString();
+
+  // Fetch pending profit/commission withdrawals
+  const { data: pending } = await supabase
+    .from('withdrawals')
+    .select('*')
+    .eq('status', 'pending')
+    .in('withdrawal_type', ['profit', 'commission'])
+    .lte('request_time', now)
+    .order('request_time', { ascending: true })
+    .limit(50);
+
+  // Fetch cooling withdrawals ready for processing
+  const { data: cooling } = await supabase
+    .from('withdrawals')
+    .select('*')
+    .eq('status', 'cooling')
+    .lte('cooling_end_at', now)
+    .order('cooling_end_at', { ascending: true })
+    .limit(50);
+
+  const allWithdrawals = [...(pending ?? []), ...(cooling ?? [])];
+
+  for (const w of allWithdrawals) {
+    try {
+      const payoutResult = await createPayout(
+        w.address || w.wallet_address || '',
+        w.coin || w.currency || 'USDT',
+        Number(w.amount),
+        `${appUrl}/api/webhooks/nowpayments-ipn`
+      );
+
+      if (payoutResult.success) {
+        await supabase
+          .from('withdrawals')
+          .update({
+            status: 'completed',
+            tx_hash: payoutResult.txHash ?? null,
+            completed_at: now,
+            processed_time: now,
+          })
+          .eq('id', w.id);
+
+        result.processed++;
+        result.details.push({ withdrawalId: w.id, status: 'completed' });
+      } else {
+        await supabase
+          .from('withdrawals')
+          .update({
+            status: 'failed',
+            failure_reason: payoutResult.error ?? 'Payout failed',
+          })
+          .eq('id', w.id);
+
+        result.failed++;
+        result.details.push({ withdrawalId: w.id, status: 'failed', error: payoutResult.error });
+      }
+    } catch (err) {
+      console.error('[processPendingWithdrawals] error for withdrawal', w.id, ':', err);
+      await supabase
+        .from('withdrawals')
+        .update({
+          status: 'failed',
+          failure_reason: err instanceof Error ? err.message : 'Unexpected payout error',
+        })
+        .eq('id', w.id);
+
+      result.failed++;
+      result.details.push({
+        withdrawalId: w.id,
+        status: 'failed',
+        error: err instanceof Error ? err.message : 'Unexpected payout error',
+      });
+    }
+  }
+
+  return result;
+}
+
 // ── Auto-withdrawal ──────────────────────────────────────────────────────────
 
 export async function updateAutoWithdrawSettings(

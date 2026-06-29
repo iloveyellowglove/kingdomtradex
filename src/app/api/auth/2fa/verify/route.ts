@@ -3,6 +3,16 @@ import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 import { verifyTOTP } from '@/lib/two-factor';
 
+// Rate limit for 2FA setup verification: max 10 attempts per user per 10 minutes
+const g = globalThis as Record<string, unknown>;
+const setupRateMap = (g.__twoFactorSetupRateMap as Map<number, { count: number; resetAt: number }>)
+  ?? (g.__twoFactorSetupRateMap = new Map<number, { count: number; resetAt: number }>());
+
+/**
+ * 2FA SETUP verification only.
+ * Login 2FA has moved to /api/auth/verify-login.
+ * This route confirms TOTP setup from the Settings page.
+ */
 export async function POST(request: NextRequest) {
   const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
@@ -26,6 +36,18 @@ export async function POST(request: NextRequest) {
   const { code } = body;
   if (!code || typeof code !== 'string' || code.length < 6) {
     return NextResponse.json({ success: false, error: 'Valid 6-digit code required.' }, { status: 400 });
+  }
+
+  // Rate limit 2FA setup attempts: max 10 per user per 10 minutes
+  const nowSetup = Date.now();
+  const setupEntry = setupRateMap.get(userId);
+  if (setupEntry && nowSetup < setupEntry.resetAt && setupEntry.count >= 10) {
+    return NextResponse.json({ success: false, error: 'Too many verification attempts. Please try again later.' }, { status: 429 });
+  }
+  if (!setupEntry || nowSetup >= setupEntry.resetAt) {
+    setupRateMap.set(userId, { count: 1, resetAt: nowSetup + 10 * 60 * 1000 });
+  } else {
+    setupEntry.count++;
   }
 
   // Fetch stored secret
@@ -55,7 +77,6 @@ export async function POST(request: NextRequest) {
     const data = JSON.parse(u.two_factor_secret);
     secret = data.secret;
   } catch {
-    // Legacy: plain secret string
     secret = u.two_factor_secret;
   }
 

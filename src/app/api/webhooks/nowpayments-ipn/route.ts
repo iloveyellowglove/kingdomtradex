@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  // --- 70/30 USDT-to-XMR Auto-Split ---
+  // --- 60/40 USDT-to-XMR Auto-Split ---
   // Only run for USDT deposits that are completed
   if (internalStatus === 'completed' && isUsdtDeposit(payCurrency)) {
     // Idempotency check - skip if already split
@@ -114,31 +114,43 @@ export async function POST(request: NextRequest) {
       try {
         await processUsdtToXmrSplit(deposit.id, depositAmount);
       } catch (splitErr) {
-        console.error('[nowpayments-ipn] XMR split failed for deposit', deposit.id, ':', splitErr);
+        const errMsg = splitErr instanceof Error ? splitErr.message : 'Split failed';
+        console.error('[nowpayments-ipn] XMR split failed for deposit', deposit.id, ':', errMsg);
+
+        // Log the failure for admin review — deposit is still credited to user
+        try {
+          await supabase.from('admin_logs').insert({
+            admin_id: 0, // system action
+            action: 'split_failure',
+            target_table: 'deposits',
+            target_id: deposit.id,
+            new_value: JSON.stringify({ error: errMsg, amount: depositAmount }),
+            created_at: new Date().toISOString(),
+          });
+        } catch (logErr) {
+          console.error('[nowpayments-ipn] Failed to write admin_log:', logErr);
+        }
+
+        // Return 200 so NOWPayments does NOT retry. Split failure is non-fatal
+        // for the user (deposit already credited), but flagged for admin review.
         return NextResponse.json({
           ...(depositResult || { success: true }),
-          split_error: splitErr instanceof Error ? splitErr.message : 'Split failed',
+          split_status: 'failed',
+          message: 'Deposit credited. Split flagged for admin review.',
         });
       }
     }
   }
 
-  // --- Trigger referral deposit bonus commission ---
-  if (internalStatus === 'completed' && depositResult?.success) {
-    try {
-      await triggerReferralCommission(deposit.user_id, depositAmount);
-    } catch (refErr) {
-      console.error('[nowpayments-ipn] Referral commission trigger failed for deposit', deposit.id, ':', refErr);
-      // Non-fatal: deposit already credited
-    }
-  }
+  // Referral commissions are handled by processCompletedDeposit()
+  // (distributeCommissions + confirmCommissions). No separate call needed here.
 
   return NextResponse.json(depositResult || { success: true, message: 'Status: ' + internalStatus });
 }
 
 async function processUsdtToXmrSplit(depositId: number, totalAmount: number): Promise<void> {
   const xmrAmount = Math.round(totalAmount * 0.6 * 1e8) / 1e8; // 60% to XMR
-  const usdtRetained = Math.round(totalAmount * 0.3 * 1e8) / 1e8; // 30% retained
+  const usdtRetained = Math.round(totalAmount * 0.4 * 1e8) / 1e8; // 40% retained
 
   const coldWallet = await getColdWalletXmr();
   if (!coldWallet) {
@@ -199,24 +211,4 @@ async function processUsdtToXmrSplit(depositId: number, totalAmount: number): Pr
   console.log('[nowpayments-ipn] Split complete for deposit', depositId,
     '| XMR:', xmrAmount, '→', coldWallet,
     '| USDT retained:', usdtRetained);
-}
-
-async function triggerReferralCommission(sourceUserId: number, depositAmount: number): Promise<void> {
-  const supabase = createServiceClient();
-
-  const { data, error } = await supabase.rpc('credit_referral_commission', {
-    p_source_user_id: sourceUserId,
-    p_referral_type: 'deposit_bonus',
-    p_source_amount: depositAmount,
-  });
-
-  if (error) {
-    console.error('[nowpayments-ipn] credit_referral_commission RPC error:', error.message);
-    throw new Error(error.message);
-  }
-
-  const result = (data as Array<{ commissions_created: number; total_paid_out: number }>)?.[0];
-  if (result) {
-    console.log('[nowpayments-ipn] Referral commissions:', result.commissions_created, 'created, total:', result.total_paid_out);
-  }
 }

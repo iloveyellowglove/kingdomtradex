@@ -4,17 +4,6 @@ import { createServiceClient } from '@/lib/supabase/service';
 import AdminTabBar from '@/components/admin/AdminTabBar';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  // DEV BYPASS: Skip auth when no real Supabase is configured
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl || supabaseUrl === 'http://localhost:54321') {
-    return (
-      <div className="py-4">
-        <AdminTabBar />
-        {children}
-      </div>
-    );
-  }
-
   const cookieStore = cookies();
   const token = cookieStore.get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) redirect('/login');

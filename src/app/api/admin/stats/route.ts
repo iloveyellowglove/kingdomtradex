@@ -1,10 +1,28 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  // Defense-in-depth: verify admin session (middleware also checks, but re-verify)
+  const token = cookies().get('__Host-kingdom_session')?.value;
+  if (!token || token.length !== 64) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const supabase = createServiceClient();
+  const { data: sessions } = await supabase
+    .from('sessions')
+    .select('user_role')
+    .eq('session_token', token)
+    .limit(1);
+
+  if (!sessions || sessions.length === 0 || sessions[0].user_role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
+  // Continue with stats query
   const dayAgo = new Date(Date.now() - 86400000).toISOString();
   const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
   const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString();

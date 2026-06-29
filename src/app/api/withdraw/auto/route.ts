@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
+import { withErrorHandler } from '@/lib/api-error-handler';
 
 export async function GET() {
   const token = cookies().get('__Host-kingdom_session')?.value;
@@ -38,7 +39,7 @@ export async function GET() {
   });
 }
 
-export async function PUT(request: NextRequest) {
+export const PUT = withErrorHandler(async (request: NextRequest) => {
   const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
@@ -122,4 +123,4 @@ export async function PUT(request: NextRequest) {
   }
 
   return NextResponse.json({ success: true });
-}
+});

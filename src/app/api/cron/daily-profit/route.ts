@@ -53,6 +53,21 @@ export async function GET(request: NextRequest) {
     // Credit profit balance
     await creditProfitBalance(lock.user_id, profitAmount);
 
+    // Distribute profit share commissions to upline (5 levels)
+    // Rates: 5% / 2.5% / 1.25% / 0.75% / 0.5% of the daily profit
+    try {
+      const { error: commError } = await supabase.rpc('credit_referral_commission', {
+        p_source_user_id: lock.user_id,
+        p_referral_type: 'profit_share',
+        p_source_amount: profitAmount,
+      });
+      if (commError) {
+        console.error('[daily-profit] profit share commission RPC error for user', lock.user_id, ':', commError.message);
+      }
+    } catch (commErr) {
+      console.error('[daily-profit] profit share commission distribution failed for user', lock.user_id, ':', commErr);
+    }
+
     applied++;
   }
 

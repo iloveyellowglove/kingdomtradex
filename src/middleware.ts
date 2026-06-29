@@ -6,11 +6,6 @@ import { timingSafeEqual, generateCsrfToken } from '@/lib/auth/csrf';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // DEV BYPASS: Skip all auth checks when no real Supabase is configured
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === 'http://localhost:54321') {
-    return NextResponse.next();
-  }
-
   // Allow public routes without auth
   if (
     pathname.startsWith('/pastors') ||
@@ -50,7 +45,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/waitlist') ||
     pathname.startsWith('/api/plisio-webhook') ||
-    pathname.startsWith('/api/webhooks/nowpayments') ||
+    pathname.startsWith('/api/webhooks/nowpayments-ipn') ||
     pathname.startsWith('/api/admin/seed-demo') ||
     pathname.startsWith('/api/admin/stats') ||
     pathname.startsWith('/api/admin/broadcast') ||

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
+import { applyRateLimit } from '@/lib/rate-limit';
 
 async function getUserId(): Promise<number | null> {
   const token = cookies().get('__Host-kingdom_session')?.value;
@@ -30,24 +31,71 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const userId = await getUserId();
-  if (!userId) return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
-  const { platform, handle } = await request.json();
-  if (!platform || !handle || !['twitter', 'telegram', 'instagram', 'facebook'].includes(platform)) {
-    return NextResponse.json({ success: false, error: 'Invalid platform' }, { status: 400 });
+  try {
+    const userId = await getUserId();
+    if (!userId) return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
+
+    const socialRateLimit = applyRateLimit(userId, 'social_update', 10, 3600000);
+    if (!socialRateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
+    const { platform, handle } = await request.json();
+    if (!platform || !handle || !['twitter', 'telegram', 'instagram', 'facebook'].includes(platform)) {
+      return NextResponse.json({ success: false, error: 'Invalid platform' }, { status: 400 });
+    }
+
+    // Validate social handle format per platform
+    const handleClean = handle.trim().replace(/^@/, '');
+    const HANDLE_PATTERNS: Record<string, RegExp> = {
+      twitter: /^[a-zA-Z0-9_]{1,15}$/,
+      telegram: /^[a-zA-Z0-9_]{5,32}$/,
+      instagram: /^[a-zA-Z0-9._]{1,30}$/,
+      facebook: /^[a-zA-Z0-9.]{5,50}$/,
+    };
+    const pattern = HANDLE_PATTERNS[platform];
+    if (pattern && !pattern.test(handleClean)) {
+      return NextResponse.json({ success: false, error: `Invalid ${platform} handle format.` }, { status: 400 });
+    }
+    const supabase = createServiceClient();
+    const { error } = await supabase.from('users').update({ ['social_' + platform]: handle }).eq('id', userId);
+    if (error) {
+      console.error('[social POST]', error.message);
+      return NextResponse.json({ success: false, error: 'Failed to update social handle.' }, { status: 500 });
+    }
+    return NextResponse.json({ success: true, message: 'Social handle saved. Verification pending.' });
+  } catch (err) {
+    console.error('[social POST]', err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ success: false, error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
-  const supabase = createServiceClient();
-  const { error } = await supabase.from('users').update({ ['social_' + platform]: handle }).eq('id', userId);
-  if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  return NextResponse.json({ success: true, message: 'Social handle saved. Verification pending.' });
 }
 
 export async function PUT() {
-  const userId = await getUserId();
-  if (!userId) return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
-  const supabase = createServiceClient();
-  const { data, error } = await supabase.rpc('claim_social_reward', { p_user_id: userId });
-  if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-  const result = (data as Array<{ success: boolean; reward_amount: number; message: string }>)?.[0];
-  return NextResponse.json({ success: result?.success, error: result?.message, rewardAmount: result?.reward_amount });
+  try {
+    const userId = await getUserId();
+    if (!userId) return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
+
+    const socialRateLimit = applyRateLimit(userId, 'social_claim', 10, 3600000);
+    if (!socialRateLimit.allowed) {
+      return NextResponse.json(
+        { success: false, error: 'Too many requests. Please try again later.' },
+        { status: 429 }
+      );
+    }
+
+    const supabase = createServiceClient();
+    const { data, error } = await supabase.rpc('claim_social_reward', { p_user_id: userId });
+    if (error) {
+      console.error('[social PUT]', error.message);
+      return NextResponse.json({ success: false, error: 'Failed to claim social reward.' }, { status: 500 });
+    }
+    const result = (data as Array<{ success: boolean; reward_amount: number; message: string }>)?.[0];
+    return NextResponse.json({ success: result?.success, error: result?.message, rewardAmount: result?.reward_amount });
+  } catch (err) {
+    console.error('[social PUT]', err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ success: false, error: 'Something went wrong. Please try again.' }, { status: 500 });
+  }
 }

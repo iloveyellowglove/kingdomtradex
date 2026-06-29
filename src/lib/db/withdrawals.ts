@@ -71,11 +71,22 @@ export async function getAllWithdrawals(
     .order('request_time', { ascending: false })
     .range(offset, offset + limit - 1);
 
-  if (statusFilter && ['pending', 'processing', 'completed', 'rejected', 'cancelled'].includes(statusFilter)) {
+  if (statusFilter && ['pending', 'processing', 'completed', 'rejected', 'cancelled', 'cooling', 'failed'].includes(statusFilter)) {
     q = q.eq('status', statusFilter);
   }
 
   const { data } = await q;
+  return data ?? [];
+}
+
+export async function getCoolingWithdrawalsReady(): Promise<Withdrawal[]> {
+  const supabase = createServiceClient();
+  const { data } = await supabase
+    .from('withdrawals')
+    .select('*')
+    .eq('status', 'cooling')
+    .lte('cooling_end_at', new Date().toISOString())
+    .order('cooling_end_at', { ascending: true });
   return data ?? [];
 }
 

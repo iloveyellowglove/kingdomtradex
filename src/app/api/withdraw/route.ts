@@ -3,10 +3,15 @@ import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 import { debitProfitBalance, debitCommissionBalance, creditProfitBalance, creditCommissionBalance } from '@/lib/db/atomic';
 import { getCurrencyById } from '@/lib/currencies';
+import { verifyUserTOTP } from '@/lib/two-factor';
+import { verifyWithdrawalOTP } from '@/lib/auth/otp-store';
+import { withErrorHandler } from '@/lib/api-error-handler';
+import { applyRateLimit } from '@/lib/rate-limit';
+import { validateWalletAddress } from '@/lib/wallet-validation';
 
 const MIN_WITHDRAWAL = 25;
 
-export async function POST(request: NextRequest) {
+export const POST = withErrorHandler(async (request: NextRequest) => {
   const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
@@ -24,6 +29,15 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = sessions[0].user_id;
+
+  // Rate limit: 5 withdrawal requests per user per hour
+  const rateLimit = applyRateLimit(userId, 'withdraw', 5, 3600000);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { success: false, error: 'Too many withdrawal requests. Please try again later.' },
+      { status: 429 }
+    );
+  }
 
   // === SHARE GATE CHECK ===
   // Fetch user role for bonus tier info
@@ -92,7 +106,37 @@ export async function POST(request: NextRequest) {
   }
   // === END SHARE GATE ===
 
-  const { amount, currency, wallet_address, withdrawal_type } = await request.json();
+  const { amount, currency, wallet_address, withdrawal_type, totp_code, email_otp_code } = await request.json();
+
+  // Verification required for all KYC-verified users on withdrawal
+  const { data: verifyUser } = await supabase
+    .from('users')
+    .select('kyc_level, two_factor_enabled')
+    .eq('id', userId)
+    .single();
+  const kycLevel = Number(verifyUser?.kyc_level ?? 0);
+
+  if (kycLevel >= 1) {
+    // Try TOTP first (if user has it enabled and provided code)
+    if (totp_code && verifyUser?.two_factor_enabled) {
+      const totpValid = await verifyUserTOTP(userId, totp_code);
+      if (!totpValid) {
+        return NextResponse.json({ success: false, error: 'Invalid authenticator code.' }, { status: 400 });
+      }
+    } else if (email_otp_code) {
+      // Email OTP (works for all verified users)
+      const otpResult = verifyWithdrawalOTP(userId, email_otp_code);
+      if (!otpResult.valid) {
+        return NextResponse.json({ success: false, error: otpResult.error || 'Invalid verification code.' }, { status: 400 });
+      }
+    } else {
+      return NextResponse.json({
+        success: false,
+        error: 'Verification code required for withdrawals. Request a code from /api/auth/send-withdrawal-otp.',
+        requires_verification: true,
+      }, { status: 400 });
+    }
+  }
 
   // Validate withdrawal_type
   const wType = (withdrawal_type || 'profit').trim();
@@ -123,12 +167,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Invalid currency.' }, { status: 400 });
   }
 
-  // Validate wallet address
+  // Validate wallet address with currency-specific pattern
   const walletAddr = (wallet_address || '').trim();
-  if (!walletAddr || walletAddr.length < 10) {
+  if (!walletAddr || !validateWalletAddress(walletAddr, currencyConfig.symbol)) {
     return NextResponse.json({
       success: false,
-      error: 'Please enter a valid wallet address.',
+      error: `Invalid ${currencyConfig.symbol} wallet address.`,
     }, { status: 400 });
   }
 
@@ -274,4 +318,4 @@ export async function POST(request: NextRequest) {
     withdrawal_id: withdrawal[0].id,
     testimony_url: testimonyUrl,
   });
-}
+});

@@ -1,3 +1,8 @@
+// DEPRECATED: Plisio is no longer the primary payment provider.
+// NOWPayments is authoritative. This webhook is kept for backward compatibility
+// with any in-flight Plisio transactions that may still callback.
+// New deposits use NOWPayments via /api/webhooks/nowpayments-ipn.
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getSetting } from '@/lib/db/settings';
 import { PlisioClient } from '@/lib/services/plisio-client';

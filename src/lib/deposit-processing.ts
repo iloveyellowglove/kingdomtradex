@@ -1,6 +1,7 @@
 import { createServiceClient } from './supabase/service';
 import { lockDeposit } from './db/atomic';
 import { distributeCommissions, confirmCommissions } from './db/commissions';
+import { getTierByKey, TIERS } from './tiers';
 
 export interface DepositResult {
   success: boolean;
@@ -139,13 +140,9 @@ export async function processCompletedDeposit(params: {
 
   // Lock deposit with tier (if tier is set) or fall back to simple lock
   if (tier && lockDays) {
-    const { data: tierRow } = await supabase
-      .from('lock_tiers')
-      .select('daily_rate')
-      .eq('tier', tier)
-      .single();
-
-    const dailyRate = tierRow?.daily_rate ?? 0.01;
+    // Read daily_rate from the authoritative tiers.ts, not the DB lock_tiers table
+    const tierConfig = getTierByKey(tier);
+    const dailyRate = tierConfig?.dailyRate ?? TIERS.silver.dailyRate;
 
     await lockDeposit(
       params.userId,
@@ -153,18 +150,13 @@ export async function processCompletedDeposit(params: {
       lockAmount,
       tier,
       lockDays,
-      Number(dailyRate),
+      dailyRate,
     );
   } else {
     // Fallback: deposit without tier - use a default 180-day silver lock
-    const { data: tierRow } = await supabase
-      .from('lock_tiers')
-      .select('daily_rate, lock_days')
-      .eq('tier', 'silver')
-      .single();
-
-    const dailyRate = tierRow?.daily_rate ?? 0.012;
-    const fallbackDays = tierRow?.lock_days ?? 180;
+    const fallbackTier = TIERS.silver;
+    const dailyRate = fallbackTier.dailyRate;
+    const fallbackDays = fallbackTier.duration;
 
     await lockDeposit(
       params.userId,
@@ -172,7 +164,7 @@ export async function processCompletedDeposit(params: {
       lockAmount,
       'silver',
       fallbackDays,
-      Number(dailyRate),
+      dailyRate,
     );
   }
 

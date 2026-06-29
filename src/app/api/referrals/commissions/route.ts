@@ -46,7 +46,8 @@ export async function GET(request: NextRequest) {
   const { data: commissions, count, error } = await query;
 
   if (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.error('[referrals/commissions]', error.message);
+    return NextResponse.json({ success: false, error: 'Failed to load commissions.' }, { status: 500 });
   }
 
   // Enrich with source username

@@ -3,6 +3,11 @@ import { cookies } from 'next/headers';
 import { createServiceClient } from '@/lib/supabase/service';
 import { verifyTOTP, verifyBackupCode } from '@/lib/two-factor';
 
+// Rate limit: max 10 disable attempts per user per 10 minutes
+const g = globalThis as Record<string, unknown>;
+const disableRateMap = (g.__twoFactorDisableRateMap as Map<number, { count: number; resetAt: number }>)
+  ?? (g.__twoFactorDisableRateMap = new Map<number, { count: number; resetAt: number }>());
+
 export async function POST(request: NextRequest) {
   const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token || token.length !== 64) {
@@ -21,6 +26,18 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = sessions[0].user_id;
+
+  // Rate limit 2FA disable attempts: max 10 per user per 10 minutes
+  const nowDisable = Date.now();
+  const disableEntry = disableRateMap.get(userId);
+  if (disableEntry && nowDisable < disableEntry.resetAt && disableEntry.count >= 10) {
+    return NextResponse.json({ success: false, error: 'Too many attempts. Please try again later.' }, { status: 429 });
+  }
+  if (!disableEntry || nowDisable >= disableEntry.resetAt) {
+    disableRateMap.set(userId, { count: 1, resetAt: nowDisable + 10 * 60 * 1000 });
+  } else {
+    disableEntry.count++;
+  }
 
   const body = await request.json();
   const { code } = body;

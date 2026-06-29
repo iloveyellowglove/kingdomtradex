@@ -208,6 +208,36 @@ function generateBackupCodes(count: number, length: number): string[] {
 }
 
 /**
+ * Verify a TOTP code for a user. Fetches the user's secret from DB and validates.
+ * Used for withdrawal 2FA checks and 2FA disable.
+ */
+export async function verifyUserTOTP(userId: number, code: string): Promise<boolean> {
+  const { createServiceClient } = await import('./supabase/service');
+  const supabase = createServiceClient();
+
+  const { data: users } = await supabase
+    .from('users')
+    .select('two_factor_secret, two_factor_enabled')
+    .eq('id', userId)
+    .limit(1);
+
+  if (!users || users.length === 0) return false;
+
+  const u = users[0] as unknown as { two_factor_secret: string | null; two_factor_enabled: boolean };
+  if (!u.two_factor_enabled || !u.two_factor_secret) return false;
+
+  let secret: string;
+  try {
+    const data = JSON.parse(u.two_factor_secret);
+    secret = data.secret;
+  } catch {
+    secret = u.two_factor_secret;
+  }
+
+  return verifyTOTP(secret, code.trim());
+}
+
+/**
  * Constant-time string comparison to prevent timing attacks.
  */
 function timingSafeCompare(a: string, b: string): boolean {

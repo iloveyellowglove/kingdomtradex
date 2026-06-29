@@ -4,7 +4,9 @@ const SHARE_TOKEN_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const SHARE_MIN_DELAY_MS = 3 * 1000; // Must wait 3 seconds after share
 
 function getSecret(): string {
-  return process.env.CRON_SECRET || process.env.NOWPAYMENTS_API_KEY || 'fallback-insecure';
+  const secret = process.env.CRON_SECRET;
+  if (!secret) throw new Error('CRON_SECRET environment variable is required');
+  return secret;
 }
 
 export function signShareToken(userId: number, testimonyId: string | null, platform: string): string {

@@ -5,6 +5,8 @@ import { PlisioClient } from '@/lib/services/plisio-client';
 import { PlisioDepositService } from '@/lib/services/plisio-deposit';
 import { createNowPayment } from '@/lib/nowpayments';
 import { getMinDeposit, getCurrencyById } from '@/lib/currencies';
+import { withErrorHandler } from '@/lib/api-error-handler';
+import { applyRateLimit } from '@/lib/rate-limit';
 
 const VALID_TIERS: Record<string, number> = {
   silver: 180,
@@ -13,7 +15,7 @@ const VALID_TIERS: Record<string, number> = {
   diamond: 540,
 };
 
-export async function POST(request: NextRequest) {
+export const POST = withErrorHandler(async (request: NextRequest) => {
   const token = cookies().get('__Host-kingdom_session')?.value;
   if (!token) {
     return NextResponse.json({ success: false, error: 'Not authenticated.' }, { status: 401 });
@@ -31,6 +33,15 @@ export async function POST(request: NextRequest) {
   }
 
   const userId = sessions[0].user_id;
+
+  // Rate limit: 10 deposit invoice creations per user per hour
+  const rateLimit = applyRateLimit(userId, 'deposit_invoice', 10, 3600000);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { success: false, error: 'Too many deposit requests. Please try again later.' },
+      { status: 429 }
+    );
+  }
 
   // Fetch user for role-based minimum check
   const { data: users } = await supabase
@@ -95,7 +106,7 @@ export async function POST(request: NextRequest) {
       priceCurrency: 'USD',
       payCurrency: currencyConfig.nowpaymentsTicker,
       orderId,
-      ipnCallbackUrl: `${appUrl}/api/webhooks/nowpayments`,
+      ipnCallbackUrl: `${appUrl}/api/webhooks/nowpayments-ipn`,
     });
 
     const txnId = `nowpay_${payment.payment_id}`;
@@ -197,4 +208,4 @@ export async function POST(request: NextRequest) {
       amount: amt,
     });
   }
-}
+});

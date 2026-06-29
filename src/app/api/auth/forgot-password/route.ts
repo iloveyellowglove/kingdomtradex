@@ -37,6 +37,14 @@ export async function POST(request: NextRequest) {
     .limit(1);
 
   if (users && users.length > 0) {
+    // Invalidate all existing unused password reset tokens for this email
+    await supabase
+      .from('password_resets')
+      .update({ used: true })
+      .eq('email', emailClean)
+      .eq('used', false)
+      .eq('type', 'password_reset');
+
     const token = randomBytes(32).toString('hex');
     await supabase.from('password_resets').insert({
       email: emailClean,

@@ -83,8 +83,8 @@ export async function distributeCommissions(
 
     if (!uplineUser || uplineUser.status !== 'active') break;
 
-    const percentageStr = await getSetting(`commission_l${level}`, String([15, 5, 3, 2, 1][level - 1]));
-    const percentage = parseFloat(percentageStr) || [15, 5, 3, 2, 1][level - 1];
+    const percentageStr = await getSetting(`commission_l${level}`, String([3, 1.5, 0.75, 0.5, 0.25][level - 1]));
+    const percentage = parseFloat(percentageStr) || [3, 1.5, 0.75, 0.5, 0.25][level - 1];
     const commissionAmount = Math.round((roundedAmount * percentage / 100) * 1e8) / 1e8;
 
     const { error: insertErr } = await supabase
@@ -117,6 +117,27 @@ export async function distributeCommissions(
 
 export async function confirmCommissions(depositId: number): Promise<void> {
   const supabase = createServiceClient();
+
+  // Check depositor's KYC level — commissions only pay when source user is KYC verified
+  const { data: deposit } = await supabase
+    .from('deposits')
+    .select('user_id')
+    .eq('id', depositId)
+    .single();
+
+  if (deposit) {
+    const { data: depositor } = await supabase
+      .from('users')
+      .select('kyc_level')
+      .eq('id', deposit.user_id)
+      .single();
+
+    if (!depositor || Number(depositor.kyc_level) < 1) {
+      // Depositor not KYC verified — leave commissions as 'pending'
+      // They will be confirmed when depositor reaches KYC Level 1
+      return;
+    }
+  }
 
   // Fetch all pending commissions for this deposit
   const { data: commissions } = await supabase

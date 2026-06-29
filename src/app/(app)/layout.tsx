@@ -5,18 +5,6 @@ import AppSidebar from '@/components/layout/AppSidebar';
 import BottomNav from '@/components/layout/BottomNav';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  // DEV BYPASS: Skip auth when no real Supabase is configured
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl || supabaseUrl === 'http://localhost:54321') {
-    return (
-      <div className="flex min-h-screen">
-        <AppSidebar />
-        <main className="flex-1 min-w-0 pb-20 lg:pb-0">{children}</main>
-        <BottomNav />
-      </div>
-    );
-  }
-
   const cookieStore = cookies();
   const token = cookieStore.get('__Host-kingdom_session')?.value;
 
