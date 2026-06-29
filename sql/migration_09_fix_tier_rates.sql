@@ -175,3 +175,9 @@ CREATE TRIGGER prevent_circular_referral
 -- ---------------------------------------------------------------------------
 ALTER TABLE withdrawals ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'manual';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS auto_withdrawal_min_amount NUMERIC(12,2) NOT NULL DEFAULT 25.00;
+
+-- ---------------------------------------------------------------------------
+-- 8. Referral anti-abuse columns
+-- ---------------------------------------------------------------------------
+ALTER TABLE users ADD COLUMN IF NOT EXISTS referral_suspicious BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS registration_ip TEXT;

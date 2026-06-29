@@ -6,8 +6,9 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { generateReferralCode, generatePlisioUid } from '@/lib/utils/referral';
 import { getBonusTier } from '@/lib/bonus-tiers';
 import { sendEmail } from '@/lib/services/email';
+import { withErrorHandler } from '@/lib/api-error-handler';
 
-export async function POST(request: NextRequest) {
+export const POST = withErrorHandler(async (request: NextRequest) => {
   const { username, email, password, referral_code, role: rawRole } = await request.json();
 
   const allowedRoles = ['member', 'pastor'];
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
   const ipRegMap = (g.__ipRegistrations as Map<string, number[]>)
     ?? (g.__ipRegistrations = new Map<string, number[]>());
   const recentUserIds = ipRegMap.get(ip) ?? [];
-  const sameIpRecent = recentUserIds.length > 0; // same IP registered another account recently
+  const sameIpRecent = recentUserIds.length > 0;
 
   const supabase = createServiceClient();
 
@@ -86,6 +87,7 @@ export async function POST(request: NextRequest) {
 
   const tier = getBonusTier(role);
 
+  // Insert user without referral_suspicious and registration_ip (may not exist yet)
   const { data: newUser } = await supabase
     .from('users')
     .insert({
@@ -108,7 +110,6 @@ export async function POST(request: NextRequest) {
       minimum_deposit_to_unlock: tier.unlockThreshold,
       kyc_level: 0,
       signup_credit: 50.00,
-      referral_suspicious: (referredBy && sameIpRecent) ? true : false,
       referral_level: 0,
       two_factor_enabled: false,
       auto_withdrawal_enabled: false,
@@ -121,28 +122,37 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Registration failed. Please try again.' }, { status: 500 });
   }
 
+  // Set anti-abuse columns in a separate update (safe if columns don't exist yet)
+  try {
+    await supabase.from('users').update({
+      registration_ip: ip !== 'unknown' ? ip : null,
+      referral_suspicious: Boolean(referredBy && sameIpRecent),
+    }).eq('id', newUser[0].id);
+  } catch {
+    // Non-critical: columns may not exist yet (migration pending). Don't fail registration.
+    console.warn('[register] Failed to set referral_suspicious/registration_ip — migration may be pending');
+  }
+
   // Track this user's ID for the IP-based anti-abuse map
   if (ip !== 'unknown') {
     recentUserIds.push(newUser[0].id);
-    ipRegMap.set(ip, recentUserIds.slice(-5)); // keep last 5
+    ipRegMap.set(ip, recentUserIds.slice(-5));
   }
 
   // Generate email verification token and send verification email
-  const verifyToken = randomBytes(32).toString('hex');
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const verifyLink = `${appUrl}/api/auth/verify-email?token=${verifyToken}`;
-
-  // Insert verification token into password_resets with type='email_verification'
-  await supabase.from('password_resets').insert({
-    email: emailClean,
-    token: verifyToken,
-    type: 'email_verification',
-    created_at: now,
-    used: false,
-  });
-
-  // Send verification email (non-blocking — don't fail registration if email fails)
   try {
+    const verifyToken = randomBytes(32).toString('hex');
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const verifyLink = `${appUrl}/api/auth/verify-email?token=${verifyToken}`;
+
+    await supabase.from('password_resets').insert({
+      email: emailClean,
+      token: verifyToken,
+      type: 'email_verification',
+      created_at: now,
+      used: false,
+    });
+
     await sendEmail(emailClean, 'Verify your email - KingdomTradex', `
       <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
         <h2 style="color: #F0B90B;">KingdomTradex</h2>
@@ -157,24 +167,35 @@ export async function POST(request: NextRequest) {
       </div>
     `);
   } catch (emailErr) {
-    console.error('[register] verification email send failed:', emailErr);
-    // Non-fatal: user can request a resend later
+    console.error('[register] Verification email failed:', emailErr);
+    // Non-fatal: user can request a resend later via /api/auth/resend-verification
   }
 
-  const { token } = await createSession(newUser[0].id, role);
-
-  const response = NextResponse.json({
-    success: true,
-    user_id: newUser[0].id,
-    referral_code: newReferralCode,
-    message: 'Account created. Please check your email to verify your account.',
-  });
-  response.cookies.set('__Host-kingdom_session', token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 86400,
-  });
-  return response;
-}
+  // Create session
+  try {
+    const { token } = await createSession(newUser[0].id, role);
+    const response = NextResponse.json({
+      success: true,
+      user_id: newUser[0].id,
+      referral_code: newReferralCode,
+      message: 'Account created. Please check your email to verify your account.',
+    });
+    response.cookies.set('__Host-kingdom_session', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 86400,
+    });
+    return response;
+  } catch (sessionErr) {
+    console.error('[register] Session creation failed:', sessionErr);
+    // User created but session failed — return success with login instruction
+    return NextResponse.json({
+      success: true,
+      user_id: newUser[0].id,
+      referral_code: newReferralCode,
+      message: 'Account created. Please log in to continue.',
+    });
+  }
+});
