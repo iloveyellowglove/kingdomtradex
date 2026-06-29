@@ -12,6 +12,7 @@ export default function AutoWithdrawSettings() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [minAmount, setMinAmount] = useState(25);
   const [coinDropdownOpen, setCoinDropdownOpen] = useState(false);
   const csrfTokenRef = useRef('');
   const coinDropdownRef = useRef<HTMLDivElement>(null);
@@ -32,6 +33,7 @@ export default function AutoWithdrawSettings() {
           setFrequency(data.settings.frequency);
           setCoin(data.settings.coin || '');
           setWallet(data.settings.wallet || '');
+          setMinAmount(data.settings.minAmount ?? 25);
         }
       } catch { /* ignore */ }
       setLoading(false);
@@ -65,6 +67,7 @@ export default function AutoWithdrawSettings() {
         frequency: frequency || null,
         coin: coin || null,
         wallet: wallet || null,
+        minAmount: minAmount,
       }),
     });
 
@@ -202,6 +205,28 @@ export default function AutoWithdrawSettings() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Minimum amount */}
+          <div>
+            <label className="block text-sm text-kt-text-secondary font-medium mb-1.5">
+              Minimum Amount (USD)
+            </label>
+            <input
+              type="number"
+              min={25}
+              value={minAmount}
+              onChange={(e) => setMinAmount(Number(e.target.value))}
+              className="w-full px-4 py-3 rounded-lg text-kt-text-primary text-base"
+              style={{
+                background: 'var(--kt-hover-bg)',
+                border: '1px solid var(--kt-hover-bg)',
+                minHeight: 48,
+              }}
+            />
+            <p className="text-xs text-kt-text-tertiary mt-1">
+              Auto-withdrawal triggers when your profit balance exceeds this amount
+            </p>
           </div>
 
           {/* Wallet address */}

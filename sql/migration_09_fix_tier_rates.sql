@@ -169,3 +169,9 @@ DROP TRIGGER IF EXISTS prevent_circular_referral ON users;
 CREATE TRIGGER prevent_circular_referral
   BEFORE INSERT OR UPDATE OF referred_by ON users
   FOR EACH ROW EXECUTE FUNCTION check_circular_referral();
+
+-- ---------------------------------------------------------------------------
+-- 7. Auto-withdrawal support columns
+-- ---------------------------------------------------------------------------
+ALTER TABLE withdrawals ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'manual';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS auto_withdrawal_min_amount NUMERIC(12,2) NOT NULL DEFAULT 25.00;

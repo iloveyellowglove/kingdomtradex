@@ -24,7 +24,7 @@ export async function GET() {
 
   const { data } = await supabase
     .from('users')
-    .select('auto_withdrawal_enabled, auto_withdrawal_frequency, auto_withdrawal_coin, auto_withdrawal_wallet')
+    .select('auto_withdrawal_enabled, auto_withdrawal_frequency, auto_withdrawal_coin, auto_withdrawal_wallet', 'auto_withdrawal_min_amount')
     .eq('id', userId)
     .single();
 
@@ -35,6 +35,7 @@ export async function GET() {
       frequency: data?.auto_withdrawal_frequency ?? null,
       coin: data?.auto_withdrawal_coin ?? null,
       wallet: data?.auto_withdrawal_wallet ?? null,
+      minAmount: Number(data?.auto_withdrawal_min_amount ?? 25),
     },
   });
 }
@@ -59,7 +60,7 @@ export const PUT = withErrorHandler(async (request: NextRequest) => {
   const userId = sessions[0].user_id;
 
   const body = await request.json();
-  const { enabled, frequency, coin, wallet } = body;
+  const { enabled, frequency, coin, wallet, minAmount } = body;
 
   // Validate frequency
   if (frequency && !['daily', 'weekly'].includes(frequency)) {
@@ -108,6 +109,16 @@ export const PUT = withErrorHandler(async (request: NextRequest) => {
   }
   if (wallet !== undefined) {
     updateData.auto_withdrawal_wallet = wallet || null;
+  }
+  if (minAmount !== undefined) {
+    const min = parseFloat(String(minAmount));
+    if (!isFinite(min) || min < 25) {
+      return NextResponse.json({
+        success: false,
+        error: 'Minimum amount must be at least $25.',
+      }, { status: 400 });
+    }
+    updateData.auto_withdrawal_min_amount = min;
   }
 
   const { error } = await supabase
